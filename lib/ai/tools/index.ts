@@ -11,6 +11,7 @@ import { getWeatherTool } from "./weather";
 import { scrapeUrlTool } from "./web";
 import { evaluateViralityTool } from "./virality";
 import { analyzeCompetitorTool } from "./competitor";
+import { repurposeLongformTool } from "./repurpose";
 
 // Register typed tools
 defaultToolRegistry.register(generateHashtagsTool);
@@ -19,6 +20,7 @@ defaultToolRegistry.register(getWeatherTool);
 defaultToolRegistry.register(scrapeUrlTool);
 defaultToolRegistry.register(evaluateViralityTool);
 defaultToolRegistry.register(analyzeCompetitorTool);
+defaultToolRegistry.register(repurposeLongformTool);
 
 export { defaultToolRegistry };
 export {
@@ -28,4 +30,5 @@ export {
   scrapeUrlTool,
   evaluateViralityTool,
   analyzeCompetitorTool,
+  repurposeLongformTool,
 };
