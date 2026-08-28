@@ -213,6 +213,9 @@ export async function executeTool(name: string, args: Record<string, any>, ctx: 
     });
     if (res.success && res.data) {
       if (typeof res.data === "string") return res.data;
+      if (name === "get_current_time" && (res.data as any).formatted) {
+        return (res.data as any).formatted;
+      }
       if (name === "generate_hashtags" && (res.data as any).hashtags) {
         return JSON.stringify((res.data as any).hashtags);
       }
