@@ -9,12 +9,20 @@ import { generateHashtagsTool } from "./hashtags";
 import { getCurrentTimeTool } from "./time";
 import { getWeatherTool } from "./weather";
 import { scrapeUrlTool } from "./web";
+import { evaluateViralityTool } from "./virality";
 
 // Register typed tools
 defaultToolRegistry.register(generateHashtagsTool);
 defaultToolRegistry.register(getCurrentTimeTool);
 defaultToolRegistry.register(getWeatherTool);
 defaultToolRegistry.register(scrapeUrlTool);
+defaultToolRegistry.register(evaluateViralityTool);
 
 export { defaultToolRegistry };
-export { generateHashtagsTool, getCurrentTimeTool, getWeatherTool, scrapeUrlTool };
+export {
+  generateHashtagsTool,
+  getCurrentTimeTool,
+  getWeatherTool,
+  scrapeUrlTool,
+  evaluateViralityTool,
+};
