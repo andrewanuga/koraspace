@@ -1,6 +1,13 @@
-import { callAI, ChatMessage } from "./openrouter";
+/**
+ * AI Engine Adapter (Ghost Mode)
+ *
+ * Provides backward-compatible bridge to the Unified GhostAgent.
+ */
 
-export type AgentActionType = "auto_reply" | "flag_lead" | "escalate_complaint" | "ignore";
+import { GhostAgent, GhostActionType, GhostEvaluation } from "./agents/ghost";
+import type { AgentContext } from "./core/types";
+
+export type AgentActionType = GhostActionType;
 
 export interface EvaluationResult {
   action: AgentActionType;
@@ -11,68 +18,47 @@ export interface EvaluationResult {
 
 /**
  * Evaluates an incoming message based on the user's Ghost Mode rules.
+ * Delegates to Unified GhostAgent.
  */
 export async function evaluateIncomingMessage(
   incomingText: string,
   platform: string,
   senderName: string,
   rules: { label: string; enabled: boolean }[],
-  isComment: boolean = false
+  isComment: boolean = false,
+  context?: Partial<AgentContext>
 ): Promise<EvaluationResult> {
-  const activeRules = rules.filter(r => r.enabled).map(r => r.label);
-  
-  if (activeRules.length === 0) {
-    return { action: "ignore", comment: "No active Ghost Mode rules." };
+  const agentCtx: AgentContext = {
+    userId: context?.userId || "system",
+    workspaceId: context?.workspaceId || "system",
+    autonomyMode: context?.autonomyMode || "assist",
+    supabase: context?.supabase,
+  };
+
+  const res = await GhostAgent.evaluate(
+    {
+      message: incomingText,
+      platform,
+      senderName,
+      rules,
+      isComment,
+    },
+    agentCtx
+  );
+
+  if (res.success && res.data) {
+    return {
+      action: res.data.action,
+      comment: res.data.reasoning,
+      reply: res.data.reply,
+      is_lead: res.data.isLead,
+    };
   }
 
-  const prompt = `You are the core logic engine for 'Ghost Mode', an autonomous social media AI assistant.
-Your job is to read an incoming ${isComment ? "comment" : "direct message"} on ${platform} from "${senderName}" and decide how to handle it based strictly on the user's active rules.
-
-ACTIVE RULES:
-${activeRules.map((r, i) => `${i + 1}. ${r}`).join("\n")}
-
-INCOMING MESSAGE:
-"${incomingText}"
-
-INSTRUCTIONS:
-1. Classify the message based on the active rules.
-2. Choose one of the following actions:
-   - "auto_reply": If a rule dictates replying to this type of message (generate a natural, friendly reply).
-   - "flag_lead": If a rule dictates flagging this as a potential lead/sales opportunity.
-   - "escalate_complaint": If a rule dictates escalating complaints/support issues.
-   - "ignore": If the message does not trigger any active rules, or is spam/irrelevant.
-3. Keep your reply concise (under 2 sentences) and suitable for social media ${isComment ? "comments" : "DMs"}.
-4. Output PURE JSON. Do not use markdown blocks.
-
-JSON SCHEMA:
-{
-  "action": "auto_reply" | "flag_lead" | "escalate_complaint" | "ignore",
-  "comment": "Short explanation of why you chose this action based on the rules.",
-  "reply": "The actual text to send back to the user (ONLY IF action is 'auto_reply', otherwise omit or null)",
-  "is_lead": true | false (Set to true if the user is expressing buying intent, asking for pricing, or showing strong interest in a service)
-}`;
-
-  try {
-    const res = await callAI([{ role: "system", content: prompt }], {
-      agent: "ghost",
-      temperature: 0.2,
-      jsonMode: true
-    });
-
-    let jsonStr = res.content.trim();
-    if (jsonStr.startsWith("\`\`\`json")) jsonStr = jsonStr.replace(/\`\`\`json/g, "").replace(/\`\`\`/g, "").trim();
-    if (jsonStr.startsWith("\`\`\`")) jsonStr = jsonStr.replace(/\`\`\`/g, "").trim();
-
-    const parsed = JSON.parse(jsonStr) as EvaluationResult;
-    
-    // Fallback validation
-    if (!["auto_reply", "flag_lead", "escalate_complaint", "ignore"].includes(parsed.action)) {
-      parsed.action = "ignore";
-    }
-
-    return parsed;
-  } catch (err) {
-    console.error("[GhostEngine] Evaluation failed:", err);
-    return { action: "ignore", comment: "AI evaluation error." };
-  }
+  return {
+    action: "ignore",
+    comment: res.error?.message || "AI evaluation error.",
+  };
 }
+
+export { GhostAgent };
