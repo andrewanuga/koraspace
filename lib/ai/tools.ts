@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { defaultToolRegistry } from "./tools/index";
 
 /* ── Tool Definitions ─────────────────────────────────────────── */
 
@@ -203,6 +204,25 @@ interface ToolContext {
 }
 
 export async function executeTool(name: string, args: Record<string, any>, ctx: ToolContext): Promise<string> {
+  // Check if migrated to typed ToolRegistry
+  if (defaultToolRegistry.has(name)) {
+    const res = await defaultToolRegistry.execute(name, args, {
+      userId: ctx.workspaceId || "system",
+      workspaceId: ctx.workspaceId || "system",
+      supabase: ctx.supabase,
+    });
+    if (res.success && res.data) {
+      if (typeof res.data === "string") return res.data;
+      if (name === "generate_hashtags" && (res.data as any).hashtags) {
+        return JSON.stringify((res.data as any).hashtags);
+      }
+      return JSON.stringify(res.data);
+    }
+    if (res.error) {
+      return `Error executing ${name}: ${res.error.message}`;
+    }
+  }
+
   switch (name) {
     case "get_current_time":
       return new Date().toLocaleString("en-US", { timeZoneName: "short" });
