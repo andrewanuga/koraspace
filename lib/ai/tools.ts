@@ -219,6 +219,9 @@ export async function executeTool(name: string, args: Record<string, any>, ctx: 
       if (name === "get_weather" && (res.data as any).summary) {
         return (res.data as any).summary;
       }
+      if (name === "scrape_url" && (res.data as any).content) {
+        return (res.data as any).content;
+      }
       if (name === "generate_hashtags" && (res.data as any).hashtags) {
         return JSON.stringify((res.data as any).hashtags);
       }
