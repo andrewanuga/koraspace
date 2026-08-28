@@ -230,6 +230,9 @@ export async function executeTool(name: string, args: Record<string, any>, ctx: 
           .map((o: any) => `### ${o.format} (${o.platform.toUpperCase()}):\n${o.content}`)
           .join("\n\n");
       }
+      if (name === "verify_claim" && (res.data as any).summary) {
+        return (res.data as any).summary;
+      }
       if (name === "generate_hashtags" && (res.data as any).hashtags) {
         return JSON.stringify((res.data as any).hashtags);
       }

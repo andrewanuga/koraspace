@@ -12,6 +12,7 @@ import { scrapeUrlTool } from "./web";
 import { evaluateViralityTool } from "./virality";
 import { analyzeCompetitorTool } from "./competitor";
 import { repurposeLongformTool } from "./repurpose";
+import { verifyClaimTool } from "./verify";
 
 // Register typed tools
 defaultToolRegistry.register(generateHashtagsTool);
@@ -21,6 +22,7 @@ defaultToolRegistry.register(scrapeUrlTool);
 defaultToolRegistry.register(evaluateViralityTool);
 defaultToolRegistry.register(analyzeCompetitorTool);
 defaultToolRegistry.register(repurposeLongformTool);
+defaultToolRegistry.register(verifyClaimTool);
 
 export { defaultToolRegistry };
 export {
@@ -31,4 +33,5 @@ export {
   evaluateViralityTool,
   analyzeCompetitorTool,
   repurposeLongformTool,
+  verifyClaimTool,
 };
