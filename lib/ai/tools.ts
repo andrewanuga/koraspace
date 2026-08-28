@@ -216,6 +216,9 @@ export async function executeTool(name: string, args: Record<string, any>, ctx: 
       if (name === "get_current_time" && (res.data as any).formatted) {
         return (res.data as any).formatted;
       }
+      if (name === "get_weather" && (res.data as any).summary) {
+        return (res.data as any).summary;
+      }
       if (name === "generate_hashtags" && (res.data as any).hashtags) {
         return JSON.stringify((res.data as any).hashtags);
       }
