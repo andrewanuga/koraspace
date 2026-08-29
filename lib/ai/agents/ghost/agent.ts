@@ -1,13 +1,13 @@
 /**
  * Unified Ghost Agent (GhostAgent)
  *
- * Autonomous social triage and engagement orchestrator.
- * Responsibilities:
+ * Autonomous social triage and engagement orchestrator with Memory Intelligence:
  * 1. receive(input): Ingests social comments, DMs, or webhook payloads
- * 2. loadContext(): Resolves rules, brand voice, and autonomy settings
+ * 2. loadContext(): Resolves workspace Brand Intelligence, rules, and past decisions
  * 3. classifyAndReason(): Uses LLM + ToolRegistry to evaluate message intent
  * 4. evaluatePolicy(): Evaluates decision with GhostPolicyEngine (Assist vs Auto, thresholds)
- * 5. executeOrQueue(): Dispatches reply if permitted, logs audit trail to agent_actions
+ * 5. brandCompliance(): Ensures generated auto-replies satisfy brand guardrails
+ * 6. executeOrQueue(): Dispatches reply if permitted, logs audit trail to agent_actions
  */
 
 import { z } from "zod";
@@ -15,6 +15,10 @@ import type { AgentContext, AgentResult } from "../../core/types";
 import { callAI, isConfigured } from "../../openrouter";
 import { defaultToolRegistry } from "../../tools/index";
 import { dispatchReply } from "../../../social/dispatch";
+import {
+  BrandIntelligenceLoader,
+  MemoryRetrievalEngine,
+} from "../../memory";
 import {
   GhostDecision,
   GhostDecisionSchema,
@@ -107,7 +111,7 @@ function evaluateFallback(
 
 export class GhostAgent {
   /**
-   * Main entry point: Evaluates an incoming interaction, enforces policy,
+   * Main entry point: Evaluates an incoming interaction, enforces memory & policy,
    * logs the decision, and conditionally dispatches.
    */
   public static async evaluate(
@@ -128,12 +132,19 @@ export class GhostAgent {
       accountToken,
     } = input;
 
+    // 1. Retrieve Workspace Memory & Brand Intelligence
+    const memoryBundle = await MemoryRetrievalEngine.retrieveContext(
+      message,
+      context,
+      { platform, maxMemories: 3 }
+    );
+
     const activeRules = rules.filter((r) => r.enabled).map((r) => r.label);
 
     let decision: GhostDecision;
     let modelUsed = "heuristic-fallback";
 
-    // 1. LLM Classification or Heuristic Fallback
+    // 2. LLM Classification or Heuristic Fallback
     if (!isConfigured()) {
       decision = evaluateFallback(input);
     } else {
@@ -141,10 +152,9 @@ export class GhostAgent {
         const systemPrompt = `You are 'Ghost Mode', an autonomous social media AI assistant for a creator/business.
 Your job is to analyze an incoming ${isComment ? "comment" : "direct message"} on ${platform} from "${senderName}" and decide how to triage it.
 
-BRAND VOICE:
-${brandVoice || "Professional, warm, concise, and helpful"}
+${memoryBundle.formattedSystemContext}
 
-ACTIVE RULES:
+ACTIVE TRIAGE RULES:
 ${
   activeRules.length > 0
     ? activeRules.map((r, i) => `${i + 1}. ${r}`).join("\n")
@@ -157,7 +167,7 @@ INSTRUCTIONS:
    - "flag_lead": For prospective buyers, pricing inquiries, or partnership offers.
    - "escalate_complaint": For dissatisfied users, technical problems, or complaints.
    - "ignore": For spam, promotional link dumps, or irrelevant noise.
-2. If "auto_reply", write a friendly reply matching the Brand Voice in under 2 sentences.
+2. If "auto_reply", write a friendly reply matching the Brand Voice in under 2 sentences. Strictly avoid forbidden guardrail terms.
 3. If "flag_lead" or "escalate_complaint", omit the reply.
 4. Output strictly valid JSON.
 
@@ -213,10 +223,19 @@ JSON SCHEMA:
       }
     }
 
-    // 2. Deterministic Policy Evaluation (Assist vs Auto, safety gating)
+    // 3. Brand Compliance Verification on Auto-Reply
+    if (decision.reply) {
+      const compliance = BrandIntelligenceLoader.checkCompliance(decision.reply, memoryBundle.brand);
+      if (!compliance.compliant) {
+        decision.riskLevel = "high";
+        decision.reasoning += ` [Compliance note: contains restricted wording]`;
+      }
+    }
+
+    // 4. Deterministic Policy Evaluation (Assist vs Auto, safety gating)
     const policy = GhostPolicyEngine.evaluate(decision, input, context);
 
-    // 3. Execution / Dispatch if permitted by policy
+    // 5. Execution / Dispatch if permitted by policy
     let dispatched = false;
     if (policy.canDispatchImmediately && decision.reply && accountToken && senderId) {
       dispatched = await dispatchReply({
@@ -229,7 +248,7 @@ JSON SCHEMA:
       });
     }
 
-    // 4. Record Audit Log in agent_actions
+    // 6. Record Audit Log in agent_actions
     const actionId = await this.persistAuditLog(context, input, decision, policy, dispatched, botId);
 
     const evaluation: GhostEvaluation = {

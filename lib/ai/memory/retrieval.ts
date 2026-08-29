@@ -15,6 +15,7 @@ import type {
 } from "./types";
 import { BrandIntelligenceLoader } from "./brand";
 import { PerformanceMemoryEngine } from "./performance";
+import { EmbeddingService } from "./embeddings";
 
 export class MemoryRetrievalEngine {
   /**
@@ -84,7 +85,7 @@ export class MemoryRetrievalEngine {
   }
 
   /**
-   * Queries relevant semantic memories for a workspace.
+   * Queries relevant semantic memories for a workspace with semantic/lexical ranking.
    */
   public static async querySemanticMemories(
     params: MemoryQuery,
@@ -93,25 +94,42 @@ export class MemoryRetrievalEngine {
     if (!context.supabase) return [];
 
     try {
+      const limit = params.limit || 5;
+
       const { data, error } = await context.supabase
         .from("ai_message_memory")
-        .select("id, user_id, source, platform, role, content, created_at")
+        .select("id, user_id, source, platform, role, content, memory_type, importance, created_at")
         .eq("user_id", params.workspaceId)
         .order("created_at", { ascending: false })
-        .limit(params.limit || 5);
+        .limit(25);
 
-      if (error || !data) return [];
+      if (error || !data || data.length === 0) return [];
 
-      return data.map((d: any) => ({
+      const mapped: SemanticMemory[] = data.map((d: any) => ({
         id: d.id,
         workspaceId: d.user_id,
         source: d.source || "chat",
         platform: d.platform || undefined,
-        memoryType: "conversation",
-        importance: 2,
+        memoryType: d.memory_type || "conversation",
+        importance: (d.importance || 2) as SemanticMemory["importance"],
         content: d.content,
         createdAt: d.created_at,
       }));
+
+      // Rank by query relevance and importance
+      if (params.query && params.query.trim().length > 0) {
+        return mapped
+          .map((m) => {
+            const rel = EmbeddingService.lexicalSimilarity(params.query, m.content);
+            const score = rel * 0.7 + (m.importance / 5) * 0.3;
+            return { memory: m, score };
+          })
+          .sort((a, b) => b.score - a.score)
+          .slice(0, limit)
+          .map((r) => r.memory);
+      }
+
+      return mapped.slice(0, limit);
     } catch (err) {
       console.warn("[MemoryRetrievalEngine] Could not query semantic memories:", err);
       return [];

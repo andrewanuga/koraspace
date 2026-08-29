@@ -1,18 +1,27 @@
 /**
  * Unified Chat Agent (ChatAgent)
  *
- * Central reasoning & execution orchestrator for Koraspace AI:
+ * Central reasoning, memory retrieval, and execution orchestrator for Koraspace AI:
+ * - Injects persistent Brand Intelligence, Semantic Memory, and Performance Analytics
  * - Formulates execution plans via ChatPlanner
  * - ReAct multi-step tool reasoning with ToolRegistry
  * - Bounded loop governance with step-level telemetry
  * - Integrated self-correction & virality refinement loops
- * - Multimodal image/document awareness
+ * - Deterministic brand compliance guardrail checks (forbidden terms)
+ * - Automatic Memory Formation from user instructions
  */
 
 import type { AgentContext, AgentResult } from "../../core/types";
 import { defaultToolRegistry } from "../../tools/index";
 import { callAI, isConfigured, ChatMessage, buildMultimodalContent } from "../../openrouter";
 import { AI_TOOLS } from "../../tools";
+import {
+  BrandIntelligenceLoader,
+  MemoryFormationEngine,
+  MemoryRetrievalEngine,
+  type BrandComplianceReport,
+  type BrandIntelligence,
+} from "../../memory";
 import type {
   AgentStep,
   ChatAgentInput,
@@ -24,9 +33,13 @@ import { ChatExecutor } from "./executor";
 
 /* ── 1. Fallback Response Generator ───────────────────────────── */
 
-function generateFallbackResponse(input: ChatAgentInput): ChatAgentOutput {
+function generateFallbackResponse(
+  input: ChatAgentInput,
+  brand?: BrandIntelligence
+): ChatAgentOutput {
   const lastUser = [...input.messages].reverse().find((m) => m.role === "user")?.content ?? "";
   const topic = lastUser.slice(0, 80).trim() || "your idea";
+  const brandName = brand?.brandName || "Koraspace";
 
   const content = [
     `Here is a ready-to-post draft on "${topic}":`,
@@ -37,7 +50,7 @@ function generateFallbackResponse(input: ChatAgentInput): ChatAgentOutput {
     "2. The tactical shift that delivers immediate traction",
     "3. Step-by-step action plan you can deploy today",
     "",
-    "What platform are we posting this to? (X thread, LinkedIn, or Instagram caption?)"
+    `What platform are we posting this to for ${brandName}? (X thread, LinkedIn, or Instagram caption?)`
   ].join("\n");
 
   return {
@@ -54,7 +67,8 @@ function generateFallbackResponse(input: ChatAgentInput): ChatAgentOutput {
 
 export class ChatAgent {
   /**
-   * Main entry point: Executes multi-turn reasoning and tool orchestration.
+   * Main entry point: Executes multi-turn reasoning, memory retrieval,
+   * tool orchestration, and brand compliance verification.
    */
   public static async execute(
     input: ChatAgentInput,
@@ -63,7 +77,7 @@ export class ChatAgent {
     const startTime = Date.now();
     const {
       messages,
-      systemPrompt = "You are Koraspace AI, an elite autonomous social media agent.",
+      systemPrompt: userSystemPrompt,
       attachments = [],
       model,
       temperature = 0.7,
@@ -71,28 +85,44 @@ export class ChatAgent {
       requireSelfCorrection = false,
     } = input;
 
-    // 1. Dev / offline fallback
+    const lastUserText = [...messages].reverse().find((m) => m.role === "user")?.content || "";
+
+    // 1. Contextual Memory Retrieval (Brand, Semantic, Performance)
+    const memoryBundle = await MemoryRetrievalEngine.retrieveContext(
+      lastUserText,
+      context
+    );
+
+    // 2. Dev / offline fallback
     if (!isConfigured()) {
       return {
         success: true,
-        data: generateFallbackResponse(input),
+        data: generateFallbackResponse(input, memoryBundle.brand),
         metadata: { latencyMs: Date.now() - startTime },
       };
     }
 
-    // 2. Planning and Intent Decomposition
+    // 3. Planning and Intent Decomposition
     const plan = ChatPlanner.plan(messages);
     const steps: AgentStep[] = [];
 
-    // 3. Assemble system and user messages
-    const aiMessages: ChatMessage[] = [{ role: "system", content: systemPrompt }];
+    // 4. Construct System Prompt with Memory Context
+    const baseSystem = userSystemPrompt || "You are Koraspace AI, an elite autonomous social media agent.";
+    const consolidatedSystemPrompt = [
+      baseSystem,
+      "",
+      memoryBundle.formattedSystemContext,
+    ].join("\n\n");
+
+    // 5. Assemble system and user messages
+    const aiMessages: ChatMessage[] = [{ role: "system", content: consolidatedSystemPrompt }];
 
     for (const msg of messages) {
       if (msg.role === "system") continue;
       aiMessages.push({ role: msg.role, content: msg.content });
     }
 
-    // 4. Multimodal context processing
+    // 6. Multimodal context processing
     const imageDataUrls: string[] = [];
     const attachmentLines: string[] = [];
 
@@ -127,11 +157,11 @@ export class ChatAgent {
       }
     }
 
-    // 5. Tool Definitions from ToolRegistry
+    // 7. Tool Definitions from ToolRegistry
     const registeredDefinitions = defaultToolRegistry.getDefinitions();
     const toolsToUse = registeredDefinitions.length > 0 ? registeredDefinitions : AI_TOOLS;
 
-    // 6. ReAct Reasoning Loop
+    // 8. ReAct Reasoning Loop
     let iterations = 0;
     let finalContent = "";
     let finalModel = model;
@@ -210,7 +240,7 @@ export class ChatAgent {
       }
     }
 
-    // 7. Self-Correction & Quality Gate (if requested or virality intent)
+    // 9. Self-Correction & Virality Check
     if (requireSelfCorrection && finalContent && finalContent.length > 40) {
       const viralityCheck = await defaultToolRegistry.execute(
         "evaluate_virality",
@@ -225,18 +255,19 @@ export class ChatAgent {
           steps.push({
             stepIndex: ++iterations,
             type: "self_correction",
-            thought: `Initial draft scored ${score}/100. Optimizing hook and engagement drivers.`,
+            thought: `Initial draft scored ${score}/100 in virality. Refining hook and pacing.`,
             timestamp: Date.now(),
           });
 
-          // Iterative refinement prompt
           const refinementRes = await callAI(
             [
               ...aiMessages,
               { role: "assistant", content: finalContent },
               {
                 role: "system",
-                content: `Self-Correction Trigger: The draft scored ${score}/100 in engagement probability. Weaknesses: ${JSON.stringify((viralityCheck.data as any).breakdown)}. Rewrite this draft to maximize hook retention and clarity. Return only the revised draft.`,
+                content: `Self-Correction Trigger: The draft scored ${score}/100 in engagement probability. Weaknesses: ${JSON.stringify(
+                  (viralityCheck.data as any).breakdown
+                )}. Rewrite to maximize retention, clarity, and authority. Return only the revised draft.`,
               },
             ],
             { agent: "chat", model, temperature: 0.5 }
@@ -249,8 +280,48 @@ export class ChatAgent {
       }
     }
 
+    // 10. Brand Compliance Guardrail Verification
+    const compliance = BrandIntelligenceLoader.checkCompliance(finalContent, memoryBundle.brand);
+    if (!compliance.compliant && compliance.violations.length > 0 && finalContent.length > 20) {
+      steps.push({
+        stepIndex: ++iterations,
+        type: "self_correction",
+        thought: `Brand compliance violation detected: ${compliance.violations.join(", ")}. Sanitizing output.`,
+        timestamp: Date.now(),
+      });
+
+      const complianceFixRes = await callAI(
+        [
+          ...aiMessages,
+          { role: "assistant", content: finalContent },
+          {
+            role: "system",
+            content: `Compliance Guardrail Trigger: The draft violated brand rules (${compliance.violations.join(
+              ", "
+            )}). Rewrite the text to strictly remove all forbidden terms and maintain high compliance. Return only the sanitized content.`,
+          },
+        ],
+        { agent: "chat", model, temperature: 0.3 }
+      );
+
+      if (complianceFixRes.content) {
+        finalContent = complianceFixRes.content;
+      }
+    }
+
     if (!finalContent && iterations >= maxIterations) {
       finalContent = "I completed multi-step analysis and reached the iteration limit. Here is the synthesized output based on observations gathered.";
+    }
+
+    // 11. Background Memory Formation (learn new rules, preferences, facts)
+    if (lastUserText && context.workspaceId) {
+      MemoryFormationEngine.processAndFormMemory(
+        lastUserText,
+        context.workspaceId,
+        context.supabase
+      ).catch((mErr) => {
+        console.warn("[ChatAgent] Non-blocking memory formation error:", mErr);
+      });
     }
 
     return {
