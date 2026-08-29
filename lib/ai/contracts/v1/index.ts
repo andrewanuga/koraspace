@@ -13,11 +13,11 @@ export const V1ChatRequestSchema = z.object({
   workspaceId: z.string(),
   conversationId: z.string().optional(),
   model: z.string().optional(),
-  enableTools: z.boolean().default(true),
+  enableTools: z.boolean().optional().default(true),
   idempotencyKey: z.string().optional(),
 });
 
-export type V1ChatRequest = z.infer<typeof V1ChatRequestSchema>;
+export type V1ChatRequest = z.input<typeof V1ChatRequestSchema>;
 
 export interface V1ChatResponse {
   reply: string;
@@ -37,7 +37,7 @@ export const V1GhostEvaluateRequestSchema = z.object({
   idempotencyKey: z.string().optional(),
 });
 
-export type V1GhostEvaluateRequest = z.infer<typeof V1GhostEvaluateRequestSchema>;
+export type V1GhostEvaluateRequest = z.input<typeof V1GhostEvaluateRequestSchema>;
 
 export interface V1GhostEvaluateResponse {
   decision: "ALLOW" | "REQUIRE_APPROVAL" | "DENY";
@@ -59,7 +59,7 @@ export const V1ContentGenerateRequestSchema = z.object({
   customInstructions: z.string().optional(),
 });
 
-export type V1ContentGenerateRequest = z.infer<typeof V1ContentGenerateRequestSchema>;
+export type V1ContentGenerateRequest = z.input<typeof V1ContentGenerateRequestSchema>;
 
 // 4. POST /api/v1/ai/memory/search
 export const V1MemorySearchRequestSchema = z.object({
@@ -69,4 +69,4 @@ export const V1MemorySearchRequestSchema = z.object({
   type: z.enum(["brand_rule", "audience_fact", "preference", "decision", "exemplar"]).optional(),
 });
 
-export type V1MemorySearchRequest = z.infer<typeof V1MemorySearchRequestSchema>;
+export type V1MemorySearchRequest = z.input<typeof V1MemorySearchRequestSchema>;

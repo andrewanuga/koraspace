@@ -82,20 +82,27 @@ export class ServiceEnvelopeBuilder {
     const now = Date.now();
     const durationMs = options.startTime ? now - options.startTime : 0;
     const tid = options.traceId || (err instanceof AIError ? err.traceId : undefined) || AITelemetry.generateId("trc");
-
     let statusCode = options.fallbackStatus || 500;
     let code = "INTERNAL_AI_ERROR";
     let message = "Internal AI service error. Please try again or contact support.";
     let retryable = false;
 
-    if (err instanceof AIError) {
+    if (options.fallbackStatus) {
+      statusCode = options.fallbackStatus;
+      code = statusCode === 401 ? "UNAUTHORIZED" : statusCode === 400 ? "BAD_REQUEST" : statusCode === 403 ? "FORBIDDEN" : "ERROR";
+      if (err instanceof Error) message = err.message;
+    } else if (err instanceof AIError) {
       statusCode = err.statusCode;
       code = err.code;
       message = err.message;
       retryable = err.retryable;
     } else if (err instanceof Error) {
       const lower = err.message.toLowerCase();
-      if (lower.includes("unauthorized") || lower.includes("forbidden") || lower.includes("missing required")) {
+      if (lower.includes("unauthorized")) {
+        statusCode = 401;
+        code = "UNAUTHORIZED";
+        message = err.message;
+      } else if (lower.includes("forbidden") || lower.includes("missing required")) {
         statusCode = 403;
         code = "FORBIDDEN";
         message = err.message;
