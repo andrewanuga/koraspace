@@ -4,7 +4,7 @@
  * Provides backward-compatible bridge to the Unified GhostAgent.
  */
 
-import { GhostAgent, GhostActionType, GhostEvaluation } from "./agents/ghost";
+import { GhostAgent, type GhostActionType } from "./agents/ghost";
 import type { AgentContext } from "./core/types";
 
 export type AgentActionType = GhostActionType;

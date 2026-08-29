@@ -41,6 +41,11 @@ export async function POST(req: NextRequest) {
         reply: res.data.reply,
         reason: res.data.reasoning,
         confidence: res.data.confidence / 100,
+        is_lead: res.data.isLead,
+        risk_level: res.data.riskLevel,
+        policy: res.data.policy,
+        dispatched: res.data.dispatched,
+        action_id: res.data.actionId,
         model: res.metadata?.model,
       });
     }
