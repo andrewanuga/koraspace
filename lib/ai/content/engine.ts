@@ -147,6 +147,7 @@ export class ContentIntelligenceEngine {
       hook,
       callToAction: cta,
       suggestedHashtags: hashtags,
+      heuristicEngagementScore: viralityScore,
       predictedViralityScore: viralityScore,
       compliancePassed: true,
       warnings: [],

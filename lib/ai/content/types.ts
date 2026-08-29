@@ -27,7 +27,8 @@ export interface PlatformContentDraft {
   hook: string;
   callToAction: string;
   suggestedHashtags: string[];
-  predictedViralityScore: number; // 0 to 100
+  heuristicEngagementScore: number; // Heuristic prediction 0 to 100 based on hook structure & format
+  predictedViralityScore: number; // Backwards-compatible alias for heuristicEngagementScore
   compliancePassed: boolean;
   warnings: string[];
 }
