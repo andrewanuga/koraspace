@@ -1,9 +1,12 @@
 /**
- * Centralized prompt engineering templates.
+ * Baseline Prompt Engineering & Copywriting Templates
  *
- * Each agent gets a carefully crafted system prompt that uses
- * role-persona, chain-of-thought, and structured output techniques
- * to produce high-quality, brand-consistent content.
+ * NOTE: Autonomous AI Agents (ChatAgent, GhostAgent, ContentIntelligenceEngine)
+ * construct dynamic prompt context using BrandIntelligenceLoader and
+ * PerformanceMemoryEngine.
+ *
+ * This module provides baseline, deterministic structured copywriting templates
+ * for single-turn generators and UI fallback routes.
  */
 
 /* ── Types ────────────────────────────────────────────────────── */
