@@ -55,12 +55,13 @@ function evaluateFallback(
     lower.includes("terrible");
 
   const isFluff =
-    /^[🔥❤️😍🙌👏✨💯👍🤝🎉]+$/u.test(lower) ||
-    lower === "great post" ||
-    lower === "amazing" ||
+    /^[🔥❤️😍🙌👏✨💯👍🤝🎉\s]+$/u.test(lower) ||
+    lower.includes("great post") ||
+    lower.includes("amazing") ||
     lower.includes("love this") ||
-    lower === "nice one" ||
-    lower === "fire";
+    lower.includes("keep it up") ||
+    lower.includes("nice one") ||
+    lower.includes("fire");
 
   if (isLead) {
     return {

@@ -74,24 +74,43 @@ export class EmbeddingService {
    * Fast lexical keyword relevance score for filtering and ranking when embeddings are unavailable.
    */
   public static lexicalSimilarity(query: string, target: string): number {
-    const qWords = new Set(
-      query
-        .toLowerCase()
-        .split(/\W+/)
-        .filter((w) => w.length > 2)
+    const qWords = Array.from(
+      new Set(
+        query
+          .toLowerCase()
+          .split(/\W+/)
+          .filter((w) => w.length > 2)
+      )
     );
-    const tWords = target
-      .toLowerCase()
-      .split(/\W+/)
-      .filter((w) => w.length > 2);
+    const tWords = Array.from(
+      new Set(
+        target
+          .toLowerCase()
+          .split(/\W+/)
+          .filter((w) => w.length > 2)
+      )
+    );
 
-    if (qWords.size === 0 || tWords.length === 0) return 0;
+    if (qWords.length === 0 || tWords.length === 0) return 0;
 
-    let matches = 0;
-    for (const w of tWords) {
-      if (qWords.has(w)) matches++;
+    const tLower = target.toLowerCase();
+    const qLower = query.toLowerCase();
+
+    let matchesQ = 0;
+    for (const q of qWords) {
+      if (tLower.includes(q) || (q.endsWith("s") && tLower.includes(q.slice(0, -1)))) {
+        matchesQ++;
+      }
     }
 
-    return Math.min(1, matches / qWords.size);
+    let matchesT = 0;
+    for (const t of tWords) {
+      if (qLower.includes(t) || (t.endsWith("s") && qLower.includes(t.slice(0, -1)))) {
+        matchesT++;
+      }
+    }
+
+    // Bidirectional containment similarity
+    return Math.max(matchesQ / qWords.length, matchesT / tWords.length);
   }
 }
