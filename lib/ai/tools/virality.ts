@@ -186,14 +186,15 @@ export const evaluateViralityTool: AITool<
 
   validateInput(raw: unknown): EvaluateViralityInput {
     if (!raw || typeof raw !== "object") {
-      throw new Error("Input must be an object containing 'post_content'.");
+      throw new Error("Input must be an object containing 'post_content' or 'content'.");
     }
-    const { post_content, platform } = raw as Record<string, unknown>;
-    if (typeof post_content !== "string" || !post_content.trim()) {
-      throw new Error("Missing or empty 'post_content' parameter.");
+    const { post_content, content, platform } = raw as Record<string, unknown>;
+    const text = typeof post_content === "string" ? post_content : typeof content === "string" ? content : "";
+    if (!text.trim()) {
+      throw new Error("Missing or empty 'post_content' or 'content' parameter.");
     }
     return {
-      post_content: post_content.trim(),
+      post_content: text.trim(),
       platform: typeof platform === "string" ? (platform as EvaluateViralityInput["platform"]) : undefined,
     };
   },
