@@ -1,5 +1,5 @@
 /**
- * Core Type Contracts for Socially AI Intelligence Layer.
+ * Core Type Contracts for Koraspace AI Intelligence Layer.
  *
  * Provides standardized, type-safe envelopes for:
  * - Agent execution context (AgentContext)

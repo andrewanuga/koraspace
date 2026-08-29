@@ -1,5 +1,5 @@
 /**
- * Central Tool Registry & Execution Governance for Socially AI.
+ * Central Tool Registry & Execution Governance for Koraspace AI.
  *
  * Responsibilities:
  * - Tool registration, discovery, and schema generation

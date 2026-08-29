@@ -1,14 +1,14 @@
-# Socially AI
+# Koraspace AI
 
 > Your personal social agent — the AI-powered social workspace built for the African creator economy.
 
-**Socially AI** shifts social media from *automation* (doing what you tell it) to *delegation* (owning goals autonomously). Powered by self-hosted **Llama 3.3 70B** via vLLM, it avoids per-token API fees and gives creators, clients, and marketers a world-class tool priced for their market.
+**Koraspace AI** shifts social media from *automation* (doing what you tell it) to *delegation* (owning goals autonomously). Powered by self-hosted **Llama 3.3 70B** via vLLM, it avoids per-token API fees and gives creators, clients, and marketers a world-class tool priced for their market.
 
 ---
 
 ## What it does
 
-Most tools tell you what happened. Socially AI tells you what will — and often handles it before you open the app.
+Most tools tell you what happened. Koraspace AI tells you what will — and often handles it before you open the app.
 
 | Feature | What it means |
 |---|---|
@@ -116,7 +116,7 @@ Each platform needs a registered developer app (most require review/approval).
 - **Telegram:** token-based — connect from **Integrations** by pasting a bot token.
 
 ### Robust Sync & Scrape Engine
-Socially AI uses a dual-engine architecture to fetch metrics:
+Koraspace AI uses a dual-engine architecture to fetch metrics:
 1. **API Primary:** Attempts to fetch deep metrics directly from native APIs (Graph API for FB/IG, YouTube Data API, etc.)
 2. **Web Scraper Fallback:** If the API fails (e.g. personal profiles, missing scope, expired tokens), our custom-built Node scraping engine uses the user's `@handle` (collected securely via OAuth Modals) to parse public subscriber/follower counts seamlessly from the web!
 
@@ -126,7 +126,7 @@ Once connected, a silent background sync triggers automatically when the user vi
 
 ## AI model
 
-Socially AI uses **OpenRouter** to access 200+ AI models. Each agent
+Koraspace AI uses **OpenRouter** to access 200+ AI models. Each agent
 (Create, Ghost Mode, Trends, Scoring) can use a different model,
 and users choose their preferred model in **Settings → AI**.
 

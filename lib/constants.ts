@@ -1,11 +1,11 @@
 // ============================================================
-// SociallyAI — App-wide constants
+// Koraspace AI — App-wide constants
 // ============================================================
 
-export const APP_NAME = "SociallyAI";
+export const APP_NAME = "Koraspace AI";
 export const APP_TAGLINE = "Stop Managing Social Media. Start Delegating It.";
 export const APP_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "https://sociallyai.co";
+  process.env.NEXT_PUBLIC_APP_URL || "https://koraspace.ai";
 
 // ── Plan limits ──────────────────────────────────────────────
 export const PLAN_LIMITS = {
@@ -92,7 +92,7 @@ export const TONES = [
   "Storyteller",
 ] as const;
 
-// ── Socially Score thresholds ────────────────────────────────
+// ── Koraspace Score thresholds ────────────────────────────────
 export const SCORE_THRESHOLDS = {
   HIGH: 75,
   MEDIUM: 50,

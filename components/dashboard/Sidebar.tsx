@@ -143,7 +143,7 @@ export function Sidebar({
           <img src="/logo.png" alt="" width={26} height={23} className="h-[24px] w-auto" style={{ filter: "drop-shadow(0 0 10px rgba(99,102,241,0.4))" }} />
           {!collapsed && (
             <span className="font-display text-[16px] font-semibold text-[var(--fg)]">
-              Socially<span className="text-[var(--sai-indigo)]"> AI</span>
+              Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
             </span>
           )}
         </div>

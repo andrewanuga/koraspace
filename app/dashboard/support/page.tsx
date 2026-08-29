@@ -137,7 +137,7 @@ export default function SupportPage() {
           ) : messages.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center text-[var(--fg-3)]">
               <Sparkles className="h-10 w-10 mb-3 opacity-50" style={{ color: "var(--sai-indigo)" }} />
-              <p className="text-sm font-medium">Hello! I'm the Socially.AI support agent.</p>
+              <p className="text-sm font-medium">Hello! I'm the Koraspace AI support agent.</p>
               <p className="text-xs mt-1">How can I help you today?</p>
             </div>
           ) : (

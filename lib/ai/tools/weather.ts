@@ -58,7 +58,7 @@ export const getWeatherTool: AITool<
 
     try {
       const res = await fetch(url, {
-        headers: { "User-Agent": "SociallyAI-Agent/1.0" },
+        headers: { "User-Agent": "KoraspaceAI-Agent/1.0" },
         signal: AbortSignal.timeout(6000),
       });
 

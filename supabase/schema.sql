@@ -1,5 +1,5 @@
 -- ============================================================
--- SociallyAI — Supabase Database Schema
+-- Koraspace AI — Supabase Database Schema
 -- Run this in the Supabase SQL editor to bootstrap the database
 -- ============================================================
 
@@ -22,7 +22,7 @@ create table if not exists public.profiles (
     check (plan in ('free', 'basic', 'pro', 'advanced')),
 
   -- ── Onboarding ──────────────────────────────────────────
-  persona text                               -- who they are using Socially as
+  persona text                               -- who they are using Koraspace as
     check (persona in ('client', 'creator', 'marketer')),
   posts_per_week int,                        -- desired posting cadence
   -- Client
@@ -347,7 +347,7 @@ create table if not exists public.bots (
 );
 
 -- ============================================================
--- AGENT CHAT  (per-user Socially AI conversations)
+-- AGENT CHAT  (per-user Koraspace AI conversations)
 -- ============================================================
 create table if not exists public.agent_conversations (
   id uuid primary key default gen_random_uuid(),

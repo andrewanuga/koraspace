@@ -36,7 +36,7 @@ export default function NotFound() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" width={26} height={23} className="h-[24px] w-auto" style={{ filter: "drop-shadow(0 0 12px rgba(99,102,241,0.45))" }} />
           <span className="font-display text-lg font-semibold text-white">
-            Socially<span className="text-[var(--sai-indigo)]"> AI</span>
+            Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
           </span>
         </Link>
 

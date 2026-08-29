@@ -41,8 +41,8 @@ export function Footer() {
                 <Zap className="w-4 h-4 text-white fill-white" />
               </div>
               <span className="font-bold text-lg">
-                <span className="gradient-text">Socially</span>
-                <span className="text-foreground">AI</span>
+                <span className="gradient-text">Koraspace</span>
+                <span className="text-foreground"> AI</span>
               </span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed mb-6">
@@ -83,7 +83,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>© 2026 SociallyAI. All rights reserved.</p>
+          <p>© 2026 Koraspace AI. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <span>🇳🇬 Built in Nigeria</span>
             <span>•</span>
