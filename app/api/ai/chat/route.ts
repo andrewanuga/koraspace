@@ -162,6 +162,9 @@ export async function POST(req: NextRequest) {
         model: finalModel,
         chatId: activeChatId,
         steps: agentResult.data?.steps,
+        plan: agentResult.data?.plan,
+        iterations: agentResult.data?.iterations,
+        selfCorrected: agentResult.data?.selfCorrected,
       });
     }
 
