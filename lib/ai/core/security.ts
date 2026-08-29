@@ -12,8 +12,8 @@ export interface SecurityScanResult {
 }
 
 const INJECTION_PATTERNS = [
-  { pattern: /ignore\s+(?:all\s+)?(?:previous|prior|above)\s+instructions/i, threat: "Instruction Override" },
-  { pattern: /disregard\s+(?:all\s+)?(?:rules|system\s+prompts|guidelines)/i, threat: "Rule Disregard" },
+  { pattern: /ignore\s+(?:all\s+)?(?:previous|prior|above)\s+(?:instructions|rules|prompts|guidelines)/i, threat: "Instruction Override" },
+  { pattern: /disregard\s+(?:all\s+)?(?:rules|system\s+prompts|guidelines|instructions)/i, threat: "Rule Disregard" },
   { pattern: /you\s+are\s+now\s+(?:in\s+)?(?:dan|developer|god|unrestricted)\s+mode/i, threat: "Jailbreak Roleplay" },
   { pattern: /(?:output|reveal|show|print)\s+(?:your\s+)?(?:system\s+prompt|initial\s+instructions)/i, threat: "System Prompt Extraction" },
   { pattern: /(?:system\s+prompt|instructions)\s*(?:reveal|leak|dump|show|print)/i, threat: "System Prompt Extraction" },

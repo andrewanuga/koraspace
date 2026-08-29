@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Build & Typecheck](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=nextdotjs)](https://nextjs.org)
-[![Automated Tests](https://img.shields.io/badge/Tests-126%20Passing-success?style=for-the-badge&logo=vitest)](https://vitest.dev)
+[![Automated Tests](https://img.shields.io/badge/Tests-136%20Passing-success?style=for-the-badge&logo=vitest)](https://vitest.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict%205.x-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org)
 [![Next.js](https://img.shields.io/badge/Next.js-16.2.6-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
 [![Database](https://img.shields.io/badge/Supabase-PostgreSQL%20%2B%20pgvector-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com)
@@ -14,7 +14,7 @@
 **The Autonomous Social AI Operating System**  
 *Engineered for creators, digital agencies, and high-growth marketing teams.*
 
-[Features](#-core-capabilities) • [Architecture](#-platform-architecture) • [Test Pyramid](#-automated-test-pyramid-126-tests) • [Security & RBAC](#-security--multi-tenant-isolation) • [Quickstart](#-quickstart--deployment) • [API Reference](#-api-endpoints)
+[Features](#-core-capabilities) • [Architecture](#-platform-architecture) • [Test Pyramid](#-automated-test-pyramid-136-tests) • [Security & RBAC](#-security--multi-tenant-isolation) • [Quickstart](#-quickstart--deployment) • [API Reference](#-api-endpoints)
 
 </div>
 
@@ -22,7 +22,7 @@
 
 ## 📖 Overview
 
-**Koraspace AI** elevates social media operations from passive automation (scheduled broadcasts) to **true autonomous delegation** (goal-oriented multi-agent reasoning, closed-loop empirical memory learning, deterministic policy safety, and dataset-versioned release governance). 
+**Koraspace AI** elevates social media operations from passive automation (scheduled broadcasts) to **true autonomous delegation** (goal-oriented multi-agent reasoning, closed-loop empirical memory learning, deterministic policy safety, live infrastructure validation, and dataset-versioned release governance). 
 
 Built atop **Next.js 16**, **Supabase with `pgvector`**, and **OpenRouter**, Koraspace empowers teams to orchestrate social growth across LinkedIn, X, Instagram, YouTube, and Telegram with zero brand drift and complete auditability.
 

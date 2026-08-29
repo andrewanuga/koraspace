@@ -15,6 +15,7 @@
     "test:security": "vitest run tests/security",
     "test:e2e": "vitest run tests/e2e",
     "test:eval": "vitest run tests/evaluations",
+    "test:live": "vitest run tests/live",
     "test:all": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
