@@ -8,4 +8,6 @@ export * from "./brand";
 export * from "./performance";
 export * from "./persona";
 export * from "./formation";
+export * from "./service";
+export * from "./consolidation";
 export * from "./retrieval";
