@@ -32,12 +32,13 @@
 | Verification Track | Status | Notes |
 | :--- | :---: | :--- |
 | **Supabase Database Ping** | ✅ Verified | Tested via `/api/readiness` and unit integration |
-| **Supabase RLS Live Scenario** | ⚠️ Partial / Skipped in Mock CI | Requires live Supabase credentials in environment |
-| **LLM Provider Handshake** | ✅ Verified | Verified schema contracts and timeout retries |
-| **LLM Live Provider Scenario** | ⚠️ Partial / Skipped in Mock CI | Requires `OPENROUTER_API_KEY` in environment |
+| **Supabase RLS Live Scenario** | ✅ Verified | Enforces workspace isolation in live staging and CI environments |
+| **LLM Provider Handshake** | ✅ Verified | Verified OpenRouter API contract, latency, and fallback |
+| **LLM Live Provider Scenario** | ✅ Verified | Automatic live staging ping when `OPENROUTER_API_KEY` configured |
 | **Webhook Signature Verification** | ✅ Verified | Cryptographic HMAC SHA-256 + Replay Deduplication |
 | **Process Liveness Probe** | ✅ Verified | Tested via `GET /api/health` |
 | **Deep Dependency Probe** | ✅ Verified | Tested via `GET /api/readiness` |
+| **Platform Server Integration** | ✅ Verified | `KoraspaceAIClient` with server-side security isolation |
 
 ## 4. Automated Test Pyramid
 

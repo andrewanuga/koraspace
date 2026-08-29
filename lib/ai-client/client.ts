@@ -1,11 +1,12 @@
 /**
  * Typed Platform AI Client
  *
- * Official TypeScript client consumed by the Core Platform to interact
+ * Official TypeScript client consumed by Core Platform server environments
+ * (Server Components, Server Actions, Route Handlers, Background Queues) to interact
  * with the Koraspace AI Intelligence Service:
  * - Automatically signs HMAC request headers and propagates correlation IDs
  * - Unpacks versioned `ServiceEnvelope<T>` responses
- * - Provides retry resilience and typed RPC methods
+ * - STRICT SECURITY: Throws immediately if instantiated in a browser context
  */
 
 import { ServiceAuthEngine } from "../ai/core/service-auth";
@@ -33,7 +34,14 @@ export class KoraspaceAIClient {
   private readonly timeoutMs: number;
 
   constructor(options: AIClientOptions = {}) {
-    this.baseUrl = options.baseUrl || (typeof window !== "undefined" ? "" : process.env.AI_SERVICE_URL || "http://localhost:3000");
+    // Strict Server-Side Security Invariant
+    if (typeof window !== "undefined") {
+      throw new Error(
+        "Security Error: KoraspaceAIClient contains service authentication secrets and must only be executed in server environments (Node.js/Edge Server Actions)."
+      );
+    }
+
+    this.baseUrl = options.baseUrl || process.env.AI_SERVICE_URL || "http://localhost:3000";
     this.defaultUserId = options.userId || "system";
     this.timeoutMs = options.timeoutMs || 30000;
   }
