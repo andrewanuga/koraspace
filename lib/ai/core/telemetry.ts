@@ -281,8 +281,8 @@ export class AITelemetry {
         .replace(/sk-[a-zA-Z0-9_-]{20,}/gi, "[REDACTED_API_KEY]")
         // Bearer tokens
         .replace(/Bearer\s+[a-zA-Z0-9_.-]{15,}/gi, "Bearer [REDACTED_TOKEN]")
-        // Supabase keys
-        .replace(/eyJhbGciOi[a-zA-Z0-9_-]{30,}/gi, "[REDACTED_JWT]")
+        // Supabase / Auth JWTs
+        .replace(/eyJhbGciOi[a-zA-Z0-9_.-]+/gi, "[REDACTED_JWT]")
         // Passwords & secrets
         .replace(/("?(?:password|token|secret|apiKey|api_key)"?\s*[:=]\s*)"[^"]+"/gi, '$1"[REDACTED]"');
     }

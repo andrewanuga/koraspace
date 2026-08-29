@@ -84,8 +84,10 @@ export class MemoryFormationEngine {
       lower.includes("i prefer") ||
       lower.includes("we prefer") ||
       lower.includes("always write in") ||
+      lower.includes("always use") ||
       lower.includes("make sure to always") ||
       lower.includes("my preference is") ||
+      lower.includes("preference") ||
       lower.includes("tone should be")
     ) {
       return {
