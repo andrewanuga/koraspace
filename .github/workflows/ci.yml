@@ -27,8 +27,23 @@ jobs:
       - name: TypeScript Typecheck
         run: npx tsc --noEmit
 
-      - name: Run Vitest Suite (Unit, Integration, Contracts, Observability)
-        run: npm test
+      - name: Run Unit Tests
+        run: npm run test:unit
+
+      - name: Run Security & Zero-Secret Tests
+        run: npm run test:security
+
+      - name: Run API Contract & Webhook Tests
+        run: npm run test:contracts
+
+      - name: Run Integration & Resilience Tests
+        run: npm run test:integration
+
+      - name: Run End-to-End Workflow Tests
+        run: npm run test:e2e
+
+      - name: Run AI Quality & Regression Gates
+        run: npm run test:eval
 
       - name: Build Next.js Production Bundle
         run: npm run build
