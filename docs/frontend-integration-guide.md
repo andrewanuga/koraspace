@@ -57,7 +57,7 @@ interface ChatRequestBody {
   message: string;             // User's message (Required)
   workspaceId: string;         // Workspace UUID (Required)
   conversationId?: string;     // Existing thread ID or omit to create new
-  model?: string;              // Optional override (default: OpenRouter primary model)
+  model?: string;              // Optional override (default: Gemini primary model)
   enableTools?: boolean;       // Enable search/virality/repurpose tools (default: true)
   idempotencyKey?: string;     // Optional unique key to prevent duplicate turns
   stream?: boolean;            // Enable Server-Sent Events streaming (default: false)

@@ -24,7 +24,7 @@
 
 **Koraspace AI** elevates social media operations from passive automation (scheduled broadcasts) to **true autonomous delegation** (goal-oriented multi-agent reasoning, closed-loop empirical memory learning, deterministic policy safety, live infrastructure validation, and versioned service contract governance). 
 
-Built atop **Next.js 16**, **Supabase with `pgvector`**, and **OpenRouter**, Koraspace empowers teams to orchestrate social growth across LinkedIn, X, Instagram, YouTube, and Telegram with zero brand drift and complete auditability.
+Built atop **Next.js 16**, **Supabase with `pgvector`**, and **Google Gemini**, Koraspace empowers teams to orchestrate social growth across LinkedIn, X, Instagram, YouTube, and Telegram with zero brand drift and complete auditability.
 
 ---
 
@@ -241,7 +241,7 @@ Create a `.env.local` file:
 NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
 SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
-OPENROUTER_API_KEY="your-openrouter-key"
+GEMINI_API_KEY="your-gemini-api-key"
 ```
 
 ### 4. Database Setup
