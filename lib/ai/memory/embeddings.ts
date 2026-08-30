@@ -71,30 +71,42 @@ export class EmbeddingService {
   }
 
   /**
+   * Tokenizes text into a unique list of lowercase keyword tokens.
+   */
+  public static tokenizeWords(text: string): string[] {
+    if (!text) return [];
+    return Array.from(
+      new Set(
+        text
+          .toLowerCase()
+          .split(/\W+/)
+          .filter((w) => w.length > 2)
+      )
+    );
+  }
+
+  /**
    * Fast lexical keyword relevance score for filtering and ranking when embeddings are unavailable.
    */
   public static lexicalSimilarity(query: string, target: string): number {
-    const qWords = Array.from(
-      new Set(
-        query
-          .toLowerCase()
-          .split(/\W+/)
-          .filter((w) => w.length > 2)
-      )
-    );
-    const tWords = Array.from(
-      new Set(
-        target
-          .toLowerCase()
-          .split(/\W+/)
-          .filter((w) => w.length > 2)
-      )
-    );
+    const qWords = this.tokenizeWords(query);
+    const qLower = query.toLowerCase();
+    return this.lexicalSimilarityPretokenized(qWords, qLower, target);
+  }
+
+  /**
+   * Calculates lexical similarity with pre-tokenized query words to eliminate redundant parsing in loops.
+   */
+  public static lexicalSimilarityPretokenized(
+    qWords: string[],
+    qLower: string,
+    target: string
+  ): number {
+    const tWords = this.tokenizeWords(target);
 
     if (qWords.length === 0 || tWords.length === 0) return 0;
 
     const tLower = target.toLowerCase();
-    const qLower = query.toLowerCase();
 
     let matchesQ = 0;
     for (const q of qWords) {

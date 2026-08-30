@@ -42,9 +42,12 @@ export class ConsolidationEngine {
     let highestSim = 0;
     let bestMatch: SemanticMemory | undefined = undefined;
 
+    const candidateLower = candidateText.trim().toLowerCase();
+    const candidateWords = EmbeddingService.tokenizeWords(candidateText);
+
     for (const mem of existingMemories) {
       // 1. Exact match
-      if (mem.content.trim().toLowerCase() === candidateText.trim().toLowerCase()) {
+      if (mem.content.trim().toLowerCase() === candidateLower) {
         return {
           status: "near_duplicate",
           highestSimilarity: 1.0,
@@ -53,7 +56,11 @@ export class ConsolidationEngine {
       }
 
       // 2. Lexical / semantic similarity
-      const sim = EmbeddingService.lexicalSimilarity(candidateText, mem.content);
+      const sim = EmbeddingService.lexicalSimilarityPretokenized(
+        candidateWords,
+        candidateLower,
+        mem.content
+      );
       if (sim > highestSim) {
         highestSim = sim;
         bestMatch = mem;

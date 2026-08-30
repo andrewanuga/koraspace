@@ -6,19 +6,41 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AITrace } from "./telemetry";
+
+export interface PersistTraceOptions {
+  executionContext?: "request" | "background";
+  client?: SupabaseClient;
+}
 
 export class TelemetryStore {
   /**
-   * Persists an execution trace into the database.
+   * Persists an execution trace into the database with explicit context handling.
    */
-  public static async persistTrace(trace: AITrace): Promise<{ success: boolean; error?: string }> {
+  public static async persistTrace(
+    trace: AITrace,
+    options: PersistTraceOptions = { executionContext: "request" }
+  ): Promise<{ success: boolean; error?: string }> {
     if (!trace || !trace.traceId) {
       return { success: false, error: "Invalid trace payload" };
     }
 
     try {
-      const supabase = await createClient();
+      let supabase: SupabaseClient | null = options.client || null;
+
+      if (!supabase) {
+        if (options.executionContext === "background") {
+          supabase = createAdminClient();
+        } else {
+          supabase = await createClient();
+        }
+      }
+
+      if (!supabase) {
+        return { success: false, error: "No Supabase client available" };
+      }
 
       const { error } = await supabase.from("ai_telemetry_traces").insert({
         trace_id: trace.traceId,
@@ -49,5 +71,19 @@ export class TelemetryStore {
       console.warn("[TelemetryStore.persistTrace] Error:", err.message);
       return { success: false, error: err.message };
     }
+  }
+
+  /**
+   * Persists a trace from an active Next.js HTTP request handler.
+   */
+  public static async persistTraceFromRequest(trace: AITrace): Promise<{ success: boolean; error?: string }> {
+    return this.persistTrace(trace, { executionContext: "request" });
+  }
+
+  /**
+   * Persists a trace from a background job, worker, or cron task using the admin service client.
+   */
+  public static async persistTraceFromBackground(trace: AITrace): Promise<{ success: boolean; error?: string }> {
+    return this.persistTrace(trace, { executionContext: "background" });
   }
 }

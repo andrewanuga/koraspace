@@ -59,6 +59,11 @@ export class AIRateLimiter {
       const usageRatio = currentSpendUsd / monthlyBudgetUsd;
       if (usageRatio >= 1.0) {
         budgetStatus = "blocked";
+        // Clean up idle window if budget is exhausted
+        const existing = usageWindows.get(workspaceId);
+        if (existing && existing.requestTimestamps.length === 0 && existing.tokenTimestamps.length === 0) {
+          usageWindows.delete(workspaceId);
+        }
         return {
           allowed: false,
           remainingRequests: 0,
@@ -136,6 +141,23 @@ export class AIRateLimiter {
     if (!result.allowed) {
       throw new RateLimitError(result.reason || "AI rate limit exceeded");
     }
+  }
+
+  /**
+   * Prunes all idle workspace windows with no recent requests or token usage.
+   */
+  public static pruneIdle(maxAgeMs: number = 60000): number {
+    const threshold = Date.now() - maxAgeMs;
+    let pruned = 0;
+    for (const [wsId, win] of usageWindows.entries()) {
+      win.requestTimestamps = win.requestTimestamps.filter((t) => t > threshold);
+      win.tokenTimestamps = win.tokenTimestamps.filter((t) => t.timestamp > threshold);
+      if (win.requestTimestamps.length === 0 && win.tokenTimestamps.length === 0) {
+        usageWindows.delete(wsId);
+        pruned++;
+      }
+    }
+    return pruned;
   }
 
   /**

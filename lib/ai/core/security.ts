@@ -21,31 +21,52 @@ const INJECTION_PATTERNS = [
   { pattern: /(?:delete|drop|truncate)\s+(?:all\s+)?.*(?:tables|database|workspace\s+data)/i, threat: "Destructive Command" },
 ];
 
+export const MAX_SAFE_INPUT_LENGTH = 100_000;
+const CHUNK_SIZE = 10_000;
+const CHUNK_OVERLAP = 500;
+
 export class PromptSecurityGuard {
   /**
    * Scans a user message for prompt injection, jailbreak attempts, or policy overrides.
+   * Employs normalization, length boundaries, and sliding chunk evaluation to prevent blind spots.
    */
   public static scan(input: string): SecurityScanResult {
     if (!input || typeof input !== "string") {
       return { isSafe: true, riskScore: 0, threats: [] };
     }
 
-    const trimmed = input.trim();
-    const threats: string[] = [];
+    const threats: Set<string> = new Set();
 
-    for (const { pattern, threat } of INJECTION_PATTERNS) {
-      if (pattern.test(trimmed)) {
-        threats.push(threat);
-      }
+    // 1. Length Policy
+    if (input.length > MAX_SAFE_INPUT_LENGTH) {
+      threats.add("Payload Size Exceeded");
     }
 
-    const riskScore = Math.min(100, threats.length * 40);
-    const isSafe = threats.length === 0;
+    // 2. Normalize and Sanitize input
+    const normalized = this.sanitize(input);
+
+    // 3. Chunked Sliding Window Scan
+    const textLength = normalized.length;
+    let index = 0;
+
+    while (index < textLength) {
+      const chunk = normalized.slice(index, index + CHUNK_SIZE);
+      for (const { pattern, threat } of INJECTION_PATTERNS) {
+        if (pattern.test(chunk)) {
+          threats.add(threat);
+        }
+      }
+      index += CHUNK_SIZE - CHUNK_OVERLAP;
+    }
+
+    const threatList = Array.from(threats);
+    const riskScore = Math.min(100, threatList.length * 40);
+    const isSafe = threatList.length === 0;
 
     return {
       isSafe,
       riskScore,
-      threats,
+      threats: threatList,
     };
   }
 
