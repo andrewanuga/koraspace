@@ -3,26 +3,47 @@
 Koraspace AI is an autonomous, multi-tenant social media intelligence and execution platform designed for creators, startups, and marketing teams.
 
 ```text
-                                 KORASPACE AI
-                                      │
-              ┌───────────────────────┼───────────────────────┐
-              ▼                       ▼                       ▼
-          ChatAgent               GhostAgent            Memory Service
-       (General Reasoning       (Social Triage &      (Brand & Performance
-       + Tool Orchestration)    Policy Automation)         Knowledge)
-              │                       │                       │
-              └───────────────────────┼───────────────────────┘
-                                      ▼
-                                Tool Registry
-                    (8 Governed Intelligence Tools)
-                                      │
-              ┌───────────────────────┼───────────────────────┐
-              ▼                       ▼                       ▼
-      PromptSecurityGuard      CircuitBreaker          AITelemetry
-    (Injection Defense)       (Resilient Retries)   (Latency, Cost, Traces)
-                                      │
-                                      ▼
-                           Test & Evaluation Layer
+┌─────────────────────────────────────────────────────────────┐
+│                   FRONTEND (Next.js UI)                     │
+│    App Router • Server Components • Dashboard UI • Forms    │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                       fetch / API Routes
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    KORASPACE BACKEND                        │
+│   Supabase Auth • RBAC • Workspaces • DB • Social Accounts  │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                    AI Service Contract v1
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  KORASPACE AI SERVICE                       │
+│                                                             │
+│  ┌───────────────────────┐         ┌──────────────────────┐ │
+│  │       ChatAgent       │         │      GhostAgent™     │ │
+│  │ (ReAct Multi-Step)    │         │ (Deterministic Policy│ │
+│  └───────────┬───────────┘         └───────────┬──────────┘ │
+│              │                                 │            │
+│              └────────────────┬────────────────┘            │
+│                               ▼                             │
+│                  Persistent Memory (pgvector)               │
+│               (Brand Rules + Empirical Learning)            │
+│                               │                             │
+│                               ▼                             │
+│                  Governed Tool Registry (8 Tools)           │
+│                               │                             │
+│              ┌────────────────┴────────────────┐            │
+│              ▼                                 ▼            │
+│     PromptSecurityGuard                 CircuitBreaker      │
+│   (Zero-Leakage Defense)              (Resilient Retry)     │
+│                               │                             │
+│                               ▼                             │
+│                     Observability & Cost                    │
+│                 (Traces, Latency Percentiles)               │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ## Core Tenets
@@ -31,3 +52,5 @@ Koraspace AI is an autonomous, multi-tenant social media intelligence and execut
 2. **Persistent Workspace Memory**: Memory is structured into Brand Intelligence, Semantic Memory, and empirical Social Performance Patterns with deduplication and consolidation.
 3. **Strict Multi-Tenant Isolation**: Every memory lookup, tool execution, and database operation enforces `workspace_id = auth.uid()` boundaries.
 4. **Governed Tool Ecosystem**: Tools are typed with Zod, validated at runtime, and executed through a centralized `ToolRegistry`.
+5. **Clear Service Boundary**: The AI intelligence engine exposes versioned, typed contracts (`/api/v1/ai/...`) consumed seamlessly by the frontend and platform backend.
+6. **Empirical Closed-Loop Learning**: Post engagement and metrics feed back into workspace performance memory to continually refine generation quality.

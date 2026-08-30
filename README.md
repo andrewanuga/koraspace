@@ -14,7 +14,7 @@
 **The Autonomous Social AI Operating System**  
 *Engineered for creators, digital agencies, and high-growth marketing teams.*
 
-[Features](#-core-capabilities) • [Architecture](#-platform-architecture) • [Golden Journeys](#-product-level-golden-journeys) • [Test Pyramid](#-automated-test-pyramid-160-tests) • [Security & RBAC](#-security--multi-tenant-isolation) • [Quickstart](#-quickstart--deployment) • [API Reference](#-api-endpoints)
+[Frontend Integration Guide](file:///docs/frontend-integration-guide.md) • [Features](#-core-capabilities) • [Architecture](#-platform-architecture) • [API Quick Reference](#-api-quick-reference-for-frontend) • [Test Pyramid (160 Tests)](#-automated-test-pyramid-160-tests) • [Security & RBAC](#-security--multi-tenant-isolation) • [Quickstart](#-quickstart--deployment)
 
 </div>
 
@@ -28,60 +28,66 @@ Built atop **Next.js 16**, **Supabase with `pgvector`**, and **OpenRouter**, Kor
 
 ---
 
+## 🎨 Frontend Developer Quickstart
+
+For developers working on UI components, pages, and dashboard forms, refer to the **[Complete Frontend Integration Guide](file:///docs/frontend-integration-guide.md)**.
+
+### API Quick Reference for Frontend:
+
+| Feature / UI Flow | Endpoint | Method | Purpose & Payload |
+| :--- | :--- | :---: | :--- |
+| **AI Assistant Chat** | `/api/v1/ai/chat` | `POST` | ReAct multi-step chat with tools & memory RAG (`{ message, workspaceId }`) |
+| **Ghost Mode™ Triage** | `/api/v1/ai/ghost/evaluate` | `POST` | Deterministic triage for inbound comments/DMs (`{ message, senderName, platform, workspaceId }`) |
+| **Content Studio Engine** | `/api/v1/ai/content/generate` | `POST` | Multi-platform drafting & repurposing (`{ topic, targetPlatform, workspaceId }`) |
+| **Brand Memory (RAG)** | `/api/ai/memory` | `GET/POST` | Search & save brand rules, audience facts, and voice preferences |
+| **Post Scheduling** | `/api/posts/schedule` | `GET/POST` | Calendar schedule entries & fetch calendar events (`{ content, platforms, scheduledAt }`) |
+| **Social Account Connect** | `/api/social/connect/[platform]`| `GET` | Initiates OAuth 2.0 PKCE flow (LinkedIn, X, Instagram, YouTube) |
+| **Social Metric Sync** | `/api/social/sync` | `POST` | Pulls follower analytics & post performance into workspace database |
+| **Telemetry & Latency** | `/api/ai/observability` | `GET` | P50/P95/P99 latency percentiles, cost accounting, and trace histories |
+| **Health Probes** | `/api/health` & `/api/readiness`| `GET` | Liveness and deep dependency database/AI provider checks |
+
+---
+
 ## 🏛️ Platform Architecture
 
 ```text
-                                 ┌────────────────────────┐
-                                 │     AUTHENTICATED      │
-                                 │   WORKSPACE SESSION    │
-                                 └───────────┬────────────┘
-                                             │
-                                             ▼
-                                 ┌────────────────────────┐
-                                 │     WorkspaceRBAC      │
-                                 │ (owner / admin / member)│
-                                 └───────────┬────────────┘
-                                             │
-                                             ▼
-                                 ┌────────────────────────┐
-                                 │     AIRateLimiter      │
-                                 │ (Throttling & Budgets) │
-                                 └───────────┬────────────┘
-                                             │
-                                             ▼
-                                 ┌────────────────────────┐
-                                 │  PromptSecurityGuard   │
-                                 │ (Zero-Leakage Defense) │
-                                 └───────────┬────────────┘
-                                             │
-                        ┌────────────────────┴────────────────────┐
-                        ▼                                         ▼
-            ┌───────────────────────┐                 ┌───────────────────────┐
-            │       ChatAgent       │                 │      GhostAgent™      │
-            │  (Multi-Step ReAct    │                 │ (Deterministic Triage │
-            │   Reasoning & Tools)  │                 │    & Policy Safety)   │
-            └───────────┬───────────┘                 └───────────┬───────────┘
-                        │                                         │
-                        └────────────────────┬────────────────────┘
-                                             ▼
-                                 ┌────────────────────────┐
-                                 │     Memory Service     │
-                                 │ (pgvector Embeddings & │
-                                 │  Brand Consolidation)  │
-                                 └───────────┬────────────┘
-                                             │
-                                             ▼
-                                 ┌────────────────────────┐
-                                 │     Tool Registry      │
-                                 │ (8 Governed AI Tools)  │
-                                 └───────────┬────────────┘
-                                             │
-                        ┌────────────────────┴────────────────────┐
-                        ▼                                         ▼
-            ┌───────────────────────┐                 ┌───────────────────────┐
-            │    CircuitBreaker     │                 │     AIAlertEngine     │
-            │   (Resilient Retry)   │                 │ (Real-Time SLA Spikes)│
-            └───────────────────────┘                 └───────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    FRONTEND (Next.js UI)                    │
+│    App Router • Server Components • Dashboard UI • Forms    │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                       fetch / API Routes
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    KORASPACE BACKEND                        │
+│   Supabase Auth • RBAC • Workspaces • DB • Social Accounts  │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                    AI Service Contract v1
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  KORASPACE AI SERVICE                       │
+│                                                             │
+│  ┌───────────────────────┐         ┌──────────────────────┐ │
+│  │       ChatAgent       │         │      GhostAgent™     │ │
+│  │ (ReAct Multi-Step)    │         │ (Deterministic Policy│ │
+│  └───────────┬───────────┘         └───────────┬──────────┘ │
+│              │                                 │            │
+│              └────────────────┬────────────────┘            │
+│                               ▼                             │
+│                  Persistent Memory (pgvector)               │
+│               (Brand Rules + Empirical Learning)            │
+│                               │                             │
+│                               ▼                             │
+│                  Governed Tool Registry (8 Tools)           │
+│                               │                             │
+│              ┌────────────────┴────────────────┐            │
+│              ▼                                 ▼            │
+│     PromptSecurityGuard                 CircuitBreaker      │
+│   (Zero-Leakage Defense)              (Resilient Retry)     │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -98,7 +104,7 @@ Built atop **Next.js 16**, **Supabase with `pgvector`**, and **OpenRouter**, Kor
   - Enforces deterministic safety policies (`ALLOW` vs `REQUIRE_APPROVAL` vs `DENY`).
   - High-value sales leads and sensitive complaints **never auto-dispatch without human review**.
 
-### 2. 📚 Persistent Memory & Brand Intelligence
+### 2. 📚 Persistent Memory & Closed-Loop Learning
 - **Brand Intelligence**: Injects brand voice, target audience, content pillars, and strictly forbidden terms into agent prompts.
 - **Performance Intelligence**: Learns viral hooks, formats, and high-engagement themes from historical workspace post analytics.
 - **Consolidation Engine**: Detects near-duplicate memory entries ($\ge 0.85$ vector/lexical similarity) and consolidates them into canonical records with full provenance tracking (`mergedFrom`, `consolidatedAt`).
@@ -121,12 +127,12 @@ Every tool is validated at runtime with Zod schemas and executed under timeout p
 
 ---
 
-## 🧪 Automated Test Pyramid (108 Tests)
+## 🧪 Automated Test Pyramid (160 Tests)
 
-Koraspace AI enforces an automated test suite executed on every commit and pull request via GitHub Actions CI:
+Koraspace AI enforces a 100% deterministic automated test suite executed on every commit and pull request via CI:
 
 ```bash
-# Run complete fast test suite (100% deterministic & passing)
+# Run complete test suite (160 tests passing)
 npm test
 
 # Segmented test layers
@@ -136,48 +142,65 @@ npm run test:security     # Injection defense, zero secret audit, and RBAC
 npm run test:integration  # Streaming, concurrency, RLS isolation, failure injection
 npm run test:e2e          # Complete chat flows, ghost triage, and memory lifecycle
 npm run test:eval         # Golden LLM benchmarks, brand adherence, regression gates
-npm run test:all          # Comprehensive test run across all 35 test files
+npm run test:all          # Comprehensive test run across all 52 test files
 ```
 
 ```text
- ✓ tests/evaluations/ghost-fail-closed.test.ts (3 tests)
- ✓ tests/unit/resilience.test.ts (3 tests)
- ✓ tests/unit/memory-service.test.ts (5 tests)
- ✓ tests/integration/memory-security.test.ts (5 tests)
+ ✓ tests/contracts/service-gateway.test.ts (4 tests)
  ✓ tests/integration/failure-injection.test.ts (3 tests)
- ✓ tests/contracts/api-routes.test.ts (4 tests)
- ✓ tests/unit/memory-formation.test.ts (6 tests)
- ✓ tests/contracts/schemas.test.ts (5 tests)
+ ✓ tests/integration/chaos-matrix.test.ts (6 tests)
+ ✓ tests/integration/platform-ai-contract.test.ts (3 tests)
  ✓ tests/e2e/memory-lifecycle.test.ts (1 test)
+ ✓ tests/unit/memory-consolidation.test.ts (4 tests)
+ ✓ tests/e2e/product-journeys.test.ts (4 tests)
+ ✓ tests/evaluations/evaluation-history.test.ts (3 tests)
+ ✓ tests/unit/resilience.test.ts (3 tests)
+ ✓ tests/unit/tools.test.ts (4 tests)
+ ✓ tests/integration/streaming.test.ts (2 tests)
+ ✓ tests/unit/memory-service.test.ts (5 tests)
+ ✓ tests/integration/ghost-agent.test.ts (3 tests)
+ ✓ tests/integration/ai-client.test.ts (2 tests)
+ ✓ tests/unit/memory-brand.test.ts (3 tests)
+ ✓ tests/evaluations/ghost-quality.test.ts (2 tests)
+ ✓ tests/contracts/api-routes.test.ts (4 tests)
+ ✓ tests/unit/rbac.test.ts (3 tests)
+ ✓ tests/e2e/chat-workflow.test.ts (1 test)
+ ✓ tests/evaluations/regression-gate.test.ts (2 tests)
+ ✓ tests/integration/memory-security.test.ts (5 tests)
+ ✓ tests/contracts/v1-routes.test.ts (5 tests)
+ ✓ tests/integration/concurrency.test.ts (2 tests)
+ ✓ tests/contracts/schemas.test.ts (5 tests)
+ ✓ tests/unit/memory-formation.test.ts (6 tests)
+ ✓ tests/evaluations/chat-quality.test.ts (2 tests)
+ ✓ tests/evaluations/content-intelligence.test.ts (2 tests)
+ ✓ tests/observability/telemetry.test.ts (3 tests)
+ ✓ tests/e2e/platform-ai-e2e.test.ts (4 tests)
+ ✓ tests/integration/telemetry-store.test.ts (2 tests)
  ✓ tests/unit/ghost-policy.test.ts (6 tests)
  ✓ tests/security/prompt-injection.test.ts (3 tests)
- ✓ tests/integration/concurrency.test.ts (2 tests)
- ✓ tests/unit/rate-limit.test.ts (4 tests)
- ✓ tests/unit/memory-consolidation.test.ts (4 tests)
- ✓ tests/security/secrets-audit.test.ts (2 tests)
- ✓ tests/observability/telemetry.test.ts (3 tests)
- ✓ tests/unit/chat-planner.test.ts (5 tests)
- ✓ tests/unit/tools.test.ts (4 tests)
- ✓ tests/unit/rbac.test.ts (3 tests)
- ✓ tests/unit/memory-brand.test.ts (3 tests)
- ✓ tests/unit/alerts.test.ts (4 tests)
- ✓ tests/integration/database-rls.test.ts (2 tests)
- ✓ tests/evaluations/chat-quality.test.ts (2 tests)
- ✓ tests/evaluations/regression-gate.test.ts (2 tests)
- ✓ tests/evaluations/ghost-quality.test.ts (2 tests)
- ✓ tests/integration/ghost-agent.test.ts (3 tests)
+ ✓ tests/unit/attribution.test.ts (3 tests)
  ✓ tests/e2e/ghost-workflow.test.ts (1 test)
- ✓ tests/integration/chat-agent.test.ts (2 tests)
- ✓ tests/e2e/chat-workflow.test.ts (1 test)
- ✓ tests/evaluations/brand-adherence.test.ts (2 tests)
- ✓ tests/unit/cost.test.ts (3 tests)
+ ✓ tests/unit/rate-limit.test.ts (4 tests)
+ ✓ tests/live/supabase-rls.test.ts (2 tests)
  ✓ tests/contracts/webhooks.test.ts (4 tests)
- ✓ tests/integration/streaming.test.ts (2 tests)
- ✓ tests/integration/disaster-recovery.test.ts (2 tests)
+ ✓ tests/security/secrets-audit.test.ts (2 tests)
  ✓ tests/evaluations/tool-selection.test.ts (2 tests)
+ ✓ tests/unit/closed-loop-learning.test.ts (2 tests)
+ ✓ tests/evaluations/dataset-versioning.test.ts (3 tests)
+ ✓ tests/unit/cost.test.ts (3 tests)
+ ✓ tests/live/webhook-verification.test.ts (2 tests)
+ ✓ tests/unit/alerts.test.ts (4 tests)
+ ✓ tests/evaluations/brand-adherence.test.ts (2 tests)
+ ✓ tests/unit/chat-planner.test.ts (5 tests)
+ ✓ tests/evaluations/release-gate-governance.test.ts (3 tests)
+ ✓ tests/integration/chat-agent.test.ts (2 tests)
+ ✓ tests/evaluations/ghost-fail-closed.test.ts (3 tests)
+ ✓ tests/live/llm-provider.test.ts (2 tests)
+ ✓ tests/integration/database-rls.test.ts (2 tests)
+ ✓ tests/integration/disaster-recovery.test.ts (2 tests)
 
- Test Files  35 passed (35)
-      Tests  108 passed (108)
+ Test Files  52 passed (52)
+      Tests  160 passed (160)
 ```
 
 ---
@@ -196,23 +219,6 @@ All memory reads, tool executions, and social accounts enforce strict workspace 
 | **Autonomous Social Auto-Posting** | ✅ | ✅ | ❌ | ❌ |
 | **AI Observability Dashboard** | ✅ | ✅ | ❌ | ❌ |
 | **Workspace Settings & Billing** | ✅ | ❌ | ❌ | ❌ |
-
----
-
-## 📡 API Endpoints
-
-### AI Core & Agents
-- `POST /api/ai/chat` — Multi-step reasoning chat with tool execution and memory retrieval.
-- `POST /api/ai/ghost` — Triage social interaction, evaluate safety policy, and propose reply.
-- `GET /api/ai/memory` — Search, filter, and list persistent workspace memories with stats.
-- `POST /api/ai/memory` — Store custom brand rule, target audience fact, or style preference.
-- `PATCH /api/ai/memory/[id]` — Update memory content and importance level.
-- `DELETE /api/ai/memory/[id]` — Permanently remove memory record.
-
-### Observability & Health Probes
-- `GET /api/ai/observability` — Real-time telemetry metrics, latency percentiles (P50/P95/P99), and costs.
-- `GET /api/health` — Lightweight process liveness probe (uptime, memory usage).
-- `GET /api/readiness` — Deep dependency probe validating database and AI provider reachability.
 
 ---
 
@@ -241,7 +247,7 @@ OPENROUTER_API_KEY="your-openrouter-key"
 ### 4. Database Setup
 Execute the vector memory schema in your Supabase SQL Editor:
 ```sql
--- Located in supabase/memory_migration.sql
+-- Located in supabase/memory_migration.sql and supabase/social_integration_schema.sql
 ```
 
 ### 5. Launch Development Server
@@ -254,7 +260,9 @@ Navigate to [http://localhost:3000](http://localhost:3000) to view the applicati
 
 ## 📄 License & Architecture Documentation
 
+- [Frontend Integration Guide](file:///docs/frontend-integration-guide.md)
 - [Architecture Overview](file:///docs/architecture/overview.md)
+- [Service Boundary & Contracts](file:///docs/architecture/service-boundary.md)
 - [ADR 001: Agent Architecture & Deterministic Policies](file:///docs/adr/001-agent-architecture.md)
 - [ADR 002: Persistent Memory & Consolidation Engine](file:///docs/adr/002-memory-architecture.md)
 - [Production Readiness Checklist](file:///docs/architecture/production-readiness.md)
