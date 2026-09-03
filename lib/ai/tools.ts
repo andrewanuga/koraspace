@@ -224,7 +224,7 @@ export const AI_TOOLS = [
     type: "function",
     function: {
       name: "get_connected_accounts",
-      description: "List all social accounts the user has connected to Socially AI, with their platform, handle, and follower count.",
+      description: "List all social accounts the user has connected to Koraspace, with their platform, handle, and follower count.",
       parameters: { type: "object", properties: {}, required: [] },
     },
   },

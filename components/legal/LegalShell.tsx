@@ -40,8 +40,8 @@ export function LegalShell({
         {/* footer cross-links */}
         <div className="mt-16 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-white/[0.08] pt-8 text-[13px] text-white/50">
           <Link href={other.href} className="transition-colors hover:text-white">{other.label} →</Link>
-          <Link href="/" className="transition-colors hover:text-white">Back to Socially AI</Link>
-          <span className="ml-auto text-white/30">© {new Date().getFullYear()} Socially AI</span>
+          <Link href="/" className="transition-colors hover:text-white">Back to Koraspace</Link>
+          <span className="ml-auto text-white/30">© {new Date().getFullYear()} Koraspace</span>
         </div>
       </main>
     </div>

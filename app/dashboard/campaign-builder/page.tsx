@@ -28,11 +28,11 @@ export default function CampaignBuilderPage() {
     setTimeout(() => {
       setCampaign({
         twitter: [
-          "1/ We just completely transformed how you do outbound marketing. Say goodbye to spreadsheets. Say hello to Socially AI's Omnichannel CRM.",
+          "1/ We just completely transformed how you do outbound marketing. Say goodbye to spreadsheets. Say hello to Koraspace's Omnichannel CRM.",
           "2/ Our new AI Intent Scoring automatically detects Hot Leads from your DMs across X, IG, and LinkedIn. It flags them with a 🔥 so your sales team knows exactly who to close.",
-          "3/ Ready to scale your agency without scaling your headcount? Try Socially AI today."
+          "3/ Ready to scale your agency without scaling your headcount? Try Koraspace today."
         ],
-        linkedin: "Outbound marketing is broken. Agencies spend hours scraping leads, sending generic DMs, and praying for replies.\n\nWe fixed it.\n\nIntroducing the Socially AI Smart CRM:\n🔥 AI Intent Scoring\n💬 Real-time Team Inbox (No more double replies!)\n⚡ Automated Drip Engines\n\nStop paying $500/mo for HubSpot just to track your Twitter DMs. Unify your entire pipeline in one beautifully designed glass dashboard. Check out the launch video below 👇",
+        linkedin: "Outbound marketing is broken. Agencies spend hours scraping leads, sending generic DMs, and praying for replies.\n\nWe fixed it.\n\nIntroducing the Koraspace Smart CRM:\n🔥 AI Intent Scoring\n💬 Real-time Team Inbox (No more double replies!)\n⚡ Automated Drip Engines\n\nStop paying $500/mo for HubSpot just to track your Twitter DMs. Unify your entire pipeline in one beautifully designed glass dashboard. Check out the launch video below 👇",
         instagram: "The future of Agency growth is here. 🚀 Our new Omnichannel CRM brings all your X, LinkedIn, and IG leads into one beautiful Kanban board. Complete with AI Intent Scoring so you never miss a hot lead again. Link in bio to start your free trial. 📈 #marketing #agency #ai"
       });
       setIsGenerating(false);

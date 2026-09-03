@@ -194,7 +194,7 @@ export async function POST(req: NextRequest) {
           recipients: {
             values: [recipientUrn],
           },
-          subject: "Message from Socially AI",
+          subject: "Message from Koraspace",
           body: message,
           messageType: {
             "com.linkedin.voyager.messaging.create.MessageCreate": {},
@@ -231,7 +231,7 @@ export async function POST(req: NextRequest) {
         break;
 
       default:
-        result = { success: false, error: `Platform '${platform}' does not support direct messaging via Socially AI yet.` };
+        result = { success: false, error: `Platform '${platform}' does not support direct messaging via Koraspace yet.` };
     }
 
     // Log the send attempt to the database

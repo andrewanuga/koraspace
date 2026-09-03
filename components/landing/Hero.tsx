@@ -71,7 +71,7 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          SociallyAI deploys autonomous AI agents that create content, engage
+          Koraspace deploys autonomous AI agents that create content, engage
           your followers, predict viral trends, and convert likes into real
           revenue — 24/7, at a price built for the African market.
         </motion.p>

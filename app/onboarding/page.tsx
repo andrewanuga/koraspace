@@ -3,7 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { OnboardingFlow } from "./OnboardingFlow";
 
-export const metadata = { title: "Set up your workspace — Socially AI" };
+export const metadata = { title: "Set up your workspace — Koraspace" };
 
 export default async function OnboardingPage() {
   const supabase = await createClient();

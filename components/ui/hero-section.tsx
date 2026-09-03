@@ -78,7 +78,7 @@ function SociallyHeroShowcase() {
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center shadow-md shadow-red-600/30">
               <span className="text-white text-xs font-black">S</span>
             </div>
-            <span className="font-bold text-sm tracking-tight text-foreground">SociallyAI</span>
+            <span className="font-bold text-sm tracking-tight text-foreground">Koraspace</span>
           </Link>
 
           <div className="flex items-center gap-2">

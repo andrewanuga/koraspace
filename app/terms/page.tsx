@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { LegalShell, Section, Bullets } from "@/components/legal/LegalShell";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — Socially AI",
-  description: "The terms for using Socially AI.",
+  title: "Terms of Service — Koraspace",
+  description: "The terms for using Koraspace.",
 };
 
 const CONTACT = "socially.ai.io@gmail.com";
@@ -13,11 +13,11 @@ export default function TermsPage() {
     <LegalShell
       title="Terms of Service"
       updated="July 30, 2026"
-      intro="These terms are the agreement between you and Socially AI. We've kept them readable. By creating an account or using the service, you agree to them."
+      intro="These terms are the agreement between you and Koraspace. We've kept them readable. By creating an account or using the service, you agree to them."
       other={{ href: "/privacy", label: "Privacy Policy" }}
     >
       <Section title="1. The service">
-        <p>Socially AI is a workspace for creating, scheduling, publishing, and analyzing social media content, with AI assistance and optional automation (bots, Ghost Mode, auto-replies). Features vary by plan and by the platforms you connect.</p>
+        <p>Koraspace is a workspace for creating, scheduling, publishing, and analyzing social media content, with AI assistance and optional automation (bots, Ghost Mode, auto-replies). Features vary by plan and by the platforms you connect.</p>
       </Section>
 
       <Section title="2. Your account">
@@ -29,7 +29,7 @@ export default function TermsPage() {
       </Section>
 
       <Section title="3. Acceptable use">
-        <p>You agree not to use Socially AI to:</p>
+        <p>You agree not to use Koraspace to:</p>
         <Bullets items={[
           "Break the law or the rules of any connected platform.",
           "Send spam, run deceptive engagement, or manipulate metrics.",
@@ -44,7 +44,7 @@ export default function TermsPage() {
       </Section>
 
       <Section title="5. AI-generated content">
-        <p>Socially AI helps you draft content, but you are responsible for what you publish. Review AI output before posting. AI can be wrong or produce content that needs editing. Subject to these terms, content you create with the tool is yours; you grant us the limited rights needed to store and process it to run the service.</p>
+        <p>Koraspace helps you draft content, but you are responsible for what you publish. Review AI output before posting. AI can be wrong or produce content that needs editing. Subject to these terms, content you create with the tool is yours; you grant us the limited rights needed to store and process it to run the service.</p>
       </Section>
 
       <Section title="6. Plans & payments">
@@ -57,7 +57,7 @@ export default function TermsPage() {
       </Section>
 
       <Section title="7. Availability & changes">
-        <p>We work to keep Socially AI available and improving, but we may modify, suspend, or discontinue features. We’ll give reasonable notice of material changes where we can.</p>
+        <p>We work to keep Koraspace available and improving, but we may modify, suspend, or discontinue features. We’ll give reasonable notice of material changes where we can.</p>
       </Section>
 
       <Section title="8. Disclaimers">
@@ -65,7 +65,7 @@ export default function TermsPage() {
       </Section>
 
       <Section title="9. Limitation of liability">
-        <p>To the maximum extent permitted by law, Socially AI is not liable for indirect, incidental, or consequential damages, or for lost profits or data. Our total liability is limited to the amount you paid us in the 3 months before the claim.</p>
+        <p>To the maximum extent permitted by law, Koraspace is not liable for indirect, incidental, or consequential damages, or for lost profits or data. Our total liability is limited to the amount you paid us in the 3 months before the claim.</p>
       </Section>
 
       <Section title="10. Termination">

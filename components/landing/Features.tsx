@@ -59,7 +59,7 @@ const GAME_CHANGERS = [
   {
     icon: TrendingUp,
     title: "Trend-to-Draft Engine",
-    desc: "SociallyAI monitors trending topics in your niche and pre-writes 3 post options the moment something blows up. No blank page. No wasted viral moments.",
+    desc: "Koraspace monitors trending topics in your niche and pre-writes 3 post options the moment something blows up. No blank page. No wasted viral moments.",
     color: "text-indigo-400",
     bg: "bg-indigo-500/10",
     glow: "hover:shadow-indigo-500/10",
@@ -77,7 +77,7 @@ const GAME_CHANGERS = [
   {
     icon: Target,
     title: "Brand Voice Sovereignty",
-    desc: "Paste your website URL and SociallyAI extracts your brand voice, vocabulary, and values in 60 seconds. Zero setup friction. The AI sounds like you, not a bot.",
+    desc: "Paste your website URL and Koraspace extracts your brand voice, vocabulary, and values in 60 seconds. Zero setup friction. The AI sounds like you, not a bot.",
     color: "text-emerald-400",
     bg: "bg-emerald-500/10",
     glow: "hover:shadow-emerald-500/10",
@@ -125,7 +125,7 @@ export function Features() {
             <span className="gradient-text">Then some.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Most tools tell you what happened. SociallyAI tells you what will
+            Most tools tell you what happened. Koraspace tells you what will
             happen — and often handles it before you even open the app.
           </p>
         </motion.div>

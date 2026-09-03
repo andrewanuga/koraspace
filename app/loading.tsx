@@ -18,7 +18,7 @@ export default function RootLoading() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo.png"
-          alt="Socially AI"
+          alt="Koraspace"
           width={72}
           height={62}
           className="h-[58px] w-auto animate-pulse-glow"
@@ -34,7 +34,7 @@ export default function RootLoading() {
             letterSpacing: "-0.03em",
           }}
         >
-          Socially AI
+          Koraspace
         </div>
 
         {/* Indeterminate progress sweep */}

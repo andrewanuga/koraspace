@@ -1,7 +1,7 @@
 /**
  * Model registry with per-agent defaults.
  *
- * Each "agent" in Socially AI (Chat, Generate, Ghost, Score, Trends)
+ * Each "agent" in Koraspace (Chat, Generate, Ghost, Score, Trends)
  * gets its own default model and temperature — personalized for the task.
  * Users can override the model globally in Settings, or per-conversation
  * in the Create page.

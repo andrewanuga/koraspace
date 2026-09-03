@@ -1,5 +1,5 @@
 -- ============================================================
--- SociallyAI — Collaborative Workspaces / Teams Schema
+-- Koraspace — Collaborative Workspaces / Teams Schema
 -- Run this in the Supabase SQL editor to bootstrap teams
 -- ============================================================
 

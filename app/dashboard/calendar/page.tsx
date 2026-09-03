@@ -725,7 +725,7 @@ export default function CalendarPage() {
 
             <div className="w-full max-w-[350px] bg-[var(--panel-fill)] border border-[var(--stroke)] rounded-[40px] shadow-2xl overflow-hidden flex flex-col h-[700px]">
               <div className="h-12 border-b border-[var(--stroke)] flex items-center justify-between px-6">
-                <span className="text-[14px] font-bold text-[var(--fg)]">@sociallyai_hq</span>
+                <span className="text-[14px] font-bold text-[var(--fg)]">@Koraspace_hq</span>
                 <Layout className="w-4 h-4 text-[var(--fg-3)]" />
               </div>
               <div className="p-4 border-b border-[var(--stroke)] flex items-center gap-4">

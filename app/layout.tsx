@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 // to Geist/system fallbacks (see --font-inter / --font-jetbrains in globals.css).
 
 export const metadata: Metadata = {
-  title: "Socially AI — Your Personal Social Agent",
+  title: "Koraspace — Your Personal Social Agent",
   description:
     "Social, understood. Deploy an AI agent that creates, engages, and converts around the clock — powered by Llama 3.3 70B.",
   keywords: [
@@ -38,9 +38,9 @@ export const metadata: Metadata = {
     icon: "/logo.png",
   },
   openGraph: {
-    title: "SociallyAI — AI-Powered Social Media Manager",
+    title: "Koraspace — AI-Powered Social Media Manager",
     description:
-      "Stop managing social media. Start delegating it. SociallyAI deploys autonomous AI agents that create content, engage followers, and convert leads 24/7.",
+      "Stop managing social media. Start delegating it. Koraspace deploys autonomous AI agents that create content, engage followers, and convert leads 24/7.",
     type: "website",
   },
 };

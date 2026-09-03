@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { FRAME_COUNT, framePath, WARM_FRAMES } from "@/lib/frames";
 
 /**
- * Full-screen #121212 preloader. The "Socially AI" wordmark has a bright lead
+ * Full-screen #121212 preloader. The "Koraspace" wordmark has a bright lead
  * sweeping through it like water flow (CSS .sai-flow-text). Warms the first
  * frames + fonts so the hero paints instantly, then fades away.
  */
@@ -101,7 +101,7 @@ export function Preloader() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo.png"
-          alt="Socially AI"
+          alt="Koraspace"
           width={78}
           height={67}
           className="h-[64px] w-auto animate-pulse-glow"
@@ -117,7 +117,7 @@ export function Preloader() {
             letterSpacing: "-0.03em",
           }}
         >
-          Socially AI
+          Koraspace
         </div>
 
         {/* thin progress track */}

@@ -8,7 +8,7 @@ const STEPS = [
     step: "01",
     icon: Link2,
     title: "Connect Your Accounts",
-    desc: "Link your X, LinkedIn, Instagram, and TikTok accounts in seconds. SociallyAI handles OAuth securely — we never store your credentials.",
+    desc: "Link your X, LinkedIn, Instagram, and TikTok accounts in seconds. Koraspace handles OAuth securely — we never store your credentials.",
     detail: "Secure OAuth 2.0 — no passwords stored",
   },
   {

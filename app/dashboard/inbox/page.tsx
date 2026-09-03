@@ -16,7 +16,7 @@ export default async function InboxPage() {
   ]);
 
   const allAccounts = [
-    { id: "system", platform: "system" as any, handle: "Socially AI", display_name: "System Notifications" },
+    { id: "system", platform: "system" as any, handle: "Koraspace", display_name: "System Notifications" },
     ...(accounts ?? []),
   ] as SocialAccount[];
 

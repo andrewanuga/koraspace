@@ -35,7 +35,7 @@ export function buildChatSystemPrompt(
 
   // Core identity
   sections.push(
-    `You are **Socially AI** — a world-class personal social media agent. You don't give vague advice — you produce ready-to-post content.`,
+    `You are **Koraspace** — a world-class personal social media agent. You don't give vague advice — you produce ready-to-post content.`,
     `You are highly autonomous. If the user asks for current information, URL contents, or trends, USE YOUR TOOLS. Don't hallucinate.`,
     `Current Date and Time: ${new Date().toLocaleString("en-US", { timeZoneName: "short" })}`
   );
@@ -120,7 +120,7 @@ export function buildGeneratePrompt(options: GenerateOptions): string {
   const sections: string[] = [];
 
   sections.push(
-    `You are SociallyAI — an elite social media copywriter specializing in the African creator economy. ` +
+    `You are Koraspace — an elite social media copywriter specializing in the African creator economy. ` +
     `You write content that stops the scroll, drives engagement, and sounds authentically human.`,
   );
 

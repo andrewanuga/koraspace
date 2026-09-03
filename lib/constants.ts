@@ -1,11 +1,11 @@
 // ============================================================
-// SociallyAI — App-wide constants
+// Koraspace — App-wide constants
 // ============================================================
 
-export const APP_NAME = "SociallyAI";
+export const APP_NAME = "Koraspace";
 export const APP_TAGLINE = "Stop Managing Social Media. Start Delegating It.";
 export const APP_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "https://sociallyai.co";
+  process.env.NEXT_PUBLIC_APP_URL || "https://Koraspace.co";
 
 // ── Plan limits ──────────────────────────────────────────────
 export const PLAN_LIMITS = {
