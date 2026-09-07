@@ -1,44 +1,40 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   Brain, Ghost, TrendingUp, DollarSign, Target, BarChart3,
   Calendar, MessageSquare, FileText, Clock,
   Link2, Sparkles, Send, LineChart,
   ArrowRight, Check, Star, Users, Zap, Search, Globe, Camera, Briefcase, Play, MessageCircle, Music,
-  Bot, Cpu, ShieldCheck, Layers, Eye, Flame, Award, ChevronRight, RefreshCw, Layers3, Activity
+  ChevronDown, Activity, RefreshCw, Layers3, Eye, Flame, Award, ShieldCheck, QrCode
 } from "lucide-react";
 
-/* ── Animation Variants ───────────────────────────────────────────── */
+/* ── Shared Button ────────────────────────────────────────────────── */
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }
-  }
-};
+function LandingButton({
+  href,
+  className = "",
+  children,
+}: {
+  href: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link href={href}>
+      <button
+        className={`px-7 py-3.5 rounded-full font-bold text-sm tracking-wide transition-all duration-300 transform hover:scale-[1.03] active:scale-[0.97] cursor-pointer ${className}`}
+      >
+        {children}
+      </button>
+    </Link>
+  );
+}
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.05 }
-  }
-};
-
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.92 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }
-  }
-};
-
-/* ── Helper Components ────────────────────────────────────────────── */
+/* ── Section Header Component ─────────────────────────────────────── */
 
 function Eyebrow({ children, tone = "pink" }: { children: React.ReactNode; tone?: "pink" | "blue" | "gradient" }) {
   const colorClass =
@@ -49,29 +45,47 @@ function Eyebrow({ children, tone = "pink" }: { children: React.ReactNode; tone?
       : "text-[#FF2E93]";
 
   return (
-    <span className={`inline-block font-mono text-xs uppercase tracking-[0.25em] font-semibold ${colorClass}`}>
+    <span className={`inline-block font-mono text-xs uppercase tracking-[0.25em] font-extrabold ${colorClass}`}>
       {children}
     </span>
   );
 }
 
 function SectionHead({
-  eyebrow, tone = "pink", title, sub,
-}: { eyebrow: string; tone?: "pink" | "blue" | "gradient"; title: React.ReactNode; sub?: string }) {
+  eyebrow,
+  tone = "pink",
+  title,
+  sub,
+}: {
+  eyebrow: string;
+  tone?: "pink" | "blue" | "gradient";
+  title: React.ReactNode;
+  sub?: string;
+}) {
+  const headerVariants: Variants = {
+    hidden: { opacity: 0, y: 30, filter: "blur(4px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-80px" }}
-      variants={fadeInUp}
+      variants={headerVariants}
       className="mx-auto mb-16 max-w-3xl text-center"
     >
       <div><Eyebrow tone={tone}>{eyebrow}</Eyebrow></div>
-      <h2 className="font-display mt-4 text-3xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl">
+      <h2 className="font-display mt-4 text-3xl font-black leading-[1.1] tracking-tight text-white sm:text-5xl">
         {title}
       </h2>
       {sub && (
-        <p className="mt-5 text-base leading-relaxed text-white/65 sm:text-lg">
+        <p className="mt-5 text-base leading-relaxed text-white/70 sm:text-lg font-medium">
           {sub}
         </p>
       )}
@@ -79,13 +93,156 @@ function SectionHead({
   );
 }
 
-/* ── 1. The KoraSpace Autonomous Growth Loop ──────────────────────── */
+/* ── 1. Alternating FeatureSection Layout (From Reference Code) ───── */
+
+interface FeatureProps {
+  badge?: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  imageAlt: string;
+  imageLeft?: boolean;
+}
+
+export function FeatureSection({
+  badge,
+  title,
+  description,
+  imageUrl,
+  imageAlt,
+  imageLeft = true,
+}: FeatureProps) {
+  const imageContainer: Variants = {
+    hidden: {
+      opacity: 0,
+      x: imageLeft ? -40 : 40,
+      y: 20,
+      scale: 0.96,
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.9,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  };
+
+  const textContainer: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.05,
+      },
+    },
+  };
+
+  const textItem: Variants = {
+    hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
+        type: "spring",
+        stiffness: 110,
+        damping: 20,
+      },
+    },
+  };
+
+  return (
+    <section className="py-12 md:py-20 px-6 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-16">
+      {/* Animated Image Wrapper Panel */}
+      <motion.div
+        variants={imageContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        whileHover={{ y: -6, scale: 1.015 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className={`flex-1 w-full will-change-transform cursor-pointer ${
+          imageLeft ? "md:order-1" : "md:order-2"
+        }`}
+      >
+        <div
+          className={`relative rounded-[40px] p-2.5 shadow-2xl border overflow-hidden ${
+            imageLeft
+              ? "bg-gradient-to-br from-[#FF2E93]/20 via-black to-[#0066FF]/10 border-[#FF2E93]/30"
+              : "bg-gradient-to-br from-[#0066FF]/20 via-black to-[#FF2E93]/10 border-[#0066FF]/30"
+          }`}
+          style={{ backdropFilter: "blur(20px)" }}
+        >
+          <img
+            src={imageUrl}
+            alt={imageAlt}
+            className="w-full h-[320px] sm:h-[380px] rounded-[32px] object-cover select-none border border-white/10"
+          />
+        </div>
+      </motion.div>
+
+      {/* Animated Content Wrapper Panel */}
+      <motion.div
+        variants={textContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        className={`flex-1 space-y-6 ${imageLeft ? "md:order-2" : "md:order-1"}`}
+      >
+        {badge && (
+          <motion.div variants={textItem}>
+            <Eyebrow tone={imageLeft ? "pink" : "blue"}>{badge}</Eyebrow>
+          </motion.div>
+        )}
+
+        <motion.h2
+          variants={textItem}
+          className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight"
+        >
+          {title}
+        </motion.h2>
+
+        <motion.p
+          variants={textItem}
+          className="text-base md:text-lg text-white/70 font-medium leading-relaxed"
+        >
+          {description}
+        </motion.p>
+
+        <motion.div
+          variants={textItem}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          className="w-fit"
+        >
+          <LandingButton
+            href="/signup"
+            className={
+              imageLeft
+                ? "bg-[#FF2E93] text-white shadow-lg shadow-[#FF2E93]/30 hover:shadow-[#FF2E93]/50"
+                : "bg-[#0066FF] text-white shadow-lg shadow-[#0066FF]/30 hover:shadow-[#0066FF]/50"
+            }
+          >
+            Try it Now
+          </LandingButton>
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+/* ── 2. The KoraSpace Autonomous Growth Loop Section ──────────────── */
 
 const LOOP_STAGES = [
   {
     num: "01",
     title: "Understand & Research",
-    desc: "Analyzes your brand data, target audience, past posts, and scans real-time niche trends across platforms.",
+    desc: "Analyzes brand data, target audience, past posts, and scans real-time niche trends across platforms.",
     icon: Search,
     color: "#FF2E93",
     badge: "Brand Brain & Search"
@@ -93,7 +250,7 @@ const LOOP_STAGES = [
   {
     num: "02",
     title: "Strategize & Create",
-    desc: "Executes a multi-step AI composing pipeline: niche check -> voice match -> draft generation -> post scoring -> double web-search reflection.",
+    desc: "Executes an 8-step AI pipeline: niche check -> voice match -> draft generation -> post scoring -> double web reflection.",
     icon: Sparkles,
     color: "#C13FE8",
     badge: "AI Composing Pipeline"
@@ -101,7 +258,7 @@ const LOOP_STAGES = [
   {
     num: "03",
     title: "Publish & Monitor",
-    desc: "Schedules to Instagram, TikTok, LinkedIn, YouTube, X, and Threads. Monitors post performance and customer engagement in real time.",
+    desc: "Schedules to Instagram, TikTok, LinkedIn, YouTube, X, and Threads. Monitors post performance and lead engagement in real time.",
     icon: Calendar,
     color: "#0066FF",
     badge: "Multi-Platform Auto-Scheduler"
@@ -109,7 +266,7 @@ const LOOP_STAGES = [
   {
     num: "04",
     title: "Learn & Optimize",
-    desc: "Measures likes, DMs, leads, and revenue ($ to sales). Identifies winning hooks and feeds findings back to auto-improve the next strategy.",
+    desc: "Measures likes, DMs, leads, and revenue. Identifies winning hooks and feeds findings back to auto-improve the next strategy.",
     icon: RefreshCw,
     color: "#00E5FF",
     badge: "Social-to-Revenue Flywheel"
@@ -117,9 +274,26 @@ const LOOP_STAGES = [
 ];
 
 export function GrowthLoopSection() {
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.05 },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 30, filter: "blur(2px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { type: "spring", stiffness: 90, damping: 18 },
+    },
+  };
+
   return (
-    <section id="how" className="relative px-5 py-28 sm:py-32 bg-[#07050d] overflow-hidden">
-      {/* Background ambient lighting */}
+    <section id="how" className="relative px-5 py-24 sm:py-32 bg-[#07050d] overflow-hidden">
       <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-gradient-to-r from-[#FF2E93]/15 via-[#5A3CFF]/15 to-[#0066FF]/15 blur-[140px]" />
 
       <div className="relative mx-auto max-w-6xl">
@@ -128,7 +302,7 @@ export function GrowthLoopSection() {
           tone="gradient"
           title={
             <>
-              Marketing that <span className="bg-gradient-to-r from-[#FF2E93] via-[#C13FE8] to-[#0066FF] bg-clip-text text-transparent">closes the loop</span> automatically.
+              Marketing that <span className="bg-gradient-to-r from-[#FF2E93] via-[#C13FE8] to-[#0066FF] bg-clip-text text-transparent">markets itself</span> automatically.
             </>
           }
           sub="Buffer and Hootsuite make you schedule manually. KoraSpace is an AI growth engine that learns your business, creates content, measures revenue, and optimizes itself."
@@ -138,15 +312,15 @@ export function GrowthLoopSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
-          variants={staggerContainer}
+          variants={containerVariants}
           className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
         >
           {LOOP_STAGES.map((s) => (
             <motion.div
               key={s.num}
-              variants={fadeInUp}
-              whileHover={{ y: -6, transition: { duration: 0.2 } }}
-              className="relative flex flex-col justify-between rounded-3xl p-7 text-white transition-all duration-300 shadow-xl"
+              variants={itemVariants}
+              whileHover={{ y: -6, scale: 1.02 }}
+              className="relative flex flex-col justify-between rounded-[36px] p-7 text-white transition-all duration-300 shadow-xl"
               style={{
                 background: "linear-gradient(170deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
                 border: "1.5px solid rgba(255,255,255,0.08)",
@@ -166,171 +340,249 @@ export function GrowthLoopSection() {
               </div>
 
               <div className="mt-8">
-                <span className="font-mono text-[11px] uppercase tracking-wider px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/70">
+                <span className="font-mono text-[11px] uppercase tracking-wider px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/70 font-semibold">
                   {s.badge}
                 </span>
                 <h3 className="font-display mt-4 text-xl font-bold text-white">{s.title}</h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-white/60">{s.desc}</p>
+                <p className="mt-2.5 text-sm leading-relaxed text-white/65 font-medium">{s.desc}</p>
               </div>
 
-              <div className="mt-6 flex items-center gap-2 text-xs font-semibold" style={{ color: s.color }}>
+              <div className="mt-6 flex items-center gap-2 text-xs font-bold" style={{ color: s.color }}>
                 <span>Feeds next stage</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </div>
             </motion.div>
           ))}
         </motion.div>
-
-        {/* Loop closing summary box */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={scaleIn}
-          className="mt-12 rounded-3xl p-6 sm:p-8 text-center text-white relative overflow-hidden"
-          style={{
-            background: "linear-gradient(135deg, rgba(255,46,147,0.12) 0%, rgba(0,102,255,0.12) 100%)",
-            border: "1.5px solid rgba(255,255,255,0.15)"
-          }}
-        >
-          <div className="flex flex-wrap items-center justify-center gap-3 text-sm font-medium sm:text-base">
-            <span className="text-white/80">Learn business</span>
-            <ChevronRight className="h-4 w-4 text-[#FF2E93]" />
-            <span className="text-white/80">Research trends</span>
-            <ChevronRight className="h-4 w-4 text-[#C13FE8]" />
-            <span className="text-white/80">Create content</span>
-            <ChevronRight className="h-4 w-4 text-[#0066FF]" />
-            <span className="text-white/80">Publish & track ROI</span>
-            <ChevronRight className="h-4 w-4 text-[#00E5FF]" />
-            <span className="font-bold text-white bg-gradient-to-r from-[#FF2E93] to-[#0066FF] bg-clip-text text-transparent">
-              Auto-Grow
-            </span>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
 }
 
-/* ── 2. Core Product Features (Composing Pipeline & Automations) ──── */
+/* ── 3. Interactive FeatureShowcase (From Reference Code) ─────────── */
 
-const CORE_FEATURES = [
+interface FeatureNode {
+  id: string;
+  title: string;
+  tagline: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  screenPath: string;
+}
+
+const FEATURE_SET_DATA: FeatureNode[] = [
   {
+    id: "ai-composer",
+    title: "AI Composing Pipeline",
+    tagline: "Multi-Step Content Engine",
+    description: "Executes an 8-step AI workflow: checks client niche -> reads past posts -> scans active trends -> drafts post & caption -> assigns hashtags -> double web reflection.",
     icon: Sparkles,
-    title: "The Composing Post Pipeline",
-    desc: "Executes an 8-step AI workflow: checks client niche -> reads past posts -> scans active trends -> drafts post & caption -> assigns hashtags -> runs 2x web reflection.",
-    tag: "Multi-Step AI Pipeline",
-    tone: "pink"
+    screenPath: "/features/Kora-AI-Composer.jpg",
   },
   {
+    id: "visual-calendar",
+    title: "Visual Calendar 2.0",
+    tagline: "Drag-and-Drop Planning",
+    description: "Visual planning surface to schedule, organize, and drag-and-drop posts across Instagram, TikTok, LinkedIn, YouTube, X, and Threads seamlessly.",
+    icon: Calendar,
+    screenPath: "/features/Visual-Drag-and-Drop Calendar.jpg",
+  },
+  {
+    id: "repurposer",
+    title: "Content Repurposer",
+    tagline: "One Asset to Multi-Platform",
+    description: "Turn one YouTube video, blog article, or podcast into LinkedIn posts, X threads, Instagram carousels, TikTok scripts, and newsletters automatically.",
     icon: RefreshCw,
-    title: "Content Repurposing Engine",
-    desc: "Turn 1 asset (YouTube video, blog, or podcast) into a LinkedIn post, X thread, Instagram carousel, TikTok script, and newsletter automatically.",
-    tag: "Multi-Format Output",
-    tone: "blue"
+    screenPath: "/features/social-media-concept-with-device.jpg",
   },
   {
-    icon: BarChart3,
-    title: "AI Post Performance Scoring",
-    desc: "Before publishing, KoraSpace scores posts across Hook (92), Relevance (95), CTA (76), Readability (89), and Brand Fit (94) with instant fix advice.",
-    tag: "Predictive Analytics",
-    tone: "pink"
-  },
-  {
-    icon: Ghost,
-    title: "Ghost Mode™ & Sales Bots",
-    desc: "Automated DM & comment sales bots with randomized human-like delays (30s, 45s, 75s) to engage prospective leads naturally without platform bans.",
-    tag: "Autonomous Automation",
-    tone: "blue"
-  },
-  {
+    id: "inbox-crm",
+    title: "Social Inbox & Sales CRM",
+    tagline: "Lead Intelligence & Triage",
+    description: "Unified inbox that classifies comments and DMs into Leads, Support, or Spam. Detects high-intent buying signals ('How much?') and logs $ opportunities.",
     icon: DollarSign,
-    title: "Social Inbox -> CRM Lead Intelligence",
-    desc: "Classifies DMs and comments automatically (Lead, Customer, Spam, Support). Detects high-intent buying signals ('How much?') and logs $ opportunities.",
-    tag: "Revenue Intelligence",
-    tone: "pink"
+    screenPath: "/features/social-ecommerce.jpg",
   },
   {
-    icon: Eye,
-    title: "AI Trend & Competitor Spy",
-    desc: "Monitors top-performing competitor posts and viral video formats in your exact niche, giving you original inspired hooks before anyone else.",
-    tag: "Competitor Intelligence",
-    tone: "blue"
-  }
+    id: "agency-workspaces",
+    title: "Agency Workspaces",
+    tagline: "Multi-Seat Collaboration",
+    description: "Built for agencies and growth teams. Manage multiple client workspaces, invite team members with strict RLS permissions, and streamline draft approvals.",
+    icon: Users,
+    screenPath: "/features/manage-multiple-brands.jpg",
+  },
+  {
+    id: "growth-marketing",
+    title: "Growth & Marketing Suite",
+    tagline: "Revenue Attribution & Strategy",
+    description: "Track the full funnel from social impressions to website visits, leads, and revenue. Get AI-driven 30/60/90 day growth plans automatically.",
+    icon: TrendingUp,
+    screenPath: "/features/social-media-marketing.jpg",
+  },
 ];
 
-export function Features() {
-  return (
-    <section id="features" className="relative px-5 py-28 sm:py-32 bg-[#07050d] text-white">
-      <div className="mx-auto max-w-6xl">
-        <SectionHead
-          eyebrow="Core Product Engine"
-          tone="pink"
-          title={
-            <>
-              Built for speed. <br />
-              <span className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] bg-clip-text text-transparent">
-                Engineered for conversion.
-              </span>
-            </>
-          }
-          sub="From drafting brand-accurate posts to tracking lead revenue, KoraSpace gives you everything modern marketing demands."
-        />
+export function FeatureShowcase() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const autoLoopTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          variants={staggerContainer}
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {CORE_FEATURES.map((f) => {
-            const isPink = f.tone === "pink";
-            const borderGlow = isPink
-              ? "rgba(255, 46, 147, 0.25)"
-              : "rgba(0, 102, 255, 0.25)";
-            const iconBg = isPink ? "rgba(255, 46, 147, 0.15)" : "rgba(0, 102, 255, 0.15)";
-            const iconColor = isPink ? "#FF2E93" : "#0066FF";
+  const startTimerPipeline = () => {
+    clearActiveTimer();
+    autoLoopTimerRef.current = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % FEATURE_SET_DATA.length);
+    }, 5000);
+  };
+
+  const clearActiveTimer = () => {
+    if (autoLoopTimerRef.current) {
+      clearInterval(autoLoopTimerRef.current);
+    }
+  };
+
+  useEffect(() => {
+    startTimerPipeline();
+    return () => clearActiveTimer();
+  });
+
+  const handleManualSelectionToggle = (index: number) => {
+    setActiveIndex(index);
+    startTimerPipeline();
+  };
+
+  const activeFeature = FEATURE_SET_DATA[activeIndex];
+
+  return (
+    <section className="py-24 rounded-[36px] bg-[#0c0919] text-white relative overflow-hidden font-sans border border-white/10 my-8 mx-4 sm:mx-8">
+      <div>
+        {/* Dynamic Content Description Area */}
+        <div className="min-h-40 max-w-4xl mx-auto px-6 text-center relative">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeFeature.id}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="space-y-3"
+            >
+              <div>
+                <span className="text-xs font-mono font-extrabold tracking-widest text-[#FF2E93] uppercase">
+                  {activeFeature.tagline}
+                </span>
+                <h3 className="text-3xl md:text-5xl font-black text-white tracking-tight mt-1">
+                  {activeFeature.title}
+                </h3>
+              </div>
+
+              <p className="text-sm md:text-base max-w-2xl mx-auto font-medium text-white/70 leading-relaxed">
+                {activeFeature.description}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Pagination Dot Matrix */}
+          <div className="flex items-center gap-2 justify-center pt-2 mt-6">
+            {FEATURE_SET_DATA.map((_, idx) => (
+              <div
+                key={idx}
+                onClick={() => handleManualSelectionToggle(idx)}
+                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  idx === activeIndex
+                    ? "w-8 bg-gradient-to-r from-[#FF2E93] to-[#0066FF]"
+                    : "w-2 bg-white/20 hover:bg-white/40"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Display Viewport Showcase Frame */}
+        <div className="flex items-center justify-center relative w-full max-w-4xl mx-auto mt-8 px-6 transform-gpu">
+          <div className="relative w-full aspect-16/10 rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-black">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={activeFeature.id}
+                src={activeFeature.screenPath}
+                alt={`${activeFeature.title} Showcase`}
+                initial={{ opacity: 0, filter: "blur(4px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+                className="w-full h-full object-cover object-top"
+              />
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Desktop Navigation Stack Node Matrix */}
+        <nav className="hidden md:flex gap-3 relative w-full max-w-5xl mx-auto justify-center flex-wrap mt-10 px-4">
+          {FEATURE_SET_DATA.map((feat, idx) => {
+            const IconComponent = feat.icon;
+            const isSelected = idx === activeIndex;
 
             return (
-              <motion.div
-                key={f.title}
-                variants={fadeInUp}
-                whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                className="group relative overflow-hidden rounded-3xl p-7 transition-all duration-300"
-                style={{
-                  background: "linear-gradient(170deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)",
-                  border: `1.5px solid ${borderGlow}`,
-                  backdropFilter: "blur(20px)"
-                }}
+              <button
+                key={feat.id}
+                onClick={() => handleManualSelectionToggle(idx)}
+                className={`overflow-hidden text-left px-5 py-3.5 rounded-2xl flex items-center justify-between border transition-all duration-300 relative group cursor-pointer ${
+                  isSelected
+                    ? "border-[#FF2E93]/60 bg-white/10 shadow-lg shadow-[#FF2E93]/20"
+                    : "border-white/10 hover:bg-white/5 bg-black/30 text-white/70"
+                }`}
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 relative z-10 w-full shrink-0">
                   <div
-                    className="flex h-12 w-12 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110"
-                    style={{ background: iconBg }}
+                    className={`p-2 rounded-xl transition-colors ${
+                      isSelected
+                        ? "bg-gradient-to-r from-[#FF2E93] to-[#0066FF] text-white"
+                        : "bg-white/10 text-white/80"
+                    }`}
                   >
-                    <f.icon className="h-6 w-6" style={{ color: iconColor }} />
+                    <IconComponent className="w-4 h-4" />
                   </div>
-                  <span
-                    className="font-mono text-[10px] uppercase tracking-wider font-semibold px-3 py-1 rounded-full"
-                    style={{ background: iconBg, color: iconColor }}
-                  >
-                    {f.tag}
+                  <span className="text-sm shrink-0 font-bold tracking-tight text-white">
+                    {feat.title}
                   </span>
                 </div>
 
-                <h3 className="font-display mt-6 text-xl font-bold text-white">{f.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/60">{f.desc}</p>
-              </motion.div>
+                {/* Active Progress Track */}
+                {isSelected && (
+                  <motion.div
+                    initial={{ width: "0%" }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 5, ease: "linear" }}
+                    className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-[#FF2E93] to-[#0066FF] z-10"
+                  />
+                )}
+              </button>
             );
           })}
-        </motion.div>
+        </nav>
+
+        {/* Mobile Swipable Selector Row */}
+        <div className="flex md:hidden flex-wrap justify-center p-4 gap-2 no-scrollbar scroll-smooth snap-x mt-6">
+          {FEATURE_SET_DATA.map((feat, idx) => {
+            const isSelected = idx === activeIndex;
+            return (
+              <button
+                key={feat.id}
+                onClick={() => handleManualSelectionToggle(idx)}
+                className={`px-4 py-2.5 rounded-xl border text-xs font-bold whitespace-nowrap snap-center cursor-pointer transition-all ${
+                  isSelected
+                    ? "text-white bg-gradient-to-r from-[#FF2E93] to-[#0066FF] border-transparent shadow-lg"
+                    : "text-white/70 border-white/10 bg-white/5"
+                }`}
+              >
+                {feat.title}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
 }
 
-/* ── 3. Brand Brain & Multi-Agent Swarm ───────────────────────────── */
+/* ── 4. KoraSpace Brand Brain & 8-Agent Swarm Section ─────────────── */
 
 const AGENT_SWARM = [
   { name: "Research Agent", role: "Scans viral niche trends & web data", icon: Search },
@@ -339,7 +591,7 @@ const AGENT_SWARM = [
   { name: "Strategy Agent", role: "Generates 30/60/90 day growth plans", icon: Target },
   { name: "Analytics Agent", role: "Tracks funnel metrics & revenue attribution", icon: BarChart3 },
   { name: "Competitor Agent", role: "Monitors rival video & post formats", icon: Eye },
-  { name: "Engagement Agent", role: "Triage inbox & manages Ghost Mode DMs", icon: MessageSquare },
+  { name: "Engagement Agent", role: "Triages inbox & manages Ghost Mode DMs", icon: MessageSquare },
   { name: "Optimization Agent", role: "Executes A/B testing & post scoring", icon: Activity }
 ];
 
@@ -361,11 +613,11 @@ export function BrainAndAgentsSection() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-center">
           {/* Brand Brain Card */}
           <motion.div
-            initial="hidden"
-            whileInView="visible"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            variants={fadeInUp}
-            className="lg:col-span-5 rounded-3xl p-8 text-white relative overflow-hidden"
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-5 rounded-[36px] p-8 text-white relative overflow-hidden"
             style={{
               background: "linear-gradient(135deg, rgba(255,46,147,0.12) 0%, rgba(0,102,255,0.08) 100%)",
               border: "1.5px solid rgba(255,46,147,0.3)",
@@ -375,11 +627,11 @@ export function BrainAndAgentsSection() {
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FF2E93]/20 border border-[#FF2E93]/40 mb-6">
               <Brain className="h-7 w-7 text-[#FF2E93]" />
             </div>
-            <span className="font-mono text-xs uppercase tracking-widest text-[#FF2E93] font-semibold">
+            <span className="font-mono text-xs uppercase tracking-widest text-[#FF2E93] font-extrabold">
               Persistent Knowledge Base
             </span>
-            <h3 className="font-display mt-2 text-2xl font-bold">KoraSpace Brand Brain</h3>
-            <p className="mt-3 text-sm leading-relaxed text-white/70">
+            <h3 className="font-display mt-2 text-2xl font-black">KoraSpace Brand Brain</h3>
+            <p className="mt-3 text-sm leading-relaxed text-white/70 font-medium">
               Upload your website URL, product PDFs, brand guidelines, or past top posts. The Brand Brain builds a persistent memory profile so every post sounds authentically like you — never generic.
             </p>
 
@@ -397,18 +649,12 @@ export function BrainAndAgentsSection() {
           </motion.div>
 
           {/* 8-Agent Swarm Grid */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4"
-          >
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
             {AGENT_SWARM.map((ag) => (
               <motion.div
                 key={ag.name}
-                variants={fadeInUp}
-                className="flex items-center gap-4 rounded-2xl p-4 transition-all duration-200 hover:bg-white/10"
+                whileHover={{ scale: 1.02 }}
+                className="flex items-center gap-4 rounded-2xl p-4 transition-all duration-200"
                 style={{
                   background: "rgba(255, 255, 255, 0.04)",
                   border: "1px solid rgba(255, 255, 255, 0.08)"
@@ -419,76 +665,107 @@ export function BrainAndAgentsSection() {
                 </div>
                 <div>
                   <h4 className="font-display text-sm font-bold text-white">{ag.name}</h4>
-                  <p className="text-xs text-white/60">{ag.role}</p>
+                  <p className="text-xs text-white/60 font-medium">{ag.role}</p>
                 </div>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/* ── 4. Native Agent Tools ────────────────────────────────────────── */
+/* ── 4.5 Agent Tools & Autonomous Capabilities ─────────────────────── */
 
-const NATIVE_TOOLS = [
-  { icon: Search, title: "Competitor Video Spy", desc: "Scrapes & analyzes high-performing competitor TikToks and Reels to find winning formats." },
-  { icon: FileText, title: "Longform Repurposer", desc: "Turns long YouTube videos or articles into 7 days of platform-tailored posts." },
-  { icon: ShieldCheck, title: "Fact & Citation Checker", desc: "Verifies statistical claims and attaches credible sources before scheduling." },
-  { icon: Calendar, title: "Auto-Scheduler DB", desc: "Approve a draft with one click and the AI schedules directly to connected APIs." },
-  { icon: Brain, title: "Visual Prompt Generator", desc: "Generates custom DALL-E & Midjourney prompts matched to your exact caption tone." },
-  { icon: Flame, title: "Viral Hook Injector", desc: "Injects current trending meme formats and proven psychological hooks into your copy." }
+const AGENT_TOOLS_LIST = [
+  {
+    title: "8-Step AI Composing Pipeline",
+    desc: "Checks client niche, past posts, active trends, drafts content, assigns hashtags, and reflects before outputting.",
+    icon: Sparkles,
+    badge: "Generation"
+  },
+  {
+    title: "Post Score Predictor",
+    desc: "AI scores post quality (1-100) before publishing and predicts engagement probability across platforms.",
+    icon: Activity,
+    badge: "Optimization"
+  },
+  {
+    title: "Ghost Mode™ Lead Triage",
+    desc: "Automated DM & comment monitor with human-like delays that detects buying signals and logs leads to CRM.",
+    icon: Ghost,
+    badge: "Automation"
+  },
+  {
+    title: "Competitor Video Spy",
+    desc: "Tracks top-performing short videos in your niche and breaks down their hooks, pacing, and calls to action.",
+    icon: Eye,
+    badge: "Intelligence"
+  },
+  {
+    title: "Auto-Hashtag & SEO Engine",
+    desc: "Generates platform-optimized hashtag clusters and keyword tags for max algorithmic distribution.",
+    icon: Search,
+    badge: "Reach"
+  },
+  {
+    title: "Multi-Platform Repurposer",
+    desc: "Turns 1 video or article into Instagram carousels, X threads, LinkedIn posts, and newsletter digests in 1 click.",
+    icon: RefreshCw,
+    badge: "Repurposing"
+  }
 ];
 
 export function AgentTools() {
   return (
-    <section id="tools" className="relative px-5 py-28 sm:py-32 bg-[#07050d] text-white">
+    <section className="relative px-5 py-24 bg-[#07050d] text-white">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="Native Tool Suite"
+          eyebrow="Autonomous Toolkit"
           tone="pink"
           title={
             <>
-              Equipped with <span className="text-[#FF2E93]">Autonomous Tools</span>
+              Supercharge your social presence with <span className="text-[#FF2E93]">AI Agent Tools</span>
             </>
           }
-          sub="Your AI doesn't just write text — it executes tool actions to research, format, fact-check, and publish."
+          sub="Deeply integrated utilities designed to automate high-impact marketing tasks end-to-end."
         />
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          variants={staggerContainer}
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {NATIVE_TOOLS.map((t) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {AGENT_TOOLS_LIST.map((tool) => (
             <motion.div
-              key={t.title}
-              variants={fadeInUp}
-              whileHover={{ y: -5 }}
-              className="rounded-3xl p-6 transition-all duration-300 group"
+              key={tool.title}
+              whileHover={{ y: -5, scale: 1.02 }}
+              className="rounded-[32px] p-7 text-white flex flex-col justify-between"
               style={{
-                background: "rgba(255, 255, 255, 0.03)",
+                background: "linear-gradient(135deg, rgba(255,46,147,0.06) 0%, rgba(255,255,255,0.02) 100%)",
                 border: "1.5px solid rgba(255, 255, 255, 0.08)",
-                backdropFilter: "blur(12px)"
+                backdropFilter: "blur(16px)"
               }}
             >
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FF2E93]/15 text-[#FF2E93] group-hover:scale-110 transition-transform">
-                <t.icon className="h-6 w-6" />
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FF2E93]/15 border border-[#FF2E93]/30">
+                    <tool.icon className="h-5 w-5 text-[#FF2E93]" />
+                  </div>
+                  <span className="font-mono text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/70">
+                    {tool.badge}
+                  </span>
+                </div>
+                <h3 className="font-display text-lg font-bold text-white mb-2">{tool.title}</h3>
+                <p className="text-sm text-white/65 leading-relaxed font-medium">{tool.desc}</p>
               </div>
-              <h3 className="font-display text-lg font-bold text-white">{t.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/60">{t.desc}</p>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ── 5. Platform Integrations ─────────────────────────────────────── */
+
+/* ── 5. Platform Integrations Section ─────────────────────────────── */
 
 const PLATFORMS = [
   { name: "Instagram", icon: Camera, color: "#FF2E93" },
@@ -507,7 +784,7 @@ export function Integrations() {
     <section className="relative px-5 py-24 bg-[#07050d] text-white overflow-hidden">
       <div className="mx-auto mb-12 max-w-2xl text-center">
         <Eyebrow tone="blue">Multi-Platform Ecosystem</Eyebrow>
-        <h2 className="font-display mt-3 text-3xl font-bold sm:text-4xl">
+        <h2 className="font-display mt-3 text-3xl font-black sm:text-4xl">
           Publish & manage across <span className="text-[#0066FF]">all your channels</span>
         </h2>
       </div>
@@ -517,7 +794,7 @@ export function Integrations() {
           <motion.div
             key={p.name}
             whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-3 rounded-full px-6 py-3.5 text-sm font-semibold text-white transition-all shadow-md"
+            className="flex items-center gap-3 rounded-full px-6 py-3.5 text-sm font-bold text-white transition-all shadow-md"
             style={{
               background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
               border: "1px solid rgba(255,255,255,0.12)"
@@ -532,7 +809,7 @@ export function Integrations() {
   );
 }
 
-/* ── 6. Growth & Revenue Intelligence (Funnel & Attribution) ──────── */
+/* ── 6. Growth & Revenue Intelligence Section ─────────────────────── */
 
 export function RevenueAttributionSection() {
   return (
@@ -543,20 +820,20 @@ export function RevenueAttributionSection() {
           tone="gradient"
           title={
             <>
-              From social engagement to <span className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] bg-clip-text text-transparent">real revenue</span>
+              From social views to <span className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] bg-clip-text text-transparent">real revenue</span>
             </>
           }
-          sub="Don't stop at vanity likes and views. Track the complete conversion funnel from post impressions down to actual dollar sales."
+          sub="Don't stop at vanity likes. Track the complete conversion funnel from post impressions down to actual dollar sales."
         />
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-center">
           {/* Revenue Attribution Funnel Visual */}
           <motion.div
-            initial="hidden"
-            whileInView="visible"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            variants={fadeInUp}
-            className="lg:col-span-7 rounded-3xl p-8 text-white relative overflow-hidden"
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-7 rounded-[36px] p-8 text-white relative overflow-hidden"
             style={{
               background: "linear-gradient(170deg, rgba(0,102,255,0.1) 0%, rgba(255,46,147,0.05) 100%)",
               border: "1.5px solid rgba(0,102,255,0.3)",
@@ -564,8 +841,8 @@ export function RevenueAttributionSection() {
             }}
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-display text-xl font-bold">Social-to-Revenue Funnel</h3>
-              <span className="font-mono text-xs text-[#0066FF] bg-[#0066FF]/20 px-3 py-1 rounded-full font-semibold">
+              <h3 className="font-display text-xl font-extrabold">Social-to-Revenue Funnel</h3>
+              <span className="font-mono text-xs text-[#0066FF] bg-[#0066FF]/20 px-3 py-1 rounded-full font-bold">
                 Live Attribution
               </span>
             </div>
@@ -595,148 +872,262 @@ export function RevenueAttributionSection() {
           </motion.div>
 
           {/* KoraScore & Health Metrics */}
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInUp}
-            className="lg:col-span-5 space-y-6"
-          >
+          <div className="lg:col-span-5 space-y-6">
             <div
-              className="rounded-3xl p-7 text-white"
+              className="rounded-[32px] p-7 text-white"
               style={{
                 background: "rgba(255, 255, 255, 0.04)",
                 border: "1.5px solid rgba(255, 255, 255, 0.1)"
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs uppercase tracking-wider text-white/60">Account Health Score</span>
+                <span className="font-mono text-xs uppercase tracking-wider text-white/60 font-bold">Account Health Score</span>
                 <Award className="h-6 w-6 text-[#FF2E93]" />
               </div>
               <div className="mt-3 flex items-baseline gap-2">
-                <span className="font-display text-4xl font-extrabold text-white">KoraScore: 78</span>
+                <span className="font-display text-4xl font-black text-white">KoraScore: 78</span>
                 <span className="text-sm text-white/50">/ 100</span>
               </div>
-              <p className="mt-2 text-xs text-[#FF2E93]">
+              <p className="mt-2 text-xs text-[#FF2E93] font-medium">
                 "Posting consistency dropped 24%. Re-engage video scheduler to regain 12 score points."
               </p>
             </div>
 
             <div
-              className="rounded-3xl p-7 text-white"
+              className="rounded-[32px] p-7 text-white"
               style={{
                 background: "rgba(255, 255, 255, 0.04)",
                 border: "1.5px solid rgba(255, 255, 255, 0.1)"
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs uppercase tracking-wider text-white/60">Lead Opportunity Radar</span>
+                <span className="font-mono text-xs uppercase tracking-wider text-white/60 font-bold">Lead Opportunity Radar</span>
                 <Flame className="h-6 w-6 text-[#0066FF]" />
               </div>
-              <h4 className="font-display mt-2 text-lg font-bold">4 Trending Niche Opportunities</h4>
-              <p className="mt-1 text-xs text-white/60">
+              <h4 className="font-display mt-2 text-lg font-black">4 Trending Niche Opportunities</h4>
+              <p className="mt-1 text-xs text-white/60 font-medium">
                 3 competitor gaps identified · 2 high-value lead questions waiting in DMs ($2,000 opportunity).
               </p>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/* ── 7. Multi-Seat Workspaces & Collaboration ─────────────────────── */
+/* ── 6.5 Agency & Team Collaboration Section ───────────────────────── */
+
+const COLLAB_FEATURES = [
+  {
+    title: "Client Workspace Portals",
+    desc: "Isolated brand environments with row-level security. Give clients a clean view of their scheduled calendar and analytics.",
+    icon: Briefcase
+  },
+  {
+    title: "1-Click Draft Approval",
+    desc: "Send shareable draft review links to clients or team leads without forcing them to create an account.",
+    icon: ShieldCheck
+  },
+  {
+    title: "Role-Based Permissions",
+    desc: "Assign roles (Admin, Editor, Reviewer, Client) with granular rights over posting, billing, and social credentials.",
+    icon: Users
+  },
+  {
+    title: "Audit Log & Version Control",
+    desc: "Track every edit, approval, prompt change, and published post with full timestamps and user attribution.",
+    icon: Clock
+  }
+];
 
 export function Collaboration() {
   return (
     <section className="relative px-5 py-24 bg-[#07050d] text-white">
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeInUp}
-        className="mx-auto max-w-4xl rounded-3xl p-10 text-center relative overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, rgba(0,102,255,0.12) 0%, rgba(255,46,147,0.08) 100%)",
-          border: "1.5px solid rgba(0,102,255,0.25)",
-          backdropFilter: "blur(20px)"
-        }}
-      >
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#0066FF]/20 text-[#0066FF]">
-          <Users className="h-8 w-8" />
-        </div>
-        <h2 className="font-display text-3xl font-bold sm:text-4xl text-white">
-          Agency Workspaces & Multi-Seat Team Approval
-        </h2>
-        <p className="mt-4 text-base leading-relaxed text-white/70 max-w-2xl mx-auto">
-          Built for agencies, marketing teams, and brand managers. Invite teammates, assign client roles, review drafts, and manage multiple brand workspaces with enterprise-grade row-level security.
-        </p>
-      </motion.div>
-    </section>
-  );
-}
-
-/* ── 8. How It Works ──────────────────────────────────────────────── */
-
-const STEPS = [
-  { icon: Link2, title: "Connect your accounts", desc: "Link Instagram, TikTok, LinkedIn, YouTube, X, and Facebook via secure OAuth 2.0.", tag: "Secure OAuth" },
-  { icon: Sparkles, title: "Train your Brand Brain", desc: "Paste your website URL or past posts. KoraSpace learns your voice in 60 seconds.", tag: "Brand Voice Engine" },
-  { icon: Send, title: "Approve or Auto-Deploy", desc: "Review multi-format drafts, or let Ghost Mode run sales engagement on autopilot.", tag: "Human-in-the-Loop" },
-  { icon: LineChart, title: "Watch Revenue Grow", desc: "Track exact revenue attribution from social views down to customer payments.", tag: "Conversion ROI" },
-];
-
-export function HowItWorks() {
-  return (
-    <section id="how-it-works" className="relative px-5 py-28 sm:py-32 bg-[#07050d] text-white">
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="Simple 4-Step Setup"
+          eyebrow="Team & Agency Workspaces"
           tone="blue"
           title={
             <>
-              Deploy your AI marketing team in <span className="text-[#0066FF]">minutes</span>
+              Collaborate seamlessly with <span className="text-[#0066FF]">multi-seat controls</span>
             </>
           }
-          sub="No complex setup or coding required. Connect, train your brand brain, and let autonomous agents execute."
+          sub="Built for marketing agencies, brand teams, and founders managing multiple social accounts with ease."
         />
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={staggerContainer}
-          className="space-y-4"
-        >
-          {STEPS.map((s, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {COLLAB_FEATURES.map((collab) => (
             <motion.div
-              key={s.title}
-              variants={fadeInUp}
-              className="flex items-start gap-5 rounded-3xl p-6 text-white transition-all"
+              key={collab.title}
+              whileHover={{ y: -5 }}
+              className="rounded-[32px] p-8 text-white flex gap-5 items-start"
               style={{
-                background: "rgba(255, 255, 255, 0.04)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                backdropFilter: "blur(12px)"
+                background: "linear-gradient(135deg, rgba(0,102,255,0.08) 0%, rgba(255,255,255,0.02) 100%)",
+                border: "1.5px solid rgba(0, 102, 255, 0.2)",
+                backdropFilter: "blur(16px)"
               }}
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0066FF]/20 text-[#0066FF] font-bold">
-                <s.icon className="h-6 w-6" />
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0066FF]/20 border border-[#0066FF]/40 text-[#0066FF]">
+                <collab.icon className="h-6 w-6" />
               </div>
-              <div className="flex-1">
-                <span className="font-mono text-xs uppercase tracking-wider text-[#0066FF] font-semibold">
-                  Step 0{i + 1}
-                </span>
-                <h3 className="font-display mt-1 text-xl font-bold text-white">{s.title}</h3>
-                <p className="mt-1.5 text-sm text-white/60">{s.desc}</p>
+              <div>
+                <h3 className="font-display text-xl font-bold text-white mb-2">{collab.title}</h3>
+                <p className="text-sm text-white/70 leading-relaxed font-medium">{collab.desc}</p>
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ── 9. Stories (Testimonials) ────────────────────────────────────── */
+/* ── 7. FAQ Accordion Section (From Reference Code) ───────────────── */
+
+const FAQS_DATA = [
+  {
+    q: "What is KoraSpace and how does the Autonomous Growth Loop work?",
+    a: "KoraSpace is an AI-powered marketing operating system. Unlike simple schedulers, KoraSpace runs a continuous 4-stage loop: it understands your brand voice, researches trends in your niche, creates and schedules posts across channels, and analyzes performance down to sales revenue to auto-optimize future strategy."
+  },
+  {
+    q: "How does the Brand Brain learn my tone of voice?",
+    a: "Simply paste your website URL, brand guidelines, product PDFs, or past top-performing social posts. The KoraSpace Brand Brain builds a persistent memory profile so every generated post, caption, and reply sounds authentically like you."
+  },
+  {
+    q: "What is Ghost Mode™ and is it safe from platform bans?",
+    a: "Ghost Mode™ runs sales DM and comment engagement with randomized human-like delays (30s, 45s, 75s) and strict compliance rules. It handles noise, answers FAQs, and flags high-value buying leads directly to your inbox."
+  },
+  {
+    q: "Which social media platforms are supported?",
+    a: "KoraSpace connects directly to Instagram, TikTok, LinkedIn, YouTube, X (Twitter), Facebook, Threads, WhatsApp, and Telegram via official authorized OAuth 2.0 APIs."
+  },
+  {
+    q: "Can I use KoraSpace for multi-client agencies or teams?",
+    a: "Yes! Our Teams & Agency plans offer dedicated client workspace portals, multi-seat team member permissions, draft approval workflows, and white-label client performance reports."
+  },
+  {
+    q: "What payment methods are supported?",
+    a: "All plans are priced in Nigerian Naira (NGN) with transparent billing via Paystack and Flutterwave. We accept all Nigerian debit cards, bank transfers, and international cards."
+  }
+];
+
+export function FAQ() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+
+  const listVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08 },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 30, filter: "blur(2px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
+        type: "spring",
+        stiffness: 90,
+        damping: 18,
+      },
+    },
+  };
+
+  return (
+    <motion.section
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      variants={containerVariants}
+      className="py-24 px-6 bg-[#0c0919] text-white rounded-[36px] my-8 mx-4 sm:mx-8 border border-white/10 relative overflow-hidden"
+    >
+      <div className="max-w-3xl mx-auto">
+        <SectionHead
+          eyebrow="Frequently Asked Questions"
+          tone="pink"
+          title={<>Got questions? <span className="text-[#FF2E93]">We've got answers.</span></>}
+          sub="Everything you need to know about KoraSpace, AI automation, and pricing."
+        />
+
+        <motion.div variants={listVariants} className="space-y-4 transform-gpu">
+          {FAQS_DATA.map((faq, i) => {
+            const isOpen = openIndex === i;
+
+            return (
+              <motion.div
+                key={i}
+                variants={itemVariants}
+                className="border-b border-white/10 pb-2"
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  className="w-full flex justify-between items-center text-left py-5 focus:outline-none group select-none cursor-pointer"
+                >
+                  <span className="text-lg md:text-xl font-bold text-white group-hover:text-[#FF2E93] transition-colors duration-200">
+                    {faq.q}
+                  </span>
+
+                  <motion.div
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="text-[#FF2E93] ml-4 shrink-0"
+                  >
+                    <ChevronDown size={22} className="stroke-[2.5]" />
+                  </motion.div>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      key="content"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{
+                        height: "auto",
+                        opacity: 1,
+                        transition: {
+                          height: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.25, delay: 0.05 },
+                        },
+                      }}
+                      exit={{
+                        height: 0,
+                        opacity: 0,
+                        transition: {
+                          height: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.15 },
+                        },
+                      }}
+                      className="overflow-hidden"
+                    >
+                      <p className="text-white/70 text-base leading-relaxed pb-5 pr-6 font-medium">
+                        {faq.a}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </div>
+    </motion.section>
+  );
+}
+
+/* ── 8. Stories (Testimonials) ────────────────────────────────────── */
 
 const STORIES = [
   { name: "Adaeze Okonkwo", role: "Fintech Founder, Lagos", avatar: "AO", text: "I replaced Buffer and a freelance manager with KoraSpace. Ghost Mode handles engagement while I close deals. ROI in week one.", highlight: "Replaced freelance team" },
@@ -762,27 +1153,21 @@ export function Stories() {
           sub="See how businesses and agencies scale their social media marketing using KoraSpace."
         />
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={staggerContainer}
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
-        >
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {STORIES.map((t) => (
             <motion.div
               key={t.name}
-              variants={fadeInUp}
-              className="rounded-3xl p-7 text-white flex flex-col justify-between"
+              whileHover={{ y: -5 }}
+              className="rounded-[32px] p-7 text-white flex flex-col justify-between"
               style={{
                 background: "rgba(255, 255, 255, 0.04)",
                 border: "1.5px solid rgba(255, 255, 255, 0.08)",
                 backdropFilter: "blur(16px)"
               }}
             >
-              <p className="text-sm leading-relaxed text-white/75">“{t.text}”</p>
+              <p className="text-sm leading-relaxed text-white/80 font-medium">“{t.text}”</p>
               <div className="mt-6">
-                <span className="font-mono text-xs px-3 py-1 rounded-full bg-[#FF2E93]/15 text-[#FF2E93] border border-[#FF2E93]/30">
+                <span className="font-mono text-xs px-3 py-1 rounded-full bg-[#FF2E93]/15 text-[#FF2E93] border border-[#FF2E93]/30 font-bold">
                   {t.highlight}
                 </span>
                 <div className="mt-4 flex items-center gap-3">
@@ -794,19 +1179,19 @@ export function Stories() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-white">{t.name}</p>
-                    <p className="text-xs text-white/50">{t.role}</p>
+                    <p className="text-xs text-white/50 font-medium">{t.role}</p>
                   </div>
                 </div>
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ── 10. Pricing (From PRD Section 9) ─────────────────────────────── */
+/* ── 9. Pricing Section (From PRD Section 9) ──────────────────────── */
 
 const PLANS = [
   {
@@ -900,19 +1285,12 @@ export function Pricing() {
           sub="Pay with Paystack, Flutterwave, or any card. Every paid plan includes a 14-day free trial."
         />
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          variants={staggerContainer}
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
-        >
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {PLANS.map((p) => (
             <motion.div
               key={p.name}
-              variants={fadeInUp}
               whileHover={{ y: -6 }}
-              className="relative flex flex-col justify-between rounded-3xl p-7 text-white"
+              className="relative flex flex-col justify-between rounded-[36px] p-7 text-white"
               style={{
                 background: p.highlight
                   ? "linear-gradient(170deg, rgba(255,46,147,0.15) 0%, rgba(0,102,255,0.1) 100%)"
@@ -925,7 +1303,7 @@ export function Pricing() {
             >
               {p.badge && (
                 <span
-                  className="font-mono text-[10px] uppercase font-bold tracking-widest px-3 py-1 rounded-full absolute -top-3 left-6 text-white"
+                  className="font-mono text-[10px] uppercase font-extrabold tracking-widest px-3 py-1 rounded-full absolute -top-3 left-6 text-white"
                   style={{ background: "linear-gradient(135deg, #FF2E93, #0066FF)" }}
                 >
                   {p.badge}
@@ -935,16 +1313,16 @@ export function Pricing() {
               <div>
                 <h3 className="font-display text-xl font-bold text-white">{p.name}</h3>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="font-display text-3xl font-extrabold text-white">{p.price}</span>
-                  <span className="text-xs text-white/50">{p.period}</span>
+                  <span className="font-display text-3xl font-black text-white">{p.price}</span>
+                  <span className="text-xs text-white/50 font-medium">{p.period}</span>
                 </div>
-                <p className="mt-1 text-xs text-white/60">{p.desc}</p>
+                <p className="mt-1 text-xs text-white/60 font-medium">{p.desc}</p>
 
-                <div className="mt-4 font-mono text-xs font-semibold text-[#FF2E93] bg-[#FF2E93]/10 px-3 py-1.5 rounded-xl border border-[#FF2E93]/20">
+                <div className="mt-4 font-mono text-xs font-bold text-[#FF2E93] bg-[#FF2E93]/10 px-3 py-1.5 rounded-xl border border-[#FF2E93]/20">
                   {p.posts}
                 </div>
 
-                <ul className="mt-6 space-y-2.5 text-xs text-white/70">
+                <ul className="mt-6 space-y-2.5 text-xs text-white/75 font-medium">
                   {p.features.map((f) => (
                     <li key={f} className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-[#0066FF] shrink-0" />
@@ -956,7 +1334,7 @@ export function Pricing() {
 
               <Link href="/signup" className="mt-8">
                 <button
-                  className="w-full rounded-full py-3 text-sm font-semibold transition-all"
+                  className="w-full rounded-full py-3 text-sm font-bold transition-all cursor-pointer"
                   style={
                     p.highlight
                       ? { background: "linear-gradient(135deg, #FF2E93 0%, #0066FF 100%)", color: "#ffffff", boxShadow: "0 0 20px rgba(255,46,147,0.4)" }
@@ -968,98 +1346,197 @@ export function Pricing() {
               </Link>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ── 11. Final CTA ────────────────────────────────────────────────── */
+/* ── 10. FinalCTA Component (From Reference Code) ─────────────────── */
 
 export function FinalCTA() {
-  return (
-    <section className="relative px-5 py-28 sm:py-32 bg-[#07050d] text-white">
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeInUp}
-        className="mx-auto max-w-4xl rounded-3xl p-10 sm:p-14 text-center relative overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, rgba(255,46,147,0.15) 0%, rgba(0,102,255,0.15) 100%)",
-          border: "1.5px solid rgba(255,46,147,0.3)",
-          backdropFilter: "blur(20px)"
-        }}
-      >
-        <Eyebrow tone="gradient">14-Day Free Trial — No Credit Card Required</Eyebrow>
-        <h2 className="font-display mt-4 text-3xl font-extrabold sm:text-5xl text-white">
-          Deploy your AI marketing engine <br />
-          <span className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] bg-clip-text text-transparent">
-            today.
-          </span>
-        </h2>
-        <p className="mt-4 text-base text-white/70 max-w-xl mx-auto">
-          Join modern creators, founders, and agencies automating content creation, scheduling, lead triage, and revenue growth.
-        </p>
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.12 },
+    },
+  };
 
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link href="/signup">
-            <button
-              className="flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold text-white transition-transform duration-200 hover:scale-[1.03]"
-              style={{ background: "linear-gradient(135deg, #FF2E93 0%, #0066FF 100%)", boxShadow: "0 0 30px rgba(255,46,147,0.5)" }}
+  const textVariants: Variants = {
+    hidden: { opacity: 0, y: 30, filter: "blur(2px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { type: "spring", stiffness: 80, damping: 16 },
+    },
+  };
+
+  const imageVariants: Variants = {
+    hidden: { opacity: 0, y: 40, scale: 0.98 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 60,
+        damping: 18,
+        delay: 0.2,
+      },
+    },
+  };
+
+  return (
+    <motion.section
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      variants={containerVariants}
+      className="py-16 md:py-24 px-6 bg-gradient-to-br from-[#0c0919] via-[#07050d] to-[#05081c] text-white rounded-[36px] border border-white/10 my-8 mx-4 sm:mx-8 z-50 relative overflow-hidden"
+    >
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-16">
+        {/* Content Side */}
+        <div className="flex-1 space-y-6 text-center md:text-left">
+          <motion.h2 variants={textVariants} className="text-xs font-mono font-extrabold uppercase tracking-widest text-[#FF2E93]">
+            14-Day Free Trial — No Credit Card Required
+          </motion.h2>
+
+          <motion.h1 variants={textVariants} className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+            Your AI marketing team <br />
+            <span className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] bg-clip-text text-transparent">
+              starts today.
+            </span>
+          </motion.h1>
+
+          <motion.p variants={textVariants} className="text-white/80 text-lg font-medium max-w-xl mx-auto md:mx-0">
+            Join 2,000+ creators, founders, and agencies automating content creation, scheduling, lead triage, and revenue growth.
+          </motion.p>
+
+          <motion.div variants={textVariants} className="pt-4 flex justify-center md:justify-start">
+            <LandingButton
+              href="/signup"
+              className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] text-white shadow-lg shadow-[#FF2E93]/30 hover:shadow-[#0066FF]/40 transition-all duration-300"
             >
-              <span>Get Started Free</span>
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </Link>
-          <Link href="/login">
-            <button className="rounded-full border border-white/20 bg-white/5 px-8 py-3.5 text-sm font-medium text-white transition-colors hover:bg-white/10">
-              Sign In to Dashboard
-            </button>
-          </Link>
+              Get Started Free
+            </LandingButton>
+          </motion.div>
         </div>
-      </motion.div>
-    </section>
+
+        {/* Image Mockup Side */}
+        <motion.div variants={imageVariants} className="flex-1 w-full transform-gpu">
+          <div className="relative rounded-[36px] overflow-hidden shadow-2xl border border-white/15 bg-black/40 p-4">
+            <img
+              src="/features/social-media-marketing.jpg"
+              alt="KoraSpace Social Media Growth Dashboard"
+              className="w-full h-80 sm:h-96 rounded-[28px] object-cover object-top"
+            />
+          </div>
+        </motion.div>
+      </div>
+    </motion.section>
   );
 }
 
-/* ── 12. Electric Blue & Deep Blue Footer ─────────────────────────── */
+/* ── 11. Upgraded Multi-Column Footer UI (From Reference Code) ────── */
+
+const FOOTER_LINKS = {
+  Product: [
+    { label: "AI Composing Pipeline", href: "#features" },
+    { label: "Visual Calendar 2.0", href: "#features" },
+    { label: "Brand Brain", href: "#brain" },
+    { label: "Autonomous Growth Loop", href: "#how" },
+    { label: "Pricing & Plans", href: "#pricing" },
+  ],
+  Platform: [
+    { label: "Instagram Integration", href: "#" },
+    { label: "TikTok Auto-Scheduler", href: "#" },
+    { label: "LinkedIn & X Publisher", href: "#" },
+    { label: "YouTube Short Repurposer", href: "#" },
+    { label: "WhatsApp & Telegram Bots", href: "#" },
+  ],
+  Legal: [
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
+    { label: "Nigeria Data Protection (NDPA)", href: "/privacy" },
+    { label: "Cookie Policy", href: "/privacy" },
+  ],
+  Support: [
+    { label: "Documentation", href: "#" },
+    { label: "Help Center", href: "#" },
+    { label: "Community", href: "#" },
+    { label: "System Status", href: "#" },
+  ],
+};
 
 export function SiteFooter() {
   return (
-    <footer className="relative bg-[#05081c] border-t border-[#0066FF]/20 px-5 py-16 text-white">
-      <div className="mx-auto max-w-6xl">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-12 border-b border-white/10">
-          <Link href="/" className="flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="KoraSpace" width={32} height={32} className="h-8 w-auto object-contain" />
-            <span className="font-display text-xl font-bold tracking-tight text-white">
-              Kora<span className="text-[#0066FF]">Space</span>
-            </span>
-          </Link>
+    <footer className="border-t border-[#0066FF]/20 bg-[#05081c] py-16 px-6 text-white relative overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+          {/* Brand Column */}
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="flex items-center gap-3 mb-4">
+              <img src="/logo.png" alt="KoraSpace Logo" width={32} height={32} className="h-8 w-auto object-contain" />
+              <span className="font-display text-xl font-bold tracking-tight text-white">
+                Kora<span className="text-[#0066FF]">Space</span>
+              </span>
+            </Link>
 
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-white/70">
-            <a href="#features" className="transition-colors hover:text-[#FF2E93]">Features</a>
-            <a href="#how" className="transition-colors hover:text-[#0066FF]">Growth Loop</a>
-            <a href="#pricing" className="transition-colors hover:text-[#FF2E93]">Pricing</a>
-            <Link href="/login" className="transition-colors hover:text-[#0066FF]">Dashboard</Link>
-            <Link href="/privacy" className="transition-colors hover:text-[#FF2E93]">Privacy Policy</Link>
-            <Link href="/terms" className="transition-colors hover:text-[#0066FF]">Terms of Service</Link>
+            <p className="text-sm text-white/60 leading-relaxed mb-6 font-medium">
+              An AI-powered marketing operating system built for modern creators, startups, and agencies.
+            </p>
+
+            <div className="flex gap-3">
+              {[Globe, Send, Zap, MessageCircle].map((Icon, i) => (
+                <a
+                  key={i}
+                  href="#"
+                  className="w-9 h-9 rounded-xl border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:border-[#FF2E93]/50 hover:bg-[#FF2E93]/10 transition-all"
+                >
+                  <Icon className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
           </div>
+
+          {/* Links Columns */}
+          {Object.entries(FOOTER_LINKS).map(([category, links]) => (
+            <div key={category}>
+              <h4 className="text-sm font-extrabold uppercase font-mono tracking-wider text-[#0066FF] mb-4">
+                {category}
+              </h4>
+              <ul className="space-y-2.5">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-white/60 hover:text-white transition-colors font-medium"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
+        {/* Bottom Credits Bar */}
+        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50 font-medium">
           <p>© {new Date().getFullYear()} KoraSpace by Techla. All rights reserved.</p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <span>🇳🇬 Built in Nigeria</span>
             <span>•</span>
-            <span className="text-[#0066FF]">Electric Blue & Pink Palette</span>
+            <span className="text-[#FF2E93]">Electric Pink & Blue</span>
             <span>•</span>
-            <span>AI Marketing Operating System</span>
+            <span>Paystack & Flutterwave Billing</span>
           </div>
         </div>
       </div>
     </footer>
   );
 }
+
 
