@@ -1811,10 +1811,6 @@ export function SiteFooter() {
           <p>© {new Date().getFullYear()} KoraSpace by Techla. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-4">
             <span>🇳🇬 Built in Nigeria</span>
-            <span>•</span>
-            <span className="text-[#FF2E93]">Electric Pink & Blue</span>
-            <span>•</span>
-            <span>Paystack & Flutterwave Billing</span>
           </div>
         </motion.div>
       </div>
