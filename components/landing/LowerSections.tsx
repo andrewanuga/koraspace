@@ -768,15 +768,20 @@ export function AgentTools() {
 /* ── 5. Platform Integrations Section ─────────────────────────────── */
 
 const PLATFORMS = [
-  { name: "Instagram", icon: Camera, color: "#FF2E93" },
-  { name: "TikTok", icon: Music, color: "#00E5FF" },
-  { name: "LinkedIn", icon: Briefcase, color: "#0066FF" },
-  { name: "YouTube", icon: Play, color: "#FF0000" },
-  { name: "Facebook", icon: Globe, color: "#1877F2" },
-  { name: "X (Twitter)", icon: MessageCircle, color: "#FFFFFF" },
-  { name: "Threads", icon: Layers3, color: "#FF2E93" },
-  { name: "WhatsApp", icon: MessageSquare, color: "#25D366" },
-  { name: "Telegram", icon: Send, color: "#229ED9" }
+  { name: "Instagram", iconPath: "/integrations/insta.png" },
+  { name: "TikTok", iconPath: "/integrations/ticktok.png" },
+  { name: "LinkedIn", iconPath: "/integrations/linkedin.png" },
+  { name: "YouTube", iconPath: "/integrations/yt.png" },
+  { name: "Facebook", iconPath: "/integrations/facebook.png" },
+  { name: "X (Twitter)", iconPath: "/integrations/twitter.png" },
+  { name: "Threads", iconPath: "/integrations/threads.png" },
+  { name: "WhatsApp", iconPath: "/integrations/whatsapp.png" },
+  { name: "Telegram", iconPath: "/integrations/telegram.png" },
+  { name: "Snapchat", iconPath: "/integrations/Snapchat.png" },
+  { name: "Discord", iconPath: "/integrations/discord.png" },
+  { name: "Messenger", iconPath: "/integrations/messanger.png" },
+  { name: "Pinterest", iconPath: "/integrations/pin.png" },
+  { name: "Reddit", iconPath: "/integrations/reddit.png" },
 ];
 
 export function Integrations() {
@@ -793,14 +798,19 @@ export function Integrations() {
         {PLATFORMS.map((p) => (
           <motion.div
             key={p.name}
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-3 rounded-full px-6 py-3.5 text-sm font-bold text-white transition-all shadow-md"
+            whileHover={{ scale: 1.06, y: -2 }}
+            className="flex items-center gap-3 rounded-full px-5 py-3 text-sm font-bold text-white transition-all shadow-md cursor-pointer"
             style={{
               background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
-              border: "1px solid rgba(255,255,255,0.12)"
+              border: "1px solid rgba(255,255,255,0.12)",
+              backdropFilter: "blur(12px)"
             }}
           >
-            <p.icon className="h-5 w-5" style={{ color: p.color }} />
+            <img
+              src={p.iconPath}
+              alt={`${p.name} icon`}
+              className="h-6 w-6 object-contain rounded-md select-none shrink-0"
+            />
             <span>{p.name}</span>
           </motion.div>
         ))}
