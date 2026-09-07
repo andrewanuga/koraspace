@@ -2,9 +2,12 @@ import { Preloader } from "@/components/landing/Preloader";
 import { FloatingNav } from "@/components/landing/FloatingNav";
 import { Hero } from "@/components/landing/Hero";
 import {
+  GrowthLoopSection,
   Features,
+  BrainAndAgentsSection,
   AgentTools,
   Integrations,
+  RevenueAttributionSection,
   Collaboration,
   HowItWorks,
   Stories,
@@ -15,14 +18,17 @@ import {
 
 export default function LandingPage() {
   return (
-    <div className="relative min-h-screen" style={{ background: "#121212" }}>
+    <div className="relative min-h-screen bg-[#07050d]">
       <Preloader />
       <FloatingNav />
       <main>
         <Hero />
+        <GrowthLoopSection />
         <Features />
+        <BrainAndAgentsSection />
         <AgentTools />
         <Integrations />
+        <RevenueAttributionSection />
         <Collaboration />
         <HowItWorks />
         <Stories />
@@ -33,3 +39,4 @@ export default function LandingPage() {
     </div>
   );
 }
+
