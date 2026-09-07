@@ -2,6 +2,7 @@ import { Preloader } from "@/components/landing/Preloader";
 import { FloatingNav } from "@/components/landing/FloatingNav";
 import { Hero } from "@/components/landing/Hero";
 import {
+  ProblemSolverSection,
   GrowthLoopSection,
   FeatureSection,
   FeatureShowcase,
@@ -24,6 +25,7 @@ export default function LandingPage() {
       <FloatingNav />
       <main>
         <Hero />
+        <ProblemSolverSection />
         <GrowthLoopSection />
         
         {/* Alternating FeatureSection Showcase Rows */}

@@ -274,6 +274,103 @@ const LOOP_STAGES = [
   }
 ];
 
+/* ── 1.5 Problem Solver Section (From Reference Code) ──────────────── */
+
+export function ProblemSolverSection() {
+  const title = "Stop wasting 15+ hours a week manually creating posts, editing videos, and replying to DMs. KoraSpace puts your social media growth on total autopilot.";
+  const titleWords = title.split(" ");
+
+  const container: Variants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1],
+        staggerChildren: 0.035,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const wordtext: Variants = {
+    hidden: { 
+      opacity: 0, 
+      y: 12, 
+      filter: "blur(6px)" 
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
+        type: "spring",
+        stiffness: 140,
+        damping: 20,
+      },
+    },
+  };
+
+  const button: Variants = {
+    hidden: { opacity: 0, y: 15, filter: "blur(4px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
+  return (
+    <motion.section
+      variants={container}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-120px" }}
+      className="relative my-12 mx-4 sm:mx-8 py-20 lg:py-24 rounded-[36px] px-6 z-20 overflow-hidden text-white shadow-2xl border border-white/10 will-change-transform"
+      style={{
+        background: "linear-gradient(135deg, rgba(255,46,147,0.1) 0%, rgba(0,102,255,0.08) 50%, rgba(7,5,13,0.95) 100%)",
+        backdropFilter: "blur(20px)"
+      }}
+    >
+      {/* Sleek top ambient accent line */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-1 bg-gradient-to-r from-[#FF2E93] to-[#0066FF] rounded-full" />
+
+      {/* Word-staggered typography heading */}
+      <p className="mb-8 text-2xl font-bold text-center lg:text-4xl text-white tracking-tight flex flex-wrap justify-center gap-x-2 gap-y-1 max-w-4xl mx-auto leading-relaxed">
+        {titleWords.map((word, index) => {
+          const isHighlighted = word.includes("15+") || word.includes("autopilot.") || word.includes("KoraSpace");
+          return (
+            <motion.span
+              key={index}
+              variants={wordtext}
+              className={`inline-block ${isHighlighted ? "text-[#FF2E93] font-black" : "text-white"}`}
+            >
+              {word}
+            </motion.span>
+          );
+        })}
+      </p>
+
+      {/* Interactive Floating Action Button */}
+      <motion.div 
+        variants={button}
+        whileHover={{ scale: 1.03, y: -2 }}
+        whileTap={{ scale: 0.97, y: 0 }}
+        className="w-fit mx-auto"
+      >
+        <LandingButton
+          href="/signup"
+          className="mx-auto text-white bg-gradient-to-r from-[#FF2E93] to-[#0066FF] shadow-lg shadow-[#FF2E93]/30 hover:shadow-[#0066FF]/40 transition-shadow"
+        >
+          Claim 14-Day Free Trial
+        </LandingButton>
+      </motion.div>
+    </motion.section>
+  );
+}
+
 export function GrowthLoopSection() {
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
