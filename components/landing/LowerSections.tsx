@@ -9,7 +9,8 @@ import {
   Calendar, MessageSquare, FileText, Clock,
   Link2, Sparkles, Send, LineChart,
   ArrowRight, Check, Star, Users, Zap, Search, Globe, Camera, Briefcase, Play, MessageCircle, Music,
-  ChevronDown, Activity, RefreshCw, Layers3, Eye, Flame, Award, ShieldCheck, QrCode
+  ChevronDown, Activity, RefreshCw, Layers3, Eye, Flame, Award, ShieldCheck, QrCode,
+  Mail, Phone, MapPin
 } from "lucide-react";
 
 /* ── Shared Button ────────────────────────────────────────────────── */
@@ -1149,6 +1150,27 @@ const STORIES = [
 ];
 
 export function Stories() {
+  const quoteContainer: Variants = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.03,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const wordtext: Variants = {
+    hidden: { opacity: 0, y: 3, filter: "blur(2px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.18, ease: "easeOut" },
+    },
+  };
+
   return (
     <section id="stories" className="relative px-5 py-28 sm:py-32 bg-[#07050d] text-white">
       <div className="mx-auto max-w-6xl">
@@ -1164,49 +1186,64 @@ export function Stories() {
         />
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {STORIES.map((t) => (
-            <motion.div
-              key={t.name}
-              whileHover={{ y: -5 }}
-              className="rounded-[32px] p-7 text-white flex flex-col justify-between"
-              style={{
-                background: "rgba(255, 255, 255, 0.04)",
-                border: "1.5px solid rgba(255, 255, 255, 0.08)",
-                backdropFilter: "blur(16px)"
-              }}
-            >
-              <p className="text-sm leading-relaxed text-white/80 font-medium">“{t.text}”</p>
-              <div className="mt-6">
-                <span className="font-mono text-xs px-3 py-1 rounded-full bg-[#FF2E93]/15 text-[#FF2E93] border border-[#FF2E93]/30 font-bold">
-                  {t.highlight}
-                </span>
-                <div className="mt-4 flex items-center gap-3">
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white"
-                    style={{ background: "linear-gradient(135deg, #FF2E93, #0066FF)" }}
-                  >
-                    {t.avatar}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-white">{t.name}</p>
-                    <p className="text-xs text-white/50 font-medium">{t.role}</p>
+          {STORIES.map((t) => {
+            const words = t.text.split(" ");
+            return (
+              <motion.div
+                key={t.name}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-60px" }}
+                whileHover={{ y: -6, scale: 1.01 }}
+                className="rounded-[32px] p-7 text-white flex flex-col justify-between cursor-pointer group"
+                style={{
+                  background: "rgba(255, 255, 255, 0.04)",
+                  border: "1.5px solid rgba(255, 255, 255, 0.08)",
+                  backdropFilter: "blur(16px)"
+                }}
+              >
+                <motion.p variants={quoteContainer} className="text-sm leading-relaxed text-white/80 font-medium select-none flex flex-wrap">
+                  <span className="text-[#FF2E93] font-bold mr-1">“</span>
+                  {words.map((word, index) => (
+                    <motion.span key={index} variants={wordtext} className="inline-block mr-1">
+                      {word}
+                    </motion.span>
+                  ))}
+                  <span className="text-[#FF2E93] font-bold ml-1">”</span>
+                </motion.p>
+
+                <div className="mt-6">
+                  <span className="font-mono text-xs px-3 py-1 rounded-full bg-[#FF2E93]/15 text-[#FF2E93] border border-[#FF2E93]/30 font-bold">
+                    {t.highlight}
+                  </span>
+                  <div className="mt-4 flex items-center gap-3">
+                    <div
+                      className="flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white shadow-md group-hover:scale-105 transition-transform"
+                      style={{ background: "linear-gradient(135deg, #FF2E93, #0066FF)" }}
+                    >
+                      {t.avatar}
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white group-hover:text-[#FF2E93] transition-colors">{t.name}</p>
+                      <p className="text-xs text-white/50 font-medium">{t.role}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 }
 
-/* ── 9. Pricing Section (From PRD Section 9) ──────────────────────── */
+/* ── 9. Pricing Section (From PRD Section 9 & Reference Code) ─────── */
 
-const PLANS = [
+const BASE_PLANS = [
   {
     name: "Free",
-    price: "₦0",
+    monthlyPrice: 0,
     period: "/month",
     desc: "For creators getting started",
     posts: "3 scheduled posts / mo",
@@ -1222,7 +1259,7 @@ const PLANS = [
   },
   {
     name: "Pro",
-    price: "₦13,500",
+    monthlyPrice: 13500,
     period: "/month",
     desc: "For growing brands & businesses",
     posts: "100 scheduled posts / mo",
@@ -1240,7 +1277,7 @@ const PLANS = [
   },
   {
     name: "Advanced",
-    price: "₦30,000",
+    monthlyPrice: 30000,
     period: "/month",
     desc: "For scaling businesses & creators",
     posts: "500 scheduled posts / mo",
@@ -1258,7 +1295,7 @@ const PLANS = [
   },
   {
     name: "Teams / Agency",
-    price: "₦130,000",
+    monthlyPrice: 130000,
     period: "/month",
     desc: "For marketing agencies at scale",
     posts: "High Volume",
@@ -1278,6 +1315,14 @@ const PLANS = [
 ];
 
 export function Pricing() {
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
+
+  const getFormattedPrice = (monthlyPrice: number) => {
+    if (monthlyPrice === 0) return "₦0";
+    const finalPrice = billingPeriod === "yearly" ? Math.round(monthlyPrice * 0.8) : monthlyPrice;
+    return `₦${finalPrice.toLocaleString("en-NG")}`;
+  };
+
   return (
     <section id="pricing" className="relative px-5 py-28 sm:py-32 bg-[#07050d] text-white">
       <div className="mx-auto max-w-6xl">
@@ -1295,12 +1340,43 @@ export function Pricing() {
           sub="Pay with Paystack, Flutterwave, or any card. Every paid plan includes a 14-day free trial."
         />
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {PLANS.map((p) => (
+        {/* Billing Toggle Switch (From Reference Code) */}
+        <div className="flex justify-center items-center gap-2 mb-14">
+          <div className="bg-white/5 p-1.5 rounded-2xl border border-white/10 inline-flex items-center backdrop-blur-md">
+            <button
+              type="button"
+              onClick={() => setBillingPeriod("monthly")}
+              className={`px-6 py-2.5 text-xs font-bold rounded-xl transition-all capitalize cursor-pointer ${
+                billingPeriod === "monthly"
+                  ? "bg-gradient-to-r from-[#FF2E93] to-[#0066FF] text-white shadow-lg"
+                  : "text-white/60 hover:text-white"
+              }`}
+            >
+              Monthly Billing
+            </button>
+            <button
+              type="button"
+              onClick={() => setBillingPeriod("yearly")}
+              className={`px-6 py-2.5 text-xs font-bold rounded-xl transition-all capitalize flex items-center gap-2 cursor-pointer ${
+                billingPeriod === "yearly"
+                  ? "bg-gradient-to-r from-[#FF2E93] to-[#0066FF] text-white shadow-lg"
+                  : "text-white/60 hover:text-white"
+              }`}
+            >
+              <span>Yearly Billing</span>
+              <span className="bg-[#FF2E93] text-white text-[10px] px-2 py-0.5 rounded-full font-black uppercase">
+                20% OFF
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 items-start mb-16">
+          {BASE_PLANS.map((p) => (
             <motion.div
               key={p.name}
-              whileHover={{ y: -6 }}
-              className="relative flex flex-col justify-between rounded-[36px] p-7 text-white"
+              whileHover={{ y: -6, scale: 1.01 }}
+              className="relative flex flex-col justify-between rounded-[36px] p-7 text-white h-full"
               style={{
                 background: p.highlight
                   ? "linear-gradient(170deg, rgba(255,46,147,0.15) 0%, rgba(0,102,255,0.1) 100%)"
@@ -1313,7 +1389,7 @@ export function Pricing() {
             >
               {p.badge && (
                 <span
-                  className="font-mono text-[10px] uppercase font-extrabold tracking-widest px-3 py-1 rounded-full absolute -top-3 left-6 text-white"
+                  className="font-mono text-[10px] uppercase font-extrabold tracking-widest px-3 py-1 rounded-full absolute -top-3 left-6 text-white shadow-md"
                   style={{ background: "linear-gradient(135deg, #FF2E93, #0066FF)" }}
                 >
                   {p.badge}
@@ -1323,8 +1399,12 @@ export function Pricing() {
               <div>
                 <h3 className="font-display text-xl font-bold text-white">{p.name}</h3>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="font-display text-3xl font-black text-white">{p.price}</span>
-                  <span className="text-xs text-white/50 font-medium">{p.period}</span>
+                  <span className="font-display text-3xl font-black text-white">
+                    {getFormattedPrice(p.monthlyPrice)}
+                  </span>
+                  <span className="text-xs text-white/50 font-medium">
+                    {billingPeriod === "yearly" ? "/mo (billed annually)" : p.period}
+                  </span>
                 </div>
                 <p className="mt-1 text-xs text-white/60 font-medium">{p.desc}</p>
 
@@ -1357,6 +1437,29 @@ export function Pricing() {
             </motion.div>
           ))}
         </div>
+
+        {/* Add-on Alert Box Block (From Reference Code) */}
+        <motion.div
+          whileHover={{ scale: 1.01 }}
+          className="max-w-3xl mx-auto rounded-3xl p-6 text-white flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4"
+          style={{
+            background: "linear-gradient(135deg, rgba(255,46,147,0.12) 0%, rgba(0,102,255,0.12) 100%)",
+            border: "1.5px solid rgba(0,102,255,0.3)",
+            backdropFilter: "blur(16px)"
+          }}
+        >
+          <div>
+            <h4 className="font-display font-black text-lg text-white">Custom Enterprise & Dedicated AI Workspaces</h4>
+            <p className="text-white/70 text-xs mt-1 font-medium">
+              Need custom LLM fine-tuning, dedicated IP addresses, SLA guarantees, or custom team seats?
+            </p>
+          </div>
+          <Link href="mailto:support@koraspace.ai" className="shrink-0">
+            <button className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] text-white px-6 py-2.5 rounded-xl font-bold text-xs shadow-md hover:shadow-lg transition-all cursor-pointer">
+              Contact Enterprise Sales
+            </button>
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
@@ -1481,39 +1584,89 @@ const FOOTER_LINKS = {
 };
 
 export function SiteFooter() {
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+
+  const columnVariants: Variants = {
+    hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
+  const descriptionStream: Variants = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.04, delayChildren: 0.2 },
+    },
+  };
+
+  const wordVariants: Variants = {
+    hidden: { opacity: 0, y: 3, filter: "blur(2px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.2, ease: "easeOut" },
+    },
+  };
+
+  const descWords = "An AI-powered marketing operating system built for modern creators, startups, and agencies.".split(" ");
+
   return (
-    <footer className="border-t border-[#0066FF]/20 bg-[#05081c] py-16 px-6 text-white relative overflow-hidden">
+    <motion.footer
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-60px" }}
+      variants={containerVariants}
+      className="border-t border-[#0066FF]/20 bg-[#05081c] py-16 px-6 text-white relative overflow-hidden transform-gpu"
+    >
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Brand Column */}
-          <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-4">
+          <motion.div variants={columnVariants} className="lg:col-span-1 space-y-4">
+            <Link href="/" className="flex items-center gap-3 mb-2">
               <img src="/logo.png" alt="KoraSpace Logo" width={32} height={32} className="h-8 w-auto object-contain" />
               <span className="font-display text-xl font-bold tracking-tight text-white">
                 Kora<span className="text-[#0066FF]">Space</span>
               </span>
             </Link>
 
-            <p className="text-sm text-white/60 leading-relaxed mb-6 font-medium">
-              An AI-powered marketing operating system built for modern creators, startups, and agencies.
-            </p>
+            {/* Word-by-Word Stream Description */}
+            <motion.p variants={descriptionStream} className="text-sm text-white/60 leading-relaxed font-medium flex flex-wrap select-none">
+              {descWords.map((word, index) => (
+                <motion.span key={index} variants={wordVariants} className="inline-block mr-1">
+                  {word}
+                </motion.span>
+              ))}
+            </motion.p>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 pt-2">
               {[Globe, Send, Zap, MessageCircle].map((Icon, i) => (
-                <a
+                <motion.a
                   key={i}
                   href="#"
+                  whileHover={{ y: -3, scale: 1.05 }}
                   className="w-9 h-9 rounded-xl border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:border-[#FF2E93]/50 hover:bg-[#FF2E93]/10 transition-all"
                 >
                   <Icon className="w-4 h-4" />
-                </a>
+                </motion.a>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Links Columns */}
           {Object.entries(FOOTER_LINKS).map(([category, links]) => (
-            <div key={category}>
+            <motion.div key={category} variants={columnVariants}>
               <h4 className="text-sm font-extrabold uppercase font-mono tracking-wider text-[#0066FF] mb-4">
                 {category}
               </h4>
@@ -1529,12 +1682,35 @@ export function SiteFooter() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
+
+          {/* Contact Support Column (From Reference Code) */}
+          <motion.div variants={columnVariants} className="space-y-4">
+            <h4 className="text-sm font-extrabold uppercase font-mono tracking-wider text-[#FF2E93] mb-4">
+              Direct Contact
+            </h4>
+            <ul className="space-y-3.5 text-sm font-medium text-white/60">
+              <li className="flex items-start gap-3">
+                <Mail size={16} className="text-[#FF2E93] shrink-0 mt-0.5" />
+                <a href="mailto:support@koraspace.ai" className="hover:text-white transition-colors break-all">
+                  support@koraspace.ai
+                </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <Phone size={16} className="text-[#0066FF] shrink-0 mt-0.5" />
+                <span>+234 701 313 4821</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <MapPin size={16} className="text-[#FF2E93] shrink-0 mt-0.5" />
+                <span>Lagos, Nigeria</span>
+              </li>
+            </ul>
+          </motion.div>
         </div>
 
         {/* Bottom Credits Bar */}
-        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50 font-medium">
+        <motion.div variants={columnVariants} className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50 font-medium">
           <p>© {new Date().getFullYear()} KoraSpace by Techla. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-4">
             <span>🇳🇬 Built in Nigeria</span>
@@ -1543,9 +1719,9 @@ export function SiteFooter() {
             <span>•</span>
             <span>Paystack & Flutterwave Billing</span>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </footer>
+    </motion.footer>
   );
 }
 
