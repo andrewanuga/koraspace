@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FRAME_COUNT, framePath, WARM_FRAMES } from "@/lib/frames";
 
 /**
  * Full-screen #121212 preloader. The "Koraspace" wordmark has a bright lead
@@ -22,7 +21,14 @@ export function Preloader() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     async function warm() {
-      const total = Math.min(WARM_FRAMES, FRAME_COUNT);
+      const WARM_IMAGES = [
+        "/landing-img/hero1.jpg",
+        "/landing-img/hero2.jpg",
+        "/landing-img/hero3.jpg",
+        "/landing-img/hero4.jpg",
+        "/landing-img/hero5.avif",
+      ];
+      const total = WARM_IMAGES.length;
       let loaded = 0;
 
       // Fonts first (so the wordmark is in General Sans immediately)
@@ -36,9 +42,9 @@ export function Preloader() {
       };
 
       await Promise.all(
-        Array.from({ length: total }, (_, k) => {
+        WARM_IMAGES.map((src) => {
           const img = new Image();
-          img.src = framePath(k + 1);
+          img.src = src;
           const settle = () =>
             (img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(bump);
           return img.complete ? settle() : new Promise<void>((res) => {

@@ -62,7 +62,7 @@ export async function GET(
     } else {
       body.set("client_secret", clientSecret);
     }
-    if (platform === "reddit") headers["User-Agent"] = "socially-ai/1.0";
+    if (platform === "reddit") headers["User-Agent"] = "koraspace/1.0";
 
     const tokenRes = await fetch(p.oauth.tokenUrl, { method: "POST", headers, body });
     const token = await tokenRes.json();
@@ -119,7 +119,7 @@ async function fetchProfile(platform: PlatformId, accessToken: string): Promise<
       return { id: c?.id, handle: c?.snippet?.customUrl, name: c?.snippet?.title, avatar: c?.snippet?.thumbnails?.default?.url, type: "channel" };
     }
     if (platform === "reddit") {
-      const r = await fetch("https://oauth.reddit.com/api/v1/me", { headers: { ...auth, "User-Agent": "socially-ai/1.0" } });
+      const r = await fetch("https://oauth.reddit.com/api/v1/me", { headers: { ...auth, "User-Agent": "koraspace/1.0" } });
       const d = await r.json();
       return { id: d.id, handle: d.name ? `u/${d.name}` : undefined, name: d.name };
     }

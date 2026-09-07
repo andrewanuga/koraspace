@@ -38,12 +38,12 @@ export default function AdminOverview() {
         ]);
 
         const planMap: Record<string, number> = {};
-        (profiles ?? []).forEach((p) => { planMap[p.plan ?? "free"] = (planMap[p.plan ?? "free"] ?? 0) + 1; });
-        const revenue = (pays ?? []).filter((p) => p.status === "success").reduce((a, p) => a + Number(p.amount), 0);
+        (profiles ?? []).forEach((p: any) => { planMap[p.plan ?? "free"] = (planMap[p.plan ?? "free"] ?? 0) + 1; });
+        const revenue = (pays ?? []).filter((p: any) => p.status === "success").reduce((a: number, p: any) => a + Number(p.amount), 0);
 
         // signups per day, last 14 days
         const buckets = new Array(14).fill(0);
-        (profiles ?? []).forEach((p) => {
+        (profiles ?? []).forEach((p: any) => {
           const d = Math.floor((Date.now() - new Date(p.created_at).getTime()) / 864e5);
           if (d >= 0 && d < 14) buckets[13 - d]++;
         });

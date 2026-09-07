@@ -48,7 +48,7 @@ export default function IntegrationsPage() {
         supabase.from("integrations").select("provider, account_label, status").eq("status", "connected"),
       ]);
       if (accts) setAccounts(accts as SocialAccount[]);
-      if (ints) setTools(Object.fromEntries(ints.map((i) => [i.provider, i.account_label ?? "Connected"])));
+      if (ints) setTools(Object.fromEntries(ints.map((i: any) => [i.provider, i.account_label ?? "Connected"])));
     } catch { /* offline */ }
   };
   useEffect(() => { load(); }, []);

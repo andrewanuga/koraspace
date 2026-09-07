@@ -1,6 +1,6 @@
 import { Preloader } from "@/components/landing/Preloader";
 import { FloatingNav } from "@/components/landing/FloatingNav";
-import { CinematicHero } from "@/components/landing/CinematicHero";
+import { Hero } from "@/components/landing/Hero";
 import {
   Features,
   AgentTools,
@@ -19,7 +19,7 @@ export default function LandingPage() {
       <Preloader />
       <FloatingNav />
       <main>
-        <CinematicHero />
+        <Hero />
         <Features />
         <AgentTools />
         <Integrations />

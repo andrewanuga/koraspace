@@ -67,7 +67,7 @@ export default function SupportPage() {
       }
     }
     loadChat();
-  }, [supabase]);
+  }, []);
 
   // Auto scroll
   useEffect(() => {

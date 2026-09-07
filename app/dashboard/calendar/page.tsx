@@ -426,7 +426,7 @@ export default function CalendarPage() {
 
     let mergedEvents: any[] = [];
     if (aiTasksData) {
-      mergedEvents = [...mergedEvents, ...aiTasksData.map(t => ({
+      mergedEvents = [...mergedEvents, ...aiTasksData.map((t: any) => ({
         id: t.id,
         title: t.title,
         platform: t.platform,
@@ -436,7 +436,7 @@ export default function CalendarPage() {
     }
     
     if (scheduledPostsData) {
-      mergedEvents = [...mergedEvents, ...scheduledPostsData.map(p => ({
+      mergedEvents = [...mergedEvents, ...scheduledPostsData.map((p: any) => ({
         id: p.id,
         title: p.content.substring(0, 35) + (p.content.length > 35 ? '...' : ''),
         platform: p.platform,

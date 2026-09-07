@@ -102,7 +102,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     }
 
     loadWorkspaces();
-  }, [supabase]);
+  }, []);
 
   const setActiveWorkspace = useCallback((id: string) => {
     setActiveWorkspaceId(id);
@@ -123,7 +123,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     
     // Refresh to reload server components based on persona
     router.refresh();
-  }, [supabase, router]);
+  }, [router]);
 
   const activeWorkspace = useMemo(
     () => workspaces.find((w) => w.id === activeWorkspaceId) || null,
