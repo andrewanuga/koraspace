@@ -1,182 +1,248 @@
 "use client";
 
-import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Zap, Play, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { FloatingOrbs } from "./AnimatedBackground";
+import { Space_Grotesk, Inter } from "next/font/google";
+import { motion } from "framer-motion";
 
-const PLATFORMS = [
-  { name: "X (Twitter)", color: "#1DA1F2", letter: "X"  },
-  { name: "LinkedIn",    color: "#0077B5", letter: "in" },
-  { name: "Instagram",   color: "#E1306C", letter: "IG" },
-  { name: "TikTok",      color: "#888888", letter: "TT" },
+const display = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-display",
+});
+
+const body = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-body",
+});
+
+const loopStages = [
+  { n: "01", label: "Understand" },
+  { n: "02", label: "Create" },
+  { n: "03", label: "Publish" },
+  { n: "04", label: "Optimize" },
 ];
 
-const STATS = [
-  { value: "10x",  label: "Faster content creation"     },
-  { value: "3.4x", label: "Avg engagement boost"        },
-  { value: "₦0",   label: "Per-token cost (self-hosted)" },
-];
+function ArrowIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <path
+        d="M2.5 9.5L9.5 2.5M9.5 2.5H4M9.5 2.5V8"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    },
+  },
+};
+
+const imageVariants = {
+  hidden: { opacity: 0, scale: 0.95, y: 30 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+      delay: 0.25,
+    },
+  },
+};
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-16 px-4 overflow-hidden">
-      <FloatingOrbs />
-
-      {/* Spotlight beam */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-80 opacity-25"
-        style={{ background: "linear-gradient(to bottom, transparent, #ef4444, transparent)" }}
-      />
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] opacity-10 blur-[80px]"
-        style={{ background: "radial-gradient(ellipse at top, #dc2626 0%, transparent 70%)" }}
-      />
-
-      <div className="relative z-10 max-w-5xl mx-auto text-center">
-        {/* Announcement badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8 flex justify-center"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-500/30 bg-red-500/10 text-red-400 text-sm">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Powered by Gemma AI — Zero per-token API fees</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-          </div>
-        </motion.div>
-
-        {/* Main heading */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-6"
-        >
-          <span className="text-foreground">Stop Managing</span>
-          <br />
-          <span className="gradient-text">Social Media.</span>
-          <br />
-          <span className="text-foreground">Start Delegating It.</span>
-        </motion.h1>
-
-        {/* Subheading */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
-        >
-          Koraspace deploys autonomous AI agents that create content, engage
-          your followers, predict viral trends, and convert likes into real
-          revenue — 24/7, at a price built for the African market.
-        </motion.p>
-
-        {/* CTA buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
-        >
-          <Link href="/signup">
-            <Button variant="gradient" size="xl" className="group w-full sm:w-auto">
-              Start free — no credit card
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
-          <button className="flex items-center gap-2 px-6 py-3 text-muted-foreground hover:text-foreground transition-colors group">
-            <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center group-hover:border-red-500 group-hover:bg-red-500/10 transition-all">
-              <Play className="w-4 h-4 ml-0.5 fill-current" />
-            </div>
-            <span className="text-sm font-medium">Watch demo (2 min)</span>
-          </button>
-        </motion.div>
-
-        {/* Social proof */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16 text-sm text-muted-foreground"
-        >
-          <div className="flex items-center gap-1">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400 drop-shadow-[0_0_4px_rgba(234,179,8,0.5)]" />
-            ))}
-            <span className="ml-2">4.9/5 from 200+ creators</span>
-          </div>
-          <div className="hidden sm:block w-px h-4 bg-border" />
-          <div>
-            <span className="text-foreground font-medium">2,000+</span> accounts managed
-          </div>
-          <div className="hidden sm:block w-px h-4 bg-border" />
-          <div>
-            Accepts{" "}
-            <span className="text-foreground font-medium">Paystack &amp; Flutterwave</span>
-          </div>
-        </motion.div>
-
-        {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.5 }}
-          className="grid grid-cols-3 gap-8 max-w-xl mx-auto mb-16"
-        >
-          {STATS.map((stat, i) => (
-            <div key={i} className="text-center">
-              <div className={`text-3xl font-bold mb-1 ${i === 2 ? "text-emerald-400" : "gradient-text"}`}>{stat.value}</div>
-              <div className="text-xs text-muted-foreground">{stat.label}</div>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Platform pills */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.6 }}
-          className="flex flex-wrap items-center justify-center gap-3"
-        >
-          <span className="text-xs text-muted-foreground mr-2">Connects to:</span>
-          {PLATFORMS.map((p) => (
-            <div
-              key={p.name}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <span
-                className="text-xs font-bold"
-                style={{ color: p.color !== "#888888" ? p.color : undefined }}
-              >
-                {p.letter}
-              </span>
-              {p.name}
-            </div>
-          ))}
-          <Badge variant="red" className="text-xs">+ more coming</Badge>
-        </motion.div>
-      </div>
-
-      {/* Scroll indicator */}
+    <section
+      className={`${display.variable} ${body.variable} min-h-screen bg-[#07050d] px-3 py-3 font-[family-name:var(--font-body)] sm:px-6 sm:py-6 lg:px-10 lg:py-8`}
+    >
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="relative mx-auto max-w-[1400px] overflow-hidden rounded-[1.75rem] sm:rounded-[2.5rem]"
       >
-        <div className="w-6 h-10 rounded-full border border-border/50 flex items-start justify-center pt-2">
+        {/* gradient layers */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(130% 110% at 14% 8%, #FF2E7A 0%, #C13FE8 26%, #5A3CFF 50%, #14102b 76%, #07050d 100%)",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(48% 55% at 96% 6%, rgba(58,91,255,0.45) 0%, transparent 65%)",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(55% 55% at 92% 100%, rgba(6,4,14,0.88) 0%, transparent 70%)",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0 w-2/3"
+          style={{
+            background: "linear-gradient(90deg, rgba(0,0,0,0.28) 0%, transparent 100%)",
+          }}
+        />
+
+        <div className="relative flex flex-col">
+          {/* nav */}
+          <motion.nav
+            variants={itemVariants}
+            className="flex items-center justify-between px-5 py-5 sm:px-10 sm:py-7"
+          >
+            <Link
+              href="/"
+              className="flex items-center gap-3 font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight text-white transition-opacity hover:opacity-90"
+            >
+              <Image
+                src="/logo.png"
+                alt="KoraSpace Logo"
+                width={32}
+                height={32}
+                className="h-8 w-auto object-contain"
+                priority
+              />
+              <span>KoraSpace</span>
+            </Link>
+
+            <div className="hidden items-center gap-8 text-sm text-white/70 md:flex">
+              <a
+                href="#features"
+                className="rounded-sm transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              >
+                Platform
+              </a>
+              <a
+                href="#how"
+                className="rounded-sm transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              >
+                Growth loop
+              </a>
+              <a
+                href="#pricing"
+                className="rounded-sm transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              >
+                Pricing
+              </a>
+            </div>
+
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-2 rounded-full bg-white py-1.5 pl-4 pr-1.5 text-sm font-medium text-[#0b0714] transition-transform hover:scale-[1.03] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              <span>Get started</span>
+              <span
+                className="flex h-6 w-6 items-center justify-center rounded-full text-white"
+                style={{ background: "linear-gradient(135deg, #FF2E7A, #2A4BFF)" }}
+              >
+                <ArrowIcon />
+              </span>
+            </Link>
+          </motion.nav>
+
+          {/* content */}
+          <div className="grid gap-8 px-5 pb-8 pt-2 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-4 lg:pb-0 lg:pt-0">
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col justify-center gap-5 py-4 lg:py-16"
+            >
+              <p className="text-sm text-white/70">Hey, I&apos;m not another scheduler.</p>
+              <h1 className="font-[family-name:var(--font-display)] text-[2.5rem] font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[4rem]">
+                Marketing that
+                <br />
+                markets itself.
+              </h1>
+            </motion.div>
+
+            <div className="relative flex flex-col lg:min-h-[440px]">
+              <motion.div
+                variants={itemVariants}
+                className="max-w-xs self-start pt-1 sm:self-end sm:text-right lg:pt-14"
+              >
+                <p className="font-[family-name:var(--font-display)] text-lg font-semibold text-white">
+                  Growth should feel automatic.
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-white/60">
+                  KoraSpace learns your brand, creates and publishes content, and
+                  optimizes what performs — so your strategy keeps improving on
+                  its own.
+                </p>
+              </motion.div>
+
+              <motion.div
+                variants={imageVariants}
+                className="relative mx-auto -mb-8 mt-6 h-[280px] w-[220px] sm:h-[360px] sm:w-[280px] lg:absolute lg:bottom-[-2rem] lg:right-[-1rem] lg:mx-0 lg:mt-0 lg:h-[440px] lg:w-[340px]"
+              >
+                <Image
+                  src="/hero-img.png"
+                  alt="A KoraSpace creator, arms crossed, looking at the camera"
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 340px, 280px"
+                  className="object-contain object-bottom drop-shadow-[0_30px_40px_rgba(0,0,0,0.45)]"
+                />
+              </motion.div>
+            </div>
+          </div>
+
+          {/* growth loop stage strip */}
           <motion.div
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-1 h-2.5 rounded-full bg-muted-foreground"
-          />
+            variants={itemVariants}
+            className="relative mt-2 grid grid-cols-2 gap-x-4 gap-y-6 border-t border-white/15 px-5 py-6 sm:grid-cols-4 sm:px-10 sm:py-8"
+          >
+            {loopStages.map((stage) => (
+              <div key={stage.n}>
+                <span className="text-xs font-medium text-[#ff9fc9]">
+                  #{stage.n}
+                </span>
+                <p className="mt-1 text-sm text-white/80">{stage.label}</p>
+              </div>
+            ))}
+          </motion.div>
         </div>
       </motion.div>
+
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.6 }}
+        className="mx-auto mt-6 max-w-[1400px] px-5 text-sm text-white/40 sm:px-10"
+      >
+        Built to grow across Instagram, TikTok, X, LinkedIn, and Threads.
+      </motion.p>
     </section>
   );
 }
+
+export default Hero;
