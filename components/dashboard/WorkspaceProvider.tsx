@@ -220,12 +220,14 @@ export function WorkspaceProvider({
 
         /* -------------------------- Load profile -------------------------- */
 
-        const { data: profile, error: profileError } =
+        const { data: rawProfile, error: profileError } =
           await supabase
             .from("profiles")
             .select("id, full_name, persona, plan")
             .eq("id", user.id)
-            .single<ProfileData>();
+            .single();
+
+        const profile = rawProfile as ProfileData | null;
 
         if (profileError) {
           console.error(

@@ -30,20 +30,23 @@ export async function POST(request: NextRequest) {
     let analysis: ContentAnalysis;
 
     try {
-      const aiResponse = await callAI({
-        agent: "creator",
-        temperature: 0.4,
-        jsonMode: true,
-      }, [
+      const aiResponse = await callAI(
+        [
+          {
+            role: "system",
+            content: "You are the KoraSpace Content Intelligence engine. Respond ONLY with valid raw JSON.",
+          },
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
         {
-          role: "system",
-          content: "You are the KoraSpace Content Intelligence engine. Respond ONLY with valid raw JSON.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ]);
+          agent: "generate",
+          temperature: 0.4,
+          jsonMode: true,
+        }
+      );
 
       const cleaned = aiResponse.content.trim().replace(/^```json\s*/i, "").replace(/```$/i, "");
       analysis = JSON.parse(cleaned);

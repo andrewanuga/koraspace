@@ -111,11 +111,6 @@ export async function POST(request: NextRequest) {
         let generatedContent = "";
         try {
           const aiRes = await callAI(
-            {
-              agent: "creator",
-              temperature: 0.7,
-              maxTokens: 1800,
-            },
             [
               {
                 role: "system",
@@ -126,7 +121,12 @@ export async function POST(request: NextRequest) {
                 role: "user",
                 content: prompt,
               },
-            ]
+            ],
+            {
+              agent: "generate",
+              temperature: 0.7,
+              maxTokens: 1800,
+            }
           );
           generatedContent = aiRes.content.trim();
         } catch (e) {

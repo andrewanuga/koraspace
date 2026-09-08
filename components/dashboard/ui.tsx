@@ -13,7 +13,13 @@ type AccentTone =
   | "success"
   | "warning"
   | "danger"
-  | "neutral";
+  | "neutral"
+  | "green"
+  | "red"
+  | "gold"
+  | "indigo"
+  | "violet"
+  | "muted";
 
 const TONE_MAP: Record<
   AccentTone,
@@ -54,6 +60,42 @@ const TONE_MAP: Record<
   },
 
   neutral: {
+    color: "var(--fg-3)",
+    bg: "var(--panel-fill-2)",
+    border: "var(--stroke)",
+  },
+
+  green: {
+    color: "var(--success)",
+    bg: "rgba(52, 211, 153, 0.10)",
+    border: "rgba(52, 211, 153, 0.22)",
+  },
+
+  red: {
+    color: "var(--danger)",
+    bg: "rgba(248, 113, 113, 0.10)",
+    border: "rgba(248, 113, 113, 0.22)",
+  },
+
+  gold: {
+    color: "var(--warning)",
+    bg: "rgba(251, 191, 36, 0.10)",
+    border: "rgba(251, 191, 36, 0.22)",
+  },
+
+  indigo: {
+    color: "var(--kora-blue)",
+    bg: "var(--kora-blue-soft)",
+    border: "rgba(0, 153, 255, 0.28)",
+  },
+
+  violet: {
+    color: "var(--kora-pink)",
+    bg: "var(--kora-pink-soft)",
+    border: "rgba(255, 0, 122, 0.28)",
+  },
+
+  muted: {
     color: "var(--fg-3)",
     bg: "var(--panel-fill-2)",
     border: "var(--stroke)",
