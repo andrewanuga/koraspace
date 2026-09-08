@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-
 import {
   Eye,
   Heart,
@@ -10,7 +9,6 @@ import {
   Share2,
   Users,
   TrendingUp,
-  TrendingDown,
   Sparkles,
   ChevronRight,
   CalendarDays,
@@ -24,24 +22,12 @@ import {
   Trophy,
   Megaphone,
   DollarSign,
+  Activity,
+  ArrowUpRight,
 } from "lucide-react";
-
-import {
-  GlassCard,
-  PageHeader,
-  Pill,
-} from "@/components/dashboard/ui";
-
-import {
-  fmtNum,
-  fmtNaira,
-  platformLabel,
-} from "@/lib/dashboard/helpers";
-
-import type {
-  SocialPost,
-  Campaign,
-} from "@/lib/social/types";
+import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
+import { fmtNum, fmtNaira, platformLabel } from "@/lib/dashboard/helpers";
+import type { SocialPost, Campaign } from "@/lib/social/types";
 
 /* -------------------------------------------------------------------------- */
 /*                                  HELPERS                                   */
@@ -59,45 +45,26 @@ const safeNumber = (value: unknown) => {
 };
 
 const platformColors: Record<string, string> = {
-  instagram: "#ec4899",
+  instagram: "#ec168c",
   tiktok: "#a855f7",
   youtube: "#ef4444",
-  twitter: "#60a5fa",
-  x: "#94a3b8",
+  twitter: "#38bdf8",
+  x: "#e2e8f0",
   linkedin: "#3b82f6",
   facebook: "#6366f1",
 };
 
 function getPlatformColor(platform: string) {
-  return platformColors[platform.toLowerCase()] ?? "#6366f1";
+  return platformColors[platform.toLowerCase()] ?? "#3b82f6";
 }
 
 function getPlatformIcon(platform: string) {
   const name = platform.toLowerCase();
-
-  if (name === "instagram") {
-    return Camera;
-  }
-
-  if (name === "youtube") {
-    return Video;
-  }
-
-  if (name === "linkedin") {
-    return Briefcase;
-  }
-
-  if (
-    name === "twitter" ||
-    name === "x"
-  ) {
-    return AtSign;
-  }
-
-  if (name === "tiktok") {
-    return Music2;
-  }
-
+  if (name === "instagram") return Camera;
+  if (name === "youtube") return Video;
+  if (name === "linkedin") return Briefcase;
+  if (name === "twitter" || name === "x") return AtSign;
+  if (name === "tiktok") return Music2;
   return Play;
 }
 
@@ -105,24 +72,15 @@ function getPlatformIcon(platform: string) {
 /*                                AREA CHART                                  */
 /* -------------------------------------------------------------------------- */
 
-function GrowthChart({
-  data,
-}: {
-  data: number[];
-}) {
+function GrowthChart({ data }: { data: number[] }) {
   const chartWidth = 720;
-  const chartHeight = 260;
-
+  const chartHeight = 240;
   const paddingTop = 20;
   const paddingBottom = 35;
   const paddingLeft = 20;
   const paddingRight = 12;
 
-  const safeData =
-    data.length >= 2
-      ? data
-      : [0, ...data, 0];
-
+  const safeData = data.length >= 2 ? data : [0, ...data, 0];
   const max = Math.max(...safeData, 1);
   const min = Math.min(...safeData, 0);
 
@@ -137,9 +95,7 @@ function GrowthChart({
       (chartHeight - paddingTop - paddingBottom);
 
   const linePath = safeData
-    .map((value, index) => {
-      return `${index === 0 ? "M" : "L"} ${x(index)} ${y(value)}`;
-    })
+    .map((value, index) => `${index === 0 ? "M" : "L"} ${x(index)} ${y(value)}`)
     .join(" ");
 
   const areaPath = `
@@ -149,55 +105,26 @@ function GrowthChart({
     Z
   `;
 
-  const labels = [
-    "Apr 14",
-    "Apr 15",
-    "Apr 16",
-    "Apr 17",
-    "Apr 18",
-    "Apr 19",
-    "Apr 20",
-  ];
+  const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   return (
-    <div className="relative mt-5 h-[260px] w-full">
+    <div className="relative mt-4 h-[240px] w-full">
       <svg
         viewBox={`0 0 ${chartWidth} ${chartHeight}`}
         className="h-full w-full overflow-visible"
         preserveAspectRatio="none"
       >
         <defs>
-          <linearGradient
-            id="growthGradient"
-            x1="0"
-            y1="0"
-            x2="0"
-            y2="1"
-          >
-            <stop
-              offset="0%"
-              stopColor="#ec4899"
-              stopOpacity="0.45"
-            />
-
-            <stop
-              offset="100%"
-              stopColor="#ec4899"
-              stopOpacity="0"
-            />
+          <linearGradient id="growthGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#ec168c" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#ec168c" stopOpacity="0" />
           </linearGradient>
         </defs>
 
-        {/* horizontal grid */}
-
+        {/* Horizontal grid lines */}
         {[0, 0.25, 0.5, 0.75, 1].map((step) => {
           const gridY =
-            paddingTop +
-            step *
-              (chartHeight -
-                paddingTop -
-                paddingBottom);
-
+            paddingTop + step * (chartHeight - paddingTop - paddingBottom);
           return (
             <line
               key={step}
@@ -205,52 +132,46 @@ function GrowthChart({
               x2={chartWidth - paddingRight}
               y1={gridY}
               y2={gridY}
-              stroke="rgba(148,163,184,0.08)"
+              stroke="rgba(255,255,255,0.06)"
               strokeWidth="1"
+              strokeDasharray="4 4"
             />
           );
         })}
 
-        {/* area */}
+        {/* Area */}
+        <path d={areaPath} fill="url(#growthGradient)" />
 
-        <path
-          d={areaPath}
-          fill="url(#growthGradient)"
-        />
-
-        {/* line */}
-
+        {/* Line */}
         <path
           d={linePath}
           fill="none"
-          stroke="#ec4899"
-          strokeWidth="3"
+          stroke="#ec168c"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
 
-        {/* points */}
-
+        {/* Data points */}
         {safeData.map((value, index) => (
           <circle
             key={index}
             cx={x(index)}
             cy={y(value)}
             r="4"
-            fill="#f472b6"
-            stroke="#ec4899"
+            fill="#ec168c"
+            stroke="#181818"
             strokeWidth="2"
           />
         ))}
       </svg>
 
-      {/* labels */}
-
-      <div className="absolute bottom-0 left-0 right-0 flex justify-between px-2">
+      {/* Axis labels */}
+      <div className="absolute bottom-0 left-0 right-0 flex justify-between px-3">
         {labels.slice(0, safeData.length).map((label) => (
           <span
             key={label}
-            className="font-data text-[10px] text-[var(--fg-4)]"
+            className="font-data text-[11px] font-medium text-[var(--fg-4)]"
           >
             {label}
           </span>
@@ -261,22 +182,20 @@ function GrowthChart({
 }
 
 /* -------------------------------------------------------------------------- */
-/*                              PLATFORM ICON                                 */
+/*                              PLATFORM BADGE                                */
 /* -------------------------------------------------------------------------- */
 
-function PlatformBadge({
-  platform,
-}: {
-  platform: string;
-}) {
+function PlatformBadge({ platform }: { platform: string }) {
   const Icon = getPlatformIcon(platform);
+  const color = getPlatformColor(platform);
 
   return (
     <div
-      className="flex h-8 w-8 items-center justify-center rounded-lg"
+      className="flex h-8 w-8 items-center justify-center rounded-lg transition-transform group-hover:scale-105"
       style={{
-        backgroundColor: `${getPlatformColor(platform)}20`,
-        color: getPlatformColor(platform),
+        backgroundColor: `${color}18`,
+        color: color,
+        border: `1px solid ${color}30`,
       }}
     >
       <Icon className="h-4 w-4" />
@@ -293,83 +212,81 @@ function AnalyticsStatCard({
   value,
   growth,
   icon: Icon,
-  tone = "indigo",
+  tone = "pink",
 }: {
   label: string;
   value: string;
   growth?: string;
   icon: React.ElementType;
-  tone?: "indigo" | "pink" | "purple" | "violet";
+  tone?: "pink" | "blue" | "green" | "purple" | "indigo" | "violet";
 }) {
-  const colors = {
-    indigo: {
-      bg: "rgba(99,102,241,0.12)",
-      border: "rgba(99,102,241,0.28)",
-      icon: "#818cf8",
-    },
-
+  const toneMap: Record<
+    string,
+    { bg: string; color: string; border: string }
+  > = {
     pink: {
-      bg: "rgba(236,72,153,0.12)",
-      border: "rgba(236,72,153,0.28)",
-      icon: "#f472b6",
+      bg: "var(--kora-pink-soft)",
+      color: "var(--kora-pink)",
+      border: "rgba(236, 22, 140, 0.2)",
     },
-
-    purple: {
-      bg: "rgba(168,85,247,0.12)",
-      border: "rgba(168,85,247,0.28)",
-      icon: "#c084fc",
+    blue: {
+      bg: "var(--kora-blue-soft)",
+      color: "var(--kora-blue)",
+      border: "rgba(59, 130, 246, 0.2)",
     },
-
+    green: {
+      bg: "var(--success-soft)",
+      color: "var(--success)",
+      border: "rgba(34, 197, 94, 0.2)",
+    },
+    indigo: {
+      bg: "var(--kora-blue-soft)",
+      color: "var(--kora-blue)",
+      border: "rgba(59, 130, 246, 0.2)",
+    },
     violet: {
-      bg: "rgba(139,92,246,0.12)",
-      border: "rgba(139,92,246,0.28)",
-      icon: "#a78bfa",
+      bg: "rgba(168, 85, 247, 0.12)",
+      color: "#c084fc",
+      border: "rgba(168, 85, 247, 0.2)",
+    },
+    purple: {
+      bg: "rgba(168, 85, 247, 0.12)",
+      color: "#c084fc",
+      border: "rgba(168, 85, 247, 0.2)",
     },
   };
 
-  const color = colors[tone];
+  const currentTone = toneMap[tone] || toneMap.pink;
 
   return (
-    <div
-      className="rounded-2xl border p-4 transition duration-200 hover:-translate-y-0.5"
-      style={{
-        background:
-          "linear-gradient(145deg, rgba(15,23,42,0.92), rgba(10,16,30,0.9))",
-        borderColor: color.border,
-      }}
-    >
+    <div className="group relative overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--stroke-strong)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.3)]">
       <div className="flex items-center justify-between">
         <div
-          className="flex h-9 w-9 items-center justify-center rounded-xl"
+          className="flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105"
           style={{
-            backgroundColor: color.bg,
+            backgroundColor: currentTone.bg,
+            color: currentTone.color,
+            border: `1px solid ${currentTone.border}`,
           }}
         >
-          <Icon
-            className="h-4 w-4"
-            style={{
-              color: color.icon,
-            }}
-          />
+          <Icon className="h-5 w-5" />
         </div>
-      </div>
-
-      <p className="mt-4 text-[11px] font-medium text-[var(--fg-4)]">
-        {label}
-      </p>
-
-      <div className="mt-1 flex items-end justify-between gap-2">
-        <p className="font-display text-2xl font-semibold tracking-tight text-[var(--fg)]">
-          {value}
-        </p>
 
         {growth && (
-          <div className="mb-1 flex items-center gap-1 text-[10px] font-semibold text-emerald-400">
+          <div className="flex items-center gap-1 rounded-full border border-[var(--success-soft)] bg-[var(--success-soft)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--success)]">
             <TrendingUp className="h-3 w-3" />
             {growth}
           </div>
         )}
       </div>
+
+      <p className="mt-4 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--fg-4)]">
+        {label}
+      </p>
+
+      <p className="mt-1 font-display text-2xl font-bold tracking-tight text-[var(--fg)]">
+        {value}
+      </p>
     </div>
   );
 }
@@ -385,44 +302,33 @@ function AudienceDonut({
   female: number;
   male: number;
 }) {
-  const radius = 48;
+  const radius = 46;
   const circumference = 2 * Math.PI * radius;
-
-  const femaleDash =
-    (female / 100) * circumference;
-
-  const maleDash =
-    (male / 100) * circumference;
+  const femaleDash = (female / 100) * circumference;
+  const maleDash = (male / 100) * circumference;
 
   return (
-    <div className="flex items-center gap-5">
-      <div className="relative h-[120px] w-[120px]">
-        <svg
-          viewBox="0 0 120 120"
-          className="h-full w-full -rotate-90"
-        >
+    <div className="flex items-center gap-6">
+      <div className="relative h-[120px] w-[120px] flex-shrink-0">
+        <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
           <circle
             cx="60"
             cy="60"
             r={radius}
             fill="none"
-            stroke="rgba(148,163,184,0.12)"
+            stroke="rgba(255, 255, 255, 0.06)"
             strokeWidth="10"
           />
-
           <circle
             cx="60"
             cy="60"
             r={radius}
             fill="none"
-            stroke="#ec4899"
+            stroke="#ec168c"
             strokeWidth="10"
-            strokeDasharray={`${femaleDash} ${
-              circumference - femaleDash
-            }`}
+            strokeDasharray={`${femaleDash} ${circumference - femaleDash}`}
             strokeLinecap="round"
           />
-
           <circle
             cx="60"
             cy="60"
@@ -430,51 +336,45 @@ function AudienceDonut({
             fill="none"
             stroke="#3b82f6"
             strokeWidth="10"
-            strokeDasharray={`${maleDash} ${
-              circumference - maleDash
-            }`}
+            strokeDasharray={`${maleDash} ${circumference - maleDash}`}
             strokeDashoffset={-femaleDash}
+            strokeLinecap="round"
           />
         </svg>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-display text-lg font-semibold text-[var(--fg)]">
+          <span className="font-display text-lg font-bold text-[var(--fg)]">
             {female}%
           </span>
-
-          <span className="text-[10px] text-[var(--fg-4)]">
+          <span className="text-[10px] uppercase tracking-wider text-[var(--fg-4)]">
             Female
           </span>
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div>
+      <div className="flex-1 space-y-3">
+        <div className="flex items-center justify-between rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 py-2">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-pink-500" />
-
-            <span className="text-[11px] text-[var(--fg-4)]">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#ec168c]" />
+            <span className="text-[12px] font-medium text-[var(--fg-2)]">
               Female
             </span>
           </div>
-
-          <p className="mt-1 text-sm font-semibold text-[var(--fg)]">
+          <span className="font-display text-sm font-bold text-[var(--fg)]">
             {female}%
-          </p>
+          </span>
         </div>
 
-        <div>
+        <div className="flex items-center justify-between rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 py-2">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-blue-500" />
-
-            <span className="text-[11px] text-[var(--fg-4)]">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#3b82f6]" />
+            <span className="text-[12px] font-medium text-[var(--fg-2)]">
               Male
             </span>
           </div>
-
-          <p className="mt-1 text-sm font-semibold text-[var(--fg)]">
+          <span className="font-display text-sm font-bold text-[var(--fg)]">
             {male}%
-          </p>
+          </span>
         </div>
       </div>
     </div>
@@ -486,24 +386,8 @@ function AudienceDonut({
 /* -------------------------------------------------------------------------- */
 
 function BestTimeHeatmap() {
-  const days = [
-    "Mon",
-    "Tue",
-    "Wed",
-    "Thu",
-    "Fri",
-    "Sat",
-    "Sun",
-  ];
-
-  const hours = [
-    "12am",
-    "4am",
-    "8am",
-    "12pm",
-    "4pm",
-    "8pm",
-  ];
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const hours = ["12a", "4a", "8a", "12p", "4p", "8p"];
 
   const heatmap = [
     [1, 1, 2, 3, 3, 2, 1, 1],
@@ -515,79 +399,61 @@ function BestTimeHeatmap() {
     [1, 1, 2, 3, 3, 2, 1, 1],
   ];
 
-  const getOpacity = (value: number) =>
-    0.08 + value * 0.09;
+  const getOpacity = (value: number) => 0.08 + value * 0.09;
 
   return (
     <div>
-      <div className="mt-4 grid grid-cols-[28px_repeat(8,1fr)] gap-1">
+      <div className="mt-4 grid grid-cols-[30px_repeat(8,1fr)] gap-1.5">
         <div />
-
         {Array.from({ length: 8 }).map((_, index) => (
           <div key={index} />
         ))}
 
         {days.map((day, dayIndex) => (
-          <div
-            key={day}
-            className="contents"
-          >
-            <div className="flex items-center text-[9px] text-[var(--fg-4)]">
+          <div key={day} className="contents">
+            <div className="flex items-center text-[10px] font-medium text-[var(--fg-4)]">
               {day}
             </div>
 
-            {heatmap[dayIndex].map(
-              (value, hourIndex) => (
-                <div
-                  key={`${day}-${hourIndex}`}
-                  className="aspect-square min-h-[15px] rounded-[2px]"
-                  style={{
-                    backgroundColor: `rgba(236,72,153,${getOpacity(
-                      value
-                    )})`,
-                    border:
-                      "1px solid rgba(236,72,153,0.12)",
-                  }}
-                />
-              )
-            )}
+            {heatmap[dayIndex].map((value, hourIndex) => (
+              <div
+                key={`${day}-${hourIndex}`}
+                className="aspect-square min-h-[16px] rounded-md transition-transform hover:scale-110"
+                style={{
+                  backgroundColor: `rgba(236, 22, 140, ${getOpacity(value)})`,
+                  border: "1px solid rgba(236, 22, 140, 0.15)",
+                }}
+              />
+            ))}
           </div>
         ))}
       </div>
 
-      <div className="mt-3 ml-7 grid grid-cols-6">
+      <div className="mt-3 ml-8 grid grid-cols-6">
         {hours.map((hour) => (
           <span
             key={hour}
-            className="text-[8px] text-[var(--fg-4)]"
+            className="text-[9px] font-medium text-[var(--fg-4)]"
           >
             {hour}
           </span>
         ))}
       </div>
 
-      <div className="mt-4 flex items-center gap-2">
-        <span className="text-[9px] text-[var(--fg-4)]">
-          Low activity
-        </span>
-
-        <div className="flex gap-[2px]">
-          {[1, 2, 3, 4].map((item) => (
+      <div className="mt-4 flex items-center justify-end gap-2 text-[10px] text-[var(--fg-4)]">
+        <span>Less active</span>
+        <div className="flex gap-1">
+          {[1, 2, 3, 4, 5].map((item) => (
             <span
               key={item}
-              className="h-2.5 w-4 rounded-sm"
+              className="h-2 w-3 rounded-sm"
               style={{
-                backgroundColor: `rgba(236,72,153,${
-                  0.12 + item * 0.18
-                })`,
+                backgroundColor: `rgba(236, 22, 140, ${0.12 + item * 0.18})`,
               }}
             />
           ))}
         </div>
-
-        <span className="text-[9px] text-[var(--fg-4)]">
-          High activity
-        </span>
+        <span>Peak activity</span>
       </div>
     </div>
   );
@@ -608,57 +474,49 @@ export function AnalyticsClient({
   campaigns: Campaign[];
   connectedCount: number;
 }) {
+  const [activeAudienceTab, setActiveAudienceTab] = useState<
+    "gender" | "age" | "location"
+  >("gender");
+
   /* ------------------------------------------------------------------------ */
   /*                               CALCULATIONS                               */
   /* ------------------------------------------------------------------------ */
 
   const totals = useMemo(() => {
     const impressions = posts.reduce(
-      (total, post) =>
-        total + safeNumber(post.impressions),
+      (total, post) => total + safeNumber(post.impressions),
       0
     );
 
     const likes = posts.reduce(
-      (total, post) =>
-        total + safeNumber(post.likes),
+      (total, post) => total + safeNumber(post.likes),
       0
     );
 
     const comments = posts.reduce(
-      (total, post) =>
-        total + safeNumber(post.comments),
+      (total, post) => total + safeNumber(post.comments),
       0
     );
 
     const shares = posts.reduce(
-      (total, post) =>
-        total + safeNumber(post.shares),
+      (total, post) => total + safeNumber(post.shares),
       0
     );
 
     const saves = posts.reduce(
-      (total, post) =>
-        total + safeNumber(post.saves),
+      (total, post) => total + safeNumber(post.saves),
       0
     );
 
-    const engagement =
-      likes +
-      comments +
-      shares +
-      saves;
+    const engagement = likes + comments + shares + saves;
 
     const revenue = posts.reduce(
-      (total, post) =>
-        total + safeNumber(post.revenue),
+      (total, post) => total + safeNumber(post.revenue),
       0
     );
 
     const engagementRate =
-      impressions > 0
-        ? (engagement / impressions) * 100
-        : 0;
+      impressions > 0 ? (engagement / impressions) * 100 : 0;
 
     return {
       impressions,
@@ -681,12 +539,8 @@ export function AnalyticsClient({
     const byDay: Record<string, number> = {};
 
     posts.forEach((post) => {
-      const date =
-        post.posted_at?.slice(0, 10) ?? "unknown";
-
-      byDay[date] =
-        (byDay[date] ?? 0) +
-        safeNumber(post.impressions);
+      const date = post.posted_at?.slice(0, 10) ?? "unknown";
+      byDay[date] = (byDay[date] ?? 0) + safeNumber(post.impressions);
     });
 
     const values = Object.keys(byDay)
@@ -699,28 +553,14 @@ export function AnalyticsClient({
 
     if (values.length > 0) {
       const first = values[0];
-
       const filler = Array.from(
         { length: Math.max(0, 7 - values.length) },
-        (_, index) =>
-          Math.max(
-            0,
-            first * (0.65 + index * 0.05)
-          )
+        (_, index) => Math.max(0, first * (0.65 + index * 0.05))
       );
-
       return [...filler, ...values];
     }
 
-    return [
-      1000,
-      1300,
-      1350,
-      2100,
-      2500,
-      2450,
-      3200,
-    ];
+    return [1000, 1300, 1350, 2100, 2500, 2450, 3200];
   }, [posts]);
 
   /* ------------------------------------------------------------------------ */
@@ -738,27 +578,18 @@ export function AnalyticsClient({
 
     posts.forEach((post) => {
       const platform = post.platform;
-
       if (!map[platform]) {
         map[platform] = {
           engagement: 0,
           impressions: 0,
         };
       }
-
       map[platform].engagement += engOf(post);
-
-      map[platform].impressions += safeNumber(
-        post.impressions
-      );
+      map[platform].impressions += safeNumber(post.impressions);
     });
 
     const totalEngagement = Math.max(
-      Object.values(map).reduce(
-        (sum, item) =>
-          sum + item.engagement,
-        0
-      ),
+      Object.values(map).reduce((sum, item) => sum + item.engagement, 0),
       1
     );
 
@@ -768,16 +599,9 @@ export function AnalyticsClient({
         label: platformLabel(platform),
         engagement: value.engagement,
         impressions: value.impressions,
-        percentage: Math.round(
-          (value.engagement /
-            totalEngagement) *
-            100
-        ),
+        percentage: Math.round((value.engagement / totalEngagement) * 100),
       }))
-      .sort(
-        (a, b) =>
-          b.engagement - a.engagement
-      );
+      .sort((a, b) => b.engagement - a.engagement);
   }, [posts]);
 
   const displayPlatforms =
@@ -827,10 +651,7 @@ export function AnalyticsClient({
 
   const topContent = useMemo(() => {
     return [...posts]
-      .sort(
-        (a, b) =>
-          engOf(b) - engOf(a)
-      )
+      .sort((a, b) => engOf(b) - engOf(a))
       .slice(0, 4);
   }, [posts]);
 
@@ -840,7 +661,6 @@ export function AnalyticsClient({
 
   const topTopics = useMemo(() => {
     const words: Record<string, number> = {};
-
     const stopWords = new Set([
       "the",
       "and",
@@ -867,20 +687,13 @@ export function AnalyticsClient({
     ]);
 
     posts.forEach((post) => {
-      const text =
-        post.content?.toLowerCase() ?? "";
-
+      const text = post.content?.toLowerCase() ?? "";
       text
-        .replace(/[^\w\s]/g, "")
-        .split(/\s+/)
-        .filter(
-          (word) =>
-            word.length > 3 &&
-            !stopWords.has(word)
-        )
+        .replace(/[^\\w\\s]/g, "")
+        .split(/\\s+/)
+        .filter((word) => word.length > 3 && !stopWords.has(word))
         .forEach((word) => {
-          words[word] =
-            (words[word] ?? 0) + 1;
+          words[word] = (words[word] ?? 0) + 1;
         });
     });
 
@@ -888,47 +701,24 @@ export function AnalyticsClient({
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([topic, count]) => ({
-        topic:
-          topic.charAt(0).toUpperCase() +
-          topic.slice(1),
+        topic: topic.charAt(0).toUpperCase() + topic.slice(1),
         count,
       }));
 
     if (extracted.length > 0) {
-      const max = Math.max(
-        ...extracted.map((item) => item.count),
-        1
-      );
-
+      const max = Math.max(...extracted.map((item) => item.count), 1);
       return extracted.map((item) => ({
         ...item,
-        percentage: Math.round(
-          (item.count / max) * 34
-        ),
+        percentage: Math.round((item.count / max) * 34),
       }));
     }
 
     return [
-      {
-        topic: "Productivity",
-        percentage: 34,
-      },
-      {
-        topic: "Content creation",
-        percentage: 28,
-      },
-      {
-        topic: "Social media tips",
-        percentage: 18,
-      },
-      {
-        topic: "Lifestyle",
-        percentage: 12,
-      },
-      {
-        topic: "Tech & AI",
-        percentage: 8,
-      },
+      { topic: "Productivity", percentage: 34 },
+      { topic: "Content creation", percentage: 28 },
+      { topic: "Social media tips", percentage: 18 },
+      { topic: "Lifestyle", percentage: 12 },
+      { topic: "Tech & AI", percentage: 8 },
     ];
   }, [posts]);
 
@@ -949,30 +739,26 @@ export function AnalyticsClient({
           sub="Connect your accounts to start tracking your content performance."
         />
 
-        <GlassCard className="mt-6 flex min-h-[400px] flex-col items-center justify-center p-10 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--sai-indigo)]/10">
-            <Plug className="h-7 w-7 text-[var(--sai-indigo)]" />
+        <GlassCard className="mt-6 flex min-h-[420px] flex-col items-center justify-center p-10 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)]">
+            <Plug className="h-7 w-7 text-[var(--kora-pink)]" />
           </div>
 
-          <h2 className="mt-5 font-display text-xl font-semibold text-[var(--fg)]">
+          <h2 className="mt-5 font-display text-xl font-bold text-[var(--fg)]">
             No analytics yet
           </h2>
 
-          <p className="mt-2 max-w-md text-sm leading-6 text-[var(--fg-4)]">
-            Connect your social accounts and sync your
-            content to unlock detailed performance
-            insights.
+          <p className="mt-2 max-w-md text-sm leading-6 text-[var(--fg-3)]">
+            Connect your social accounts and sync your content to unlock detailed
+            cross-platform performance insights.
           </p>
 
           <Link
             href="/dashboard/integrations"
-            className="mt-6 rounded-xl px-5 py-3 text-sm font-semibold text-white"
-            style={{
-              background:
-                "linear-gradient(135deg,#ec4899,#a855f7)",
-            }}
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--kora-pink)] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 shadow-[0_8px_20px_rgba(236,22,140,0.3)]"
           >
-            Connect accounts
+            Connect Accounts
+            <ArrowUpRight className="h-4 w-4" />
           </Link>
         </GlassCard>
       </div>
@@ -984,50 +770,43 @@ export function AnalyticsClient({
   /* ------------------------------------------------------------------------ */
 
   return (
-    <div className="mx-auto max-w-[1500px] pb-10">
+    <div className="mx-auto max-w-[1500px] space-y-6 pb-12">
       {/* HEADER */}
-
-      <div className="mb-6 flex flex-col justify-between gap-5 md:flex-row md:items-start">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <div className="mb-2 flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-pink-400" />
-
-            <span className="font-data text-[10px] uppercase tracking-[0.2em] text-[var(--fg-4)]">
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] px-3 py-1 text-xs font-semibold text-[var(--kora-pink)]">
+            <Activity className="h-3.5 w-3.5" />
+            <span>
               {persona === "creator"
-                ? "Creator focused"
-                : "Performance insights"}
+                ? "Creator Performance"
+                : "Performance Insights"}
             </span>
           </div>
 
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-[var(--fg)]">
+          <h1 className="font-display text-3xl font-bold tracking-tight text-[var(--fg)]">
             Analytics
           </h1>
 
-          <p className="mt-2 text-sm text-[var(--fg-4)]">
-            Understand your audience and discover what
-            content works.
+          <p className="mt-1 text-sm text-[var(--fg-3)]">
+            Track engagement, reach, and audience growth across your channels.
           </p>
         </div>
 
-        <button className="flex items-center gap-2 self-start rounded-xl border border-[var(--border)] bg-[var(--panel-fill)] px-4 py-2.5 text-xs font-medium text-[var(--fg-2)] transition hover:bg-[var(--panel-fill-2)]">
-          <CalendarDays className="h-4 w-4 text-pink-400" />
-
-          Last 30 days
-
-          <ChevronRight className="h-3.5 w-3.5 rotate-90" />
-        </button>
+        <div className="flex items-center gap-3">
+          <button className="inline-flex items-center gap-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3.5 py-2 text-xs font-medium text-[var(--fg-2)] transition hover:border-[var(--stroke-strong)] hover:bg-[var(--panel-fill-2)]">
+            <CalendarDays className="h-4 w-4 text-[var(--kora-pink)]" />
+            Last 30 days
+            <ChevronRight className="h-3.5 w-3.5 rotate-90 text-[var(--fg-4)]" />
+          </button>
+        </div>
       </div>
 
       {/* TOP METRICS */}
-
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         <AnalyticsStatCard
-          label="Followers"
+          label="Total Followers"
           value={fmtNum(
-            Math.max(
-              totals.count * 1200,
-              connectedCount * 1000
-            )
+            Math.max(totals.count * 1200, connectedCount * 1000)
           )}
           growth="+12%"
           icon={Users}
@@ -1043,43 +822,39 @@ export function AnalyticsClient({
         />
 
         <AnalyticsStatCard
-          label="Reach"
+          label="Total Reach"
           value={fmtNum(totals.impressions)}
           growth="+24%"
           icon={TrendingUp}
-          tone="violet"
+          tone="blue"
         />
 
         <AnalyticsStatCard
-          label="Impressions"
+          label="Total Impressions"
           value={fmtNum(totals.impressions)}
           growth="+18%"
           icon={Eye}
-          tone="indigo"
+          tone="green"
         />
       </div>
 
-      {/* MAIN ROW */}
-
-      <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(350px,0.9fr)]">
+      {/* MAIN ROW: GROWTH CHART + TOP CONTENT */}
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(350px,0.9fr)]">
         {/* FOLLOWER GROWTH */}
-
-        <GlassCard className="overflow-hidden p-5">
+        <GlassCard className="flex flex-col justify-between p-5">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="font-display text-[15px] font-semibold text-[var(--fg)]">
-                Follower Growth
+              <h2 className="font-display text-base font-bold text-[var(--fg)]">
+                Audience Growth
               </h2>
-
-              <p className="mt-1 text-[11px] text-[var(--fg-4)]">
-                Audience growth over the last 7 days
+              <p className="mt-0.5 text-xs text-[var(--fg-4)]">
+                Weekly follower and impression trends
               </p>
             </div>
 
-            <div className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold text-emerald-400">
-              <TrendingUp className="h-3 w-3" />
-
-              +12%
+            <div className="flex items-center gap-1 rounded-full border border-[var(--success-soft)] bg-[var(--success-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--success)]">
+              <TrendingUp className="h-3.5 w-3.5" />
+              +12% this week
             </div>
           </div>
 
@@ -1087,102 +862,91 @@ export function AnalyticsClient({
         </GlassCard>
 
         {/* TOP CONTENT */}
-
-        <GlassCard className="p-5">
+        <GlassCard className="flex flex-col p-5">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-display text-[15px] font-semibold text-[var(--fg)]">
+              <h2 className="font-display text-base font-bold text-[var(--fg)]">
                 Top Performing Content
               </h2>
-
-              <p className="mt-1 text-[11px] text-[var(--fg-4)]">
-                Ranked by engagement
+              <p className="mt-0.5 text-xs text-[var(--fg-4)]">
+                Ranked by total engagement
               </p>
             </div>
 
-            <span className="cursor-pointer text-[10px] font-semibold text-pink-400">
+            <Link
+              href="/dashboard/library"
+              className="text-xs font-semibold text-[var(--kora-pink)] transition hover:underline"
+            >
               View all
-            </span>
+            </Link>
           </div>
 
-          <div className="mt-5 space-y-3">
+          <div className="mt-4 flex-1 space-y-2.5">
             {topContent.length > 0 ? (
-              topContent.map(
-                (post, index) => {
-                  const PlatformIcon =
-                    getPlatformIcon(
-                      post.platform
-                    );
+              topContent.map((post, index) => {
+                const PlatformIcon = getPlatformIcon(post.platform);
+                const platformColor = getPlatformColor(post.platform);
 
-                  return (
-                    <div
-                      key={post.id}
-                      className="flex items-center gap-3"
-                    >
-                      <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md bg-[var(--panel-fill-2)] text-[10px] font-semibold text-[var(--fg-4)]">
-                        {index + 1}
-                      </div>
-
-                      <div
-                        className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl"
-                        style={{
-                          backgroundColor: `${getPlatformColor(
-                            post.platform
-                          )}18`,
-                        }}
-                      >
-                        <PlatformIcon
-                          className="h-5 w-5"
-                          style={{
-                            color: getPlatformColor(
-                              post.platform
-                            ),
-                          }}
-                        />
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-[11px] font-medium text-[var(--fg-2)]">
-                          {post.content ??
-                            "Untitled content"}
-                        </p>
-
-                        <p className="mt-1 text-[9px] text-[var(--fg-4)]">
-                          {fmtNum(
-                            engOf(post)
-                          )} engagement ·{" "}
-                          {post.engagement_rate ?? 0}%
-                        </p>
-                      </div>
-                    </div>
-                  );
-                }
-              )
-            ) : (
-              <>
-                {[
-                  "Behind the scenes",
-                  "My top 3 lessons",
-                  "This or that",
-                  "A day in my life",
-                ].map((title, index) => (
+                return (
                   <div
-                    key={title}
-                    className="flex items-center gap-3"
+                    key={post.id}
+                    className="flex items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 transition hover:border-[var(--stroke-strong)]"
                   >
-                    <div className="flex h-5 w-5 items-center justify-center rounded-md bg-[var(--panel-fill-2)] text-[10px] text-[var(--fg-4)]">
+                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg bg-[var(--panel-fill)] text-xs font-bold text-[var(--fg-3)]">
                       {index + 1}
                     </div>
 
-                    <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-pink-500/30 to-purple-500/30" />
+                    <div
+                      className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg"
+                      style={{
+                        backgroundColor: `${platformColor}18`,
+                        color: platformColor,
+                      }}
+                    >
+                      <PlatformIcon className="h-4 w-4" />
+                    </div>
 
-                    <div>
-                      <p className="text-[11px] text-[var(--fg-2)]">
-                        {title}
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-xs font-medium text-[var(--fg)]">
+                        {post.content ?? "Untitled content"}
                       </p>
 
-                      <p className="mt-1 text-[9px] text-[var(--fg-4)]">
-                        —
+                      <p className="mt-0.5 text-[11px] text-[var(--fg-4)]">
+                        <span className="font-semibold text-[var(--fg-2)]">
+                          {fmtNum(engOf(post))}
+                        </span>{" "}
+                        engagements · {post.engagement_rate ?? 0}% rate
+                      </p>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <>
+                {[
+                  "Behind the scenes tutorial",
+                  "My top 3 creator lessons",
+                  "Tool stack for 2026",
+                  "A day in the life of a creator",
+                ].map((title, index) => (
+                  <div
+                    key={title}
+                    className="flex items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3"
+                  >
+                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg bg-[var(--panel-fill)] text-xs font-bold text-[var(--fg-4)]">
+                      {index + 1}
+                    </div>
+
+                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]">
+                      <Sparkles className="h-4 w-4" />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-xs font-medium text-[var(--fg-2)]">
+                        {title}
+                      </p>
+                      <p className="mt-0.5 text-[11px] text-[var(--fg-4)]">
+                        Syncing analytics...
                       </p>
                     </div>
                   </div>
@@ -1194,10 +958,9 @@ export function AnalyticsClient({
       </div>
 
       {/* SECONDARY METRICS */}
-
-      <div className="mt-5 grid grid-cols-2 gap-4 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         <AnalyticsStatCard
-          label="Reach"
+          label="Total Reach"
           value={fmtNum(totals.impressions)}
           growth="+24%"
           icon={Eye}
@@ -1205,7 +968,7 @@ export function AnalyticsClient({
         />
 
         <AnalyticsStatCard
-          label="Likes"
+          label="Total Likes"
           value={fmtNum(totals.likes)}
           growth="+18%"
           icon={Heart}
@@ -1217,66 +980,79 @@ export function AnalyticsClient({
           value={fmtNum(totals.comments)}
           growth="+12%"
           icon={MessageCircle}
-          tone="violet"
+          tone="blue"
         />
 
         <AnalyticsStatCard
-          label="Shares"
-          value={fmtNum(totals.shares)}
+          label="Shares & Saves"
+          value={fmtNum(totals.shares + totals.saves)}
           growth="+15%"
           icon={Share2}
-          tone="indigo"
+          tone="green"
         />
       </div>
 
       {/* DEMOGRAPHICS / BEST TIME / PLATFORM */}
-
-      <div className="mt-5 grid gap-5 xl:grid-cols-3">
+      <div className="grid gap-5 xl:grid-cols-3">
         {/* AUDIENCE */}
-
         <GlassCard className="p-5">
-          <div>
-            <h2 className="font-display text-[15px] font-semibold text-[var(--fg)]">
-              Audience Demographics
-            </h2>
-
-            <p className="mt-1 text-[11px] text-[var(--fg-4)]">
-              Audience breakdown
-            </p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="font-display text-base font-bold text-[var(--fg)]">
+                Audience Demographics
+              </h2>
+              <p className="mt-0.5 text-xs text-[var(--fg-4)]">
+                Demographic segmentation
+              </p>
+            </div>
           </div>
 
-          <div className="mt-4 flex gap-2">
-            <button className="rounded-lg bg-pink-500 px-3 py-1.5 text-[10px] font-semibold text-white">
+          <div className="mt-4 flex gap-1.5 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-1">
+            <button
+              onClick={() => setActiveAudienceTab("gender")}
+              className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition ${
+                activeAudienceTab === "gender"
+                  ? "bg-[var(--panel-fill)] text-[var(--fg)] shadow-sm"
+                  : "text-[var(--fg-4)] hover:text-[var(--fg-2)]"
+              }`}
+            >
               Gender
             </button>
-
-            <button className="rounded-lg bg-[var(--panel-fill)] px-3 py-1.5 text-[10px] text-[var(--fg-4)]">
+            <button
+              onClick={() => setActiveAudienceTab("age")}
+              className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition ${
+                activeAudienceTab === "age"
+                  ? "bg-[var(--panel-fill)] text-[var(--fg)] shadow-sm"
+                  : "text-[var(--fg-4)] hover:text-[var(--fg-2)]"
+              }`}
+            >
               Age
             </button>
-
-            <button className="rounded-lg bg-[var(--panel-fill)] px-3 py-1.5 text-[10px] text-[var(--fg-4)]">
+            <button
+              onClick={() => setActiveAudienceTab("location")}
+              className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition ${
+                activeAudienceTab === "location"
+                  ? "bg-[var(--panel-fill)] text-[var(--fg)] shadow-sm"
+                  : "text-[var(--fg-4)] hover:text-[var(--fg-2)]"
+              }`}
+            >
               Location
             </button>
           </div>
 
           <div className="mt-6">
-            <AudienceDonut
-              female={68}
-              male={32}
-            />
+            <AudienceDonut female={68} male={32} />
           </div>
         </GlassCard>
 
         {/* BEST TIME */}
-
         <GlassCard className="p-5">
           <div>
-            <h2 className="font-display text-[15px] font-semibold text-[var(--fg)]">
+            <h2 className="font-display text-base font-bold text-[var(--fg)]">
               Best Time to Post
             </h2>
-
-            <p className="mt-1 text-[11px] text-[var(--fg-4)]">
-              When your audience is most active
+            <p className="mt-0.5 text-xs text-[var(--fg-4)]">
+              Optimal publishing windows based on activity
             </p>
           </div>
 
@@ -1284,317 +1060,224 @@ export function AnalyticsClient({
         </GlassCard>
 
         {/* PLATFORM PERFORMANCE */}
-
         <GlassCard className="p-5">
           <div>
-            <h2 className="font-display text-[15px] font-semibold text-[var(--fg)]">
-              Platform Performance
+            <h2 className="font-display text-base font-bold text-[var(--fg)]">
+              Platform Distribution
             </h2>
-
-            <p className="mt-1 text-[11px] text-[var(--fg-4)]">
-              Engagement distribution
+            <p className="mt-0.5 text-xs text-[var(--fg-4)]">
+              Engagement share across channels
             </p>
           </div>
 
-          <div className="mt-6 space-y-5">
-            {displayPlatforms
-              .slice(0, 5)
-              .map((platform) => (
-                <div
-                  key={platform.platform}
-                >
-                  <div className="mb-2 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <PlatformBadge
-                        platform={
-                          platform.platform
-                        }
-                      />
-
-                      <span className="text-[11px] font-medium text-[var(--fg-2)]">
-                        {platform.label}
-                      </span>
-                    </div>
-
-                    <span className="font-data text-[10px] text-[var(--fg-4)]">
-                      {platform.percentage}%
+          <div className="mt-5 space-y-4">
+            {displayPlatforms.slice(0, 5).map((platform) => (
+              <div key={platform.platform} className="group">
+                <div className="mb-2 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <PlatformBadge platform={platform.platform} />
+                    <span className="text-xs font-semibold text-[var(--fg)]">
+                      {platform.label}
                     </span>
                   </div>
 
-                  <div className="h-1.5 overflow-hidden rounded-full bg-[var(--panel-fill-2)]">
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${platform.percentage}%`,
-                        backgroundColor:
-                          getPlatformColor(
-                            platform.platform
-                          ),
-                      }}
-                    />
-                  </div>
+                  <span className="font-display text-xs font-bold text-[var(--fg-2)]">
+                    {platform.percentage}%
+                  </span>
                 </div>
-              ))}
+
+                <div className="h-2 overflow-hidden rounded-full bg-[var(--panel-fill-2)]">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${platform.percentage}%`,
+                      backgroundColor: getPlatformColor(platform.platform),
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </GlassCard>
       </div>
 
       {/* AI INSIGHTS / TOPICS */}
-
-      <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.3fr)_minmax(350px,0.8fr)]">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.3fr)_minmax(350px,0.8fr)]">
         {/* AI INSIGHTS */}
-
-        <GlassCard className="overflow-hidden p-5">
+        <GlassCard className="p-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-pink-500/20 to-purple-500/20">
-                <Sparkles className="h-4 w-4 text-pink-400" />
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--kora-blue-soft)] bg-[var(--kora-blue-soft)] text-[var(--kora-blue)]">
+                <Sparkles className="h-4 w-4" />
               </div>
-
               <div>
-                <h2 className="font-display text-[15px] font-semibold text-[var(--fg)]">
-                  AI Insights
+                <h2 className="font-display text-base font-bold text-[var(--fg)]">
+                  AI Content Insights
                 </h2>
-
-                <p className="text-[10px] text-[var(--fg-4)]">
-                  Personalized recommendations
+                <p className="text-xs text-[var(--fg-4)]">
+                  Tailored recommendations for higher conversion
                 </p>
               </div>
             </div>
 
-            <span className="text-[10px] font-semibold text-pink-400">
-              View all
+            <span className="cursor-pointer text-xs font-semibold text-[var(--kora-pink)] transition hover:underline">
+              Refresh
             </span>
           </div>
 
-          <div className="mt-5 divide-y divide-[var(--border)]">
-            <div className="flex gap-3 py-4 first:pt-0">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-pink-500/10">
-                <TrendingUp className="h-4 w-4 text-pink-400" />
+          <div className="mt-4 divide-y divide-[var(--stroke)]">
+            <div className="flex gap-3 py-3.5 first:pt-0">
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]">
+                <TrendingUp className="h-4 w-4" />
               </div>
-
               <div className="flex-1">
-                <p className="text-[12px] leading-5 text-[var(--fg-2)]">
-                  Your engagement is strongest when
-                  you post consistently between your
-                  highest-performing time windows.
+                <p className="text-xs leading-relaxed text-[var(--fg-2)]">
+                  Posting consistently between <strong className="text-[var(--fg)]">4:00 PM – 8:00 PM on Wednesdays and Thursdays</strong> yields a 2.4× higher comment rate.
                 </p>
               </div>
-
-              <ChevronRight className="mt-1 h-4 w-4 text-[var(--fg-4)]" />
+              <ChevronRight className="mt-0.5 h-4 w-4 text-[var(--fg-4)]" />
             </div>
 
-            <div className="flex gap-3 py-4">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-purple-500/10">
-                <Play className="h-4 w-4 text-purple-400" />
+            <div className="flex gap-3 py-3.5">
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-purple-500/20 bg-purple-500/10 text-purple-400">
+                <Play className="h-4 w-4" />
               </div>
-
               <div className="flex-1">
-                <p className="text-[12px] leading-5 text-[var(--fg-2)]">
-                  Video content is outperforming
-                  static content. Consider creating
-                  more short-form video posts.
+                <p className="text-xs leading-relaxed text-[var(--fg-2)]">
+                  Short-form video clips with on-screen text hooks generate <strong className="text-[var(--fg)]">38% more saves</strong> than carousel infographics.
                 </p>
               </div>
-
-              <ChevronRight className="mt-1 h-4 w-4 text-[var(--fg-4)]" />
+              <ChevronRight className="mt-0.5 h-4 w-4 text-[var(--fg-4)]" />
             </div>
 
-            <div className="flex gap-3 py-4 pb-0">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-500/10">
-                <Users className="h-4 w-4 text-indigo-400" />
+            <div className="flex gap-3 py-3.5 pb-0">
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--kora-blue-soft)] bg-[var(--kora-blue-soft)] text-[var(--kora-blue)]">
+                <Users className="h-4 w-4" />
               </div>
-
               <div className="flex-1">
-                <p className="text-[12px] leading-5 text-[var(--fg-2)]">
-                  Your audience is most responsive to
-                  content around your strongest topics.
-                  Double down on what is already
-                  performing.
+                <p className="text-xs leading-relaxed text-[var(--fg-2)]">
+                  Your audience engages most with content on <strong className="text-[var(--fg)]">Productivity & Content Creation</strong>. Repurpose high performers to TikTok & LinkedIn.
                 </p>
               </div>
-
-              <ChevronRight className="mt-1 h-4 w-4 text-[var(--fg-4)]" />
+              <ChevronRight className="mt-0.5 h-4 w-4 text-[var(--fg-4)]" />
             </div>
           </div>
         </GlassCard>
 
         {/* TOP TOPICS */}
-
         <GlassCard className="p-5">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-display text-[15px] font-semibold text-[var(--fg)]">
+              <h2 className="font-display text-base font-bold text-[var(--fg)]">
                 Top Topics
               </h2>
-
-              <p className="mt-1 text-[11px] text-[var(--fg-4)]">
-                What your audience engages with
+              <p className="mt-0.5 text-xs text-[var(--fg-4)]">
+                Subject categories by engagement
               </p>
             </div>
-
-            <span className="text-[10px] font-semibold text-pink-400">
-              View all
-            </span>
           </div>
 
-          <div className="mt-5 space-y-3">
-            {topTopics.map(
-              (topic, index) => (
-                <div
-                  key={topic.topic}
-                  className="flex items-center gap-3"
-                >
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--panel-fill)] text-[10px] font-semibold text-[var(--fg-4)]">
-                    {index + 1}
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[11px] text-[var(--fg-2)]">
-                      {topic.topic}
-                    </p>
-                  </div>
-
-                  <span className="font-data text-[10px] text-[var(--fg-3)]">
-                    {topic.percentage}%
-                  </span>
-
-                  <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-400">
-                    <TrendingUp className="h-3 w-3" />
-
-                    +{Math.max(
-                      2,
-                      Math.round(
-                        topic.percentage / 5
-                      )
-                    )}
-                    %
-                  </div>
+          <div className="mt-4 space-y-2.5">
+            {topTopics.map((topic, index) => (
+              <div
+                key={topic.topic}
+                className="flex items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-2.5"
+              >
+                <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-[var(--panel-fill)] text-xs font-bold text-[var(--fg-4)]">
+                  {index + 1}
                 </div>
-              )
-            )}
+
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-medium text-[var(--fg)]">
+                    {topic.topic}
+                  </p>
+                </div>
+
+                <span className="font-display text-xs font-bold text-[var(--fg-2)]">
+                  {topic.percentage}%
+                </span>
+
+                <div className="flex items-center gap-1 rounded-md border border-[var(--success-soft)] bg-[var(--success-soft)] px-2 py-0.5 text-[10px] font-semibold text-[var(--success)]">
+                  <TrendingUp className="h-3 w-3" />+
+                  {Math.max(2, Math.round(topic.percentage / 5))}%
+                </div>
+              </div>
+            ))}
           </div>
         </GlassCard>
       </div>
 
       {/* CAMPAIGN PERFORMANCE */}
-
       {campaigns.length > 0 && (
-        <div className="mt-5">
-          <div className="mb-4 flex items-center gap-2">
-            <Megaphone className="h-4 w-4 text-amber-400" />
-
-            <h2 className="font-display text-[15px] font-semibold text-[var(--fg)]">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Megaphone className="h-5 w-5 text-amber-400" />
+            <h2 className="font-display text-lg font-bold text-[var(--fg)]">
               Campaign Performance
             </h2>
           </div>
 
           <div className="grid gap-4 xl:grid-cols-2">
-            {campaigns.slice(0, 4).map(
-              (campaign) => (
-                <GlassCard
-                  key={campaign.id}
-                  className="p-5"
-                >
-                  <div className="flex items-start justify-between gap-4">
+            {campaigns.slice(0, 4).map((campaign) => (
+              <GlassCard key={campaign.id} className="p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-400">
+                      <Megaphone className="h-5 w-5" />
+                    </div>
+
                     <div>
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10">
-                          <Megaphone className="h-4 w-4 text-amber-400" />
-                        </div>
-
-                        <div>
-                          <h3 className="font-display text-sm font-semibold text-[var(--fg)]">
-                            {campaign.name}
-                          </h3>
-
-                          <p className="mt-0.5 text-[10px] text-[var(--fg-4)]">
-                            {platformLabel(
-                              campaign.platform
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Pill
-                      tone={
-                        campaign.status ===
-                        "active"
-                          ? "green"
-                          : "muted"
-                      }
-                    >
-                      {campaign.status}
-                    </Pill>
-                  </div>
-
-                  <div className="mt-5 grid grid-cols-4 gap-2">
-                    <div className="rounded-xl bg-[var(--panel-fill)] p-3 text-center">
-                      <DollarSign className="mx-auto h-3.5 w-3.5 text-amber-400" />
-
-                      <p className="mt-2 font-data text-xs text-[var(--fg)]">
-                        {fmtNaira(
-                          safeNumber(
-                            campaign.spend
-                          )
-                        )}
-                      </p>
-
-                      <p className="mt-1 text-[9px] text-[var(--fg-4)]">
-                        Spend
-                      </p>
-                    </div>
-
-                    <div className="rounded-xl bg-[var(--panel-fill)] p-3 text-center">
-                      <TrendingUp className="mx-auto h-3.5 w-3.5 text-pink-400" />
-
-                      <p className="mt-2 font-data text-xs text-[var(--fg)]">
-                        {safeNumber(
-                          campaign.ctr
-                        ).toFixed(1)}
-                        %
-                      </p>
-
-                      <p className="mt-1 text-[9px] text-[var(--fg-4)]">
-                        CTR
-                      </p>
-                    </div>
-
-                    <div className="rounded-xl bg-[var(--panel-fill)] p-3 text-center">
-                      <Trophy className="mx-auto h-3.5 w-3.5 text-purple-400" />
-
-                      <p className="mt-2 font-data text-xs text-[var(--fg)]">
-                        {fmtNum(
-                          safeNumber(
-                            campaign.conversions
-                          )
-                        )}
-                      </p>
-
-                      <p className="mt-1 text-[9px] text-[var(--fg-4)]">
-                        Conv.
-                      </p>
-                    </div>
-
-                    <div className="rounded-xl bg-[var(--panel-fill)] p-3 text-center">
-                      <TrendingUp className="mx-auto h-3.5 w-3.5 text-emerald-400" />
-
-                      <p className="mt-2 font-data text-xs text-[var(--fg)]">
-                        {safeNumber(
-                          campaign.roas
-                        ).toFixed(1)}
-                        ×
-                      </p>
-
-                      <p className="mt-1 text-[9px] text-[var(--fg-4)]">
-                        ROAS
+                      <h3 className="font-display text-sm font-bold text-[var(--fg)]">
+                        {campaign.name}
+                      </h3>
+                      <p className="mt-0.5 text-xs text-[var(--fg-4)]">
+                        {platformLabel(campaign.platform)}
                       </p>
                     </div>
                   </div>
-                </GlassCard>
-              )
-            )}
+
+                  <Pill
+                    tone={campaign.status === "active" ? "green" : "muted"}
+                  >
+                    {campaign.status}
+                  </Pill>
+                </div>
+
+                <div className="mt-5 grid grid-cols-4 gap-2">
+                  <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-center">
+                    <DollarSign className="mx-auto h-4 w-4 text-amber-400" />
+                    <p className="mt-1.5 font-display text-xs font-bold text-[var(--fg)]">
+                      {fmtNaira(safeNumber(campaign.spend))}
+                    </p>
+                    <p className="text-[10px] text-[var(--fg-4)]">Spend</p>
+                  </div>
+
+                  <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-center">
+                    <TrendingUp className="mx-auto h-4 w-4 text-[var(--kora-pink)]" />
+                    <p className="mt-1.5 font-display text-xs font-bold text-[var(--fg)]">
+                      {safeNumber(campaign.ctr).toFixed(1)}%
+                    </p>
+                    <p className="text-[10px] text-[var(--fg-4)]">CTR</p>
+                  </div>
+
+                  <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-center">
+                    <Trophy className="mx-auto h-4 w-4 text-purple-400" />
+                    <p className="mt-1.5 font-display text-xs font-bold text-[var(--fg)]">
+                      {fmtNum(safeNumber(campaign.conversions))}
+                    </p>
+                    <p className="text-[10px] text-[var(--fg-4)]">Conv.</p>
+                  </div>
+
+                  <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-center">
+                    <TrendingUp className="mx-auto h-4 w-4 text-[var(--success)]" />
+                    <p className="mt-1.5 font-display text-xs font-bold text-[var(--fg)]">
+                      {safeNumber(campaign.roas).toFixed(1)}×
+                    </p>
+                    <p className="text-[10px] text-[var(--fg-4)]">ROAS</p>
+                  </div>
+                </div>
+              </GlassCard>
+            ))}
           </div>
         </div>
       )}
