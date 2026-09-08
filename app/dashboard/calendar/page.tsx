@@ -138,7 +138,7 @@ function getPlatformColor(platform: string) {
     case "youtube":
       return "bg-red-500";
     default:
-      return "bg-fuchsia-500";
+      return "bg-[var(--kora-pink)]";
   }
 }
 
@@ -168,7 +168,7 @@ function PlatformIcon({
       return <Music2 className={`${className} text-cyan-400`} />;
 
     default:
-      return <Bot className={`${className} text-fuchsia-400`} />;
+      return <Bot className={`${className} text-[var(--kora-pink)]`} />;
   }
 }
 
@@ -202,29 +202,29 @@ function MiniDatePicker({
         rounded-2xl
         overflow-hidden
         border
-        border-slate-800
-        bg-[#0b1422]
+        border-[var(--stroke)]
+        bg-[var(--panel-fill)]
         shadow-[0_25px_70px_rgba(0,0,0,0.6)]
       "
       onMouseDown={(e) => e.stopPropagation()}
     >
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--stroke)]">
         <button
           onClick={() => setPickerYear((y) => y - 1)}
           className="
             w-8 h-8
             rounded-lg
             flex items-center justify-center
-            text-slate-500
-            hover:text-white
-            hover:bg-slate-800
+            text-[var(--fg-4)]
+            hover:text-[var(--fg)]
+            hover:bg-[var(--hover)]
             transition-all
           "
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        <span className="text-sm font-bold text-white">
+        <span className="text-sm font-bold text-[var(--fg)]">
           {pickerYear}
         </span>
 
@@ -234,9 +234,9 @@ function MiniDatePicker({
             w-8 h-8
             rounded-lg
             flex items-center justify-center
-            text-slate-500
-            hover:text-white
-            hover:bg-slate-800
+            text-[var(--fg-4)]
+            hover:text-[var(--fg)]
+            hover:bg-[var(--hover)]
             transition-all
           "
         >
@@ -271,24 +271,22 @@ function MiniDatePicker({
                 ${
                   isSelected
                     ? `
-                      bg-gradient-to-r
-                      from-fuchsia-600
-                      to-pink-600
-                      text-white
+                      bg-[var(--kora-pink)]
+                      text-[var(--fg)]
                       shadow-lg
                       shadow-pink-500/20
                     `
                     : isCurrent
                     ? `
                       border
-                      border-fuchsia-500/40
-                      text-fuchsia-400
-                      hover:bg-fuchsia-500/10
+                      border-[var(--kora-pink-border)]
+                      text-[var(--kora-pink)]
+                      hover:bg-[var(--kora-pink-soft)]
                     `
                     : `
-                      text-slate-400
-                      hover:bg-slate-800
-                      hover:text-white
+                      text-[var(--fg-4)]
+                      hover:bg-[var(--hover)]
+                      hover:text-[var(--fg)]
                     `
                 }
               `}
@@ -310,12 +308,12 @@ function MiniDatePicker({
             py-2.5
             rounded-xl
             border
-            border-slate-800
+            border-[var(--stroke)]
             text-xs
             font-semibold
-            text-slate-400
-            hover:text-white
-            hover:bg-slate-800
+            text-[var(--fg-4)]
+            hover:text-[var(--fg)]
+            hover:bg-[var(--hover)]
             transition-all
           "
         >
@@ -472,27 +470,27 @@ function DatePicker({
           rounded-2xl
           overflow-hidden
           border
-          border-slate-800
-          bg-[#0b1422]
+          border-[var(--stroke)]
+          bg-[var(--panel-fill)]
           shadow-[0_25px_70px_rgba(0,0,0,0.7)]
         "
       >
-        <div className="flex items-center justify-between px-3 py-3 border-b border-slate-800">
+        <div className="flex items-center justify-between px-3 py-3 border-b border-[var(--stroke)]">
           <button
             onClick={prevMonth}
             className="
               w-8 h-8
               rounded-lg
               flex items-center justify-center
-              text-slate-500
-              hover:bg-slate-800
-              hover:text-white
+              text-[var(--fg-4)]
+              hover:bg-[var(--hover)]
+              hover:text-[var(--fg)]
             "
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <span className="text-sm font-bold text-white">
+          <span className="text-sm font-bold text-[var(--fg)]">
             {MONTHS_SHORT[pickerMonth]} {pickerYear}
           </span>
 
@@ -502,9 +500,9 @@ function DatePicker({
               w-8 h-8
               rounded-lg
               flex items-center justify-center
-              text-slate-500
-              hover:bg-slate-800
-              hover:text-white
+              text-[var(--fg-4)]
+              hover:bg-[var(--hover)]
+              hover:text-[var(--fg)]
             "
           >
             <ChevronRight className="w-4 h-4" />
@@ -521,7 +519,7 @@ function DatePicker({
                     text-center
                     text-[10px]
                     font-bold
-                    text-slate-600
+                    text-[var(--fg-4)]
                   "
                 >
                   {day}
@@ -568,21 +566,19 @@ function DatePicker({
                         ? "opacity-0 pointer-events-none"
                         : isSelectedDay(dayNum)
                         ? `
-                          bg-gradient-to-r
-                          from-fuchsia-600
-                          to-pink-600
-                          text-white
+                          bg-[var(--kora-pink)]
+                          text-[var(--fg)]
                         `
                         : isToday(dayNum)
                         ? `
                           border
-                          border-fuchsia-500/50
-                          text-fuchsia-400
+                          border-[var(--kora-pink-border)]/50
+                          text-[var(--kora-pink)]
                         `
                         : `
-                          text-slate-400
-                          hover:bg-slate-800
-                          hover:text-white
+                          text-[var(--fg-4)]
+                          hover:bg-[var(--hover)]
+                          hover:text-[var(--fg)]
                         `
                     }
                   `}
@@ -615,13 +611,13 @@ function DatePicker({
           ${
             open
               ? `
-                border-fuchsia-500/60
-                bg-[#0d1828]
+                border-[var(--kora-pink-border)]/60
+                bg-[var(--panel-fill-2)]
               `
               : `
-                border-slate-800
-                bg-[#0b1624]
-                hover:border-slate-700
+                border-[var(--stroke)]
+                bg-[var(--panel-fill-2)]
+                hover:border-[var(--stroke-strong)]
               `
           }
         `}
@@ -629,14 +625,14 @@ function DatePicker({
         <span
           className={
             value
-              ? "text-white text-xs"
-              : "text-slate-600 text-xs"
+              ? "text-[var(--fg)] text-xs"
+              : "text-[var(--fg-4)] text-xs"
           }
         >
           {display || "Pick a date"}
         </span>
 
-        <CalendarIcon className="w-4 h-4 text-slate-500" />
+        <CalendarIcon className="w-4 h-4 text-[var(--fg-4)]" />
       </button>
 
       {dropdown}
@@ -770,13 +766,13 @@ function TimePicker({
           rounded-2xl
           overflow-hidden
           border
-          border-slate-800
-          bg-[#0b1422]
+          border-[var(--stroke)]
+          bg-[var(--panel-fill)]
           shadow-[0_25px_70px_rgba(0,0,0,0.7)]
         "
       >
         <div className="p-3">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-2">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--fg-4)] mb-2">
             Hour
           </p>
 
@@ -801,13 +797,13 @@ function TimePicker({
                   ${
                     value?.hour === hour
                       ? `
-                        bg-fuchsia-600
-                        text-white
+                        bg-[var(--kora-pink)]
+                        text-[var(--fg)]
                       `
                       : `
-                        text-slate-400
-                        hover:bg-slate-800
-                        hover:text-white
+                        text-[var(--fg-4)]
+                        hover:bg-[var(--hover)]
+                        hover:text-[var(--fg)]
                       `
                   }
                 `}
@@ -818,10 +814,10 @@ function TimePicker({
           </div>
         </div>
 
-        <div className="mx-3 border-t border-slate-800" />
+        <div className="mx-3 border-t border-[var(--stroke)]" />
 
         <div className="p-3">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-2">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--fg-4)] mb-2">
             Minute
           </p>
 
@@ -846,13 +842,13 @@ function TimePicker({
                   ${
                     value?.minute === minute
                       ? `
-                        bg-fuchsia-600
-                        text-white
+                        bg-[var(--kora-pink)]
+                        text-[var(--fg)]
                       `
                       : `
-                        text-slate-400
-                        hover:bg-slate-800
-                        hover:text-white
+                        text-[var(--fg-4)]
+                        hover:bg-[var(--hover)]
+                        hover:text-[var(--fg)]
                       `
                   }
                 `}
@@ -863,10 +859,10 @@ function TimePicker({
           </div>
         </div>
 
-        <div className="mx-3 border-t border-slate-800" />
+        <div className="mx-3 border-t border-[var(--stroke)]" />
 
         <div className="p-3">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-2">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--fg-4)] mb-2">
             AM / PM
           </p>
 
@@ -891,17 +887,15 @@ function TimePicker({
                   ${
                     value?.ampm === ampm
                       ? `
-                        bg-gradient-to-r
-                        from-fuchsia-600
-                        to-pink-600
-                        text-white
+                        bg-[var(--kora-pink)]
+                        text-[var(--fg)]
                       `
                       : `
                         border
-                        border-slate-800
-                        text-slate-500
-                        hover:bg-slate-800
-                        hover:text-white
+                        border-[var(--stroke)]
+                        text-[var(--fg-4)]
+                        hover:bg-[var(--hover)]
+                        hover:text-[var(--fg)]
                       `
                   }
                 `}
@@ -933,13 +927,13 @@ function TimePicker({
           ${
             open
               ? `
-                border-fuchsia-500/60
-                bg-[#0d1828]
+                border-[var(--kora-pink-border)]/60
+                bg-[var(--panel-fill-2)]
               `
               : `
-                border-slate-800
-                bg-[#0b1624]
-                hover:border-slate-700
+                border-[var(--stroke)]
+                bg-[var(--panel-fill-2)]
+                hover:border-[var(--stroke-strong)]
               `
           }
         `}
@@ -947,14 +941,14 @@ function TimePicker({
         <span
           className={
             value
-              ? "text-white text-xs"
-              : "text-slate-600 text-xs"
+              ? "text-[var(--fg)] text-xs"
+              : "text-[var(--fg-4)] text-xs"
           }
         >
           {display || "Pick a time"}
         </span>
 
-        <Clock className="w-4 h-4 text-slate-500" />
+        <Clock className="w-4 h-4 text-[var(--fg-4)]" />
       </button>
 
       {dropdown}
@@ -1533,7 +1527,7 @@ ${aiTaskPrompt}
           <div className="flex items-center gap-2">
             {/* VIEW SWITCHER */}
 
-            <div className="hidden md:flex items-center p-1 rounded-xl border border-slate-800 bg-[#0b1422]">
+            <div className="hidden md:flex items-center p-1 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)]">
               <button
                 onClick={() =>
                   setView("calendar")
@@ -1549,13 +1543,13 @@ ${aiTaskPrompt}
                   ${
                     view === "calendar"
                       ? `
-                        bg-slate-800
-                        text-white
+                        bg-[var(--panel-fill-2)]
+                        text-[var(--fg)]
                         shadow-md
                       `
                       : `
-                        text-slate-500
-                        hover:text-white
+                        text-[var(--fg-4)]
+                        hover:text-[var(--fg)]
                       `
                   }
                 `}
@@ -1579,13 +1573,13 @@ ${aiTaskPrompt}
                   ${
                     view === "grid"
                       ? `
-                        bg-slate-800
-                        text-white
+                        bg-[var(--panel-fill-2)]
+                        text-[var(--fg)]
                         shadow-md
                       `
                       : `
-                        text-slate-500
-                        hover:text-white
+                        text-[var(--fg-4)]
+                        hover:text-[var(--fg)]
                       `
                   }
                 `}
@@ -1610,13 +1604,13 @@ ${aiTaskPrompt}
                 px-4
                 rounded-xl
                 border
-                border-fuchsia-500/30
-                bg-fuchsia-500/[0.06]
-                text-fuchsia-300
+                border-[var(--kora-pink-border)]
+                bg-[var(--kora-pink-soft)]
+                text-[var(--kora-pink)]
                 text-xs
                 font-semibold
-                hover:bg-fuchsia-500/[0.12]
-                hover:border-fuchsia-500/50
+                hover:bg-[var(--kora-pink-soft)]
+                hover:border-[var(--kora-pink-border)]/50
                 transition-all
               "
             >
@@ -1660,8 +1654,8 @@ ${aiTaskPrompt}
           overflow-hidden
           rounded-2xl
           border
-          border-slate-800/80
-          bg-[#08111f]
+          border-[var(--stroke)]
+          bg-[var(--panel-fill)]
           shadow-[0_20px_80px_rgba(0,0,0,0.35)]
         "
       >
@@ -1680,11 +1674,8 @@ ${aiTaskPrompt}
             px-5
             py-4
             border-b
-            border-slate-800
-            bg-gradient-to-r
-            from-[#0b1422]
-            via-[#09121f]
-            to-[#0b1422]
+            border-[var(--stroke)]
+            bg-[var(--panel-fill)]
           "
         >
           {/* LEFT */}
@@ -1707,8 +1698,8 @@ ${aiTaskPrompt}
                   text-lg
                   font-semibold
                   tracking-tight
-                  text-white
-                  hover:text-pink-400
+                  text-[var(--fg)]
+                  hover:text-[var(--kora-pink)]
                   transition-colors
                 "
               >
@@ -1718,7 +1709,7 @@ ${aiTaskPrompt}
                   className="
                     w-4 h-4
                     rotate-90
-                    text-slate-600
+                    text-[var(--fg-4)]
                   "
                 />
               </button>
@@ -1751,11 +1742,11 @@ ${aiTaskPrompt}
                   items-center
                   justify-center
                   border
-                  border-slate-800
-                  bg-slate-900/50
-                  text-slate-500
-                  hover:text-white
-                  hover:bg-slate-800
+                  border-[var(--stroke)]
+                  bg-[var(--panel-fill-2)]
+                  text-[var(--fg-4)]
+                  hover:text-[var(--fg)]
+                  hover:bg-[var(--hover)]
                   transition-all
                 "
               >
@@ -1769,13 +1760,13 @@ ${aiTaskPrompt}
                   h-8
                   rounded-lg
                   border
-                  border-slate-800
-                  bg-slate-900/50
+                  border-[var(--stroke)]
+                  bg-[var(--panel-fill-2)]
                   text-[11px]
                   font-semibold
-                  text-slate-400
-                  hover:text-white
-                  hover:border-fuchsia-500/30
+                  text-[var(--fg-4)]
+                  hover:text-[var(--fg)]
+                  hover:border-[var(--kora-pink-border)]
                   transition-all
                 "
               >
@@ -1792,11 +1783,11 @@ ${aiTaskPrompt}
                   items-center
                   justify-center
                   border
-                  border-slate-800
-                  bg-slate-900/50
-                  text-slate-500
-                  hover:text-white
-                  hover:bg-slate-800
+                  border-[var(--stroke)]
+                  bg-[var(--panel-fill-2)]
+                  text-[var(--fg-4)]
+                  hover:text-[var(--fg)]
+                  hover:bg-[var(--hover)]
                   transition-all
                 "
               >
@@ -1827,20 +1818,18 @@ ${aiTaskPrompt}
                     ${
                       platformFilter === platform
                         ? `
-                          bg-gradient-to-r
-                          from-fuchsia-600
-                          to-pink-600
-                          text-white
+                          bg-[var(--kora-pink)]
+                          text-[var(--fg)]
                           shadow-lg
                           shadow-pink-500/20
                         `
                         : `
                           border
-                          border-slate-800
-                          bg-slate-900/50
-                          text-slate-500
-                          hover:text-white
-                          hover:border-slate-700
+                          border-[var(--stroke)]
+                          bg-[var(--panel-fill-2)]
+                          text-[var(--fg-4)]
+                          hover:text-[var(--fg)]
+                          hover:border-[var(--stroke-strong)]
                         `
                     }
                   `}
@@ -1857,7 +1846,7 @@ ${aiTaskPrompt}
         {/* ============================================================ */}
 
         {view === "calendar" ? (
-          <div className="flex-1 overflow-auto bg-[#07101c]">
+          <div className="flex-1 overflow-auto bg-[var(--app-bg)]">
             {/* WEEK HEADERS */}
 
             <div
@@ -1868,8 +1857,8 @@ ${aiTaskPrompt}
                 top-0
                 z-10
                 border-b
-                border-slate-800
-                bg-[#09121f]
+                border-[var(--stroke)]
+                bg-[var(--panel-fill-2)]
               "
             >
               {WEEK_DAYS.map((day) => (
@@ -1882,7 +1871,7 @@ ${aiTaskPrompt}
                     font-bold
                     uppercase
                     tracking-[0.12em]
-                    text-slate-600
+                    text-[var(--fg-4)]
                   "
                 >
                   {day}
@@ -1951,7 +1940,7 @@ ${aiTaskPrompt}
                       relative
                       border-r
                       border-b
-                      border-slate-800/70
+                      border-[var(--stroke)]
                       min-h-[145px]
                       p-2.5
                       transition-all
@@ -1959,11 +1948,11 @@ ${aiTaskPrompt}
                       ${
                         isCurrentMonth
                           ? `
-                            bg-[#09121f]/70
-                            hover:bg-[#0c1726]
+                            bg-[var(--panel-fill-2)]/70
+                            hover:bg-[var(--hover)]
                           `
                           : `
-                            bg-[#050a12]
+                            bg-[var(--app-bg)]
                             opacity-30
                           `
                       }
@@ -1986,15 +1975,13 @@ ${aiTaskPrompt}
                           ${
                             isToday
                               ? `
-                                bg-gradient-to-br
-                                from-fuchsia-500
-                                to-pink-600
-                                text-white
+                                bg-[var(--kora-pink)]
+                                text-[var(--fg)]
                                 shadow-lg
                                 shadow-pink-500/30
                               `
                               : `
-                                text-slate-500
+                                text-[var(--fg-4)]
                               `
                           }
                         `}
@@ -2005,7 +1992,7 @@ ${aiTaskPrompt}
                       </span>
 
                       {scheduledEvents.length > 0 && (
-                        <span className="text-[9px] text-slate-700">
+                        <span className="text-[9px] text-[var(--fg-4)]">
                           {scheduledEvents.length}
                         </span>
                       )}
@@ -2026,14 +2013,14 @@ ${aiTaskPrompt}
                               overflow-hidden
                               rounded-xl
                               border
-                              border-slate-800
-                              bg-gradient-to-br
+                              border-[var(--stroke)]
+                              bg-[var(--panel-fill)]
                               from-[#101d2e]
-                              to-[#0b1624]
+                              to-[var(--panel-fill-2)]
                               px-2.5
                               py-2
                               pl-3
-                              hover:border-fuchsia-500/30
+                              hover:border-[var(--kora-pink-border)]
                               hover:-translate-y-[1px]
                               hover:shadow-lg
                               transition-all
@@ -2068,9 +2055,9 @@ ${aiTaskPrompt}
                                   flex
                                   items-center
                                   justify-center
-                                  bg-slate-900
+                                  bg-[var(--panel-fill-2)]
                                   border
-                                  border-slate-800
+                                  border-[var(--stroke)]
                                 "
                               >
                                 <PlatformIcon
@@ -2085,7 +2072,7 @@ ${aiTaskPrompt}
 
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1">
-                                  <span className="text-[8px] uppercase tracking-wider font-bold text-slate-600">
+                                  <span className="text-[8px] uppercase tracking-wider font-bold text-[var(--fg-4)]">
                                     {event.type ===
                                     "post"
                                       ? "Scheduled"
@@ -2093,14 +2080,14 @@ ${aiTaskPrompt}
                                   </span>
                                 </div>
 
-                                <p className="mt-0.5 text-[10px] font-medium text-slate-300 truncate group-hover:text-white">
+                                <p className="mt-0.5 text-[10px] font-medium text-[var(--fg-2)] truncate group-hover:text-[var(--fg)]">
                                   {event.title}
                                 </p>
 
                                 <div className="flex items-center gap-1.5 mt-1">
-                                  <Clock className="w-2.5 h-2.5 text-slate-600" />
+                                  <Clock className="w-2.5 h-2.5 text-[var(--fg-4)]" />
 
-                                  <span className="text-[8px] text-slate-600">
+                                  <span className="text-[8px] text-[var(--fg-4)]">
                                     {formatEventTime(
                                       event.trigger_at
                                     )}
@@ -2131,7 +2118,7 @@ ${aiTaskPrompt}
                                 flex
                                 items-center
                                 justify-center
-                                text-slate-600
+                                text-[var(--fg-4)]
                                 hover:text-red-400
                                 hover:bg-red-500/10
                                 transition-all
@@ -2143,7 +2130,7 @@ ${aiTaskPrompt}
                         ))}
 
                       {scheduledEvents.length > 3 && (
-                        <div className="text-[9px] text-fuchsia-400 px-1">
+                        <div className="text-[9px] text-[var(--kora-pink)] px-1">
                           +{scheduledEvents.length - 3} more
                         </div>
                       )}
@@ -2162,7 +2149,7 @@ ${aiTaskPrompt}
             className="
               flex-1
               overflow-auto
-              bg-[#07101c]
+              bg-[var(--app-bg)]
               flex
               items-center
               justify-center
@@ -2176,25 +2163,23 @@ ${aiTaskPrompt}
                   w-12
                   h-12
                   rounded-xl
-                  bg-gradient-to-br
-                  from-pink-500/20
-                  to-fuchsia-500/10
+                  bg-[var(--kora-pink-soft)]
                   border
-                  border-pink-500/20
+                  border-[var(--kora-pink-border)]
                   flex
                   items-center
                   justify-center
                 "
               >
-                <LayoutGrid className="w-6 h-6 text-pink-400" />
+                <LayoutGrid className="w-6 h-6 text-[var(--kora-pink)]" />
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold text-white">
+                <h3 className="text-xl font-semibold text-[var(--fg)]">
                   Instagram Grid Preview
                 </h3>
 
-                <p className="text-sm text-slate-500 leading-relaxed mt-3">
+                <p className="text-sm text-[var(--fg-4)] leading-relaxed mt-3">
                   Preview how your upcoming
                   content will look on your
                   Instagram profile before it
@@ -2206,20 +2191,20 @@ ${aiTaskPrompt}
                 className="
                   rounded-xl
                   border
-                  border-fuchsia-500/15
-                  bg-fuchsia-500/[0.04]
+                  border-[var(--kora-pink-border)]/15
+                  bg-[var(--kora-pink-soft)]
                   p-4
                 "
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="w-4 h-4 text-fuchsia-400" />
+                  <Sparkles className="w-4 h-4 text-[var(--kora-pink)]" />
 
-                  <span className="text-xs font-semibold text-fuchsia-300">
+                  <span className="text-xs font-semibold text-[var(--kora-pink)]">
                     Visual Planning
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <p className="text-xs text-[var(--fg-4)] leading-relaxed">
                   Rearrange your future
                   content to create a
                   consistent visual identity.
@@ -2237,32 +2222,30 @@ ${aiTaskPrompt}
                 rounded-[38px]
                 overflow-hidden
                 border
-                border-slate-700
-                bg-[#09121f]
+                border-[var(--stroke-strong)]
+                bg-[var(--panel-fill-2)]
                 shadow-[0_30px_100px_rgba(0,0,0,0.6)]
                 flex
                 flex-col
               "
             >
-              <div className="h-12 border-b border-slate-800 flex items-center justify-between px-6">
-                <span className="text-sm font-bold text-white">
+              <div className="h-12 border-b border-[var(--stroke)] flex items-center justify-between px-6">
+                <span className="text-sm font-bold text-[var(--fg)]">
                   @Koraspace_hq
                 </span>
 
-                <Layout className="w-4 h-4 text-slate-500" />
+                <Layout className="w-4 h-4 text-[var(--fg-4)]" />
               </div>
 
               {/* PROFILE */}
 
-              <div className="p-5 border-b border-slate-800 flex items-center gap-4">
+              <div className="p-5 border-b border-[var(--stroke)] flex items-center gap-4">
                 <div
                   className="
                     w-16
                     h-16
                     rounded-full
-                    bg-gradient-to-br
-                    from-fuchsia-500
-                    to-pink-600
+                    bg-[var(--kora-pink)]
                     flex
                     items-center
                     justify-center
@@ -2270,33 +2253,33 @@ ${aiTaskPrompt}
                     shadow-pink-500/20
                   "
                 >
-                  <Sparkles className="w-6 h-6 text-white" />
+                  <Sparkles className="w-6 h-6 text-[var(--fg)]" />
                 </div>
 
                 <div className="flex gap-5">
                   <div className="text-center">
-                    <p className="text-sm font-bold text-white">
+                    <p className="text-sm font-bold text-[var(--fg)]">
                       124
                     </p>
-                    <p className="text-[10px] text-slate-600">
+                    <p className="text-[10px] text-[var(--fg-4)]">
                       Posts
                     </p>
                   </div>
 
                   <div className="text-center">
-                    <p className="text-sm font-bold text-white">
+                    <p className="text-sm font-bold text-[var(--fg)]">
                       12.5K
                     </p>
-                    <p className="text-[10px] text-slate-600">
+                    <p className="text-[10px] text-[var(--fg-4)]">
                       Followers
                     </p>
                   </div>
 
                   <div className="text-center">
-                    <p className="text-sm font-bold text-white">
+                    <p className="text-sm font-bold text-[var(--fg)]">
                       45
                     </p>
-                    <p className="text-[10px] text-slate-600">
+                    <p className="text-[10px] text-[var(--fg-4)]">
                       Following
                     </p>
                   </div>
@@ -2305,7 +2288,7 @@ ${aiTaskPrompt}
 
               {/* GRID */}
 
-              <div className="flex-1 bg-[#050a12] overflow-y-auto">
+              <div className="flex-1 bg-[var(--app-bg)] overflow-y-auto">
                 <div className="grid grid-cols-3 gap-[2px]">
                   {Array.from({
                     length: 18,
@@ -2321,15 +2304,12 @@ ${aiTaskPrompt}
                         ${
                           index < 4
                             ? `
-                              bg-gradient-to-br
-                              from-fuchsia-500/25
-                              via-pink-500/10
-                              to-purple-500/20
+                              bg-[var(--panel-fill-2)]
                               border
-                              border-fuchsia-500/20
+                              border-[var(--kora-pink-border)]
                             `
                             : `
-                              bg-[#0c1726]
+                              bg-[var(--hover)]
                             `
                         }
                       `}
@@ -2340,9 +2320,9 @@ ${aiTaskPrompt}
                             tone="indigo"
                             className="
                               scale-75
-                              bg-fuchsia-600/80
-                              border-fuchsia-400/30
-                              text-white
+                              bg-[var(--kora-pink)]
+                              border-[var(--kora-pink-border)]
+                              text-[var(--fg)]
                               backdrop-blur-md
                             "
                           >
@@ -2370,24 +2350,24 @@ ${aiTaskPrompt}
           className="
             rounded-2xl
             border
-            border-slate-800
-            bg-[#09121f]
+            border-[var(--stroke)]
+            bg-[var(--panel-fill-2)]
             p-4
             shadow-lg
           "
         >
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-semibold text-white">
+              <h3 className="text-sm font-semibold text-[var(--fg)]">
                 Upcoming Posts
               </h3>
 
-              <p className="text-[10px] text-slate-600 mt-1">
+              <p className="text-[10px] text-[var(--fg-4)] mt-1">
                 Your next scheduled content
               </p>
             </div>
 
-            <span className="text-[10px] text-fuchsia-400 font-medium">
+            <span className="text-[10px] text-[var(--kora-pink)] font-medium">
               View all
             </span>
           </div>
@@ -2403,7 +2383,7 @@ ${aiTaskPrompt}
                     gap-3
                     p-2
                     rounded-xl
-                    hover:bg-slate-900/60
+                    hover:bg-[var(--hover)]/60
                     transition-colors
                   "
                 >
@@ -2416,8 +2396,8 @@ ${aiTaskPrompt}
                       items-center
                       justify-center
                       border
-                      border-slate-800
-                      bg-[#0d1828]
+                      border-[var(--stroke)]
+                      bg-[var(--panel-fill-2)]
                     "
                   >
                     <PlatformIcon
@@ -2427,11 +2407,11 @@ ${aiTaskPrompt}
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-medium text-slate-300 truncate">
+                    <p className="text-xs font-medium text-[var(--fg-2)] truncate">
                       {task.title}
                     </p>
 
-                    <p className="text-[9px] text-slate-600 mt-1">
+                    <p className="text-[9px] text-[var(--fg-4)] mt-1">
                       {formatEventDate(
                         task.trigger_at
                       )}{" "}
@@ -2459,9 +2439,9 @@ ${aiTaskPrompt}
               ))
             ) : (
               <div className="py-10 text-center">
-                <CalendarIcon className="w-5 h-5 mx-auto text-slate-700 mb-2" />
+                <CalendarIcon className="w-5 h-5 mx-auto text-[var(--fg-4)] mb-2" />
 
-                <p className="text-xs text-slate-600">
+                <p className="text-xs text-[var(--fg-4)]">
                   No upcoming posts
                 </p>
               </div>
@@ -2475,24 +2455,24 @@ ${aiTaskPrompt}
           className="
             rounded-2xl
             border
-            border-slate-800
-            bg-[#09121f]
+            border-[var(--stroke)]
+            bg-[var(--panel-fill-2)]
             p-4
             shadow-lg
           "
         >
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-semibold text-white">
+              <h3 className="text-sm font-semibold text-[var(--fg)]">
                 Content Queue
               </h3>
 
-              <p className="text-[10px] text-slate-600 mt-1">
+              <p className="text-[10px] text-[var(--fg-4)] mt-1">
                 Your publishing pipeline
               </p>
             </div>
 
-            <span className="text-[10px] text-fuchsia-400 font-medium">
+            <span className="text-[10px] text-[var(--kora-pink)] font-medium">
               Manage
             </span>
           </div>
@@ -2503,7 +2483,7 @@ ${aiTaskPrompt}
                 label: "Drafts",
                 count: 12,
                 icon: FileText,
-                color: "text-slate-400",
+                color: "text-[var(--fg-4)]",
               },
               {
                 label: "Scheduled",
@@ -2515,7 +2495,7 @@ ${aiTaskPrompt}
                 label: "Publishing",
                 count: 3,
                 icon: Send,
-                color: "text-pink-400",
+                color: "text-[var(--kora-pink)]",
               },
               {
                 label: "Needs Approval",
@@ -2536,9 +2516,9 @@ ${aiTaskPrompt}
                     p-2.5
                     rounded-xl
                     border
-                    border-slate-800
-                    bg-slate-900/30
-                    hover:bg-slate-900/60
+                    border-[var(--stroke)]
+                    bg-[var(--panel-fill-2)]
+                    hover:bg-[var(--hover)]/60
                     transition-all
                   "
                 >
@@ -2547,12 +2527,12 @@ ${aiTaskPrompt}
                       className={`w-3.5 h-3.5 ${item.color}`}
                     />
 
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-[var(--fg-4)]">
                       {item.label}
                     </span>
                   </div>
 
-                  <span className="text-sm font-semibold text-white">
+                  <span className="text-sm font-semibold text-[var(--fg)]">
                     {item.count}
                   </span>
                 </div>
@@ -2569,11 +2549,8 @@ ${aiTaskPrompt}
             overflow-hidden
             rounded-2xl
             border
-            border-fuchsia-500/20
-            bg-gradient-to-br
-            from-[#1a1030]
-            via-[#101426]
-            to-[#09121f]
+            border-[var(--kora-pink-border)]
+            bg-[var(--panel-fill)]
             p-5
             shadow-lg
           "
@@ -2588,7 +2565,7 @@ ${aiTaskPrompt}
               w-48
               h-48
               rounded-full
-              bg-fuchsia-500/20
+              bg-[var(--kora-pink-soft)]
               blur-3xl
             "
           />
@@ -2615,20 +2592,20 @@ ${aiTaskPrompt}
                 flex
                 items-center
                 justify-center
-                bg-fuchsia-500/15
+                bg-[var(--kora-pink-soft)]
                 border
-                border-fuchsia-500/20
+                border-[var(--kora-pink-border)]
                 mb-4
               "
             >
-              <Sparkles className="w-5 h-5 text-fuchsia-400" />
+              <Sparkles className="w-5 h-5 text-[var(--kora-pink)]" />
             </div>
 
-            <h3 className="text-base font-semibold text-white">
+            <h3 className="text-base font-semibold text-[var(--fg)]">
               Let AI plan your content
             </h3>
 
-            <p className="mt-2 text-xs leading-relaxed text-slate-400 max-w-[280px]">
+            <p className="mt-2 text-xs leading-relaxed text-[var(--fg-4)] max-w-[280px]">
               Generate a personalized content
               strategy based on your audience,
               trends and publishing goals.
@@ -2643,12 +2620,10 @@ ${aiTaskPrompt}
                 w-full
                 h-10
                 rounded-xl
-                bg-gradient-to-r
-                from-fuchsia-600
-                to-pink-600
+                bg-[var(--kora-pink)]
                 text-xs
                 font-semibold
-                text-white
+                text-[var(--fg)]
                 shadow-lg
                 shadow-pink-500/20
                 hover:scale-[1.01]
@@ -2675,7 +2650,7 @@ ${aiTaskPrompt}
             flex
             items-center
             justify-center
-            bg-[#020617]/80
+            bg-[var(--app-bg)]/80
             backdrop-blur-md
             p-4
           "
@@ -2688,8 +2663,8 @@ ${aiTaskPrompt}
               overflow-y-auto
               rounded-2xl
               border
-              border-slate-800
-              bg-[#09121f]
+              border-[var(--stroke)]
+              bg-[var(--panel-fill-2)]
               shadow-[0_30px_100px_rgba(0,0,0,0.7)]
               flex
               flex-col
@@ -2697,7 +2672,7 @@ ${aiTaskPrompt}
           >
             {/* MODAL HEADER */}
 
-            <div className="flex items-center justify-between p-5 border-b border-slate-800">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--stroke)]">
               <div className="flex items-center gap-3">
                 <div
                   className="
@@ -2707,22 +2682,22 @@ ${aiTaskPrompt}
                     flex
                     items-center
                     justify-center
-                    bg-gradient-to-br
-                    from-fuchsia-500/20
+                    bg-[var(--panel-fill)]
+                    from-[var(--kora-pink-soft)]
                     to-pink-500/10
                     border
-                    border-fuchsia-500/20
+                    border-[var(--kora-pink-border)]
                   "
                 >
-                  <Bot className="w-5 h-5 text-fuchsia-400" />
+                  <Bot className="w-5 h-5 text-[var(--kora-pink)]" />
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-white text-[16px]">
+                  <h3 className="font-semibold text-[var(--fg)] text-[16px]">
                     Schedule AI Task
                   </h3>
 
-                  <p className="text-[10px] text-slate-600 mt-0.5">
+                  <p className="text-[10px] text-[var(--fg-4)] mt-0.5">
                     Automate your next piece of
                     content
                   </p>
@@ -2740,9 +2715,9 @@ ${aiTaskPrompt}
                   flex
                   items-center
                   justify-center
-                  text-slate-500
-                  hover:text-white
-                  hover:bg-slate-800
+                  text-[var(--fg-4)]
+                  hover:text-[var(--fg)]
+                  hover:bg-[var(--hover)]
                   transition-all
                 "
               >
@@ -2756,7 +2731,7 @@ ${aiTaskPrompt}
               {/* TITLE */}
 
               <div>
-                <label className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 block mb-2">
+                <label className="text-[11px] font-semibold uppercase tracking-wide text-[var(--fg-4)] block mb-2">
                   Task Title
                 </label>
 
@@ -2773,19 +2748,19 @@ ${aiTaskPrompt}
                     w-full
                     rounded-xl
                     border
-                    border-slate-800
-                    bg-[#0b1624]
+                    border-[var(--stroke)]
+                    bg-[var(--panel-fill-2)]
                     px-4
                     py-3
                     text-sm
-                    text-white
-                    placeholder:text-slate-600
+                    text-[var(--fg)]
+                    placeholder:text-[var(--fg-4)]
                     outline-none
                     transition-all
-                    hover:border-slate-700
-                    focus:border-fuchsia-500/60
+                    hover:border-[var(--stroke-strong)]
+                    focus:border-[var(--kora-pink-border)]/60
                     focus:ring-2
-                    focus:ring-fuchsia-500/10
+                    focus:ring-[var(--kora-pink-soft)]
                   "
                 />
               </div>
@@ -2793,7 +2768,7 @@ ${aiTaskPrompt}
               {/* AI INSTRUCTIONS */}
 
               <div>
-                <label className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 block mb-2">
+                <label className="text-[11px] font-semibold uppercase tracking-wide text-[var(--fg-4)] block mb-2">
                   AI Instructions
                 </label>
 
@@ -2811,19 +2786,19 @@ ${aiTaskPrompt}
                     resize-none
                     rounded-xl
                     border
-                    border-slate-800
-                    bg-[#0b1624]
+                    border-[var(--stroke)]
+                    bg-[var(--panel-fill-2)]
                     px-4
                     py-3
                     text-sm
-                    text-white
-                    placeholder:text-slate-600
+                    text-[var(--fg)]
+                    placeholder:text-[var(--fg-4)]
                     outline-none
                     transition-all
-                    hover:border-slate-700
-                    focus:border-fuchsia-500/60
+                    hover:border-[var(--stroke-strong)]
+                    focus:border-[var(--kora-pink-border)]/60
                     focus:ring-2
-                    focus:ring-fuchsia-500/10
+                    focus:ring-[var(--kora-pink-soft)]
                   "
                 />
               </div>
@@ -2832,7 +2807,7 @@ ${aiTaskPrompt}
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 block mb-2">
+                  <label className="text-[11px] font-semibold uppercase tracking-wide text-[var(--fg-4)] block mb-2">
                     Date
                   </label>
 
@@ -2843,7 +2818,7 @@ ${aiTaskPrompt}
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 block mb-2">
+                  <label className="text-[11px] font-semibold uppercase tracking-wide text-[var(--fg-4)] block mb-2">
                     Time
                   </label>
 
@@ -2857,7 +2832,7 @@ ${aiTaskPrompt}
               {/* PLATFORM */}
 
               <div>
-                <label className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 block mb-2">
+                <label className="text-[11px] font-semibold uppercase tracking-wide text-[var(--fg-4)] block mb-2">
                   Platform Account
                 </label>
 
@@ -2867,12 +2842,12 @@ ${aiTaskPrompt}
                       w-full
                       rounded-xl
                       border
-                      border-slate-800
-                      bg-[#0b1624]
+                      border-[var(--stroke)]
+                      bg-[var(--panel-fill-2)]
                       px-4
                       py-3
                       text-xs
-                      text-slate-600
+                      text-[var(--fg-4)]
                     "
                   >
                     No accounts connected
@@ -2889,8 +2864,8 @@ ${aiTaskPrompt}
                         w-full
                         h-auto
                         py-3
-                        border-slate-800
-                        bg-[#0b1624]
+                        border-[var(--stroke)]
+                        bg-[var(--panel-fill-2)]
                       "
                     >
                       <SelectValue placeholder="Select account..." />
@@ -2921,9 +2896,9 @@ ${aiTaskPrompt}
               {/* MEDIA */}
 
               <div>
-                <label className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 block mb-2">
+                <label className="text-[11px] font-semibold uppercase tracking-wide text-[var(--fg-4)] block mb-2">
                   Media Attachment
-                  <span className="normal-case font-normal text-slate-700 ml-1">
+                  <span className="normal-case font-normal text-[var(--fg-4)] ml-1">
                     Optional
                   </span>
                 </label>
@@ -2942,7 +2917,7 @@ ${aiTaskPrompt}
                             rounded-xl
                             overflow-hidden
                             border
-                            border-slate-800
+                            border-[var(--stroke)]
                             group
                           "
                         >
@@ -2976,7 +2951,7 @@ ${aiTaskPrompt}
                               h-6
                               rounded-full
                               bg-black/70
-                              text-white
+                              text-[var(--fg)]
                               flex
                               items-center
                               justify-center
@@ -3002,14 +2977,14 @@ ${aiTaskPrompt}
                         rounded-xl
                         border
                         border-dashed
-                        border-slate-700
+                        border-[var(--stroke-strong)]
                         flex
                         flex-col
                         items-center
                         justify-center
-                        text-slate-600
-                        hover:text-fuchsia-400
-                        hover:border-fuchsia-500/40
+                        text-[var(--fg-4)]
+                        hover:text-[var(--kora-pink)]
+                        hover:border-[var(--kora-pink-border)]
                         transition-all
                       "
                     >
@@ -3027,17 +3002,17 @@ ${aiTaskPrompt}
                       rounded-xl
                       border
                       border-dashed
-                      border-slate-700
-                      bg-[#0b1624]/60
+                      border-[var(--stroke-strong)]
+                      bg-[var(--panel-fill-2)]/60
                       flex
                       flex-col
                       items-center
                       justify-center
                       gap-2
-                      text-slate-600
-                      hover:text-slate-400
-                      hover:border-fuchsia-500/40
-                      hover:bg-[#0d1828]
+                      text-[var(--fg-4)]
+                      hover:text-[var(--fg-4)]
+                      hover:border-[var(--kora-pink-border)]
+                      hover:bg-[var(--panel-fill-2)]
                       transition-all
                     "
                   >
@@ -3046,9 +3021,9 @@ ${aiTaskPrompt}
                         w-9
                         h-9
                         rounded-xl
-                        bg-slate-900
+                        bg-[var(--panel-fill-2)]
                         border
-                        border-slate-800
+                        border-[var(--stroke)]
                         flex
                         items-center
                         justify-center
@@ -3079,11 +3054,11 @@ ${aiTaskPrompt}
               className="
                 p-5
                 border-t
-                border-slate-800
+                border-[var(--stroke)]
                 flex
                 justify-end
                 gap-3
-                bg-[#07101c]
+                bg-[var(--app-bg)]
               "
             >
               <button
@@ -3096,9 +3071,9 @@ ${aiTaskPrompt}
                   rounded-xl
                   text-xs
                   font-semibold
-                  text-slate-500
-                  hover:text-white
-                  hover:bg-slate-800
+                  text-[var(--fg-4)]
+                  hover:text-[var(--fg)]
+                  hover:bg-[var(--hover)]
                   transition-all
                 "
               >
@@ -3117,12 +3092,10 @@ ${aiTaskPrompt}
                   items-center
                   justify-center
                   gap-2
-                  bg-gradient-to-r
-                  from-fuchsia-600
-                  to-pink-600
+                  bg-[var(--kora-pink)]
                   text-xs
                   font-semibold
-                  text-white
+                  text-[var(--fg)]
                   shadow-lg
                   shadow-pink-500/20
                   hover:shadow-pink-500/30
