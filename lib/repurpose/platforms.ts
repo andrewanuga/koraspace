@@ -2,7 +2,7 @@ import React from "react";
 import {
   Camera,
   Music2,
-  Youtube,
+  Video,
   Briefcase,
   Mail,
   FileText,
@@ -45,7 +45,7 @@ export const REPURPOSE_PLATFORMS: PlatformConfig[] = [
     id: "youtube",
     label: "YouTube",
     subtitle: "Short / Video",
-    icon: Youtube,
+    icon: Video,
     description: "YouTube content concept, opening hook, outline and description.",
   },
   {
