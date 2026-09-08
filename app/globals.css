@@ -494,3 +494,178 @@ html.sai-js [data-reveal] { opacity: 0; }
     radial-gradient(120% 80% at 50% 0%, rgba(99, 102, 241, 0.08), transparent 60%),
     radial-gradient(100% 60% at 50% 100%, rgba(168, 85, 247, 0.06), transparent 60%);
 }
+
+
+@keyframes koraspace-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes koraspace-chart-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scaleY(0.96);
+    transform-origin: bottom;
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+}
+
+.skeleton-shimmer {
+  background: rgba(255, 255, 255, 0.055);
+  animation: koraspace-pulse 1.8s ease-in-out infinite;
+}
+
+.skeleton-chart {
+  background: rgba(255, 0, 128, 0.12);
+  border: 1px solid rgba(255, 0, 128, 0.15);
+  animation: koraspace-chart-pulse 2s ease-in-out infinite;
+}
+
+.skeleton-pink {
+  background: rgba(255, 0, 128, 0.18);
+  border: 1px solid rgba(255, 0, 128, 0.2);
+  animation: koraspace-pulse 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer,
+  .skeleton-chart,
+  .skeleton-pink {
+    animation: none;
+  }
+}
+
+
+.sai-app {
+  --app-bg: #121212;
+
+  --panel-fill: #181818;
+  --panel-fill-2: #1e1e1e;
+
+  --hover: #242424;
+
+  --stroke: rgba(255, 255, 255, 0.08);
+  --stroke-strong: rgba(255, 255, 255, 0.14);
+
+  --fg: #f7f7f8;
+  --fg-2: #c6c6cc;
+  --fg-3: #96969f;
+  --fg-4: #65656e;
+
+  /* KoraSpace brand — Electric Pink */
+  --kora-pink: #ff0080;
+  --kora-pink-hover: #e60073;
+  --kora-pink-soft: rgba(255, 0, 128, 0.14);
+  --kora-pink-border: rgba(255, 0, 128, 0.28);
+
+  /* KoraSpace brand — Electric Blue */
+  --kora-blue: #3b82f6;
+  --kora-blue-hover: #2563eb;
+  --kora-blue-soft: rgba(59, 130, 246, 0.14);
+  --kora-blue-border: rgba(59, 130, 246, 0.28);
+
+  /* Semantic */
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.12);
+
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.12);
+
+  --danger: #fb7185;
+  --danger-soft: rgba(251, 113, 133, 0.12);
+
+  --info: var(--kora-blue);
+  --info-soft: var(--kora-blue-soft);
+
+  background: var(--app-bg);
+  color: var(--fg);
+}
+
+/* ── KoraSpace global design tokens ─────────────────── */
+:root {
+  /* -------------------------------------------------------------------------- */
+  /*                              BACKGROUND                                    */
+  /* -------------------------------------------------------------------------- */
+
+  --app-bg: #121212;
+
+  --panel-fill: #181818;
+  --panel-fill-2: #1e1e1e;
+
+  --hover: #242424;
+
+  /* -------------------------------------------------------------------------- */
+  /*                              BORDERS                                       */
+  /* -------------------------------------------------------------------------- */
+
+  --stroke: rgba(255, 255, 255, 0.08);
+  --stroke-strong: rgba(255, 255, 255, 0.14);
+
+  /* -------------------------------------------------------------------------- */
+  /*                              TEXT                                          */
+  /* -------------------------------------------------------------------------- */
+
+  --fg: #f7f7f8;
+
+  --fg-2: #c6c6cc;
+
+  --fg-3: #96969f;
+
+  --fg-4: #65656e;
+
+  /* -------------------------------------------------------------------------- */
+  /*                           KORASPACE BRAND                                  */
+  /* -------------------------------------------------------------------------- */
+
+  /* Electric Pink — Primary */
+  --kora-pink: #ff0080;
+
+  --kora-pink-hover: #e60073;
+
+  --kora-pink-soft: rgba(255, 0, 128, 0.14);
+
+  --kora-pink-border: rgba(255, 0, 128, 0.28);
+
+
+  /* Electric Blue — Secondary */
+  --kora-blue: #3b82f6;
+
+  --kora-blue-hover: #2563eb;
+
+  --kora-blue-soft: rgba(59, 130, 246, 0.14);
+
+  --kora-blue-border: rgba(59, 130, 246, 0.28);
+
+
+  /* -------------------------------------------------------------------------- */
+  /*                              SEMANTIC                                       */
+  /* -------------------------------------------------------------------------- */
+
+  --success: #34d399;
+
+  --success-soft: rgba(52, 211, 153, 0.12);
+
+  --warning: #fbbf24;
+
+  --warning-soft: rgba(251, 191, 36, 0.12);
+
+  --danger: #fb7185;
+
+  --danger-soft: rgba(251, 113, 133, 0.12);
+
+  --info: var(--kora-blue);
+
+  --info-soft: var(--kora-blue-soft);
+}

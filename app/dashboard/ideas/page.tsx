@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
-import { TrendsClient } from "./TrendsClient";
+﻿import { createClient } from "@/lib/supabase/server";
+import { IdeasClient } from "./IdeasClient";
 
 export default async function IdeasPage() {
   const supabase = await createClient();
@@ -22,23 +22,16 @@ export default async function IdeasPage() {
         .from("social_trends")
         .select("*")
         .eq("user_id", user.id)
-        .order("score", {
-          ascending: false,
-        }),
+        .order("score", { ascending: false }),
 
       supabase
         .from("social_accounts")
-        .select(`
-          id,
-          platform,
-          handle,
-          display_name
-        `)
+        .select("id, platform, handle, display_name")
         .eq("user_id", user.id),
     ]);
 
   return (
-    <TrendsClient
+    <IdeasClient
       trends={trends ?? []}
       accounts={accounts ?? []}
       userNiche={profile?.niche ?? null}

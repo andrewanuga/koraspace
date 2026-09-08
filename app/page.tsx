@@ -22,7 +22,6 @@ export default function LandingPage() {
   return (
     <div className="relative min-h-screen bg-[#07050d] selection:bg-[#FF2E93]/20 selection:text-[#FF2E93]">
       <Preloader />
-      <FloatingNav />
       <main>
         <Hero />
         <ProblemSolverSection />
