@@ -1,4 +1,4 @@
-﻿export type RepurposePlatform =
+export type RepurposePlatform =
   | "instagram"
   | "instagram-carousel"
   | "tiktok"

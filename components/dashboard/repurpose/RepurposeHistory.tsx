@@ -56,7 +56,7 @@ export function RepurposeHistory({
                 </p>
                 <div className="mt-0.5 flex items-center gap-2 text-[10px] text-[var(--fg-4)]">
                   <span className="capitalize">{project.source_type}</span>
-                  <span>•</span>
+                  <span>ï¿½</span>
                   <span>
                     {new Date(project.created_at).toLocaleDateString(undefined, {
                       month: "short",

@@ -1,4 +1,4 @@
-﻿import type { RepurposePlatform } from "./types";
+import type { RepurposePlatform } from "./types";
 
 export function buildAnalysisPrompt(content: string): string {
   return `You are the KoraSpace Content Intelligence AI.

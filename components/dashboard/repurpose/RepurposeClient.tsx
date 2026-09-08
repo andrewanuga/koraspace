@@ -11,10 +11,8 @@ import {
   Loader2,
   CheckCircle2,
   Zap,
-  RefreshCw,
 } from "lucide-react";
 import { GlassCard } from "@/components/dashboard/ui";
-import { REPURPOSE_PLATFORMS } from "@/lib/repurpose/platforms";
 import type {
   RepurposePlatform,
   RepurposeProject,
@@ -56,7 +54,7 @@ export function RepurposeClient({
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
 
-  /* -- AI State (Phases 1-4) -- */
+  /* AI State (Phases 1-4) */
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<ContentAnalysis | null>(null);
   const [selectedHook, setSelectedHook] = useState<string>("");
@@ -65,9 +63,8 @@ export function RepurposeClient({
   const [generating, setGenerating] = useState(false);
   const [outputs, setOutputs] = useState<RepurposeOutput[]>([]);
   const [projects, setProjects] = useState<RepurposeProject[]>(initialProjects);
-  const [currentProject, setCurrentProject] = useState<RepurposeProject | null>(null);
 
-  /* -- Validation -- */
+  /* Validation */
   const canGenerate = useMemo(() => {
     if (!selectedPlatforms.length) return false;
     if (sourceMode === "text") return textContent.trim().length > 10;
@@ -92,7 +89,7 @@ export function RepurposeClient({
     );
   };
 
-  /* -- AI Content Analysis (Phase 3) -- */
+  /* AI Content Analysis (Phase 3) */
   async function handleAnalyze() {
     let rawContent = "";
     if (sourceMode === "text") rawContent = textContent;
@@ -109,7 +106,6 @@ export function RepurposeClient({
 
     setAnalyzing(true);
     try {
-      // If URL, fetch text first
       if (sourceMode === "url") {
         const formData = new FormData();
         formData.append("url", url);
@@ -142,7 +138,7 @@ export function RepurposeClient({
     }
   }
 
-  /* -- Generate Outputs (Phase 1-4) -- */
+  /* Generate Outputs (Phases 1-4) */
   async function handleGenerate() {
     if (!canGenerate || generating) return;
 
@@ -205,7 +201,6 @@ export function RepurposeClient({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Generation failed");
 
-      setCurrentProject(data.project);
       setOutputs(data.outputs || []);
       if (data.project) {
         setProjects((prev) => [data.project, ...prev.filter((p) => p.id !== data.project.id)]);
@@ -223,7 +218,7 @@ export function RepurposeClient({
 
   return (
     <div className="mx-auto max-w-[1600px] space-y-8 pb-14">
-      {/* -- HERO BANNER -- */}
+      {/* HERO BANNER */}
       <div className="relative overflow-hidden rounded-[28px] border border-[var(--stroke)] bg-[var(--panel-fill)] p-8 md:p-10">
         <div className="pointer-events-none absolute right-0 top-0 h-full w-[45%] opacity-20">
           <div
@@ -263,7 +258,7 @@ export function RepurposeClient({
         </div>
       </div>
 
-      {/* -- MAIN WORKSPACE GRID -- */}
+      {/* MAIN WORKSPACE GRID */}
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         {/* LEFT COLUMN: Source + Analysis + Outputs */}
         <div className="space-y-6">
@@ -298,7 +293,7 @@ export function RepurposeClient({
               })}
             </div>
 
-            {/* UPLOAD (Phase 2) */}
+            {/* UPLOAD */}
             {sourceMode === "upload" && (
               <div className="p-6">
                 <div
@@ -341,7 +336,7 @@ export function RepurposeClient({
                       <CheckCircle2 className="mb-2 h-6 w-6 text-[var(--success)]" />
                       <p className="font-semibold text-[var(--fg)]">{file.name}</p>
                       <p className="mt-1 text-xs text-[var(--fg-4)]">
-                        {(file.size / (1024 * 1024)).toFixed(2)} MB • Ready to repurpose
+                        {(file.size / (1024 * 1024)).toFixed(2)} MB - Ready to repurpose
                       </p>
                     </>
                   ) : (
@@ -379,20 +374,20 @@ export function RepurposeClient({
                   placeholder="Paste your source text here...
 
 Examples:
-• A podcast transcript or video script
-• A blog article or essay
-• Notes from a client call
-• A rough stream-of-consciousness idea"
+- A podcast transcript or video script
+- A blog article or essay
+- Notes from a client call
+- A rough stream-of-consciousness idea"
                   className="min-h-[320px] w-full resize-y rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-5 text-sm leading-relaxed text-[var(--fg)] outline-none transition-all placeholder:text-[var(--fg-4)] focus:border-[var(--kora-pink-border)]"
                 />
                 <div className="mt-3 flex items-center justify-between text-xs text-[var(--fg-4)]">
-                  <span>KoraSpace extracts viral hooks & transforms format structure.</span>
+                  <span>KoraSpace extracts viral hooks and transforms format structure.</span>
                   <span>{textContent.length} characters</span>
                 </div>
               </div>
             )}
 
-            {/* URL (Phase 2) */}
+            {/* URL */}
             {sourceMode === "url" && (
               <div className="flex min-h-[320px] items-center p-8">
                 <div className="mx-auto w-full max-w-xl text-center">
@@ -419,7 +414,7 @@ Examples:
             )}
           </GlassCard>
 
-          {/* AI Content Intelligence Card (Phase 3) */}
+          {/* AI Content Intelligence Card */}
           {analysis && (
             <AnalysisCard
               analysis={analysis}
@@ -430,7 +425,7 @@ Examples:
             />
           )}
 
-          {/* Generated Results (Phase 1 & 4) */}
+          {/* Generated Results */}
           {outputs.length > 0 && (
             <RepurposeResults outputs={outputs} onUpdate={setOutputs} />
           )}
@@ -458,7 +453,6 @@ Examples:
             </p>
 
             <div className="space-y-2.5">
-              {/* Optional Analysis Trigger Button */}
               {!analysis && (
                 <button
                   type="button"
@@ -474,13 +468,12 @@ Examples:
                   ) : (
                     <>
                       <Zap className="h-3.5 w-3.5" />
-                      Analyze & Extract Hooks
+                      Analyze and Extract Hooks
                     </>
                   )}
                 </button>
               )}
 
-              {/* Main Generation Trigger Button */}
               <button
                 type="button"
                 disabled={!canGenerate || generating}
