@@ -5,29 +5,67 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
-  Brain, Ghost, TrendingUp, DollarSign, Target, BarChart3,
-  Calendar, MessageSquare, FileText, Clock,
-  Link2, Sparkles, Send, LineChart,
-  ArrowRight, Check, Star, Users, Zap, Search, Globe, Camera, Briefcase, Play, MessageCircle, Music,
-  ChevronDown, Activity, RefreshCw, Layers3, Eye, Flame, Award, ShieldCheck, QrCode,
-  Mail, Phone, MapPin
+  Brain,
+  Ghost,
+  TrendingUp,
+  DollarSign,
+  Target,
+  BarChart3,
+  Calendar,
+  MessageSquare,
+  FileText,
+  Clock,
+  Sparkles,
+  Send,
+  LineChart,
+  ArrowRight,
+  Check,
+  Star,
+  Users,
+  Zap,
+  Search,
+  Globe,
+  Camera,
+  Briefcase,
+  Play,
+  MessageCircle,
+  Music,
+  ChevronDown,
+  Activity,
+  RefreshCw,
+  Layers3,
+  Eye,
+  Flame,
+  Award,
+  ShieldCheck,
+  Mail,
+  Phone,
+  MapPin,
+  CheckCircle2,
+  Sliders,
+  Cpu,
+  Inbox,
+  ArrowUpRight,
 } from "lucide-react";
 
-/* ── Shared Button ────────────────────────────────────────────────── */
+/* ── Shared Action Button ─────────────────────────────────────────── */
 
 function LandingButton({
   href,
   className = "",
+  style,
   children,
 }: {
   href: string;
   className?: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }) {
   return (
     <Link href={href}>
       <button
-        className={`px-7 py-3.5 rounded-full font-bold text-sm tracking-wide transition-all duration-300 transform hover:scale-[1.03] active:scale-[0.97] cursor-pointer ${className}`}
+        style={style}
+        className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs tracking-wide transition-all duration-200 cursor-pointer active:scale-[0.98] ${className}`}
       >
         {children}
       </button>
@@ -35,18 +73,34 @@ function LandingButton({
   );
 }
 
-/* ── Section Header Component ─────────────────────────────────────── */
 
-function Eyebrow({ children, tone = "pink" }: { children: React.ReactNode; tone?: "pink" | "blue" | "gradient" }) {
-  const colorClass =
+/* ── Section Eyebrow & Header ─────────────────────────────────────── */
+
+function Eyebrow({
+  children,
+  tone = "pink",
+}: {
+  children: React.ReactNode;
+  tone?: "pink" | "blue" | "white";
+}) {
+  const toneClass =
     tone === "blue"
-      ? "text-[#0066FF]"
-      : tone === "gradient"
-      ? "bg-gradient-to-r from-[#FF2E93] to-[#0066FF] bg-clip-text text-transparent"
-      : "text-[#FF2E93]";
+      ? "text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/25"
+      : tone === "white"
+      ? "text-white/80 bg-white/5 border-white/10"
+      : "text-[#ff0a8a] bg-[#ff0a8a]/10 border-[#ff0a8a]/25";
 
   return (
-    <span className={`inline-block font-mono text-xs uppercase tracking-[0.25em] font-extrabold ${colorClass}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider font-semibold border ${toneClass}`}
+    >
+      <span
+        className="h-1.5 w-1.5 rounded-full"
+        style={{
+          background:
+            tone === "blue" ? "#3b82f6" : tone === "white" ? "#ffffff" : "#ff0a8a",
+        }}
+      />
       {children}
     </span>
   );
@@ -59,45 +113,370 @@ function SectionHead({
   sub,
 }: {
   eyebrow: string;
-  tone?: "pink" | "blue" | "gradient";
+  tone?: "pink" | "blue" | "white";
   title: React.ReactNode;
   sub?: string;
 }) {
-  const headerVariants: Variants = {
-    hidden: { opacity: 0, y: 30, filter: "blur(4px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-    },
-  };
-
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-80px" }}
-      variants={headerVariants}
-      className="mx-auto mb-16 max-w-3xl text-center"
-    >
-      <div><Eyebrow tone={tone}>{eyebrow}</Eyebrow></div>
-      <h2 className="font-display mt-4 text-3xl font-black leading-[1.1] tracking-tight text-white sm:text-5xl">
+    <div className="mx-auto mb-14 max-w-3xl text-center">
+      <div>
+        <Eyebrow tone={tone}>{eyebrow}</Eyebrow>
+      </div>
+      <h2 className="font-display mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.15]">
         {title}
       </h2>
       {sub && (
-        <p className="mt-5 text-base leading-relaxed text-white/70 sm:text-lg font-medium">
+        <p className="mt-4 text-sm sm:text-base leading-relaxed text-white/60 font-normal max-w-2xl mx-auto">
           {sub}
         </p>
       )}
-    </motion.div>
+    </div>
   );
 }
 
-/* ── 1. Alternating FeatureSection Layout (From Reference Code) ───── */
+/* ── 1. Problem Solver Section ────────────────────────────────────── */
+
+export function ProblemSolverSection() {
+  return (
+    <section className="relative px-4 sm:px-6 lg:px-8 py-16">
+      <div className="relative mx-auto max-w-6xl rounded-3xl border border-white/[0.08] bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden">
+        {/* Subtle accent border at top */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[2px] bg-gradient-to-r from-[#ff0a8a] to-[#3b82f6] rounded-full" />
+
+        <div className="max-w-3xl mx-auto text-center">
+          <Eyebrow tone="white">The Old Way vs The KoraSpace Way</Eyebrow>
+
+          <h2 className="mt-5 font-display text-2xl sm:text-4xl lg:text-4xl font-bold text-white tracking-tight leading-snug">
+            Stop wasting 15+ hours a week fighting writer&apos;s block, copying
+            posts between apps, and losing high-intent leads in messy DMs.
+          </h2>
+
+          <p className="mt-5 text-sm sm:text-base text-white/60 leading-relaxed font-normal">
+            Traditional schedulers only push posts. KoraSpace is an autonomous
+            growth workspace with dual engines: a <span className="text-[#ff0a8a] font-semibold">Creator Studio</span> for signature voice content and a <span className="text-[#3b82f6] font-semibold">Marketing Operator</span> for CRM lead conversion.
+          </p>
+
+          {/* 3 Pillars Grid */}
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+            <div className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#ff0a8a]/15 text-[#ff0a8a] mb-3">
+                <Sparkles className="h-4.5 w-4.5" />
+              </div>
+              <h3 className="text-sm font-bold text-white">AI Brand Brain</h3>
+              <p className="mt-1.5 text-xs text-white/55 leading-relaxed">
+                Learns your authentic voice, past top-performing hooks, and strict guidelines so posts never sound generic.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3b82f6]/15 text-[#3b82f6] mb-3">
+                <Calendar className="h-4.5 w-4.5" />
+              </div>
+              <h3 className="text-sm font-bold text-white">Visual 6-Platform Sync</h3>
+              <p className="mt-1.5 text-xs text-white/55 leading-relaxed">
+                Schedule and drag-and-drop across Instagram, TikTok, LinkedIn, YouTube, X, and Threads in one calendar.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#34d399]/15 text-[#34d399] mb-3">
+                <Target className="h-4.5 w-4.5" />
+              </div>
+              <h3 className="text-sm font-bold text-white">Social CRM &amp; Revenue</h3>
+              <p className="mt-1.5 text-xs text-white/55 leading-relaxed">
+                Detects buying signals in comments and DMs (&quot;How much?&quot;), converts leads, and attributes real revenue.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3.5">
+            <LandingButton
+              href="/signup"
+              className="bg-[#ff0a8a] text-white shadow-[0_4px_20px_rgba(255,10,138,0.3)] hover:bg-[#ff299b]"
+            >
+              <span>Get Started Free</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </LandingButton>
+            <LandingButton
+              href="#dual-modes"
+              className="border border-white/[0.10] bg-white/[0.03] text-white/80 hover:bg-white/[0.06] hover:text-white"
+            >
+              <span>Compare Dual Modes</span>
+            </LandingButton>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── 2. Dual-Mode Showcase Section (#dual-modes) ─────────────────── */
+
+export function DualModeShowcaseSection() {
+  return (
+    <section id="dual-modes" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+      <div className="mx-auto max-w-6xl">
+        <SectionHead
+          eyebrow="Two Distinct Operating Modes"
+          tone="pink"
+          title={
+            <>
+              Built for <span className="text-[#ff0a8a]">Creators</span> &amp;{" "}
+              <span className="text-[#3b82f6]">Marketing Teams</span>
+            </>
+          }
+          sub="Switch seamlessly between Creator Mode and Marketer Mode depending on whether you are crafting signature content or running an autonomous revenue campaign."
+        />
+
+        {/* Dual Cards Comparison Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Creator Mode Card */}
+          <div className="relative rounded-3xl border border-[#ff0a8a]/25 bg-[#171717] p-8 shadow-[0_15px_45px_rgba(255,10,138,0.08)] flex flex-col justify-between">
+            <div className="absolute top-4 right-5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ff0a8a]/15 px-3 py-1 text-[11px] font-bold text-[#ff0a8a] border border-[#ff0a8a]/30">
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Creator Mode</span>
+              </span>
+            </div>
+
+            <div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ff0a8a]/15 text-[#ff0a8a] mb-5 border border-[#ff0a8a]/30">
+                <Sparkles className="h-6 w-6" />
+              </div>
+
+              <h3 className="font-display text-2xl font-bold text-white">
+                Brand Voice &amp; Audience Studio
+              </h3>
+              <p className="mt-2.5 text-sm text-white/60 leading-relaxed">
+                For solo creators, thought leaders, and influencers who need to publish consistent, high-impact content across 6+ platforms without burning out.
+              </p>
+
+              <div className="mt-6 space-y-3">
+                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
+                  <CheckCircle2 className="h-4 w-4 text-[#ff0a8a] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-bold text-white">AI Composing Pipeline</span>
+                    <p className="text-[11px] text-white/50">8-step AI workflow: voice match, web research, draft scoring, and reflection.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
+                  <CheckCircle2 className="h-4 w-4 text-[#ff0a8a] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-bold text-white">Visual Drag-and-Drop Calendar</span>
+                    <p className="text-[11px] text-white/50">Plan and rearrange weekly schedules across Instagram, TikTok, LinkedIn, and X.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
+                  <CheckCircle2 className="h-4 w-4 text-[#ff0a8a] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-bold text-white">Content Repurposer</span>
+                    <p className="text-[11px] text-white/50">Turn 1 YouTube video or article into 6 platform-native drafts instantly.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
+                  <CheckCircle2 className="h-4 w-4 text-[#ff0a8a] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-bold text-white">Viral Trend Radar &amp; Idea Lab</span>
+                    <p className="text-[11px] text-white/50">Real-time niche trend monitoring with instant &quot;Turn into Draft&quot; actions.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-white/[0.07] flex items-center justify-between">
+              <span className="text-xs font-mono text-[#ff0a8a] font-semibold">Theme: Kora Pink (#ff0a8a)</span>
+              <LandingButton
+                href="/signup"
+                className="bg-[#ff0a8a] text-white shadow-[0_4px_16px_rgba(255,10,138,0.25)] hover:bg-[#ff299b]"
+              >
+                <span>Launch Creator Studio</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </LandingButton>
+            </div>
+          </div>
+
+          {/* Marketer Mode Card */}
+          <div className="relative rounded-3xl border border-[#3b82f6]/25 bg-[#171717] p-8 shadow-[0_15px_45px_rgba(59,130,246,0.08)] flex flex-col justify-between">
+            <div className="absolute top-4 right-5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#3b82f6]/15 px-3 py-1 text-[11px] font-bold text-[#3b82f6] border border-[#3b82f6]/30">
+                <Target className="h-3.5 w-3.5" />
+                <span>Marketer Mode</span>
+              </span>
+            </div>
+
+            <div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#3b82f6]/15 text-[#3b82f6] mb-5 border border-[#3b82f6]/30">
+                <Target className="h-6 w-6" />
+              </div>
+
+              <h3 className="font-display text-2xl font-bold text-white">
+                Marketing Operator &amp; Social CRM
+              </h3>
+              <p className="mt-2.5 text-sm text-white/60 leading-relaxed">
+                For marketing teams, agencies, and businesses looking to automate lead triage, campaign execution, and full-funnel revenue attribution.
+              </p>
+
+              <div className="mt-6 space-y-3">
+                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
+                  <CheckCircle2 className="h-4 w-4 text-[#3b82f6] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-bold text-white">AI Marketing Operator</span>
+                    <p className="text-[11px] text-white/50">Action queue prioritizing high-intent leads, budget reallocations, and approval tasks.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
+                  <CheckCircle2 className="h-4 w-4 text-[#3b82f6] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-bold text-white">Lead Intelligence &amp; CRM Pipeline</span>
+                    <p className="text-[11px] text-white/50">Drag-and-drop Kanban board classifying leads from social comments and DMs.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
+                  <CheckCircle2 className="h-4 w-4 text-[#3b82f6] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-bold text-white">Multi-Channel Campaigns Engine</span>
+                    <p className="text-[11px] text-white/50">Server-side stats tracking real-time ROAS, spend, clicks, and qualified conversions.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
+                  <CheckCircle2 className="h-4 w-4 text-[#3b82f6] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-bold text-white">Agency Workspaces &amp; Approvals</span>
+                    <p className="text-[11px] text-white/50">Manage multiple client brands with strict RLS permissions and shareable approval links.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-white/[0.07] flex items-center justify-between">
+              <span className="text-xs font-mono text-[#3b82f6] font-semibold">Theme: Kora Blue (#3b82f6)</span>
+              <LandingButton
+                href="/signup"
+                className="bg-[#3b82f6] text-white shadow-[0_4px_16px_rgba(59,130,246,0.25)] hover:bg-[#2563eb]"
+              >
+                <span>Launch Marketer Operator</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </LandingButton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── 3. Growth Loop Section (#how) ────────────────────────────────── */
+
+const LOOP_STAGES = [
+  {
+    num: "01",
+    title: "Understand & Research",
+    desc: "Scans your brand guidelines, past viral winners, and real-time social trends across your niche.",
+    icon: Search,
+    color: "#ff0a8a",
+    badge: "Brand Brain",
+  },
+  {
+    num: "02",
+    title: "Strategize & Compose",
+    desc: "Executes an 8-step AI pipeline with tone-matching, draft scoring, and reflection before final output.",
+    icon: Sparkles,
+    color: "#ec4899",
+    badge: "AI Composer",
+  },
+  {
+    num: "03",
+    title: "Publish & Triage",
+    desc: "Auto-schedules across 6+ networks and triages incoming comments & DMs with high-intent lead detection.",
+    icon: Calendar,
+    color: "#3b82f6",
+    badge: "Multi-Platform CRM",
+  },
+  {
+    num: "04",
+    title: "Measure & Optimize",
+    desc: "Attributes social clicks to real pipeline revenue and automatically feeds insights into future strategy.",
+    icon: RefreshCw,
+    color: "#2563eb",
+    badge: "Closed-Loop Growth",
+  },
+];
+
+export function GrowthLoopSection() {
+  return (
+    <section id="how" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+      <div className="relative mx-auto max-w-6xl">
+        <SectionHead
+          eyebrow="The Autonomous Growth Loop"
+          tone="white"
+          title="Social media marketing that continuously optimizes itself."
+          sub="Buffer and Hootsuite make you do everything manually. KoraSpace connects understanding, creation, distribution, and revenue attribution in a single automated loop."
+        />
+
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {LOOP_STAGES.map((s) => (
+            <div
+              key={s.num}
+              className="relative flex flex-col justify-between rounded-3xl border border-white/[0.08] bg-[#171717] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.3)] transition-all duration-300 hover:border-white/20 hover:bg-[#1a1a1a]"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <span
+                    className="font-mono text-base font-extrabold tracking-wider"
+                    style={{ color: s.color }}
+                  >
+                    #{s.num}
+                  </span>
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-xl"
+                    style={{
+                      background: `${s.color}18`,
+                      border: `1px solid ${s.color}35`,
+                      color: s.color,
+                    }}
+                  >
+                    <s.icon className="h-4.5 w-4.5" />
+                  </div>
+                </div>
+
+                <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/60 font-semibold">
+                  {s.badge}
+                </span>
+
+                <h3 className="font-display mt-3 text-lg font-bold text-white">
+                  {s.title}
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-white/55 font-normal">
+                  {s.desc}
+                </p>
+              </div>
+
+              <div
+                className="mt-6 flex items-center gap-1.5 text-xs font-bold"
+                style={{ color: s.color }}
+              >
+                <span>Feeds next stage</span>
+                <ArrowRight className="h-3 w-3" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── 4. Alternating FeatureSection Layout ─────────────────────────── */
 
 interface FeatureProps {
   badge?: string;
+  tone?: "pink" | "blue";
   title: string;
   description: string;
   imageUrl: string;
@@ -107,363 +486,75 @@ interface FeatureProps {
 
 export function FeatureSection({
   badge,
+  tone = "pink",
   title,
   description,
   imageUrl,
   imageAlt,
   imageLeft = true,
 }: FeatureProps) {
-  const imageContainer: Variants = {
-    hidden: {
-      opacity: 0,
-      x: imageLeft ? -40 : 40,
-      y: 20,
-      scale: 0.96,
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.9,
-        ease: [0.16, 1, 0.3, 1],
-      },
-    },
-  };
-
-  const textContainer: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.05,
-      },
-    },
-  };
-
-  const textItem: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: {
-        type: "spring",
-        stiffness: 110,
-        damping: 20,
-      },
-    },
-  };
+  const isBlue = tone === "blue";
+  const brandColor = isBlue ? "#3b82f6" : "#ff0a8a";
 
   return (
-    <section className="py-12 md:py-20 px-6 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-16">
-      {/* Animated Image Wrapper Panel */}
-      <motion.div
-        variants={imageContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-80px" }}
-        whileHover={{ y: -6, scale: 1.015 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className={`flex-1 w-full will-change-transform cursor-pointer ${
+    <section className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-14">
+      {/* Visual Image Preview */}
+      <div
+        className={`flex-1 w-full ${
           imageLeft ? "md:order-1" : "md:order-2"
         }`}
       >
-        <div
-          className={`relative rounded-[40px] p-2.5 shadow-2xl border overflow-hidden ${
-            imageLeft
-              ? "bg-gradient-to-br from-[#FF2E93]/20 via-black to-[#0066FF]/10 border-[#FF2E93]/30"
-              : "bg-gradient-to-br from-[#0066FF]/20 via-black to-[#FF2E93]/10 border-[#0066FF]/30"
-          }`}
-          style={{ backdropFilter: "blur(20px)" }}
-        >
+        <div className="relative rounded-3xl border border-white/[0.10] bg-[#161616] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden">
           <img
             src={imageUrl}
             alt={imageAlt}
-            className="w-full h-[320px] sm:h-[380px] rounded-[32px] object-cover select-none border border-white/10"
+            className="w-full h-[300px] sm:h-[360px] rounded-2xl object-cover object-top border border-white/10"
           />
         </div>
-      </motion.div>
+      </div>
 
-      {/* Animated Content Wrapper Panel */}
-      <motion.div
-        variants={textContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-80px" }}
-        className={`flex-1 space-y-6 ${imageLeft ? "md:order-2" : "md:order-1"}`}
+      {/* Content Text */}
+      <div
+        className={`flex-1 space-y-4 ${
+          imageLeft ? "md:order-2" : "md:order-1"
+        }`}
       >
-        {badge && (
-          <motion.div variants={textItem}>
-            <Eyebrow tone={imageLeft ? "pink" : "blue"}>{badge}</Eyebrow>
-          </motion.div>
-        )}
+        {badge && <Eyebrow tone={tone}>{badge}</Eyebrow>}
 
-        <motion.h2
-          variants={textItem}
-          className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight"
-        >
+        <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight tracking-tight">
           {title}
-        </motion.h2>
+        </h2>
 
-        <motion.p
-          variants={textItem}
-          className="text-base md:text-lg text-white/70 font-medium leading-relaxed"
-        >
+        <p className="text-sm sm:text-base text-white/60 font-normal leading-relaxed">
           {description}
-        </motion.p>
+        </p>
 
-        <motion.div
-          variants={textItem}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          className="w-fit"
-        >
+        <div className="pt-2">
           <LandingButton
             href="/signup"
-            className={
-              imageLeft
-                ? "bg-[#FF2E93] text-white shadow-lg shadow-[#FF2E93]/30 hover:shadow-[#FF2E93]/50"
-                : "bg-[#0066FF] text-white shadow-lg shadow-[#0066FF]/30 hover:shadow-[#0066FF]/50"
-            }
+            className="text-white"
+            style={{
+              background: brandColor,
+              boxShadow: `0 4px 18px ${brandColor}35`,
+            }}
           >
-            Try it Now
+            <span>Explore Feature</span>
+            <ArrowRight className="h-3.5 w-3.5" />
           </LandingButton>
-        </motion.div>
-      </motion.div>
-    </section>
-  );
-}
-
-/* ── 2. The KoraSpace Autonomous Growth Loop Section ──────────────── */
-
-const LOOP_STAGES = [
-  {
-    num: "01",
-    title: "Understand & Research",
-    desc: "Analyzes brand data, target audience, past posts, and scans real-time niche trends across platforms.",
-    icon: Search,
-    color: "#FF2E93",
-    badge: "Brand Brain & Search"
-  },
-  {
-    num: "02",
-    title: "Strategize & Create",
-    desc: "Executes an 8-step AI pipeline: niche check -> voice match -> draft generation -> post scoring -> double web reflection.",
-    icon: Sparkles,
-    color: "#C13FE8",
-    badge: "AI Composing Pipeline"
-  },
-  {
-    num: "03",
-    title: "Publish & Monitor",
-    desc: "Schedules to Instagram, TikTok, LinkedIn, YouTube, X, and Threads. Monitors post performance and lead engagement in real time.",
-    icon: Calendar,
-    color: "#0066FF",
-    badge: "Multi-Platform Auto-Scheduler"
-  },
-  {
-    num: "04",
-    title: "Learn & Optimize",
-    desc: "Measures likes, DMs, leads, and revenue. Identifies winning hooks and feeds findings back to auto-improve the next strategy.",
-    icon: RefreshCw,
-    color: "#00E5FF",
-    badge: "Social-to-Revenue Flywheel"
-  }
-];
-
-/* ── 1.5 Problem Solver Section (From Reference Code) ──────────────── */
-
-export function ProblemSolverSection() {
-  const title = "Stop wasting 15+ hours a week manually creating posts, editing videos, and replying to DMs. KoraSpace puts your social media growth on total autopilot.";
-  const titleWords = title.split(" ");
-
-  const container: Variants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1],
-        staggerChildren: 0.035,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const wordtext: Variants = {
-    hidden: { 
-      opacity: 0, 
-      y: 12, 
-      filter: "blur(6px)" 
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: {
-        type: "spring",
-        stiffness: 140,
-        damping: 20,
-      },
-    },
-  };
-
-  const button: Variants = {
-    hidden: { opacity: 0, y: 15, filter: "blur(4px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-  };
-
-  return (
-    <motion.section
-      variants={container}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-120px" }}
-      className="relative my-12 mx-4 sm:mx-8 py-20 lg:py-24 rounded-[36px] px-6 z-20 overflow-hidden text-white shadow-2xl border border-white/10 will-change-transform"
-      style={{
-        background: "linear-gradient(135deg, rgba(255,46,147,0.1) 0%, rgba(0,102,255,0.08) 50%, rgba(7,5,13,0.95) 100%)",
-        backdropFilter: "blur(20px)"
-      }}
-    >
-      {/* Sleek top ambient accent line */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-1 bg-gradient-to-r from-[#FF2E93] to-[#0066FF] rounded-full" />
-
-      {/* Word-staggered typography heading */}
-      <p className="mb-8 text-2xl font-bold text-center lg:text-4xl text-white tracking-tight flex flex-wrap justify-center gap-x-2 gap-y-1 max-w-4xl mx-auto leading-relaxed">
-        {titleWords.map((word, index) => {
-          const isHighlighted = word.includes("15+") || word.includes("autopilot.") || word.includes("KoraSpace");
-          return (
-            <motion.span
-              key={index}
-              variants={wordtext}
-              className={`inline-block ${isHighlighted ? "text-[#FF2E93] font-black" : "text-white"}`}
-            >
-              {word}
-            </motion.span>
-          );
-        })}
-      </p>
-
-      {/* Interactive Floating Action Button */}
-      <motion.div 
-        variants={button}
-        whileHover={{ scale: 1.03, y: -2 }}
-        whileTap={{ scale: 0.97, y: 0 }}
-        className="w-fit mx-auto"
-      >
-        <LandingButton
-          href="/signup"
-          className="mx-auto text-white bg-gradient-to-r from-[#FF2E93] to-[#0066FF] shadow-lg shadow-[#FF2E93]/30 hover:shadow-[#0066FF]/40 transition-shadow"
-        >
-          Claim 14-Day Free Trial
-        </LandingButton>
-      </motion.div>
-    </motion.section>
-  );
-}
-
-export function GrowthLoopSection() {
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.05 },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 30, filter: "blur(2px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { type: "spring", stiffness: 90, damping: 18 },
-    },
-  };
-
-  return (
-    <section id="how" className="relative px-5 py-24 sm:py-32 bg-[#07050d] overflow-hidden">
-      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-gradient-to-r from-[#FF2E93]/15 via-[#5A3CFF]/15 to-[#0066FF]/15 blur-[140px]" />
-
-      <div className="relative mx-auto max-w-6xl">
-        <SectionHead
-          eyebrow="The KoraSpace Autonomous Growth Loop"
-          tone="gradient"
-          title={
-            <>
-              Marketing that <span className="bg-gradient-to-r from-[#FF2E93] via-[#C13FE8] to-[#0066FF] bg-clip-text text-transparent">markets itself</span> automatically.
-            </>
-          }
-          sub="Buffer and Hootsuite make you schedule manually. KoraSpace is an AI growth engine that learns your business, creates content, measures revenue, and optimizes itself."
-        />
-
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          variants={containerVariants}
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
-        >
-          {LOOP_STAGES.map((s) => (
-            <motion.div
-              key={s.num}
-              variants={itemVariants}
-              whileHover={{ y: -6, scale: 1.02 }}
-              className="relative flex flex-col justify-between rounded-[36px] p-7 text-white transition-all duration-300 shadow-xl"
-              style={{
-                background: "linear-gradient(170deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
-                border: "1.5px solid rgba(255,255,255,0.08)",
-                backdropFilter: "blur(16px)"
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-xl font-bold tracking-wider" style={{ color: s.color }}>
-                  #{s.num}
-                </span>
-                <div
-                  className="flex h-11 w-11 items-center justify-center rounded-2xl"
-                  style={{ background: `${s.color}20`, border: `1px solid ${s.color}40` }}
-                >
-                  <s.icon className="h-5 w-5" style={{ color: s.color }} />
-                </div>
-              </div>
-
-              <div className="mt-8">
-                <span className="font-mono text-[11px] uppercase tracking-wider px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/70 font-semibold">
-                  {s.badge}
-                </span>
-                <h3 className="font-display mt-4 text-xl font-bold text-white">{s.title}</h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-white/65 font-medium">{s.desc}</p>
-              </div>
-
-              <div className="mt-6 flex items-center gap-2 text-xs font-bold" style={{ color: s.color }}>
-                <span>Feeds next stage</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ── 3. Interactive FeatureShowcase (From Reference Code) ─────────── */
+/* ── 5. Interactive FeatureShowcase (#engines) ────────────────────── */
 
 interface FeatureNode {
   id: string;
   title: string;
   tagline: string;
   description: string;
+  tone: "pink" | "blue";
   icon: React.ComponentType<{ className?: string }>;
   screenPath: string;
 }
@@ -472,48 +563,60 @@ const FEATURE_SET_DATA: FeatureNode[] = [
   {
     id: "ai-composer",
     title: "AI Composing Pipeline",
-    tagline: "Multi-Step Content Engine",
-    description: "Executes an 8-step AI workflow: checks client niche -> reads past posts -> scans active trends -> drafts post & caption -> assigns hashtags -> double web reflection.",
+    tagline: "Multi-Step Reflection Engine",
+    description:
+      "Executes an 8-step AI workflow: checks brand voice guidelines -> analyzes past viral posts -> scans real-time niche trends -> drafts post & caption -> assigns hashtag clusters -> double web reflections.",
+    tone: "pink",
     icon: Sparkles,
     screenPath: "/features/Kora-AI-Composer.jpg",
   },
   {
     id: "visual-calendar",
-    title: "Visual Calendar 2.0",
-    tagline: "Drag-and-Drop Planning",
-    description: "Visual planning surface to schedule, organize, and drag-and-drop posts across Instagram, TikTok, LinkedIn, YouTube, X, and Threads seamlessly.",
+    title: "Visual Drag-and-Drop Calendar",
+    tagline: "Multi-Platform Scheduling",
+    description:
+      "A fast, unified planning board to schedule, rearrange, and manage scheduled posts across Instagram, TikTok, LinkedIn, YouTube, X, and Threads effortlessly.",
+    tone: "pink",
     icon: Calendar,
     screenPath: "/features/Visual-Drag-and-Drop Calendar.jpg",
   },
   {
     id: "repurposer",
     title: "Content Repurposer",
-    tagline: "One Asset to Multi-Platform",
-    description: "Turn one YouTube video, blog article, or podcast into LinkedIn posts, X threads, Instagram carousels, TikTok scripts, and newsletters automatically.",
+    tagline: "1 Asset to 6 Formats",
+    description:
+      "Transform a single YouTube video, podcast transcript, or article into LinkedIn carousels, X threads, Instagram captions, TikTok scripts, and newsletters with one click.",
+    tone: "pink",
     icon: RefreshCw,
     screenPath: "/features/social-media-concept-with-device.jpg",
   },
   {
     id: "inbox-crm",
-    title: "Social Inbox & Sales CRM",
-    tagline: "Lead Intelligence & Triage",
-    description: "Unified inbox that classifies comments and DMs into Leads, Support, or Spam. Detects high-intent buying signals ('How much?') and logs $ opportunities.",
+    title: "Social CRM & Lead Triage",
+    tagline: "High-Intent Signal Detection",
+    description:
+      "Unified social inbox that classifies comments and DMs into Leads, Support, or Inquiries. Automatically flags buying questions ('How much is this?') and creates CRM opportunities.",
+    tone: "blue",
     icon: DollarSign,
     screenPath: "/features/social-ecommerce.jpg",
   },
   {
     id: "agency-workspaces",
-    title: "Agency Workspaces",
+    title: "Agency Workspaces & Client Portals",
     tagline: "Multi-Seat Collaboration",
-    description: "Built for agencies and growth teams. Manage multiple client workspaces, invite team members with strict RLS permissions, and streamline draft approvals.",
+    description:
+      "Built for marketing agencies and growth teams. Manage multiple client workspaces with strict RLS permissions, shareable approval links, and white-label reporting.",
+    tone: "blue",
     icon: Users,
     screenPath: "/features/manage-multiple-brands.jpg",
   },
   {
     id: "growth-marketing",
-    title: "Growth & Marketing Suite",
-    tagline: "Revenue Attribution & Strategy",
-    description: "Track the full funnel from social impressions to website visits, leads, and revenue. Get AI-driven 30/60/90 day growth plans automatically.",
+    title: "Revenue & ROAS Attribution",
+    tagline: "Full-Funnel Analytics",
+    description:
+      "Track the journey from social impressions to website visits, qualified CRM leads, and closed revenue. Identify high-ROI campaigns with verifiable Naira / dollar conversion data.",
+    tone: "blue",
     icon: TrendingUp,
     screenPath: "/features/social-media-marketing.jpg",
   },
@@ -521,156 +624,69 @@ const FEATURE_SET_DATA: FeatureNode[] = [
 
 export function FeatureShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const autoLoopTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const startTimerPipeline = () => {
-    clearActiveTimer();
-    autoLoopTimerRef.current = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % FEATURE_SET_DATA.length);
-    }, 5000);
-  };
-
-  const clearActiveTimer = () => {
-    if (autoLoopTimerRef.current) {
-      clearInterval(autoLoopTimerRef.current);
-    }
-  };
-
-  useEffect(() => {
-    startTimerPipeline();
-    return () => clearActiveTimer();
-  });
-
-  const handleManualSelectionToggle = (index: number) => {
-    setActiveIndex(index);
-    startTimerPipeline();
-  };
 
   const activeFeature = FEATURE_SET_DATA[activeIndex];
 
   return (
-    <section className="py-24 rounded-[36px] bg-[#0c0919] text-white relative overflow-hidden font-sans border border-white/10 my-8 mx-4 sm:mx-8">
-      <div>
-        {/* Dynamic Content Description Area */}
-        <div className="min-h-40 max-w-4xl mx-auto px-6 text-center relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeFeature.id}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="space-y-3"
-            >
-              <div>
-                <span className="text-xs font-mono font-extrabold tracking-widest text-[#FF2E93] uppercase">
-                  {activeFeature.tagline}
-                </span>
-                <h3 className="text-3xl md:text-5xl font-black text-white tracking-tight mt-1">
-                  {activeFeature.title}
-                </h3>
-              </div>
+    <section
+      id="engines"
+      className="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto"
+    >
+      <div className="rounded-3xl border border-white/[0.08] bg-[#161616] p-6 sm:p-10 lg:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+        {/* Header Text */}
+        <div className="text-center max-w-3xl mx-auto mb-8">
+          <Eyebrow tone={activeFeature.tone}>
+            {activeFeature.tagline}
+          </Eyebrow>
 
-              <p className="text-sm md:text-base max-w-2xl mx-auto font-medium text-white/70 leading-relaxed">
-                {activeFeature.description}
-              </p>
-            </motion.div>
-          </AnimatePresence>
+          <h3 className="font-display mt-3 text-2xl sm:text-4xl font-bold text-white tracking-tight">
+            {activeFeature.title}
+          </h3>
 
-          {/* Pagination Dot Matrix */}
-          <div className="flex items-center gap-2 justify-center pt-2 mt-6">
-            {FEATURE_SET_DATA.map((_, idx) => (
-              <div
-                key={idx}
-                onClick={() => handleManualSelectionToggle(idx)}
-                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  idx === activeIndex
-                    ? "w-8 bg-gradient-to-r from-[#FF2E93] to-[#0066FF]"
-                    : "w-2 bg-white/20 hover:bg-white/40"
-                }`}
-              />
-            ))}
-          </div>
+          <p className="mt-3 text-xs sm:text-sm text-white/60 leading-relaxed max-w-2xl mx-auto">
+            {activeFeature.description}
+          </p>
         </div>
 
-        {/* Display Viewport Showcase Frame */}
-        <div className="flex items-center justify-center relative w-full max-w-4xl mx-auto mt-8 px-6 transform-gpu">
-          <div className="relative w-full aspect-16/10 rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-black">
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={activeFeature.id}
-                src={activeFeature.screenPath}
-                alt={`${activeFeature.title} Showcase`}
-                initial={{ opacity: 0, filter: "blur(4px)" }}
-                animate={{ opacity: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.35, ease: "easeInOut" }}
-                className="w-full h-full object-cover object-top"
-              />
-            </AnimatePresence>
-          </div>
+        {/* Display Mockup Frame */}
+        <div className="relative w-full max-w-4xl mx-auto aspect-16/10 rounded-2xl overflow-hidden border border-white/[0.10] bg-black shadow-2xl">
+          <img
+            src={activeFeature.screenPath}
+            alt={activeFeature.title}
+            className="w-full h-full object-cover object-top"
+          />
         </div>
 
-        {/* Desktop Navigation Stack Node Matrix */}
-        <nav className="hidden md:flex gap-3 relative w-full max-w-5xl mx-auto justify-center flex-wrap mt-10 px-4">
+        {/* Tab Navigation Matrix */}
+        <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
           {FEATURE_SET_DATA.map((feat, idx) => {
-            const IconComponent = feat.icon;
+            const Icon = feat.icon;
             const isSelected = idx === activeIndex;
+            const featColor = feat.tone === "blue" ? "#3b82f6" : "#ff0a8a";
 
             return (
               <button
                 key={feat.id}
-                onClick={() => handleManualSelectionToggle(idx)}
-                className={`overflow-hidden text-left px-5 py-3.5 rounded-2xl flex items-center justify-between border transition-all duration-300 relative group cursor-pointer ${
+                type="button"
+                onClick={() => setActiveIndex(idx)}
+                className={`flex flex-col items-center text-center p-3 rounded-xl border transition-all cursor-pointer ${
                   isSelected
-                    ? "border-[#FF2E93]/60 bg-white/10 shadow-lg shadow-[#FF2E93]/20"
-                    : "border-white/10 hover:bg-white/5 bg-black/30 text-white/70"
+                    ? "bg-white/[0.08] border-white/20 text-white shadow-sm"
+                    : "bg-white/[0.02] border-white/[0.06] text-white/50 hover:bg-white/[0.05] hover:text-white"
                 }`}
               >
-                <div className="flex items-center gap-3 relative z-10 w-full shrink-0">
-                  <div
-                    className={`p-2 rounded-xl transition-colors ${
-                      isSelected
-                        ? "bg-gradient-to-r from-[#FF2E93] to-[#0066FF] text-white"
-                        : "bg-white/10 text-white/80"
-                    }`}
-                  >
-                    <IconComponent className="w-4 h-4" />
-                  </div>
-                  <span className="text-sm shrink-0 font-bold tracking-tight text-white">
-                    {feat.title}
-                  </span>
+                <div
+                  className="flex h-8 w-8 items-center justify-center rounded-lg mb-2"
+                  style={{
+                    background: isSelected ? `${featColor}20` : "rgba(255,255,255,0.05)",
+                    color: isSelected ? featColor : "inherit",
+                  }}
+                >
+                  <Icon className="h-4 w-4" />
                 </div>
-
-                {/* Active Progress Track */}
-                {isSelected && (
-                  <motion.div
-                    initial={{ width: "0%" }}
-                    animate={{ width: "100%" }}
-                    transition={{ duration: 5, ease: "linear" }}
-                    className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-[#FF2E93] to-[#0066FF] z-10"
-                  />
-                )}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* Mobile Swipable Selector Row */}
-        <div className="flex md:hidden flex-wrap justify-center p-4 gap-2 no-scrollbar scroll-smooth snap-x mt-6">
-          {FEATURE_SET_DATA.map((feat, idx) => {
-            const isSelected = idx === activeIndex;
-            return (
-              <button
-                key={feat.id}
-                onClick={() => handleManualSelectionToggle(idx)}
-                className={`px-4 py-2.5 rounded-xl border text-xs font-bold whitespace-nowrap snap-center cursor-pointer transition-all ${
-                  isSelected
-                    ? "text-white bg-gradient-to-r from-[#FF2E93] to-[#0066FF] border-transparent shadow-lg"
-                    : "text-white/70 border-white/10 bg-white/5"
-                }`}
-              >
-                {feat.title}
+                <span className="text-xs font-semibold tracking-tight truncate w-full">
+                  {feat.title}
+                </span>
               </button>
             );
           })}
@@ -680,92 +696,91 @@ export function FeatureShowcase() {
   );
 }
 
-/* ── 4. KoraSpace Brand Brain & 8-Agent Swarm Section ─────────────── */
+/* ── 6. Brand Brain & 8-Agent Swarm (#brain) ──────────────────────── */
 
 const AGENT_SWARM = [
   { name: "Research Agent", role: "Scans viral niche trends & web data", icon: Search },
-  { name: "Brand Agent", role: "Guarantees brand voice & guidelines", icon: ShieldCheck },
-  { name: "Content Agent", role: "Drafts captions, scripts & carousels", icon: FileText },
-  { name: "Strategy Agent", role: "Generates 30/60/90 day growth plans", icon: Target },
-  { name: "Analytics Agent", role: "Tracks funnel metrics & revenue attribution", icon: BarChart3 },
-  { name: "Competitor Agent", role: "Monitors rival video & post formats", icon: Eye },
-  { name: "Engagement Agent", role: "Triages inbox & manages Ghost Mode DMs", icon: MessageSquare },
-  { name: "Optimization Agent", role: "Executes A/B testing & post scoring", icon: Activity }
+  { name: "Brand Voice Guard", role: "Guarantees authentic tone & formatting", icon: ShieldCheck },
+  { name: "Content Studio Agent", role: "Drafts captions, carousels & scripts", icon: FileText },
+  { name: "Strategy Agent", role: "Builds 30/60/90 day growth roadmaps", icon: Target },
+  { name: "Analytics Agent", role: "Tracks funnel metrics & revenue ROAS", icon: BarChart3 },
+  { name: "Competitor Spy Agent", role: "Monitors rival formats & engagement hooks", icon: Eye },
+  { name: "Engagement Triage Agent", role: "Manages DMs & flags hot CRM leads", icon: MessageSquare },
+  { name: "Optimization Agent", role: "Calculates post scores & A/B performance", icon: Activity },
 ];
 
 export function BrainAndAgentsSection() {
   return (
-    <section id="brain" className="relative px-5 py-28 sm:py-32 bg-[#07050d] text-white overflow-hidden">
+    <section id="brain" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="AI Architecture & Brain"
-          tone="blue"
+          eyebrow="AI Multi-Agent Architecture"
+          tone="pink"
           title={
             <>
-              Powered by the <span className="text-[#FF2E93]">KoraSpace Brand Brain</span> & <span className="text-[#0066FF]">8-Agent Swarm</span>
+              Powered by the <span className="text-[#ff0a8a]">Kora Brand Brain</span> &amp;{" "}
+              <span className="text-[#3b82f6]">8-Agent Swarm</span>
             </>
           }
-          sub="Instead of a generic single AI prompt, KoraSpace deploys a specialized multi-agent system connected to your business Knowledge Base."
+          sub="Instead of generic one-shot prompts, KoraSpace deploys a coordinated swarm of specialized agents connected to your persistent knowledge base."
         />
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-center">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
           {/* Brand Brain Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-5 rounded-[36px] p-8 text-white relative overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg, rgba(255,46,147,0.12) 0%, rgba(0,102,255,0.08) 100%)",
-              border: "1.5px solid rgba(255,46,147,0.3)",
-              backdropFilter: "blur(20px)"
-            }}
-          >
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FF2E93]/20 border border-[#FF2E93]/40 mb-6">
-              <Brain className="h-7 w-7 text-[#FF2E93]" />
-            </div>
-            <span className="font-mono text-xs uppercase tracking-widest text-[#FF2E93] font-extrabold">
-              Persistent Knowledge Base
-            </span>
-            <h3 className="font-display mt-2 text-2xl font-black">KoraSpace Brand Brain</h3>
-            <p className="mt-3 text-sm leading-relaxed text-white/70 font-medium">
-              Upload your website URL, product PDFs, brand guidelines, or past top posts. The Brand Brain builds a persistent memory profile so every post sounds authentically like you — never generic.
-            </p>
+          <div className="lg:col-span-5 rounded-3xl border border-[#ff0a8a]/25 bg-[#171717] p-7 sm:p-8 flex flex-col justify-between">
+            <div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ff0a8a]/15 text-[#ff0a8a] border border-[#ff0a8a]/30 mb-5">
+                <Brain className="h-6 w-6" />
+              </div>
+              <span className="font-mono text-xs uppercase tracking-wider text-[#ff0a8a] font-bold">
+                Persistent Knowledge Base
+              </span>
+              <h3 className="font-display mt-2 text-2xl font-bold text-white">
+                KoraSpace Brand Brain
+              </h3>
+              <p className="mt-3 text-xs sm:text-sm leading-relaxed text-white/60 font-normal">
+                Upload your website URL, product briefs, brand guidelines, and top-performing past posts. The Brand Brain builds a persistent memory profile so every post sounds authentically like your brand.
+              </p>
 
-            <ul className="mt-6 space-y-2.5 text-xs text-white/80 font-mono">
-              <li className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-[#FF2E93]" /> Learns tone, vocabulary & emojis
-              </li>
-              <li className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-[#FF2E93]" /> Remembers custom guidelines ("No competitors")
-              </li>
-              <li className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-[#FF2E93]" /> Uses past winning content as ground truth
-              </li>
-            </ul>
-          </motion.div>
+              <div className="mt-6 space-y-2 text-xs text-white/70">
+                <div className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-[#ff0a8a]" />
+                  <span>Learns signature tone, vocabulary, and emoji rules</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-[#ff0a8a]" />
+                  <span>Enforces custom guardrails (&quot;Never mention competitors&quot;)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-[#ff0a8a]" />
+                  <span>Uses winning historical content as benchmark truth</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-white/[0.08]">
+              <div className="flex items-center justify-between text-xs text-white/50">
+                <span>Memory Status: Active</span>
+                <span className="text-[#34d399] font-medium">100% Isolated RLS Data</span>
+              </div>
+            </div>
+          </div>
 
           {/* 8-Agent Swarm Grid */}
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {AGENT_SWARM.map((ag) => (
-              <motion.div
+              <div
                 key={ag.name}
-                whileHover={{ scale: 1.02 }}
-                className="flex items-center gap-4 rounded-2xl p-4 transition-all duration-200"
-                style={{
-                  background: "rgba(255, 255, 255, 0.04)",
-                  border: "1px solid rgba(255, 255, 255, 0.08)"
-                }}
+                className="flex items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-[#171717] p-4 transition-all duration-200 hover:border-white/15 hover:bg-[#1a1a1a]"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0066FF]/20 text-[#0066FF]">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#3b82f6]/15 text-[#3b82f6]">
                   <ag.icon className="h-5 w-5" />
                 </div>
-                <div>
-                  <h4 className="font-display text-sm font-bold text-white">{ag.name}</h4>
-                  <p className="text-xs text-white/60 font-medium">{ag.role}</p>
+                <div className="min-w-0">
+                  <h4 className="text-xs font-bold text-white truncate">{ag.name}</h4>
+                  <p className="text-[11px] text-white/50 truncate">{ag.role}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -774,96 +789,107 @@ export function BrainAndAgentsSection() {
   );
 }
 
-/* ── 4.5 Agent Tools & Autonomous Capabilities ─────────────────────── */
+/* ── 7. Agent Tools Grid (#tools / #features) ─────────────────────── */
 
 const AGENT_TOOLS_LIST = [
   {
     title: "8-Step AI Composing Pipeline",
-    desc: "Checks client niche, past posts, active trends, drafts content, assigns hashtags, and reflects before outputting.",
+    desc: "Checks niche context, past posts, active trends, drafts content, assigns hashtag sets, and reflects before publishing.",
     icon: Sparkles,
-    badge: "Generation"
+    badge: "Creator Engine",
+    tone: "pink" as const,
   },
   {
     title: "Post Score Predictor",
-    desc: "AI scores post quality (1-100) before publishing and predicts engagement probability across platforms.",
+    desc: "AI scores hook strength and estimated engagement probability (1-100) before you hit publish.",
     icon: Activity,
-    badge: "Optimization"
+    badge: "Optimization",
+    tone: "pink" as const,
   },
   {
-    title: "Ghost Mode™ Lead Triage",
-    desc: "Automated DM & comment monitor with human-like delays that detects buying signals and logs leads to CRM.",
+    title: "Social CRM & Ghost Mode™",
+    desc: "Automated DM & comment monitor with humanized delays that detects buying signals and logs leads to CRM.",
     icon: Ghost,
-    badge: "Automation"
+    badge: "Automation",
+    tone: "blue" as const,
   },
   {
     title: "Competitor Video Spy",
-    desc: "Tracks top-performing short videos in your niche and breaks down their hooks, pacing, and calls to action.",
+    desc: "Tracks viral short-form videos in your niche and deconstructs their hooks, audio pacing, and CTAs.",
     icon: Eye,
-    badge: "Intelligence"
+    badge: "Intelligence",
+    tone: "blue" as const,
   },
   {
-    title: "Auto-Hashtag & SEO Engine",
-    desc: "Generates platform-optimized hashtag clusters and keyword tags for max algorithmic distribution.",
+    title: "Auto-Hashtag & Keyword Cluster",
+    desc: "Generates platform-optimized hashtag clusters and keyword tags for maximum algorithmic distribution.",
     icon: Search,
-    badge: "Reach"
+    badge: "Reach",
+    tone: "pink" as const,
   },
   {
     title: "Multi-Platform Repurposer",
-    desc: "Turns 1 video or article into Instagram carousels, X threads, LinkedIn posts, and newsletter digests in 1 click.",
+    desc: "Converts 1 video, audio file, or article into LinkedIn carousels, X threads, and reels in seconds.",
     icon: RefreshCw,
-    badge: "Repurposing"
-  }
+    badge: "Repurposing",
+    tone: "pink" as const,
+  },
 ];
 
 export function AgentTools() {
   return (
-    <section className="relative px-5 py-24 bg-[#07050d] text-white">
+    <section id="features" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <SectionHead
           eyebrow="Autonomous Toolkit"
           tone="pink"
-          title={
-            <>
-              Supercharge your social presence with <span className="text-[#FF2E93]">AI Agent Tools</span>
-            </>
-          }
-          sub="Deeply integrated utilities designed to automate high-impact marketing tasks end-to-end."
+          title="Supercharge your social presence with dedicated AI tools"
+          sub="Everything you need to automate high-impact marketing workflows from ideation to revenue attribution."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {AGENT_TOOLS_LIST.map((tool) => (
-            <motion.div
-              key={tool.title}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className="rounded-[32px] p-7 text-white flex flex-col justify-between"
-              style={{
-                background: "linear-gradient(135deg, rgba(255,46,147,0.06) 0%, rgba(255,255,255,0.02) 100%)",
-                border: "1.5px solid rgba(255, 255, 255, 0.08)",
-                backdropFilter: "blur(16px)"
-              }}
-            >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FF2E93]/15 border border-[#FF2E93]/30">
-                    <tool.icon className="h-5 w-5 text-[#FF2E93]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {AGENT_TOOLS_LIST.map((tool) => {
+            const isBlue = tool.tone === "blue";
+            const iconColor = isBlue ? "#3b82f6" : "#ff0a8a";
+
+            return (
+              <div
+                key={tool.title}
+                className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 flex flex-col justify-between transition-all hover:border-white/20 hover:bg-[#1a1a1a]"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div
+                      className="flex h-10 w-10 items-center justify-center rounded-xl"
+                      style={{
+                        background: `${iconColor}18`,
+                        border: `1px solid ${iconColor}30`,
+                        color: iconColor,
+                      }}
+                    >
+                      <tool.icon className="h-5 w-5" />
+                    </div>
+                    <span className="font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/60">
+                      {tool.badge}
+                    </span>
                   </div>
-                  <span className="font-mono text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/70">
-                    {tool.badge}
-                  </span>
+                  <h3 className="font-display text-base font-bold text-white mb-2">
+                    {tool.title}
+                  </h3>
+                  <p className="text-xs text-white/55 leading-relaxed font-normal">
+                    {tool.desc}
+                  </p>
                 </div>
-                <h3 className="font-display text-lg font-bold text-white mb-2">{tool.title}</h3>
-                <p className="text-sm text-white/65 leading-relaxed font-medium">{tool.desc}</p>
               </div>
-            </motion.div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
   );
 }
 
-
-/* ── 5. Platform Integrations Section ─────────────────────────────── */
+/* ── 8. Platform Integrations Section (#integrations) ─────────────── */
 
 const PLATFORMS = [
   { name: "Instagram", iconPath: "/integrations/insta.png" },
@@ -884,137 +910,127 @@ const PLATFORMS = [
 
 export function Integrations() {
   return (
-    <section className="relative px-5 py-24 bg-[#07050d] text-white overflow-hidden">
-      <div className="mx-auto mb-12 max-w-2xl text-center">
+    <section id="integrations" className="relative px-4 sm:px-6 lg:px-8 py-20">
+      <div className="mx-auto mb-10 max-w-2xl text-center">
         <Eyebrow tone="blue">Multi-Platform Ecosystem</Eyebrow>
-        <h2 className="font-display mt-3 text-3xl font-black sm:text-4xl">
-          Publish & manage across <span className="text-[#0066FF]">all your channels</span>
+        <h2 className="font-display mt-3 text-2xl sm:text-4xl font-bold text-white tracking-tight">
+          Publish &amp; triage across <span className="text-[#3b82f6]">all your channels</span>
         </h2>
+        <p className="mt-2 text-xs sm:text-sm text-white/60">
+          Official OAuth 2.0 API integrations for instant scheduling and two-way messaging.
+        </p>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto">
+      <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
         {PLATFORMS.map((p) => (
-          <motion.div
+          <div
             key={p.name}
-            whileHover={{ scale: 1.06, y: -2 }}
-            className="flex items-center gap-3 rounded-full px-5 py-3 text-sm font-bold text-white transition-all shadow-md cursor-pointer"
-            style={{
-              background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
-              border: "1px solid rgba(255,255,255,0.12)",
-              backdropFilter: "blur(12px)"
-            }}
+            className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-[#171717] px-4 py-2.5 text-xs font-semibold text-white/80 transition-all hover:border-white/20 hover:bg-[#1c1c1c] hover:text-white cursor-pointer"
           >
             <img
               src={p.iconPath}
               alt={`${p.name} icon`}
-              className="h-6 w-6 object-contain rounded-md select-none shrink-0"
+              className="h-5 w-5 object-contain rounded select-none shrink-0"
             />
             <span>{p.name}</span>
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>
   );
 }
 
-/* ── 6. Growth & Revenue Intelligence Section ─────────────────────── */
+/* ── 9. Revenue Attribution & Intelligence (#revenue) ─────────────── */
 
 export function RevenueAttributionSection() {
   return (
-    <section id="revenue" className="relative px-5 py-28 sm:py-32 bg-[#07050d] text-white">
+    <section id="revenue" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="Growth & Revenue Intelligence"
-          tone="gradient"
+          eyebrow="Revenue & Conversion Tracking"
+          tone="blue"
           title={
             <>
-              From social views to <span className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] bg-clip-text text-transparent">real revenue</span>
+              From social impressions to <span className="text-[#3b82f6]">verifiable pipeline revenue</span>
             </>
           }
-          sub="Don't stop at vanity likes. Track the complete conversion funnel from post impressions down to actual dollar sales."
+          sub="Stop guessing the ROI of your social posts. Track the full journey from views to profile visits, CRM leads, and closed revenue."
         />
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-center">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
           {/* Revenue Attribution Funnel Visual */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-7 rounded-[36px] p-8 text-white relative overflow-hidden"
-            style={{
-              background: "linear-gradient(170deg, rgba(0,102,255,0.1) 0%, rgba(255,46,147,0.05) 100%)",
-              border: "1.5px solid rgba(0,102,255,0.3)",
-              backdropFilter: "blur(20px)"
-            }}
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-display text-xl font-extrabold">Social-to-Revenue Funnel</h3>
-              <span className="font-mono text-xs text-[#0066FF] bg-[#0066FF]/20 px-3 py-1 rounded-full font-bold">
-                Live Attribution
-              </span>
+          <div className="lg:col-span-7 rounded-3xl border border-[#3b82f6]/25 bg-[#171717] p-6 sm:p-8 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="font-display text-lg font-bold text-white">Social-to-Revenue Funnel</h3>
+                  <p className="text-xs text-white/50">Real-time attribution powered by UTM tracking</p>
+                </div>
+                <span className="font-mono text-xs text-[#3b82f6] bg-[#3b82f6]/15 border border-[#3b82f6]/30 px-3 py-1 rounded-full font-bold">
+                  Live Sync
+                </span>
+              </div>
+
+              <div className="space-y-2.5 font-mono text-xs">
+                <div className="flex justify-between items-center bg-[#141414] p-3 rounded-xl border border-white/[0.06]">
+                  <span className="text-white">50,000 Social Impressions</span>
+                  <span className="text-white/50">Top of Funnel</span>
+                </div>
+                <div className="flex justify-between items-center bg-[#141414] p-3 rounded-xl border border-white/[0.06] ml-2 sm:ml-4">
+                  <span className="text-white">1,420 Profile Visits</span>
+                  <span className="text-[#ff0a8a]">2.84% Conv.</span>
+                </div>
+                <div className="flex justify-between items-center bg-[#141414] p-3 rounded-xl border border-white/[0.06] ml-4 sm:ml-8">
+                  <span className="text-white">310 Website Clicks</span>
+                  <span className="text-[#3b82f6]">UTM Verified</span>
+                </div>
+                <div className="flex justify-between items-center bg-[#141414] p-3 rounded-xl border border-white/[0.06] ml-6 sm:ml-12">
+                  <span className="text-white">48 Qualified Leads</span>
+                  <span className="text-[#34d399]">Social CRM Pipeline</span>
+                </div>
+                <div className="flex justify-between items-center bg-[#3b82f6]/15 border border-[#3b82f6]/30 p-3.5 rounded-xl font-bold ml-8 sm:ml-16 text-white">
+                  <span>14 Customers Closed</span>
+                  <span className="text-[#3b82f6] font-extrabold">₦1,450,000 Revenue</span>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-3 font-mono text-sm">
-              <div className="flex justify-between items-center bg-white/5 p-3.5 rounded-2xl border border-white/10">
-                <span>50,000 Social Views</span>
-                <span className="text-white/60">Top of Funnel</span>
-              </div>
-              <div className="flex justify-between items-center bg-white/5 p-3.5 rounded-2xl border border-white/10 ml-3">
-                <span>1,420 Profile Visits</span>
-                <span className="text-[#FF2E93]">2.84% Conv.</span>
-              </div>
-              <div className="flex justify-between items-center bg-white/5 p-3.5 rounded-2xl border border-white/10 ml-6">
-                <span>310 Website Visitors</span>
-                <span className="text-[#0066FF]">UTM Tracked</span>
-              </div>
-              <div className="flex justify-between items-center bg-white/5 p-3.5 rounded-2xl border border-white/10 ml-9">
-                <span>48 Qualified Leads</span>
-                <span className="text-[#00E5FF]">Social Inbox CRM</span>
-              </div>
-              <div className="flex justify-between items-center bg-gradient-to-r from-[#FF2E93]/20 to-[#0066FF]/20 p-4 rounded-2xl border border-[#FF2E93]/50 font-bold ml-12 text-white">
-                <span>11 Customers ($4,850 Revenue)</span>
-                <span className="text-[#FF2E93]">$4,850 Total</span>
-              </div>
+            <div className="mt-6 pt-4 border-t border-white/[0.07] flex items-center justify-between text-xs text-white/50">
+              <span>Attribution Model: Multi-Touch</span>
+              <span className="text-white/80 font-medium">ROAS: 4.2x</span>
             </div>
-          </motion.div>
+          </div>
 
-          {/* KoraScore & Health Metrics */}
-          <div className="lg:col-span-5 space-y-6">
-            <div
-              className="rounded-[32px] p-7 text-white"
-              style={{
-                background: "rgba(255, 255, 255, 0.04)",
-                border: "1.5px solid rgba(255, 255, 255, 0.1)"
-              }}
-            >
+          {/* KoraScore & Opportunity Radar */}
+          <div className="lg:col-span-5 space-y-4 flex flex-col justify-between">
+            <div className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs uppercase tracking-wider text-white/60 font-bold">Account Health Score</span>
-                <Award className="h-6 w-6 text-[#FF2E93]" />
+                <span className="font-mono text-xs uppercase tracking-wider text-white/50 font-bold">
+                  Account Health Score
+                </span>
+                <Award className="h-5 w-5 text-[#ff0a8a]" />
               </div>
               <div className="mt-3 flex items-baseline gap-2">
-                <span className="font-display text-4xl font-black text-white">KoraScore: 78</span>
-                <span className="text-sm text-white/50">/ 100</span>
+                <span className="font-display text-3xl font-bold text-white">KoraScore: 88</span>
+                <span className="text-xs text-white/40">/ 100</span>
               </div>
-              <p className="mt-2 text-xs text-[#FF2E93] font-medium">
-                "Posting consistency dropped 24%. Re-engage video scheduler to regain 12 score points."
+              <p className="mt-2 text-xs text-[#34d399] font-medium leading-relaxed">
+                &quot;Top 5% posting consistency this week. Schedule 2 more short videos to hit peak reach.&quot;
               </p>
             </div>
 
-            <div
-              className="rounded-[32px] p-7 text-white"
-              style={{
-                background: "rgba(255, 255, 255, 0.04)",
-                border: "1.5px solid rgba(255, 255, 255, 0.1)"
-              }}
-            >
+            <div className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs uppercase tracking-wider text-white/60 font-bold">Lead Opportunity Radar</span>
-                <Flame className="h-6 w-6 text-[#0066FF]" />
+                <span className="font-mono text-xs uppercase tracking-wider text-white/50 font-bold">
+                  Lead Opportunity Radar
+                </span>
+                <Flame className="h-5 w-5 text-[#3b82f6]" />
               </div>
-              <h4 className="font-display mt-2 text-lg font-black">4 Trending Niche Opportunities</h4>
-              <p className="mt-1 text-xs text-white/60 font-medium">
-                3 competitor gaps identified · 2 high-value lead questions waiting in DMs ($2,000 opportunity).
+              <h4 className="font-display mt-2 text-base font-bold text-white">
+                4 Hot Niche Opportunities Detected
+              </h4>
+              <p className="mt-1 text-xs text-white/55 leading-relaxed font-normal">
+                3 high-intent lead questions in Instagram DMs + 1 trending competitor breakout format in your industry.
               </p>
             </div>
           </div>
@@ -1024,66 +1040,60 @@ export function RevenueAttributionSection() {
   );
 }
 
-/* ── 6.5 Agency & Team Collaboration Section ───────────────────────── */
+/* ── 10. Collaboration & Agency Workspaces (#collaboration) ───────── */
 
 const COLLAB_FEATURES = [
   {
     title: "Client Workspace Portals",
-    desc: "Isolated brand environments with row-level security. Give clients a clean view of their scheduled calendar and analytics.",
-    icon: Briefcase
+    desc: "Isolated brand environments with strict row-level security. Give clients a clean view of their scheduled calendar and reports.",
+    icon: Briefcase,
   },
   {
-    title: "1-Click Draft Approval",
-    desc: "Send shareable draft review links to clients or team leads without forcing them to create an account.",
-    icon: ShieldCheck
+    title: "1-Click Shareable Draft Approvals",
+    desc: "Send review links to clients or stakeholders without forcing them to create an account or login.",
+    icon: ShieldCheck,
   },
   {
-    title: "Role-Based Permissions",
-    desc: "Assign roles (Admin, Editor, Reviewer, Client) with granular rights over posting, billing, and social credentials.",
-    icon: Users
+    title: "Role-Based Team Permissions",
+    desc: "Assign roles (Admin, Editor, Reviewer, Client) with granular permissions over publishing, billing, and credentials.",
+    icon: Users,
   },
   {
-    title: "Audit Log & Version Control",
-    desc: "Track every edit, approval, prompt change, and published post with full timestamps and user attribution.",
-    icon: Clock
-  }
+    title: "Audit Trail & Activity Log",
+    desc: "Track every edit, approval, prompt update, and published post with complete timestamps and user attribution.",
+    icon: Clock,
+  },
 ];
 
 export function Collaboration() {
   return (
-    <section className="relative px-5 py-24 bg-[#07050d] text-white">
+    <section className="relative px-4 sm:px-6 lg:px-8 py-20">
       <div className="mx-auto max-w-6xl">
         <SectionHead
           eyebrow="Team & Agency Workspaces"
           tone="blue"
-          title={
-            <>
-              Collaborate seamlessly with <span className="text-[#0066FF]">multi-seat controls</span>
-            </>
-          }
-          sub="Built for marketing agencies, brand teams, and founders managing multiple social accounts with ease."
+          title="Collaborate seamlessly with multi-seat controls"
+          sub="Built for marketing agencies, brand teams, and growth operators managing multiple client brands under one roof."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {COLLAB_FEATURES.map((collab) => (
-            <motion.div
+            <div
               key={collab.title}
-              whileHover={{ y: -5 }}
-              className="rounded-[32px] p-8 text-white flex gap-5 items-start"
-              style={{
-                background: "linear-gradient(135deg, rgba(0,102,255,0.08) 0%, rgba(255,255,255,0.02) 100%)",
-                border: "1.5px solid rgba(0, 102, 255, 0.2)",
-                backdropFilter: "blur(16px)"
-              }}
+              className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 sm:p-7 flex gap-4 items-start transition-all hover:border-white/20 hover:bg-[#1a1a1a]"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0066FF]/20 border border-[#0066FF]/40 text-[#0066FF]">
-                <collab.icon className="h-6 w-6" />
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#3b82f6]/15 text-[#3b82f6] border border-[#3b82f6]/30">
+                <collab.icon className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-display text-xl font-bold text-white mb-2">{collab.title}</h3>
-                <p className="text-sm text-white/70 leading-relaxed font-medium">{collab.desc}</p>
+                <h3 className="font-display text-base font-bold text-white mb-1.5">
+                  {collab.title}
+                </h3>
+                <p className="text-xs text-white/60 leading-relaxed font-normal">
+                  {collab.desc}
+                </p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -1091,242 +1101,110 @@ export function Collaboration() {
   );
 }
 
-/* ── 7. FAQ Accordion Section (From Reference Code) ───────────────── */
-
-const FAQS_DATA = [
-  {
-    q: "What is KoraSpace and how does the Autonomous Growth Loop work?",
-    a: "KoraSpace is an AI-powered marketing operating system. Unlike simple schedulers, KoraSpace runs a continuous 4-stage loop: it understands your brand voice, researches trends in your niche, creates and schedules posts across channels, and analyzes performance down to sales revenue to auto-optimize future strategy."
-  },
-  {
-    q: "How does the Brand Brain learn my tone of voice?",
-    a: "Simply paste your website URL, brand guidelines, product PDFs, or past top-performing social posts. The KoraSpace Brand Brain builds a persistent memory profile so every generated post, caption, and reply sounds authentically like you."
-  },
-  {
-    q: "What is Ghost Mode™ and is it safe from platform bans?",
-    a: "Ghost Mode™ runs sales DM and comment engagement with randomized human-like delays (30s, 45s, 75s) and strict compliance rules. It handles noise, answers FAQs, and flags high-value buying leads directly to your inbox."
-  },
-  {
-    q: "Which social media platforms are supported?",
-    a: "KoraSpace connects directly to Instagram, TikTok, LinkedIn, YouTube, X (Twitter), Facebook, Threads, WhatsApp, and Telegram via official authorized OAuth 2.0 APIs."
-  },
-  {
-    q: "Can I use KoraSpace for multi-client agencies or teams?",
-    a: "Yes! Our Teams & Agency plans offer dedicated client workspace portals, multi-seat team member permissions, draft approval workflows, and white-label client performance reports."
-  },
-  {
-    q: "What payment methods are supported?",
-    a: "All plans are priced in Nigerian Naira (NGN) with transparent billing via Paystack and Flutterwave. We accept all Nigerian debit cards, bank transfers, and international cards."
-  }
-];
-
-export function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
-  };
-
-  const listVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.08 },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 30, filter: "blur(2px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: {
-        type: "spring",
-        stiffness: 90,
-        damping: 18,
-      },
-    },
-  };
-
-  return (
-    <motion.section
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      variants={containerVariants}
-      className="py-24 px-6 bg-[#0c0919] text-white rounded-[36px] my-8 mx-4 sm:mx-8 border border-white/10 relative overflow-hidden"
-    >
-      <div className="max-w-3xl mx-auto">
-        <SectionHead
-          eyebrow="Frequently Asked Questions"
-          tone="pink"
-          title={<>Got questions? <span className="text-[#FF2E93]">We've got answers.</span></>}
-          sub="Everything you need to know about KoraSpace, AI automation, and pricing."
-        />
-
-        <motion.div variants={listVariants} className="space-y-4 transform-gpu">
-          {FAQS_DATA.map((faq, i) => {
-            const isOpen = openIndex === i;
-
-            return (
-              <motion.div
-                key={i}
-                variants={itemVariants}
-                className="border-b border-white/10 pb-2"
-              >
-                <button
-                  type="button"
-                  onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full flex justify-between items-center text-left py-5 focus:outline-none group select-none cursor-pointer"
-                >
-                  <span className="text-lg md:text-xl font-bold text-white group-hover:text-[#FF2E93] transition-colors duration-200">
-                    {faq.q}
-                  </span>
-
-                  <motion.div
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                    className="text-[#FF2E93] ml-4 shrink-0"
-                  >
-                    <ChevronDown size={22} className="stroke-[2.5]" />
-                  </motion.div>
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      key="content"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{
-                        height: "auto",
-                        opacity: 1,
-                        transition: {
-                          height: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
-                          opacity: { duration: 0.25, delay: 0.05 },
-                        },
-                      }}
-                      exit={{
-                        height: 0,
-                        opacity: 0,
-                        transition: {
-                          height: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
-                          opacity: { duration: 0.15 },
-                        },
-                      }}
-                      className="overflow-hidden"
-                    >
-                      <p className="text-white/70 text-base leading-relaxed pb-5 pr-6 font-medium">
-                        {faq.a}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-      </div>
-    </motion.section>
-  );
-}
-
-/* ── 8. Stories (Testimonials) ────────────────────────────────────── */
+/* ── 11. Customer Stories (Testimonials) (#stories) ────────────────── */
 
 const STORIES = [
-  { name: "Adaeze Okonkwo", role: "Fintech Founder, Lagos", avatar: "AO", text: "I replaced Buffer and a freelance manager with KoraSpace. Ghost Mode handles engagement while I close deals. ROI in week one.", highlight: "Replaced freelance team" },
-  { name: "Chukwuemeka Dike", role: "Digital Agency, Abuja", avatar: "CD", text: "Eight client accounts used to need three people. Now it's me and KoraSpace. Social Inbox Triage alone saves 2 hours a day.", highlight: "Manages 8 clients solo" },
-  { name: "Fatima Al-Hassan", role: "E-commerce, Kano", avatar: "FA", text: "Revenue Attribution is wild. I can show 'this post made us ₦340,000 this week.' The marketing budget stopped being a question.", highlight: "₦340,000 from 1 post" },
-  { name: "Tunde Fashola", role: "Brand Coach, Lagos", avatar: "TF", text: "Trend-to-Draft is a ghostwriter that never sleeps. It caught the news cycle before I woke up — three drafts waiting.", highlight: "Trend content on autopilot" },
-  { name: "Ngozi Eze", role: "Fashion Brand, Port Harcourt", avatar: "NE", text: "I was skeptical about AI sounding like me. My followers can't tell. Engagement went up three times.", highlight: "3× engagement boost" },
-  { name: "Biodun Afolabi", role: "SaaS Founder, Lagos", avatar: "BA", text: "The persistent Brand Brain keeps content private and accurate. And the pricing structure in NGN makes complete sense.", highlight: "Privacy-first Brand Brain" },
+  {
+    name: "Adaeze Okonkwo",
+    role: "Fintech Founder, Lagos",
+    avatar: "AO",
+    text: "I replaced Buffer and a freelance manager with KoraSpace. The AI operator handles our comment triage and schedules weekly content while I close enterprise deals.",
+    highlight: "Saved 15 hrs / week",
+    tone: "pink" as const,
+  },
+  {
+    name: "Chukwuemeka Dike",
+    role: "Digital Agency Lead, Abuja",
+    avatar: "CD",
+    text: "Managing 8 client accounts used to require three junior managers. Now it is just me and KoraSpace. The client approval links make signoffs effortless.",
+    highlight: "Manages 8 brands solo",
+    tone: "blue" as const,
+  },
+  {
+    name: "Fatima Al-Hassan",
+    role: "E-Commerce Founder, Kano",
+    avatar: "FA",
+    text: "The Social CRM detected high-intent buyer questions in our Instagram comments and generated ₦480,000 in sales within 2 weeks of switching.",
+    highlight: "₦480,000 direct revenue",
+    tone: "blue" as const,
+  },
+  {
+    name: "Tunde Fashola",
+    role: "Executive Brand Coach, Lagos",
+    avatar: "TF",
+    text: "Trend-to-Draft is like having a ghostwriter that never sleeps. It catches breaking news cycles and prepares three multi-format drafts before I wake up.",
+    highlight: "Always on trend",
+    tone: "pink" as const,
+  },
+  {
+    name: "Ngozi Eze",
+    role: "Fashion Brand Director, PH",
+    avatar: "NE",
+    text: "I was skeptical about AI capturing my brand voice. The Brand Brain learned our tone from past top posts so well that my followers could not tell the difference.",
+    highlight: "Authentic voice matching",
+    tone: "pink" as const,
+  },
+  {
+    name: "Biodun Afolabi",
+    role: "B2B SaaS Growth Marketer",
+    avatar: "BA",
+    text: "Transparent NGN pricing and seamless Paystack billing made adoption a no-brainer for our team. The multi-channel attribution is top notch.",
+    highlight: "Predictable NGN billing",
+    tone: "blue" as const,
+  },
 ];
 
 export function Stories() {
-  const quoteContainer: Variants = {
-    hidden: { opacity: 1 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.03,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const wordtext: Variants = {
-    hidden: { opacity: 0, y: 3, filter: "blur(2px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.18, ease: "easeOut" },
-    },
-  };
-
   return (
-    <section id="stories" className="relative px-5 py-28 sm:py-32 bg-[#07050d] text-white">
+    <section id="stories" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="Operator Success Stories"
+          eyebrow="Success Stories"
           tone="pink"
-          title={
-            <>
-              Loved by <span className="text-[#FF2E93]">creators & growth teams</span>
-            </>
-          }
-          sub="See how businesses and agencies scale their social media marketing using KoraSpace."
+          title="Loved by creators, founders, &amp; growth teams"
+          sub="See how businesses across Nigeria and beyond scale their social presence and revenue with KoraSpace."
         />
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {STORIES.map((t) => {
-            const words = t.text.split(" ");
-            return (
-              <motion.div
-                key={t.name}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-60px" }}
-                whileHover={{ y: -6, scale: 1.01 }}
-                className="rounded-[32px] p-7 text-white flex flex-col justify-between cursor-pointer group"
-                style={{
-                  background: "rgba(255, 255, 255, 0.04)",
-                  border: "1.5px solid rgba(255, 255, 255, 0.08)",
-                  backdropFilter: "blur(16px)"
-                }}
-              >
-                <motion.p variants={quoteContainer} className="text-sm leading-relaxed text-white/80 font-medium select-none flex flex-wrap">
-                  <span className="text-[#FF2E93] font-bold mr-1">“</span>
-                  {words.map((word, index) => (
-                    <motion.span key={index} variants={wordtext} className="inline-block mr-1">
-                      {word}
-                    </motion.span>
-                  ))}
-                  <span className="text-[#FF2E93] font-bold ml-1">”</span>
-                </motion.p>
+            const isBlue = t.tone === "blue";
+            const badgeColor = isBlue ? "#3b82f6" : "#ff0a8a";
 
-                <div className="mt-6">
-                  <span className="font-mono text-xs px-3 py-1 rounded-full bg-[#FF2E93]/15 text-[#FF2E93] border border-[#FF2E93]/30 font-bold">
+            return (
+              <div
+                key={t.name}
+                className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 text-white flex flex-col justify-between transition-all hover:border-white/20 hover:bg-[#1a1a1a]"
+              >
+                <p className="text-xs leading-relaxed text-white/70 font-normal">
+                  &ldquo;{t.text}&rdquo;
+                </p>
+
+                <div className="mt-6 pt-4 border-t border-white/[0.06]">
+                  <span
+                    className="font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full border inline-block mb-3"
+                    style={{
+                      background: `${badgeColor}15`,
+                      borderColor: `${badgeColor}30`,
+                      color: badgeColor,
+                    }}
+                  >
                     {t.highlight}
                   </span>
-                  <div className="mt-4 flex items-center gap-3">
+
+                  <div className="flex items-center gap-3">
                     <div
-                      className="flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white shadow-md group-hover:scale-105 transition-transform"
-                      style={{ background: "linear-gradient(135deg, #FF2E93, #0066FF)" }}
+                      className="flex h-9 w-9 items-center justify-center rounded-xl text-xs font-bold text-white shadow-sm"
+                      style={{ background: badgeColor }}
                     >
                       {t.avatar}
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-white group-hover:text-[#FF2E93] transition-colors">{t.name}</p>
-                      <p className="text-xs text-white/50 font-medium">{t.role}</p>
+                      <p className="text-xs font-bold text-white">{t.name}</p>
+                      <p className="text-[11px] text-white/45">{t.role}</p>
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
@@ -1335,80 +1213,85 @@ export function Stories() {
   );
 }
 
-/* ── 9. Pricing Section (From PRD Section 9 & Reference Code) ─────── */
+/* ── 12. Transparent Pricing Section (#pricing) ───────────────────── */
 
 const BASE_PLANS = [
   {
-    name: "Free",
+    name: "Starter / Free",
     monthlyPrice: 0,
-    period: "/month",
-    desc: "For creators getting started",
-    posts: "3 scheduled posts / mo",
+    period: "/mo",
+    desc: "For solo creators getting started",
+    posts: "15 scheduled posts / mo",
     features: [
-      "50,000 AI tokens/mo",
-      "3 social integrations",
-      "Basic analytics",
+      "50,000 AI tokens / mo",
+      "3 social account integrations",
       "Visual content calendar",
-      "Mobile app access"
+      "Basic AI post composer",
+      "Community support",
     ],
     cta: "Start Free",
-    highlight: false
+    highlight: false,
+    tone: "white" as const,
   },
   {
-    name: "Pro",
-    monthlyPrice: 13500,
-    period: "/month",
-    desc: "For growing brands & businesses",
-    posts: "100 scheduled posts / mo",
+    name: "Creator Pro",
+    monthlyPrice: 15000,
+    period: "/mo",
+    desc: "For active creators & influencers",
+    posts: "150 scheduled posts / mo",
     features: [
-      "400,000 AI tokens/mo",
-      "7 social integrations",
-      "3 team collaborators",
-      "5 sales & Ghost Mode bots",
-      "Trend analysis & Brand Brain",
-      "Post scoring prediction"
+      "400,000 AI tokens / mo",
+      "6 social account integrations",
+      "Full AI Composing Pipeline",
+      "Content Repurposer (1->6)",
+      "Viral Trend Radar & Brand Brain",
+      "Post scoring & engagement prediction",
     ],
-    cta: "Start Pro Trial",
+    cta: "Start Creator Trial",
     highlight: true,
-    badge: "Most Popular"
+    badge: "Creator Favorite",
+    tone: "pink" as const,
   },
   {
-    name: "Advanced",
-    monthlyPrice: 30000,
-    period: "/month",
-    desc: "For scaling businesses & creators",
+    name: "Marketer Pro",
+    monthlyPrice: 35000,
+    period: "/mo",
+    desc: "For growth operators & businesses",
     posts: "500 scheduled posts / mo",
     features: [
-      "900,000 AI tokens/mo",
-      "10 social integrations",
-      "7 team collaborators",
-      "15 sales & Ghost Mode bots",
-      "Competitor video spy",
-      "A/B testing & Hashtag manager",
-      "Social-to-Revenue Attribution"
+      "1,000,000 AI tokens / mo",
+      "10 social account integrations",
+      "Marketing Operator Agent",
+      "Social CRM & High-Intent Triage",
+      "Multi-channel Campaigns & Automations",
+      "Full-Funnel Revenue Attribution",
+      "Priority WhatsApp & email support",
     ],
-    cta: "Get Advanced",
-    highlight: false
+    cta: "Start Marketer Trial",
+    highlight: false,
+    badge: "Marketer Tier",
+    tone: "blue" as const,
   },
   {
-    name: "Teams / Agency",
-    monthlyPrice: 130000,
-    period: "/month",
-    desc: "For marketing agencies at scale",
-    posts: "High Volume",
+    name: "Agency / Teams",
+    monthlyPrice: 85000,
+    period: "/mo",
+    desc: "For agencies managing multiple brands",
+    posts: "Unlimited scheduled posts",
     features: [
-      "1.8M tokens/wk (7.2M/mo)",
-      "Unlimited* social integrations",
-      "Unlimited team & client seats",
-      "Unlimited/very high bots",
-      "White-label client reports",
-      "Client workspace portals",
-      "Priority API & support"
+      "3,000,000 AI tokens / mo",
+      "Unlimited social integrations",
+      "Unlimited client workspace portals",
+      "1-Click shareable approval links",
+      "Multi-seat role permissions (RLS)",
+      "White-label client performance reports",
+      "Dedicated account manager",
     ],
-    cta: "Get Teams Plan",
+    cta: "Get Agency Plan",
     highlight: false,
-    badge: "Agency Tier"
-  }
+    badge: "Agency Tier",
+    tone: "white" as const,
+  },
 ];
 
 export function Pricing() {
@@ -1421,32 +1304,30 @@ export function Pricing() {
   };
 
   return (
-    <section id="pricing" className="relative px-5 py-28 sm:py-32 bg-[#07050d] text-white">
+    <section id="pricing" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="Simple NGN Pricing"
-          tone="gradient"
+          eyebrow="Transparent NGN Pricing"
+          tone="pink"
           title={
             <>
-              Transparent plans. <br />
-              <span className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] bg-clip-text text-transparent">
-                No USD exchange surprises.
-              </span>
+              Simple plans.{" "}
+              <span className="text-[#ff0a8a]">No USD conversion surprises.</span>
             </>
           }
-          sub="Pay with Paystack, Flutterwave, or any card. Every paid plan includes a 14-day free trial."
+          sub="Pay locally via Paystack, Flutterwave, or any Nigerian debit card. Every paid plan includes a 14-day free trial."
         />
 
-        {/* Billing Toggle Switch (From Reference Code) */}
-        <div className="flex justify-center items-center gap-2 mb-14">
-          <div className="bg-white/5 p-1.5 rounded-2xl border border-white/10 inline-flex items-center backdrop-blur-md">
+        {/* Monthly / Yearly Toggle */}
+        <div className="flex justify-center items-center gap-2 mb-12">
+          <div className="bg-[#171717] p-1 rounded-2xl border border-white/[0.08] inline-flex items-center">
             <button
               type="button"
               onClick={() => setBillingPeriod("monthly")}
-              className={`px-6 py-2.5 text-xs font-bold rounded-xl transition-all capitalize cursor-pointer ${
+              className={`px-5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                 billingPeriod === "monthly"
-                  ? "bg-gradient-to-r from-[#FF2E93] to-[#0066FF] text-white shadow-lg"
-                  : "text-white/60 hover:text-white"
+                  ? "bg-white/[0.12] text-white shadow-sm"
+                  : "text-white/50 hover:text-white"
               }`}
             >
               Monthly Billing
@@ -1454,217 +1335,271 @@ export function Pricing() {
             <button
               type="button"
               onClick={() => setBillingPeriod("yearly")}
-              className={`px-6 py-2.5 text-xs font-bold rounded-xl transition-all capitalize flex items-center gap-2 cursor-pointer ${
+              className={`px-5 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
                 billingPeriod === "yearly"
-                  ? "bg-gradient-to-r from-[#FF2E93] to-[#0066FF] text-white shadow-lg"
-                  : "text-white/60 hover:text-white"
+                  ? "bg-[#ff0a8a] text-white shadow-[0_4px_16px_rgba(255,10,138,0.3)]"
+                  : "text-white/50 hover:text-white"
               }`}
             >
-              <span>Yearly Billing</span>
-              <span className="bg-[#FF2E93] text-white text-[10px] px-2 py-0.5 rounded-full font-black uppercase">
+              <span>Annual Billing</span>
+              <span className="bg-black/30 text-white text-[10px] px-2 py-0.5 rounded-full font-black uppercase">
                 20% OFF
               </span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 items-start mb-16">
-          {BASE_PLANS.map((p) => (
-            <motion.div
-              key={p.name}
-              whileHover={{ y: -6, scale: 1.01 }}
-              className="relative flex flex-col justify-between rounded-[36px] p-7 text-white h-full"
-              style={{
-                background: p.highlight
-                  ? "linear-gradient(170deg, rgba(255,46,147,0.15) 0%, rgba(0,102,255,0.1) 100%)"
-                  : "rgba(255, 255, 255, 0.04)",
-                border: p.highlight
-                  ? "2px solid #FF2E93"
-                  : "1.5px solid rgba(255, 255, 255, 0.08)",
-                boxShadow: p.highlight ? "0 0 35px rgba(255,46,147,0.25)" : "none"
-              }}
-            >
-              {p.badge && (
-                <span
-                  className="font-mono text-[10px] uppercase font-extrabold tracking-widest px-3 py-1 rounded-full absolute -top-3 left-6 text-white shadow-md"
-                  style={{ background: "linear-gradient(135deg, #FF2E93, #0066FF)" }}
-                >
-                  {p.badge}
-                </span>
-              )}
+        {/* Pricing Cards Grid */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 items-stretch mb-12">
+          {BASE_PLANS.map((p) => {
+            const isPink = p.tone === "pink";
+            const isBlue = p.tone === "blue";
+            const borderColor = isPink
+              ? "border-[#ff0a8a]/40"
+              : isBlue
+              ? "border-[#3b82f6]/40"
+              : "border-white/[0.08]";
 
-              <div>
-                <h3 className="font-display text-xl font-bold text-white">{p.name}</h3>
-                <div className="mt-3 flex items-baseline gap-1">
-                  <span className="font-display text-3xl font-black text-white">
-                    {getFormattedPrice(p.monthlyPrice)}
+            const buttonStyle = isPink
+              ? "bg-[#ff0a8a] text-white shadow-[0_4px_18px_rgba(255,10,138,0.25)] hover:bg-[#ff299b]"
+              : isBlue
+              ? "bg-[#3b82f6] text-white shadow-[0_4px_18px_rgba(59,130,246,0.25)] hover:bg-[#2563eb]"
+              : "bg-white/[0.06] text-white border border-white/[0.10] hover:bg-white/[0.10]";
+
+            return (
+              <div
+                key={p.name}
+                className={`relative flex flex-col justify-between rounded-3xl border bg-[#171717] p-6 text-white transition-all ${borderColor}`}
+                style={{
+                  boxShadow: p.highlight ? "0 10px 40px rgba(255,10,138,0.15)" : undefined,
+                }}
+              >
+                {p.badge && (
+                  <span
+                    className={`font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full absolute -top-3 left-6 text-white shadow-sm ${
+                      isPink ? "bg-[#ff0a8a]" : isBlue ? "bg-[#3b82f6]" : "bg-white/20"
+                    }`}
+                  >
+                    {p.badge}
                   </span>
-                  <span className="text-xs text-white/50 font-medium">
-                    {billingPeriod === "yearly" ? "/mo (billed annually)" : p.period}
-                  </span>
-                </div>
-                <p className="mt-1 text-xs text-white/60 font-medium">{p.desc}</p>
+                )}
 
-                <div className="mt-4 font-mono text-xs font-bold text-[#FF2E93] bg-[#FF2E93]/10 px-3 py-1.5 rounded-xl border border-[#FF2E93]/20">
-                  {p.posts}
+                <div>
+                  <h3 className="font-display text-lg font-bold text-white">{p.name}</h3>
+                  <div className="mt-2 flex items-baseline gap-1">
+                    <span className="font-display text-3xl font-bold text-white">
+                      {getFormattedPrice(p.monthlyPrice)}
+                    </span>
+                    <span className="text-xs text-white/45">
+                      {billingPeriod === "yearly" ? "/mo (billed annually)" : p.period}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-white/50">{p.desc}</p>
+
+                  <div className="mt-4 font-mono text-xs font-semibold text-white/80 bg-white/[0.04] px-3 py-1.5 rounded-xl border border-white/[0.06]">
+                    {p.posts}
+                  </div>
+
+                  <ul className="mt-6 space-y-2.5 text-xs text-white/70">
+                    {p.features.map((f) => (
+                      <li key={f} className="flex items-center gap-2">
+                        <Check
+                          className="h-3.5 w-3.5 shrink-0"
+                          style={{
+                            color: isPink ? "#ff0a8a" : isBlue ? "#3b82f6" : "#ffffff",
+                          }}
+                        />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                <ul className="mt-6 space-y-2.5 text-xs text-white/75 font-medium">
-                  {p.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-[#0066FF] shrink-0" />
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
+                <Link href="/signup" className="mt-8">
+                  <button
+                    className={`w-full rounded-xl py-2.5 text-xs font-bold transition-all cursor-pointer ${buttonStyle}`}
+                  >
+                    {p.cta}
+                  </button>
+                </Link>
               </div>
-
-              <Link href="/signup" className="mt-8">
-                <button
-                  className="w-full rounded-full py-3 text-sm font-bold transition-all cursor-pointer"
-                  style={
-                    p.highlight
-                      ? { background: "linear-gradient(135deg, #FF2E93 0%, #0066FF 100%)", color: "#ffffff", boxShadow: "0 0 20px rgba(255,46,147,0.4)" }
-                      : { background: "rgba(255,255,255,0.08)", color: "#ffffff", border: "1px solid rgba(255,255,255,0.15)" }
-                  }
-                >
-                  {p.cta}
-                </button>
-              </Link>
-            </motion.div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Add-on Alert Box Block (From Reference Code) */}
-        <motion.div
-          whileHover={{ scale: 1.01 }}
-          className="max-w-3xl mx-auto rounded-3xl p-6 text-white flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4"
-          style={{
-            background: "linear-gradient(135deg, rgba(255,46,147,0.12) 0%, rgba(0,102,255,0.12) 100%)",
-            border: "1.5px solid rgba(0,102,255,0.3)",
-            backdropFilter: "blur(16px)"
-          }}
-        >
+        {/* Custom Enterprise Callout */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#161616] p-6 text-white flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4 max-w-3xl mx-auto">
           <div>
-            <h4 className="font-display font-black text-lg text-white">Custom Enterprise & Dedicated AI Workspaces</h4>
-            <p className="text-white/70 text-xs mt-1 font-medium">
-              Need custom LLM fine-tuning, dedicated IP addresses, SLA guarantees, or custom team seats?
+            <h4 className="font-display font-bold text-base text-white">
+              Enterprise &amp; High-Volume Custom Workspaces
+            </h4>
+            <p className="text-white/60 text-xs mt-1">
+              Need custom fine-tuned models, dedicated IPs, SLA guarantees, or 20+ team seats?
             </p>
           </div>
           <Link href="mailto:support@koraspace.ai" className="shrink-0">
-            <button className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] text-white px-6 py-2.5 rounded-xl font-bold text-xs shadow-md hover:shadow-lg transition-all cursor-pointer">
+            <button className="border border-white/[0.10] bg-white/[0.04] text-white px-5 py-2 rounded-xl font-semibold text-xs hover:bg-white/[0.08] transition-all cursor-pointer">
               Contact Enterprise Sales
             </button>
           </Link>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ── 10. FinalCTA Component (From Reference Code) ─────────────────── */
+/* ── 13. FAQ Accordion (#faq) ─────────────────────────────────────── */
 
-export function FinalCTA() {
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.12 },
-    },
-  };
+const FAQS_DATA = [
+  {
+    q: "What is the difference between Creator Mode and Marketer Mode?",
+    a: "Creator Mode is built for creators, solo founders, and influencers focusing on brand voice learning, AI post composing, multi-format repurposing, and visual drag-and-drop scheduling across 6+ social networks. Marketer Mode is designed for growth operators and marketing agencies who need campaign execution, social CRM lead triage (converting comments & DMs to deals), autonomous agent operators, and closed-loop revenue attribution.",
+  },
+  {
+    q: "How does the Brand Brain ensure posts sound like me?",
+    a: "Simply input your website URL, brand guidelines, product briefs, or top past posts. The KoraSpace Brand Brain builds a persistent memory profile with vocabulary rules, tone settings, and custom guardrails so every generated post, carousel, or script sounds authentic.",
+  },
+  {
+    q: "Which social media platforms are supported?",
+    a: "KoraSpace connects directly to Instagram, TikTok, LinkedIn, YouTube, X (Twitter), Facebook, Threads, WhatsApp, Telegram, and more via official authorized OAuth 2.0 APIs.",
+  },
+  {
+    q: "How does Ghost Mode™ lead triage work?",
+    a: "Ghost Mode™ monitors your comments and direct messages in real time. Using NLP and randomized human-like delays (30s–75s), it detects buying questions (e.g. 'How much does this cost?', 'Can I buy today?') and logs qualified leads directly into your CRM Kanban board.",
+  },
+  {
+    q: "Can I use KoraSpace for multi-client agencies or teams?",
+    a: "Yes! The Agency & Teams tier includes dedicated client workspace portals, multi-seat role permissions with row-level security, shareable draft approval links (no login required for clients), and white-label analytics reports.",
+  },
+  {
+    q: "What payment methods are supported in Nigeria and internationally?",
+    a: "All plans are billed in Nigerian Naira (NGN) without foreign exchange surprises. We accept all Nigerian debit cards (Mastercard, Visa, Verve), bank transfers, and international cards via Paystack and Flutterwave.",
+  },
+];
 
-  const textVariants: Variants = {
-    hidden: { opacity: 0, y: 30, filter: "blur(2px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { type: "spring", stiffness: 80, damping: 16 },
-    },
-  };
-
-  const imageVariants: Variants = {
-    hidden: { opacity: 0, y: 40, scale: 0.98 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 60,
-        damping: 18,
-        delay: 0.2,
-      },
-    },
-  };
+export function FAQ() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <motion.section
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      variants={containerVariants}
-      className="py-16 md:py-24 px-6 bg-gradient-to-br from-[#0c0919] via-[#07050d] to-[#05081c] text-white rounded-[36px] border border-white/10 my-8 mx-4 sm:mx-8 z-50 relative overflow-hidden"
-    >
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-16">
-        {/* Content Side */}
-        <div className="flex-1 space-y-6 text-center md:text-left">
-          <motion.h2 variants={textVariants} className="text-xs font-mono font-extrabold uppercase tracking-widest text-[#FF2E93]">
-            14-Day Free Trial — No Credit Card Required
-          </motion.h2>
+    <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+      <SectionHead
+        eyebrow="Frequently Asked Questions"
+        tone="pink"
+        title="Got questions? We've got answers."
+        sub="Everything you need to know about KoraSpace, dual operating modes, AI safety, and pricing."
+      />
 
-          <motion.h1 variants={textVariants} className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
-            Your AI marketing team <br />
-            <span className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] bg-clip-text text-transparent">
-              starts today.
-            </span>
-          </motion.h1>
+      <div className="space-y-3">
+        {FAQS_DATA.map((faq, i) => {
+          const isOpen = openIndex === i;
 
-          <motion.p variants={textVariants} className="text-white/80 text-lg font-medium max-w-xl mx-auto md:mx-0">
-            Join 2,000+ creators, founders, and agencies automating content creation, scheduling, lead triage, and revenue growth.
-          </motion.p>
-
-          <motion.div variants={textVariants} className="pt-4 flex justify-center md:justify-start">
-            <LandingButton
-              href="/signup"
-              className="bg-gradient-to-r from-[#FF2E93] to-[#0066FF] text-white shadow-lg shadow-[#FF2E93]/30 hover:shadow-[#0066FF]/40 transition-all duration-300"
+          return (
+            <div
+              key={i}
+              className="rounded-2xl border border-white/[0.08] bg-[#161616] overflow-hidden transition-colors"
             >
-              Get Started Free
-            </LandingButton>
-          </motion.div>
-        </div>
+              <button
+                type="button"
+                onClick={() => setOpenIndex(isOpen ? null : i)}
+                className="w-full flex justify-between items-center text-left p-5 focus:outline-none select-none cursor-pointer"
+              >
+                <span className="text-sm sm:text-base font-bold text-white pr-4">
+                  {faq.q}
+                </span>
 
-        {/* Image Mockup Side */}
-        <motion.div variants={imageVariants} className="flex-1 w-full transform-gpu">
-          <div className="relative rounded-[36px] overflow-hidden shadow-2xl border border-white/15 bg-black/40 p-4">
-            <img
-              src="/features/social-media-marketing.jpg"
-              alt="KoraSpace Social Media Growth Dashboard"
-              className="w-full h-80 sm:h-96 rounded-[28px] object-cover object-top"
-            />
-          </div>
-        </motion.div>
+                <div
+                  className={`text-white/60 shrink-0 transition-transform duration-200 ${
+                    isOpen ? "rotate-180 text-[#ff0a8a]" : ""
+                  }`}
+                >
+                  <ChevronDown size={18} />
+                </div>
+              </button>
+
+              {isOpen && (
+                <div className="px-5 pb-5 pt-0">
+                  <p className="text-xs sm:text-sm text-white/60 leading-relaxed font-normal border-t border-white/[0.06] pt-3">
+                    {faq.a}
+                  </p>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
-    </motion.section>
+    </section>
   );
 }
 
-/* ── 11. Upgraded Multi-Column Footer UI (From Reference Code) ────── */
+/* ── 14. Final Call To Action ─────────────────────────────────────── */
+
+export function FinalCTA() {
+  return (
+    <section className="px-4 sm:px-6 lg:px-8 py-16">
+      <div className="relative mx-auto max-w-6xl rounded-3xl border border-white/[0.10] bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden">
+        {/* Subtle accent border */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-[2px] bg-gradient-to-r from-[#ff0a8a] to-[#3b82f6] rounded-full" />
+
+        <div className="max-w-3xl mx-auto text-center">
+          <Eyebrow tone="pink">14-Day Free Trial — No Credit Card Required</Eyebrow>
+
+          <h2 className="mt-5 font-display text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+            Your autonomous AI marketing team{" "}
+            <span className="text-[#ff0a8a]">starts today.</span>
+          </h2>
+
+          <p className="mt-4 text-sm sm:text-base text-white/60 leading-relaxed font-normal max-w-xl mx-auto">
+            Join thousands of creators, founders, and marketing operators automating content creation, scheduling, CRM triage, and revenue growth.
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
+            <LandingButton
+              href="/signup"
+              className="bg-[#ff0a8a] text-white shadow-[0_4px_20px_rgba(255,10,138,0.3)] hover:bg-[#ff299b]"
+            >
+              <span>Get Started Free</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </LandingButton>
+            <LandingButton
+              href="/login"
+              className="border border-white/[0.10] bg-white/[0.03] text-white/80 hover:bg-white/[0.06] hover:text-white"
+            >
+              <span>Sign In to Workspace</span>
+            </LandingButton>
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-white/40">
+            <div className="flex items-center gap-1.5">
+              <Check className="h-3.5 w-3.5 text-[#34d399]" />
+              <span>Instant 2-minute onboarding</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Check className="h-3.5 w-3.5 text-[#34d399]" />
+              <span>Supports 6+ social networks</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── 15. Upgraded Footer ──────────────────────────────────────────── */
 
 const FOOTER_LINKS = {
   Product: [
-    { label: "AI Composing Pipeline", href: "#features" },
-    { label: "Visual Calendar 2.0", href: "#features" },
+    { label: "AI Composing Pipeline", href: "#engines" },
+    { label: "Visual Calendar 2.0", href: "#engines" },
     { label: "Brand Brain", href: "#brain" },
     { label: "Autonomous Growth Loop", href: "#how" },
     { label: "Pricing & Plans", href: "#pricing" },
   ],
   Platform: [
-    { label: "Instagram Integration", href: "#" },
-    { label: "TikTok Auto-Scheduler", href: "#" },
-    { label: "LinkedIn & X Publisher", href: "#" },
-    { label: "YouTube Short Repurposer", href: "#" },
-    { label: "WhatsApp & Telegram Bots", href: "#" },
+    { label: "Instagram Integration", href: "#integrations" },
+    { label: "TikTok Auto-Scheduler", href: "#integrations" },
+    { label: "LinkedIn & X Publisher", href: "#integrations" },
+    { label: "YouTube Repurposer", href: "#integrations" },
+    { label: "WhatsApp & Telegram CRM", href: "#integrations" },
   ],
   Legal: [
     { label: "Privacy Policy", href: "/privacy" },
@@ -1681,141 +1616,99 @@ const FOOTER_LINKS = {
 };
 
 export function SiteFooter() {
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
-  };
-
-  const columnVariants: Variants = {
-    hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
-    },
-  };
-
-  const descriptionStream: Variants = {
-    hidden: { opacity: 1 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.04, delayChildren: 0.2 },
-    },
-  };
-
-  const wordVariants: Variants = {
-    hidden: { opacity: 0, y: 3, filter: "blur(2px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.2, ease: "easeOut" },
-    },
-  };
-
-  const descWords = "An AI-powered marketing operating system built for modern creators, startups, and agencies.".split(" ");
-
   return (
-    <motion.footer
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-60px" }}
-      variants={containerVariants}
-      className="border-t border-[#0066FF]/20 bg-[#05081c] py-16 px-6 text-white relative overflow-hidden transform-gpu"
-    >
+    <footer className="border-t border-white/[0.08] bg-[#121212] py-14 px-4 sm:px-6 lg:px-8 text-white">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Brand Column */}
-          <motion.div variants={columnVariants} className="lg:col-span-1 space-y-4">
-            <Link href="/" className="flex items-center gap-3 mb-2">
-              <img src="/logo.png" alt="KoraSpace Logo" width={32} height={32} className="h-8 w-auto object-contain" />
-              <span className="font-display text-xl font-bold tracking-tight text-white">
-                Kora<span className="text-[#0066FF]">Space</span>
+          <div className="lg:col-span-1 space-y-3">
+            <Link href="/" className="flex items-center gap-2.5 mb-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[#ff0a8a] to-[#3b82f6] p-[1px]">
+                <div className="flex h-full w-full items-center justify-center rounded-[7px] bg-[#141414]">
+                  <img src="/logo.png" alt="KoraSpace Logo" className="h-4 w-4 object-contain" />
+                </div>
+              </div>
+              <span className="font-display text-lg font-bold tracking-tight text-white">
+                Kora<span className="text-[#3b82f6]">Space</span>
               </span>
             </Link>
 
-            {/* Word-by-Word Stream Description */}
-            <motion.p variants={descriptionStream} className="text-sm text-white/60 leading-relaxed font-medium flex flex-wrap select-none">
-              {descWords.map((word, index) => (
-                <motion.span key={index} variants={wordVariants} className="inline-block mr-1">
-                  {word}
-                </motion.span>
-              ))}
-            </motion.p>
+            <p className="text-xs text-white/55 leading-relaxed font-normal">
+              Autonomous AI marketing operating system built for modern creators, startups, and marketing agencies.
+            </p>
 
-            <div className="flex gap-3 pt-2">
+            <div className="flex gap-2 pt-2">
               {[Globe, Send, Zap, MessageCircle].map((Icon, i) => (
-                <motion.a
+                <a
                   key={i}
                   href="#"
-                  whileHover={{ y: -3, scale: 1.05 }}
-                  className="w-9 h-9 rounded-xl border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:border-[#FF2E93]/50 hover:bg-[#FF2E93]/10 transition-all"
+                  className="w-8 h-8 rounded-lg border border-white/[0.08] flex items-center justify-center text-white/50 hover:text-white hover:border-[#ff0a8a]/40 hover:bg-[#ff0a8a]/10 transition-all"
                 >
-                  <Icon className="w-4 h-4" />
-                </motion.a>
+                  <Icon className="w-3.5 h-3.5" />
+                </a>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Links Columns */}
           {Object.entries(FOOTER_LINKS).map(([category, links]) => (
-            <motion.div key={category} variants={columnVariants}>
-              <h4 className="text-sm font-extrabold uppercase font-mono tracking-wider text-[#0066FF] mb-4">
+            <div key={category}>
+              <h4 className="text-xs font-bold uppercase font-mono tracking-wider text-white/45 mb-3.5">
                 {category}
               </h4>
-              <ul className="space-y-2.5">
+              <ul className="space-y-2 text-xs">
                 {links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-white/60 hover:text-white transition-colors font-medium"
+                      className="text-white/60 hover:text-white transition-colors"
                     >
                       {link.label}
                     </Link>
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
 
-          {/* Contact Support Column (From Reference Code) */}
-          <motion.div variants={columnVariants} className="space-y-4">
-            <h4 className="text-sm font-extrabold uppercase font-mono tracking-wider text-[#FF2E93] mb-4">
+          {/* Contact Support Column */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase font-mono tracking-wider text-[#ff0a8a] mb-3.5">
               Direct Contact
             </h4>
-            <ul className="space-y-3.5 text-sm font-medium text-white/60">
-              <li className="flex items-start gap-3">
-                <Mail size={16} className="text-[#FF2E93] shrink-0 mt-0.5" />
-                <a href="mailto:support@koraspace.ai" className="hover:text-white transition-colors break-all">
+            <ul className="space-y-2.5 text-xs text-white/60">
+              <li className="flex items-start gap-2.5">
+                <Mail size={14} className="text-[#ff0a8a] shrink-0 mt-0.5" />
+                <a
+                  href="mailto:support@koraspace.ai"
+                  className="hover:text-white transition-colors break-all"
+                >
                   support@koraspace.ai
                 </a>
               </li>
-              <li className="flex items-start gap-3">
-                <Phone size={16} className="text-[#0066FF] shrink-0 mt-0.5" />
+              <li className="flex items-start gap-2.5">
+                <Phone size={14} className="text-[#3b82f6] shrink-0 mt-0.5" />
                 <span>+234 701 313 4821</span>
               </li>
-              <li className="flex items-start gap-3">
-                <MapPin size={16} className="text-[#FF2E93] shrink-0 mt-0.5" />
+              <li className="flex items-start gap-2.5">
+                <MapPin size={14} className="text-[#ff0a8a] shrink-0 mt-0.5" />
                 <span>Lagos, Nigeria</span>
               </li>
             </ul>
-          </motion.div>
+          </div>
         </div>
 
         {/* Bottom Credits Bar */}
-        <motion.div variants={columnVariants} className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50 font-medium">
+        <div className="border-t border-white/[0.08] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/40">
           <p>© {new Date().getFullYear()} KoraSpace by Techla. All rights reserved.</p>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
+            <span>Systems Normal</span>
+            <span className="mx-2 text-white/20">•</span>
             <span>🇳🇬 Built in Nigeria</span>
           </div>
-        </motion.div>
+        </div>
       </div>
-    </motion.footer>
+    </footer>
   );
 }
-
-

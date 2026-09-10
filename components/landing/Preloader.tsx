@@ -97,7 +97,7 @@ export function Preloader() {
         className="pointer-events-none absolute h-[340px] w-[340px] rounded-full"
         style={{
           background:
-            "radial-gradient(circle, rgba(99,102,241,0.18), transparent 70%)",
+            "radial-gradient(circle, rgba(255,10,138,0.15), rgba(59,130,246,0.15), transparent 70%)",
           filter: "blur(20px)",
         }}
       />
@@ -111,7 +111,7 @@ export function Preloader() {
           width={78}
           height={67}
           className="h-[64px] w-auto animate-pulse-glow"
-          style={{ filter: "drop-shadow(0 0 18px rgba(99,102,241,0.45))" }}
+          style={{ filter: "drop-shadow(0 0 18px rgba(255,10,138,0.35))" }}
         />
 
         {/* Wordmark with water-flow light sweep */}
@@ -123,7 +123,7 @@ export function Preloader() {
             letterSpacing: "-0.03em",
           }}
         >
-          Koraspace
+          KoraSpace
         </div>
 
         {/* thin progress track */}
@@ -133,7 +133,7 @@ export function Preloader() {
             style={{
               width: `${progress}%`,
               background:
-                "linear-gradient(90deg, #6366f1, #a855f7, #f5c451)",
+                "linear-gradient(90deg, #ff0a8a, #3b82f6)",
             }}
           />
         </div>

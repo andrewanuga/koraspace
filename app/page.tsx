@@ -3,6 +3,7 @@ import { FloatingNav } from "@/components/landing/FloatingNav";
 import { Hero } from "@/components/landing/Hero";
 import {
   ProblemSolverSection,
+  DualModeShowcaseSection,
   GrowthLoopSection,
   FeatureSection,
   FeatureShowcase,
@@ -20,16 +21,19 @@ import {
 
 export default function LandingPage() {
   return (
-    <div className="relative min-h-screen bg-[#07050d] selection:bg-[#FF2E93]/20 selection:text-[#FF2E93]">
+    <div className="relative min-h-screen bg-[#121212] selection:bg-[#ff0a8a]/20 selection:text-[#ff0a8a]">
       <Preloader />
+      <FloatingNav />
       <main>
         <Hero />
         <ProblemSolverSection />
+        <DualModeShowcaseSection />
         <GrowthLoopSection />
         
         {/* Alternating FeatureSection Showcase Rows */}
         <FeatureSection
           badge="AI Composing Pipeline"
+          tone="pink"
           title="Turn your brand voice into ready-to-publish posts"
           description="Executes an 8-step AI pipeline: checks client niche -> reads past posts -> scans active trends -> drafts post & caption -> assigns hashtags -> double web reflection."
           imageUrl="/features/Kora-AI-Composer.jpg"
@@ -39,6 +43,7 @@ export default function LandingPage() {
 
         <FeatureSection
           badge="Visual Calendar 2.0"
+          tone="pink"
           title="Drag-and-drop your social growth strategy"
           description="Visual planning surface to schedule, organize, and drag-and-drop posts across Instagram, TikTok, LinkedIn, YouTube, X, and Threads effortlessly."
           imageUrl="/features/Visual-Drag-and-Drop Calendar.jpg"
@@ -53,6 +58,7 @@ export default function LandingPage() {
 
         <FeatureSection
           badge="Social Inbox & CRM"
+          tone="blue"
           title="Classify leads & triage messages automatically"
           description="Unified inbox that detects high-intent buying signals ('How much does this cost?'), tags leads, and logs dollar opportunities straight to CRM."
           imageUrl="/features/social-ecommerce.jpg"
@@ -62,6 +68,7 @@ export default function LandingPage() {
 
         <FeatureSection
           badge="Agency Workspaces"
+          tone="blue"
           title="Multi-seat team approval & client portals"
           description="Manage multiple client workspaces with strict row-level security. Teammates manage accounts, review drafts, while you control billing."
           imageUrl="/features/manage-multiple-brands.jpg"
@@ -82,5 +89,6 @@ export default function LandingPage() {
     </div>
   );
 }
+
 
 
