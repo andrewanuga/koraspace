@@ -75,6 +75,9 @@ export function Preloader() {
   useEffect(() => {
     if (!done) return;
     document.documentElement.classList.add("sai-loaded");
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("koraspace-loader-done"));
+    }
     const t = window.setTimeout(() => setHidden(true), 700);
     return () => window.clearTimeout(t);
   }, [done]);
@@ -85,7 +88,7 @@ export function Preloader() {
     <div
       ref={rootRef}
       aria-hidden={done}
-      className="fixed inset-0 z-[120] flex flex-col items-center justify-center transition-opacity duration-700"
+      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center transition-opacity duration-700"
       style={{
         background: "#121212",
         opacity: done ? 0 : 1,

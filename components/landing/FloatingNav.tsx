@@ -15,33 +15,61 @@ const navLinks = [
 ];
 
 export function FloatingNav() {
+  const [isLoaded, setIsLoaded] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
 
   useEffect(() => {
+    // Check if loader is already done
+    if (
+      typeof document !== "undefined" &&
+      document.documentElement.classList.contains("sai-loaded")
+    ) {
+      setIsLoaded(true);
+    }
+
+    const onLoaderDone = () => {
+      setIsLoaded(true);
+    };
+
+    window.addEventListener("koraspace-loader-done", onLoaderDone);
+
+    // Safety fallback in case preloader completes before listener attached
+    const fallbackTimer = window.setTimeout(() => {
+      setIsLoaded(true);
+    }, 2400);
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 30);
     };
 
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("koraspace-loader-done", onLoaderDone);
+      window.removeEventListener("scroll", handleScroll);
+      window.clearTimeout(fallbackTimer);
+    };
   }, []);
 
   const capsuleSpring = { type: "spring" as const, stiffness: 350, damping: 28 };
 
   return (
-    <motion.header
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className={`fixed left-1/2 -translate-x-1/2 z-[999] flex items-center max-w-[95vw] xl:max-w-7xl w-full transition-all duration-300 px-2 sm:px-4 ${
-        isScrolled
-          ? "top-3 justify-between"
-          : "top-4 md:top-6 justify-center"
-      }`}
-    >
+    <AnimatePresence>
+      {isLoaded && (
+        <motion.header
+          initial={{ y: -30, opacity: 0, filter: "blur(6px)" }}
+          animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+          exit={{ y: -30, opacity: 0 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className={`fixed left-1/2 -translate-x-1/2 z-[999] flex items-center max-w-[95vw] xl:max-w-7xl w-full transition-all duration-300 px-2 sm:px-4 ${
+            isScrolled
+              ? "top-3 justify-between"
+              : "top-4 md:top-6 justify-center"
+          }`}
+        >
       {/* ── WHEN AT TOP: Unified Glass Bar ── */}
       {!isScrolled ? (
         <motion.div
@@ -222,6 +250,8 @@ export function FloatingNav() {
         )}
       </AnimatePresence>
     </motion.header>
+      )}
+    </AnimatePresence>
   );
 }
 
