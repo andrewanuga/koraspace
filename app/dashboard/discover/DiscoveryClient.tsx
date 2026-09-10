@@ -28,7 +28,9 @@ import {
   Building2,
   CheckCircle2,
   X,
+  Clock,
 } from "lucide-react";
+import { PageHeader, GlassCard, StatTile, Pill } from "@/components/dashboard/ui";
 
 import type {
   SocialPost,
@@ -58,9 +60,6 @@ type DiscoveryTab =
   | "listening"
   | "opportunities"
   | "conversations";
-
-const BRAND_BLUE = "#2F80FF";
-const BRAND_PINK = "#FF0A8A";
 
 function fmt(value: number) {
   if (!Number.isFinite(value)) return "0";
@@ -113,7 +112,7 @@ function Sparkline({
       <polyline
         points={points}
         fill="none"
-        stroke={positive ? BRAND_BLUE : "#64748B"}
+        stroke={positive ? "#3b82f6" : "var(--fg-4)"}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -122,7 +121,7 @@ function Sparkline({
         cx="105"
         cy={positive ? "6" : "32"}
         r="2.5"
-        fill={positive ? BRAND_BLUE : "#64748B"}
+        fill={positive ? "#3b82f6" : "var(--fg-4)"}
       />
     </svg>
   );
@@ -131,7 +130,7 @@ function Sparkline({
 function MiniBar({
   value,
   label,
-  color = BRAND_BLUE,
+  color = "#3b82f6",
 }: {
   value: number;
   label: string;
@@ -139,11 +138,11 @@ function MiniBar({
 }) {
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center justify-between text-[11px]">
-        <span className="text-zinc-400">{label}</span>
-        <span className="font-semibold text-zinc-200">{value}%</span>
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-[var(--fg-4)] font-medium">{label}</span>
+        <span className="font-semibold text-[var(--fg)]">{value}%</span>
       </div>
-      <div className="h-1.5 overflow-hidden rounded-full bg-[#0d1218]">
+      <div className="h-1.5 overflow-hidden rounded-full bg-[var(--panel-fill-2)] border border-[var(--stroke)]">
         <div
           className="h-full rounded-full transition-all"
           style={{
@@ -168,19 +167,18 @@ function SectionHeader({
   return (
     <div className="mb-4 flex items-center justify-between">
       <div className="flex items-center gap-2.5">
-        <div
-          className="flex h-7 w-7 items-center justify-center rounded-lg border border-blue-500/20 bg-blue-500/10"
-          style={{ color: BRAND_BLUE }}
-        >
+        <div className="flex h-7 w-7 items-center justify-center rounded-xl border border-blue-500/20 bg-blue-500/10 text-blue-400">
           <Icon className="h-4 w-4" />
         </div>
-        <h2 className="text-[14px] font-semibold text-zinc-100">{title}</h2>
+        <h2 className="text-sm font-bold text-[var(--fg)] tracking-tight">{title}</h2>
       </div>
 
-      <button className="flex items-center gap-1 text-[11px] font-medium text-blue-400 hover:text-blue-300">
-        {action}
-        <ArrowUpRight className="h-3 w-3" />
-      </button>
+      {action && (
+        <button className="flex items-center gap-1 text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors">
+          {action}
+          <ArrowUpRight className="h-3.5 w-3.5" />
+        </button>
+      )}
     </div>
   );
 }
@@ -266,113 +264,158 @@ export function DiscoveryClient({
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] space-y-6 px-1 pb-14 text-white">
+    <div className="mx-auto flex max-w-full flex-col min-h-screen pb-16 space-y-6">
       {/* =========================================================
-          HEADER
+          PAGE HEADER
       ========================================================= */}
-      <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-        <div>
-          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-[11px] font-semibold text-blue-400">
-            <Sparkles className="h-3.5 w-3.5 text-blue-400" />
-            AI-Powered Intelligence
-          </div>
+      <PageHeader
+        eyebrow="AI-Powered Intelligence"
+        title="Discover What's Next"
+        sub="Track rising topics, benchmark competitor velocity, isolate content opportunities, and capitalize on audience signals in real time."
+        actions={
+          <button
+            onClick={handleAnalyzeTrends}
+            disabled={isAnalyzing}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] disabled:opacity-50"
+          >
+            {isAnalyzing ? (
+              <RefreshCw className="h-4 w-4 animate-spin" />
+            ) : (
+              <Sparkles className="h-4 w-4" />
+            )}
+            <span>{isAnalyzing ? "Analyzing Trends..." : "AI Trend Analysis"}</span>
+          </button>
+        }
+      />
 
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100 sm:text-3xl">
-            Discover What&apos;s Next
-          </h1>
-
-          <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-zinc-400">
-            Track rising topics, benchmark competitor velocity, isolate content opportunities, and capitalize on audience signals in real time.
-          </p>
-        </div>
-
-        <button
-          onClick={handleAnalyzeTrends}
-          disabled={isAnalyzing}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-[12px] font-semibold text-white shadow-md shadow-blue-500/20 transition hover:bg-blue-500 active:scale-[0.98] disabled:opacity-60"
-        >
-          {isAnalyzing ? (
-            <RefreshCw className="h-4 w-4 animate-spin" />
-          ) : (
-            <Sparkles className="h-4 w-4" />
-          )}
-          {isAnalyzing ? "Analyzing Trends..." : "AI Trend Analysis"}
-        </button>
+      {/* =========================================================
+          TOP STATS SUMMARY
+      ========================================================= */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatTile
+          label="Tracked Topics"
+          value={discovery.topics.length.toLocaleString()}
+          icon={Hash}
+          footer={
+            <span className="text-xs text-[var(--fg-4)] font-medium">
+              +{discovery.topics.filter((t) => t.growth >= 50).length} surging (🔥 50%+)
+            </span>
+          }
+          tone="neutral"
+        />
+        <StatTile
+          label="Content Opportunities"
+          value={discovery.opportunities.length.toLocaleString()}
+          icon={Lightbulb}
+          footer={
+            <span className="text-xs text-[var(--fg-4)] font-medium">
+              High potential angles identified
+            </span>
+          }
+          tone="blue"
+        />
+        <StatTile
+          label="Audience Signals"
+          value={fmt(Math.max(totalEngagement, 2840))}
+          icon={TrendingUp}
+          footer={
+            <span className="text-xs text-emerald-400 font-medium">
+              +23% engagement velocity
+            </span>
+          }
+          tone="success"
+        />
+        <StatTile
+          label="Competitors Monitored"
+          value={discovery.competitors.length.toLocaleString()}
+          icon={Target}
+          footer={
+            <span className="text-xs text-[var(--fg-4)] font-medium">
+              {connectedPlatforms.length} platform channels
+            </span>
+          }
+          tone="warning"
+        />
       </div>
 
       {/* =========================================================
           SEARCH / INTELLIGENCE STRIP
       ========================================================= */}
-      <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
-        <div className="rounded-xl border border-white/[0.08] bg-[#14171d] p-4 shadow-sm">
+      <GlassCard className="p-4">
+        <div className="grid gap-4 lg:grid-cols-[1fr_340px] items-center">
           <div className="flex flex-col gap-3 md:flex-row md:items-center">
-            <div className="flex h-10 flex-1 items-center gap-2.5 rounded-lg border border-white/[0.08] bg-[#0e1014] px-3">
-              <Search className="h-4 w-4 text-zinc-500" />
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--fg-4)]" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search trends, competitors, keywords, topics..."
-                className="w-full bg-transparent text-[12px] text-zinc-200 outline-none placeholder:text-zinc-500"
+                className="h-10 w-full rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] pl-10 pr-4 text-xs text-[var(--fg)] placeholder:text-[var(--fg-4)] focus:border-blue-500 focus:outline-none transition-all"
               />
+              {query && (
+                <button
+                  onClick={() => setQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--fg-4)] hover:text-[var(--fg)]"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
-              <button className="flex h-10 items-center gap-2 rounded-lg border border-white/[0.08] bg-[#0e1014] px-3 text-[11px] font-semibold text-zinc-300 hover:border-zinc-700">
+              <div className="flex h-10 items-center gap-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 text-xs font-semibold text-[var(--fg-2)]">
                 <Radio className="h-3.5 w-3.5 text-blue-400" />
-                Last 7 days
-              </button>
-              <button className="flex h-10 items-center gap-2 rounded-lg border border-white/[0.08] bg-[#0e1014] px-3 text-[11px] text-zinc-400 hover:text-white">
-                <MoreHorizontal className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-white/[0.08] bg-[#14171d] p-4 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-[10px] uppercase font-semibold tracking-wider text-zinc-500">
-              Intelligence Coverage
-            </p>
-            <p className="mt-1 text-[18px] font-bold text-zinc-100">
-              {connectedPlatforms.length || 0} Platforms Active
-            </p>
-            <div className="mt-2 flex gap-1.5">
-              {connectedPlatforms.slice(0, 5).map((account) => (
-                <div
-                  key={account.id}
-                  title={platformName(account.platform)}
-                  className="flex h-6 w-6 items-center justify-center rounded border border-white/[0.08] bg-zinc-800 text-blue-400"
-                >
-                  <PlatformIcon platform={account.platform} />
-                </div>
-              ))}
-              {!connectedPlatforms.length && (
-                <span className="text-[11px] text-zinc-500">
-                  Connect accounts to enrich discovery.
-                </span>
-              )}
+                <span>Last 7 days</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-blue-500/20 bg-blue-500/10 text-blue-400">
-            <Globe2 className="h-5 w-5" />
+          <div className="flex items-center justify-between border-t lg:border-t-0 lg:border-l border-[var(--stroke)] pt-3 lg:pt-0 lg:pl-4">
+            <div>
+              <p className="text-[10px] uppercase font-semibold tracking-wider text-[var(--fg-4)]">
+                Intelligence Coverage
+              </p>
+              <p className="mt-0.5 text-sm font-bold text-[var(--fg)]">
+                {connectedPlatforms.length || 0} Platforms Active
+              </p>
+              <div className="mt-1.5 flex gap-1.5 flex-wrap">
+                {connectedPlatforms.slice(0, 5).map((account) => (
+                  <div
+                    key={account.id}
+                    title={platformName(account.platform)}
+                    className="flex h-6 w-6 items-center justify-center rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-blue-400"
+                  >
+                    <PlatformIcon platform={account.platform} />
+                  </div>
+                ))}
+                {!connectedPlatforms.length && (
+                  <span className="text-[11px] text-[var(--fg-4)]">
+                    Connect accounts to enrich discovery.
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-blue-500/20 bg-blue-500/10 text-blue-400">
+              <Globe2 className="h-5 w-5" />
+            </div>
           </div>
         </div>
-      </div>
+      </GlassCard>
 
       {/* =========================================================
           NAVIGATION TABS
       ========================================================= */}
-      <div className="overflow-x-auto border-b border-white/[0.08]">
-        <div className="flex min-w-max items-center gap-7">
+      <div className="overflow-x-auto border-b border-[var(--stroke)]">
+        <div className="flex min-w-max items-center gap-6 pb-1">
           {tabs.map((tab) => {
             const active = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative pb-3 pt-1 text-[12px] font-semibold transition ${
-                  active ? "text-blue-400" : "text-zinc-400 hover:text-zinc-200"
+                className={`relative pb-3 pt-1 text-xs font-semibold transition-all ${
+                  active ? "text-blue-400" : "text-[var(--fg-4)] hover:text-[var(--fg)]"
                 }`}
               >
                 {tab.label}
@@ -390,58 +433,58 @@ export function DiscoveryClient({
       ========================================================= */}
       <div className="grid gap-6 xl:grid-cols-2">
         {/* TRENDING TOPICS */}
-        <section className="rounded-xl border border-white/[0.08] bg-[#14171d] p-5 shadow-sm">
+        <GlassCard className="p-5">
           <SectionHeader icon={Flame} title="Trending Topics & Themes" />
 
-          <div className="divide-y divide-white/[0.04]">
+          <div className="divide-y divide-[var(--stroke)]/60">
             {filteredTopics.map((topic, index) => (
               <button
                 key={topic.name}
                 onClick={() => setSelectedTopic(topic.name)}
-                className="group flex w-full items-center gap-3 py-3 text-left transition hover:bg-white/[0.02] rounded-lg px-2"
+                className="group flex w-full items-center gap-3 py-3 text-left transition hover:bg-[var(--panel-fill-2)] rounded-xl px-2.5"
               >
                 <div
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                     index === 0
                       ? "bg-blue-600 text-white shadow-sm"
-                      : "bg-zinc-800 text-zinc-300 border border-white/[0.06]"
+                      : "bg-[var(--panel-fill-2)] text-[var(--fg-3)] border border-[var(--stroke)]"
                   }`}
                 >
                   {index + 1}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-semibold text-zinc-200 group-hover:text-white">
+                  <p className="truncate text-xs font-semibold text-[var(--fg)] group-hover:text-blue-400 transition-colors">
                     {topic.name}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-zinc-500">
-                    {topic.category} · {topic.mentions || 100}+ signals
+                  <p className="mt-0.5 text-[11px] text-[var(--fg-4)]">
+                    {topic.category} • {topic.mentions || 100}+ signals
                   </p>
                 </div>
 
-                <span className="text-[12px] font-bold text-emerald-400">
+                <span className="text-xs font-bold text-emerald-400">
                   +{topic.growth}%
                 </span>
 
                 <Sparkline value={topic.growth} />
 
-                <ChevronRight className="h-4 w-4 text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-blue-400" />
+                <ChevronRight className="h-4 w-4 text-[var(--fg-4)] transition group-hover:translate-x-0.5 group-hover:text-blue-400" />
               </button>
             ))}
 
             {!filteredTopics.length && (
-              <div className="py-10 text-center text-[12px] text-zinc-500">
+              <div className="py-10 text-center text-xs text-[var(--fg-4)]">
                 No topics match your query.
               </div>
             )}
           </div>
-        </section>
+        </GlassCard>
 
         {/* CONTENT OPPORTUNITIES */}
-        <section className="rounded-xl border border-white/[0.08] bg-[#14171d] p-5 shadow-sm">
+        <GlassCard className="p-5">
           <SectionHeader icon={Lightbulb} title="High-Potential Content Angles" />
 
-          <div className="divide-y divide-white/[0.04]">
+          <div className="divide-y divide-[var(--stroke)]/60">
             {discovery.opportunities.map((item: DiscoveryOpportunity) => {
               const Icon =
                 item.iconName === "bot"
@@ -458,36 +501,36 @@ export function DiscoveryClient({
                 <Link
                   href="/dashboard/create"
                   key={item.title}
-                  className="group flex items-center gap-3 py-3 transition hover:bg-white/[0.02] rounded-lg px-2"
+                  className="group flex items-center gap-3 py-3 transition hover:bg-[var(--panel-fill-2)] rounded-xl px-2.5"
                 >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-400">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-blue-500/20 bg-blue-500/10 text-blue-400">
                     <Icon className="h-4 w-4" />
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13px] font-semibold text-zinc-200 group-hover:text-white">
+                    <p className="truncate text-xs font-semibold text-[var(--fg)] group-hover:text-blue-400 transition-colors">
                       {item.title}
                     </p>
                     <div className="mt-1 flex gap-1.5">
-                      <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-400 border border-emerald-500/20">
+                      <span className="rounded-lg bg-emerald-500/10 px-2 py-0.5 text-[9px] font-semibold text-emerald-400 border border-emerald-500/20">
                         {item.category}
                       </span>
-                      <span className="rounded bg-blue-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-blue-400 border border-blue-500/20">
+                      <span className="rounded-lg bg-blue-500/10 px-2 py-0.5 text-[9px] font-semibold text-blue-400 border border-blue-500/20">
                         {item.secondary}
                       </span>
                     </div>
                   </div>
 
-                  <span className="text-[12px] font-bold text-emerald-400">
+                  <span className="text-xs font-bold text-emerald-400">
                     {item.growth}
                   </span>
 
-                  <ChevronRight className="h-4 w-4 text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-blue-400" />
+                  <ChevronRight className="h-4 w-4 text-[var(--fg-4)] transition group-hover:translate-x-0.5 group-hover:text-blue-400" />
                 </Link>
               );
             })}
           </div>
-        </section>
+        </GlassCard>
       </div>
 
       {/* =========================================================
@@ -495,60 +538,60 @@ export function DiscoveryClient({
       ========================================================= */}
       <div className="grid gap-6 xl:grid-cols-2">
         {/* COMPETITOR INTELLIGENCE */}
-        <section className="rounded-xl border border-white/[0.08] bg-[#14171d] p-5 shadow-sm">
+        <GlassCard className="p-5">
           <SectionHeader icon={Target} title="Competitor Velocity & Benchmarks" />
 
-          <div className="grid grid-cols-[1.4fr_0.7fr_0.8fr_0.7fr] border-b border-white/[0.06] px-2 pb-2 text-[10px] uppercase font-semibold tracking-wider text-zinc-500">
+          <div className="grid grid-cols-[1.4fr_0.7fr_0.8fr_0.7fr] border-b border-[var(--stroke)] px-2 pb-2 text-[10px] uppercase font-bold tracking-wider text-[var(--fg-4)]">
             <span>Competitor</span>
             <span>New Posts</span>
             <span>Engagement</span>
             <span>Growth</span>
           </div>
 
-          <div className="divide-y divide-white/[0.04]">
+          <div className="divide-y divide-[var(--stroke)]/60">
             {discovery.competitors.map((competitor: DiscoveryCompetitor) => (
               <div
                 key={competitor.name}
                 className="grid grid-cols-[1.4fr_0.7fr_0.8fr_0.7fr] items-center px-2 py-3"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-md border border-white/[0.08] bg-zinc-800 text-[11px] font-bold text-zinc-300">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[11px] font-bold text-[var(--fg-2)]">
                     {competitor.logo}
                   </div>
-                  <span className="text-[12px] font-semibold text-zinc-200">
+                  <span className="text-xs font-semibold text-[var(--fg)]">
                     {competitor.name}
                   </span>
                 </div>
 
-                <span className="text-[12px] text-zinc-400">
+                <span className="text-xs text-[var(--fg-3)]">
                   {competitor.content}
                 </span>
 
-                <span className="text-[12px] text-zinc-400">
+                <span className="text-xs text-[var(--fg-3)]">
                   {competitor.engagement}
                 </span>
 
-                <span className="text-[12px] font-bold text-emerald-400">
+                <span className="text-xs font-bold text-emerald-400">
                   {competitor.growth}
                 </span>
               </div>
             ))}
           </div>
-        </section>
+        </GlassCard>
 
         {/* SOCIAL LISTENING */}
-        <section className="rounded-xl border border-white/[0.08] bg-[#14171d] p-5 shadow-sm">
+        <GlassCard className="p-5">
           <SectionHeader icon={MessageCircle} title="Social Listening & Sentiment" />
 
-          <div className="mb-4 flex rounded-lg border border-white/[0.08] bg-[#0e1014] p-0.5">
+          <div className="mb-4 flex rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-1">
             {(["mentions", "conversations", "sentiment"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setListeningTab(tab)}
-                className={`flex-1 rounded-md py-1.5 text-[11px] font-semibold capitalize transition ${
+                className={`flex-1 rounded-lg py-1.5 text-xs font-semibold capitalize transition-all ${
                   listeningTab === tab
-                    ? "bg-zinc-700 text-white"
-                    : "text-zinc-400 hover:text-zinc-200"
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "text-[var(--fg-4)] hover:text-[var(--fg)]"
                 }`}
               >
                 {tab}
@@ -558,20 +601,20 @@ export function DiscoveryClient({
 
           <div className="grid grid-cols-[1fr_auto] gap-5 items-center">
             <div>
-              <p className="text-[26px] font-bold tracking-tight text-zinc-100">
+              <p className="text-2xl font-bold tracking-tight text-[var(--fg)]">
                 {fmt(Math.max(totalEngagement, 2840))}
               </p>
-              <p className="text-[11px] text-zinc-500">Tracked interactions</p>
+              <p className="text-xs text-[var(--fg-4)]">Tracked interactions</p>
 
               <div className="mt-2.5 flex items-center gap-2">
                 <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
-                <span className="text-[11px] font-bold text-emerald-400">+23%</span>
-                <span className="text-[11px] text-zinc-500">vs. previous period</span>
+                <span className="text-xs font-bold text-emerald-400">+23%</span>
+                <span className="text-xs text-[var(--fg-4)]">vs. previous period</span>
               </div>
             </div>
 
-            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-blue-500/30 bg-blue-500/10">
-              <div className="text-[14px] font-bold text-blue-400">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-500/30 bg-blue-500/10">
+              <div className="text-base font-bold text-blue-400">
                 {discovery.listeningScore}
               </div>
             </div>
@@ -581,26 +624,26 @@ export function DiscoveryClient({
             <MiniBar
               label="Positive Sentiment"
               value={discovery.sentiment.positive}
-              color="#10B981"
+              color="#10b981"
             />
             <MiniBar
               label="Neutral Sentiment"
               value={discovery.sentiment.neutral}
-              color="#3B82F6"
+              color="#3b82f6"
             />
             <MiniBar
               label="Negative Sentiment"
               value={discovery.sentiment.negative}
-              color="#F43F5E"
+              color="#f43f5e"
             />
           </div>
-        </section>
+        </GlassCard>
       </div>
 
       {/* =========================================================
           RECENT POST SIGNALS & AI RECOMMENDATIONS
       ========================================================= */}
-      <section className="rounded-xl border border-white/[0.08] bg-[#14171d] p-5 shadow-sm">
+      <GlassCard className="p-5">
         <SectionHeader icon={BarChart3} title="Recent Publishing Signals" action="View analytics" />
 
         {latestPosts.length > 0 ? (
@@ -608,73 +651,67 @@ export function DiscoveryClient({
             {latestPosts.map((post) => (
               <div
                 key={post.id}
-                className="flex items-center gap-3 rounded-lg border border-transparent px-3 py-2.5 transition hover:border-white/[0.06] hover:bg-white/[0.02]"
+                className="flex items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 transition hover:border-[var(--stroke)] hover:bg-[var(--panel-fill-2)]"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-400">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-blue-500/20 bg-blue-500/10 text-blue-400">
                   <PlatformIcon platform={post.platform} />
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[12px] font-medium text-zinc-200">
+                  <p className="truncate text-xs font-semibold text-[var(--fg)]">
                     {post.content || "Untitled post"}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-zinc-500">
+                  <p className="mt-0.5 text-[10px] text-[var(--fg-4)]">
                     {platformName(post.platform)}
                   </p>
                 </div>
 
                 <div className="hidden text-right sm:block">
-                  <p className="text-[10px] text-zinc-500">Impressions</p>
-                  <p className="text-[12px] font-bold text-zinc-200">
+                  <p className="text-[10px] text-[var(--fg-4)]">Impressions</p>
+                  <p className="text-xs font-bold text-[var(--fg)]">
                     {fmt(Number(post.impressions || 0))}
                   </p>
                 </div>
 
                 <div className="text-right">
-                  <p className="text-[10px] text-zinc-500">Engagements</p>
-                  <p className="text-[12px] font-bold text-emerald-400">
+                  <p className="text-[10px] text-[var(--fg-4)]">Engagements</p>
+                  <p className="text-xs font-bold text-emerald-400">
                     {fmt(Number(post.engagement || 0))}
                   </p>
                 </div>
 
-                <ChevronRight className="h-4 w-4 text-zinc-600" />
+                <ChevronRight className="h-4 w-4 text-[var(--fg-4)]" />
               </div>
             ))}
           </div>
         ) : (
-          <div className="rounded-lg border border-dashed border-white/[0.08] py-8 text-center">
-            <BarChart3 className="mx-auto h-6 w-6 text-zinc-600" />
-            <p className="mt-2 text-[13px] font-medium text-zinc-300">
+          <div className="rounded-2xl border-2 border-dashed border-[var(--stroke)] py-8 text-center bg-[var(--panel-fill-2)]/30">
+            <BarChart3 className="mx-auto h-6 w-6 text-[var(--fg-4)]" />
+            <p className="mt-2 text-xs font-semibold text-[var(--fg-2)]">
               Not enough content published yet
             </p>
-            <p className="mt-0.5 text-[11px] text-zinc-500">
+            <p className="mt-0.5 text-[11px] text-[var(--fg-4)]">
               Publish posts to automatically extract first-party engagement signals.
             </p>
           </div>
         )}
-      </section>
+      </GlassCard>
 
       {/* =========================================================
           AI RECOMMENDATIONS
       ========================================================= */}
-      <section className="rounded-xl border border-white/[0.08] bg-[#14171d] p-5 shadow-sm">
-        <SectionHeader icon={Sparkles} title="AI Action Recommendations" />
+      <GlassCard className="p-5">
+        <SectionHeader icon={Sparkles} title="AI Action Recommendations" action="" />
 
-        <div className="grid gap-3.5 lg:grid-cols-3">
+        <div className="grid gap-4 lg:grid-cols-3">
           {discovery.recommendations.map((recommendation, index) => (
             <div
               key={recommendation.title}
-              className="rounded-lg border border-white/[0.06] bg-[#0f1115] p-4 flex flex-col justify-between"
+              className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-start justify-between gap-3">
-                  <div
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${
-                      index === 1
-                        ? "border-pink-500/30 bg-pink-500/10 text-pink-400"
-                        : "border-blue-500/30 bg-blue-500/10 text-blue-400"
-                    }`}
-                  >
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-400">
                     {index === 0 ? (
                       <Bot className="h-4 w-4" />
                     ) : index === 1 ? (
@@ -684,97 +721,68 @@ export function DiscoveryClient({
                     )}
                   </div>
 
-                  <button className="text-zinc-500 hover:text-white">
+                  <button className="text-[var(--fg-4)] hover:text-[var(--fg)]">
                     <MoreHorizontal className="h-4 w-4" />
                   </button>
                 </div>
 
-                <h3 className="mt-3.5 text-[13px] font-semibold text-zinc-200">
+                <h3 className="mt-3.5 text-xs font-bold text-[var(--fg)]">
                   {recommendation.title}
                 </h3>
-                <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-400">
+                <p className="mt-1.5 text-[11px] leading-relaxed text-[var(--fg-3)]">
                   {recommendation.description}
                 </p>
               </div>
 
               <Link
                 href="/dashboard/create"
-                className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-zinc-800/80 px-3 py-2 text-[11px] font-semibold text-blue-400 transition hover:bg-zinc-800 hover:text-blue-300"
+                className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white px-3 py-2 text-xs font-semibold shadow-md shadow-blue-500/20 transition-all"
               >
                 {recommendation.action}
-                <ArrowUpRight className="h-3 w-3" />
+                <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
             </div>
           ))}
         </div>
-      </section>
-
-      {/* =========================================================
-          FOOTER INTELLIGENCE STATS
-      ========================================================= */}
-      <div className="grid gap-3.5 md:grid-cols-3">
-        <div className="rounded-xl border border-white/[0.08] bg-[#14171d] p-4 shadow-sm">
-          <div className="flex items-center gap-2">
-            <Eye className="h-4 w-4 text-blue-400" />
-            <span className="text-[11px] font-medium text-zinc-400">Content Analyzed</span>
-          </div>
-          <p className="mt-1 text-[22px] font-bold text-zinc-100">{fmt(posts.length)}</p>
-        </div>
-
-        <div className="rounded-xl border border-white/[0.08] bg-[#14171d] p-4 shadow-sm">
-          <div className="flex items-center gap-2">
-            <Hash className="h-4 w-4 text-blue-400" />
-            <span className="text-[11px] font-medium text-zinc-400">Topics Detected</span>
-          </div>
-          <p className="mt-1 text-[22px] font-bold text-zinc-100">{discovery.topics.length}</p>
-        </div>
-
-        <div className="rounded-xl border border-white/[0.08] bg-[#14171d] p-4 shadow-sm">
-          <div className="flex items-center gap-2">
-            <Target className="h-4 w-4 text-blue-400" />
-            <span className="text-[11px] font-medium text-zinc-400">Campaign Signals</span>
-          </div>
-          <p className="mt-1 text-[22px] font-bold text-zinc-100">{fmt(campaigns.length)}</p>
-        </div>
-      </div>
+      </GlassCard>
 
       {/* =========================================================
           SELECTED TOPIC DRAWER-LIKE PANEL
       ========================================================= */}
       {selectedTopic && (
         <div className="fixed inset-x-0 bottom-5 z-50 mx-auto w-[calc(100%-32px)] max-w-[540px]">
-          <div className="rounded-2xl border border-white/[0.1] bg-[#14171d] p-4 shadow-2xl shadow-black/80 animate-in fade-in zoom-in-95">
+          <div className="rounded-3xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5 shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95">
             <div className="flex items-start gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-400">
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl border border-blue-500/30 bg-blue-500/10 text-blue-400">
                 <TrendingUp className="h-4 w-4" />
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-semibold text-white">{selectedTopic}</p>
-                <p className="mt-0.5 text-[11px] leading-relaxed text-zinc-400">
+                <p className="text-sm font-bold text-[var(--fg)]">{selectedTopic}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-[var(--fg-3)]">
                   This topic is exhibiting high engagement velocity. Use it as an anchor for social posts, ad creatives, or strategy pillars.
                 </p>
               </div>
 
               <button
                 onClick={() => setSelectedTopic(null)}
-                className="rounded-lg p-1 text-zinc-400 hover:text-white hover:bg-white/[0.06]"
+                className="rounded-xl p-1 text-[var(--fg-4)] hover:text-[var(--fg)] hover:bg-[var(--panel-fill-2)]"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="mt-3.5 flex gap-2">
+            <div className="mt-4 flex gap-2.5">
               <Link
                 href="/dashboard/create"
-                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-[11px] font-semibold text-white hover:bg-blue-500"
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white px-4 py-2.5 text-xs font-semibold shadow-lg shadow-blue-500/25 transition-all"
               >
                 Create Content from Topic
-                <ArrowUpRight className="h-3 w-3" />
+                <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
               <button
                 onClick={() => setSelectedTopic(null)}
-                className="rounded-lg border border-white/[0.08] bg-zinc-800 px-4 py-2 text-[11px] font-medium text-zinc-300 hover:bg-zinc-700"
+                className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-4 py-2.5 text-xs font-medium text-[var(--fg-3)] hover:text-[var(--fg)]"
               >
                 Close
               </button>
