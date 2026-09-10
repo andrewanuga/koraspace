@@ -45,11 +45,17 @@ export function DashboardShowcase() {
         {/* ================================================================ */}
         {/* INTERACTIVE MODE TOGGLE PILL */}
         {/* ================================================================ */}
-        <div className="flex flex-col items-center justify-center text-center mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30, filter: "blur(6px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-center justify-center text-center mb-10"
+        >
           <div className="mb-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider font-semibold border text-white/80 bg-white/5 border-white/10">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider font-semibold border text-white/80 bg-white/5 border-white/10 shadow-sm backdrop-blur-md">
               <span
-                className="h-1.5 w-1.5 rounded-full"
+                className="h-1.5 w-1.5 rounded-full animate-pulse"
                 style={{ background: brandColor }}
               />
               Live Interactive Workspace Preview
@@ -58,7 +64,7 @@ export function DashboardShowcase() {
 
           <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-white max-w-2xl">
             See KoraSpace in action:{" "}
-            <span style={{ color: brandColor }}>
+            <span style={{ color: brandColor }} className="transition-colors duration-300">
               {isCreator ? "Creator Studio" : "Marketing Operator"}
             </span>
           </h2>
@@ -71,35 +77,55 @@ export function DashboardShowcase() {
             <button
               type="button"
               onClick={() => setPersona("creator")}
-              className={`flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-all duration-300 cursor-pointer ${
-                isCreator
-                  ? "bg-[#ff0a8a] text-white shadow-[0_4px_18px_rgba(255,10,138,0.35)]"
-                  : "text-white/55 hover:text-white"
+              className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer ${
+                isCreator ? "text-white" : "text-white/55 hover:text-white"
               }`}
             >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Creator Mode</span>
+              {isCreator && (
+                <motion.div
+                  layoutId="dashboard-mode-pill"
+                  className="absolute inset-0 rounded-xl bg-[#ff0a8a] shadow-[0_4px_18px_rgba(255,10,138,0.35)]"
+                  transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10 flex items-center gap-2">
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Creator Mode</span>
+              </span>
             </button>
 
             <button
               type="button"
               onClick={() => setPersona("marketer")}
-              className={`flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-all duration-300 cursor-pointer ${
-                !isCreator
-                  ? "bg-[#3b82f6] text-white shadow-[0_4px_18px_rgba(59,130,246,0.35)]"
-                  : "text-white/55 hover:text-white"
+              className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer ${
+                !isCreator ? "text-white" : "text-white/55 hover:text-white"
               }`}
             >
-              <Target className="h-3.5 w-3.5" />
-              <span>Marketer Mode</span>
+              {!isCreator && (
+                <motion.div
+                  layoutId="dashboard-mode-pill"
+                  className="absolute inset-0 rounded-xl bg-[#3b82f6] shadow-[0_4px_18px_rgba(59,130,246,0.35)]"
+                  transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10 flex items-center gap-2">
+                <Target className="h-3.5 w-3.5" />
+                <span>Marketer Mode</span>
+              </span>
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* ================================================================ */}
         {/* INTERACTIVE HIGH-FIDELITY PRODUCT SHOWCASE FRAME */}
         {/* ================================================================ */}
-        <div className="relative mx-auto overflow-hidden rounded-2xl sm:rounded-3xl border border-white/[0.10] bg-[#171717] shadow-[0_30px_90px_rgba(0,0,0,0.6)]">
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.96 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          className="relative mx-auto overflow-hidden rounded-2xl sm:rounded-3xl border border-white/[0.10] bg-[#171717] shadow-[0_30px_90px_rgba(0,0,0,0.6)]"
+        >
           {/* Window header */}
           <div className="flex h-12 items-center justify-between border-b border-white/[0.07] bg-[#141414] px-4 sm:px-6">
             <div className="flex items-center gap-2">
@@ -348,17 +374,23 @@ export function DashboardShowcase() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* ================================================================ */}
         {/* METRIC STRIP SUMMARY */}
         {/* ================================================================ */}
-        <div className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7, delay: 0.15 }}
+          className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto"
+        >
           <KpiMetricCard number="10×" label="Faster Content Speed" sub="From idea to 6-platform draft in seconds" />
           <KpiMetricCard number="₦8.4M+" label="Managed Pipeline Revenue" sub="Attributed social sales and conversions" />
           <KpiMetricCard number="4.2×" label="Higher Lead Intent" sub="Automated comment & DM lead classification" />
           <KpiMetricCard number="6+" label="Connected Networks" sub="Instagram, TikTok, LinkedIn, YouTube, X, Threads" />
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -406,7 +438,11 @@ function MockStat({
   color: string;
 }) {
   return (
-    <div className="rounded-xl border border-white/[0.07] bg-[#161616] p-3">
+    <motion.div
+      whileHover={{ y: -3, scale: 1.02 }}
+      transition={{ duration: 0.2 }}
+      className="rounded-xl border border-white/[0.07] bg-[#161616] p-3 cursor-default"
+    >
       <div className="text-[10px] text-white/40 truncate">{label}</div>
       <div className="mt-1 text-base font-bold text-white tracking-tight">
         {value}
@@ -417,7 +453,7 @@ function MockStat({
       >
         {change}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -431,7 +467,11 @@ function KpiMetricCard({
   sub: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-[#161616]/60 p-5 text-center">
+    <motion.div
+      whileHover={{ y: -6, scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="rounded-2xl border border-white/[0.08] bg-[#161616]/70 p-5 text-center transition-colors hover:border-white/20 hover:bg-[#1a1a1a] shadow-lg cursor-default"
+    >
       <div className="font-display text-3xl font-bold tracking-tight text-white">
         {number}
       </div>
@@ -441,8 +481,9 @@ function KpiMetricCard({
       <div className="mt-1 text-[11px] text-white/40">
         {sub}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 export default DashboardShowcase;
+

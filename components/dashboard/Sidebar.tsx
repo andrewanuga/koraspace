@@ -582,11 +582,11 @@ export function Sidebar({
         >
           {/* LOGO MARK */}
 
-          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-white p-1 shadow-sm transition-all duration-300">
+          <div className="h-10 w-10 flex-shrink rounded-xl bg-white shadow-sm transition-all duration-300">
             <img
               src={persona === "marketer" ? "/logo-blue.png" : "/logo.png"}
               alt="KoraSpace"
-              className="h-5 w-5 object-contain"
+              className="h-full w-full object-contain"
             />
           </div>
 

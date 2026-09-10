@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
@@ -17,23 +17,17 @@ import {
   Clock,
   Sparkles,
   Send,
-  LineChart,
   ArrowRight,
   Check,
-  Star,
   Users,
   Zap,
   Search,
   Globe,
-  Camera,
   Briefcase,
-  Play,
   MessageCircle,
-  Music,
   ChevronDown,
   Activity,
   RefreshCw,
-  Layers3,
   Eye,
   Flame,
   Award,
@@ -42,11 +36,53 @@ import {
   Phone,
   MapPin,
   CheckCircle2,
-  Sliders,
-  Cpu,
-  Inbox,
-  ArrowUpRight,
 } from "lucide-react";
+
+/* ── Animation Physics & Variants ─────────────────────────────────── */
+
+const springTransition = {
+  type: "spring" as const,
+  stiffness: 110,
+  damping: 18,
+  mass: 0.8,
+};
+
+const cardHoverSpring = {
+  type: "spring" as const,
+  stiffness: 300,
+  damping: 20,
+};
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const itemFadeUp: Variants = {
+  hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: springTransition,
+  },
+};
+
+const scaleIn: Variants = {
+  hidden: { opacity: 0, scale: 0.94, filter: "blur(4px)" },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: springTransition,
+  },
+};
 
 /* ── Shared Action Button ─────────────────────────────────────────── */
 
@@ -63,16 +99,18 @@ function LandingButton({
 }) {
   return (
     <Link href={href}>
-      <button
+      <motion.button
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        transition={cardHoverSpring}
         style={style}
-        className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs tracking-wide transition-all duration-200 cursor-pointer active:scale-[0.98] ${className}`}
+        className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs tracking-wide transition-colors duration-200 cursor-pointer ${className}`}
       >
         {children}
-      </button>
+      </motion.button>
     </Link>
   );
 }
-
 
 /* ── Section Eyebrow & Header ─────────────────────────────────────── */
 
@@ -85,24 +123,28 @@ function Eyebrow({
 }) {
   const toneClass =
     tone === "blue"
-      ? "text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/25"
+      ? "text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/25 shadow-[0_0_15px_rgba(59,130,246,0.15)]"
       : tone === "white"
-      ? "text-white/80 bg-white/5 border-white/10"
-      : "text-[#ff0a8a] bg-[#ff0a8a]/10 border-[#ff0a8a]/25";
+      ? "text-white/80 bg-white/5 border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+      : "text-[#ff0a8a] bg-[#ff0a8a]/10 border-[#ff0a8a]/25 shadow-[0_0_15px_rgba(255,10,138,0.15)]";
 
   return (
-    <span
+    <motion.span
+      initial={{ opacity: 0, scale: 0.9 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4 }}
       className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider font-semibold border ${toneClass}`}
     >
       <span
-        className="h-1.5 w-1.5 rounded-full"
+        className="h-1.5 w-1.5 rounded-full animate-pulse"
         style={{
           background:
             tone === "blue" ? "#3b82f6" : tone === "white" ? "#ffffff" : "#ff0a8a",
         }}
       />
       {children}
-    </span>
+    </motion.span>
   );
 }
 
@@ -118,7 +160,13 @@ function SectionHead({
   sub?: string;
 }) {
   return (
-    <div className="mx-auto mb-14 max-w-3xl text-center">
+    <motion.div
+      initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={springTransition}
+      className="mx-auto mb-14 max-w-3xl text-center"
+    >
       <div>
         <Eyebrow tone={tone}>{eyebrow}</Eyebrow>
       </div>
@@ -130,7 +178,7 @@ function SectionHead({
           {sub}
         </p>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -139,9 +187,22 @@ function SectionHead({
 export function ProblemSolverSection() {
   return (
     <section className="relative px-4 sm:px-6 lg:px-8 py-16">
-      <div className="relative mx-auto max-w-6xl rounded-3xl border border-white/[0.08] bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden">
-        {/* Subtle accent border at top */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[2px] bg-gradient-to-r from-[#ff0a8a] to-[#3b82f6] rounded-full" />
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={springTransition}
+        className="relative mx-auto max-w-6xl rounded-3xl border border-white/[0.08] bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden"
+      >
+        {/* Animated accent border at top */}
+        <motion.div
+          animate={{
+            scaleX: [0.85, 1.15, 0.85],
+            opacity: [0.7, 1, 0.7],
+          }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-[#ff0a8a] via-white/50 to-[#3b82f6] rounded-full blur-[0.5px]"
+        />
 
         <div className="max-w-3xl mx-auto text-center">
           <Eyebrow tone="white">The Old Way vs The KoraSpace Way</Eyebrow>
@@ -156,9 +217,20 @@ export function ProblemSolverSection() {
             growth workspace with dual engines: a <span className="text-[#ff0a8a] font-semibold">Creator Studio</span> for signature voice content and a <span className="text-[#3b82f6] font-semibold">Marketing Operator</span> for CRM lead conversion.
           </p>
 
-          {/* 3 Pillars Grid */}
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
-            <div className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5">
+          {/* 3 Pillars Grid with Staggered Entrance and 3D Spring Hover */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 text-left"
+          >
+            <motion.div
+              variants={itemFadeUp}
+              whileHover={{ y: -6, scale: 1.02, borderColor: "rgba(255,10,138,0.3)" }}
+              transition={cardHoverSpring}
+              className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5 transition-colors"
+            >
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#ff0a8a]/15 text-[#ff0a8a] mb-3">
                 <Sparkles className="h-4.5 w-4.5" />
               </div>
@@ -166,9 +238,14 @@ export function ProblemSolverSection() {
               <p className="mt-1.5 text-xs text-white/55 leading-relaxed">
                 Learns your authentic voice, past top-performing hooks, and strict guidelines so posts never sound generic.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5">
+            <motion.div
+              variants={itemFadeUp}
+              whileHover={{ y: -6, scale: 1.02, borderColor: "rgba(59,130,246,0.3)" }}
+              transition={cardHoverSpring}
+              className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5 transition-colors"
+            >
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3b82f6]/15 text-[#3b82f6] mb-3">
                 <Calendar className="h-4.5 w-4.5" />
               </div>
@@ -176,9 +253,14 @@ export function ProblemSolverSection() {
               <p className="mt-1.5 text-xs text-white/55 leading-relaxed">
                 Schedule and drag-and-drop across Instagram, TikTok, LinkedIn, YouTube, X, and Threads in one calendar.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5">
+            <motion.div
+              variants={itemFadeUp}
+              whileHover={{ y: -6, scale: 1.02, borderColor: "rgba(52,211,153,0.3)" }}
+              transition={cardHoverSpring}
+              className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5 transition-colors"
+            >
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#34d399]/15 text-[#34d399] mb-3">
                 <Target className="h-4.5 w-4.5" />
               </div>
@@ -186,10 +268,16 @@ export function ProblemSolverSection() {
               <p className="mt-1.5 text-xs text-white/55 leading-relaxed">
                 Detects buying signals in comments and DMs (&quot;How much?&quot;), converts leads, and attributes real revenue.
               </p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3.5">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="mt-10 flex flex-wrap items-center justify-center gap-3.5"
+          >
             <LandingButton
               href="/signup"
               className="bg-[#ff0a8a] text-white shadow-[0_4px_20px_rgba(255,10,138,0.3)] hover:bg-[#ff299b]"
@@ -203,9 +291,9 @@ export function ProblemSolverSection() {
             >
               <span>Compare Dual Modes</span>
             </LandingButton>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -231,7 +319,16 @@ export function DualModeShowcaseSection() {
         {/* Dual Cards Comparison Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Creator Mode Card */}
-          <div className="relative rounded-3xl border border-[#ff0a8a]/25 bg-[#171717] p-8 shadow-[0_15px_45px_rgba(255,10,138,0.08)] flex flex-col justify-between">
+          <motion.div
+            initial={{ opacity: 0, x: -30, filter: "blur(4px)" }}
+            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-80px" }}
+            whileHover={{ y: -8, scale: 1.01 }}
+            transition={cardHoverSpring}
+            className="relative rounded-3xl border border-[#ff0a8a]/25 bg-[#171717] p-8 shadow-[0_15px_45px_rgba(255,10,138,0.08)] flex flex-col justify-between overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-60 h-60 bg-[#ff0a8a]/5 rounded-full blur-3xl pointer-events-none" />
+
             <div className="absolute top-4 right-5">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ff0a8a]/15 px-3 py-1 text-[11px] font-bold text-[#ff0a8a] border border-[#ff0a8a]/30">
                 <Sparkles className="h-3.5 w-3.5" />
@@ -252,37 +349,39 @@ export function DualModeShowcaseSection() {
               </p>
 
               <div className="mt-6 space-y-3">
-                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
-                  <CheckCircle2 className="h-4 w-4 text-[#ff0a8a] shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-xs font-bold text-white">AI Composing Pipeline</span>
-                    <p className="text-[11px] text-white/50">8-step AI workflow: voice match, web research, draft scoring, and reflection.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
-                  <CheckCircle2 className="h-4 w-4 text-[#ff0a8a] shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-xs font-bold text-white">Visual Drag-and-Drop Calendar</span>
-                    <p className="text-[11px] text-white/50">Plan and rearrange weekly schedules across Instagram, TikTok, LinkedIn, and X.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
-                  <CheckCircle2 className="h-4 w-4 text-[#ff0a8a] shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-xs font-bold text-white">Content Repurposer</span>
-                    <p className="text-[11px] text-white/50">Turn 1 YouTube video or article into 6 platform-native drafts instantly.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
-                  <CheckCircle2 className="h-4 w-4 text-[#ff0a8a] shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-xs font-bold text-white">Viral Trend Radar &amp; Idea Lab</span>
-                    <p className="text-[11px] text-white/50">Real-time niche trend monitoring with instant &quot;Turn into Draft&quot; actions.</p>
-                  </div>
-                </div>
+                {[
+                  {
+                    title: "AI Composing Pipeline",
+                    desc: "8-step AI workflow: voice match, web research, draft scoring, and reflection.",
+                  },
+                  {
+                    title: "Visual Drag-and-Drop Calendar",
+                    desc: "Plan and rearrange weekly schedules across Instagram, TikTok, LinkedIn, and X.",
+                  },
+                  {
+                    title: "Content Repurposer",
+                    desc: "Turn 1 YouTube video or article into 6 platform-native drafts instantly.",
+                  },
+                  {
+                    title: "Viral Trend Radar & Idea Lab",
+                    desc: "Real-time niche trend monitoring with instant \"Turn into Draft\" actions.",
+                  },
+                ].map((item, i) => (
+                  <motion.div
+                    key={item.title}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 * i, duration: 0.4 }}
+                    className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3 transition-colors hover:border-[#ff0a8a]/20"
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-[#ff0a8a] shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-xs font-bold text-white">{item.title}</span>
+                      <p className="text-[11px] text-white/50">{item.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             </div>
 
@@ -296,10 +395,19 @@ export function DualModeShowcaseSection() {
                 <ArrowRight className="h-3.5 w-3.5" />
               </LandingButton>
             </div>
-          </div>
+          </motion.div>
 
           {/* Marketer Mode Card */}
-          <div className="relative rounded-3xl border border-[#3b82f6]/25 bg-[#171717] p-8 shadow-[0_15px_45px_rgba(59,130,246,0.08)] flex flex-col justify-between">
+          <motion.div
+            initial={{ opacity: 0, x: 30, filter: "blur(4px)" }}
+            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-80px" }}
+            whileHover={{ y: -8, scale: 1.01 }}
+            transition={cardHoverSpring}
+            className="relative rounded-3xl border border-[#3b82f6]/25 bg-[#171717] p-8 shadow-[0_15px_45px_rgba(59,130,246,0.08)] flex flex-col justify-between overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-60 h-60 bg-[#3b82f6]/5 rounded-full blur-3xl pointer-events-none" />
+
             <div className="absolute top-4 right-5">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#3b82f6]/15 px-3 py-1 text-[11px] font-bold text-[#3b82f6] border border-[#3b82f6]/30">
                 <Target className="h-3.5 w-3.5" />
@@ -320,37 +428,39 @@ export function DualModeShowcaseSection() {
               </p>
 
               <div className="mt-6 space-y-3">
-                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
-                  <CheckCircle2 className="h-4 w-4 text-[#3b82f6] shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-xs font-bold text-white">AI Marketing Operator</span>
-                    <p className="text-[11px] text-white/50">Action queue prioritizing high-intent leads, budget reallocations, and approval tasks.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
-                  <CheckCircle2 className="h-4 w-4 text-[#3b82f6] shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-xs font-bold text-white">Lead Intelligence &amp; CRM Pipeline</span>
-                    <p className="text-[11px] text-white/50">Drag-and-drop Kanban board classifying leads from social comments and DMs.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
-                  <CheckCircle2 className="h-4 w-4 text-[#3b82f6] shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-xs font-bold text-white">Multi-Channel Campaigns Engine</span>
-                    <p className="text-[11px] text-white/50">Server-side stats tracking real-time ROAS, spend, clicks, and qualified conversions.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3">
-                  <CheckCircle2 className="h-4 w-4 text-[#3b82f6] shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-xs font-bold text-white">Agency Workspaces &amp; Approvals</span>
-                    <p className="text-[11px] text-white/50">Manage multiple client brands with strict RLS permissions and shareable approval links.</p>
-                  </div>
-                </div>
+                {[
+                  {
+                    title: "AI Marketing Operator",
+                    desc: "Action queue prioritizing high-intent leads, budget reallocations, and approval tasks.",
+                  },
+                  {
+                    title: "Lead Intelligence & CRM Pipeline",
+                    desc: "Drag-and-drop Kanban board classifying leads from social comments and DMs.",
+                  },
+                  {
+                    title: "Multi-Channel Campaigns Engine",
+                    desc: "Server-side stats tracking real-time ROAS, spend, clicks, and qualified conversions.",
+                  },
+                  {
+                    title: "Agency Workspaces & Approvals",
+                    desc: "Manage multiple client brands with strict RLS permissions and shareable approval links.",
+                  },
+                ].map((item, i) => (
+                  <motion.div
+                    key={item.title}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 * i, duration: 0.4 }}
+                    className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3 transition-colors hover:border-[#3b82f6]/20"
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-[#3b82f6] shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-xs font-bold text-white">{item.title}</span>
+                      <p className="text-[11px] text-white/50">{item.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             </div>
 
@@ -364,7 +474,7 @@ export function DualModeShowcaseSection() {
                 <ArrowRight className="h-3.5 w-3.5" />
               </LandingButton>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -419,11 +529,20 @@ export function GrowthLoopSection() {
           sub="Buffer and Hootsuite make you do everything manually. KoraSpace connects understanding, creation, distribution, and revenue attribution in a single automated loop."
         />
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4"
+        >
           {LOOP_STAGES.map((s) => (
-            <div
+            <motion.div
               key={s.num}
-              className="relative flex flex-col justify-between rounded-3xl border border-white/[0.08] bg-[#171717] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.3)] transition-all duration-300 hover:border-white/20 hover:bg-[#1a1a1a]"
+              variants={itemFadeUp}
+              whileHover={{ y: -8, scale: 1.02 }}
+              transition={cardHoverSpring}
+              className="relative flex flex-col justify-between rounded-3xl border border-white/[0.08] bg-[#171717] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.3)] transition-colors hover:border-white/20 hover:bg-[#1a1a1a]"
             >
               <div>
                 <div className="flex items-center justify-between mb-5">
@@ -464,9 +583,9 @@ export function GrowthLoopSection() {
                 <span>Feeds next stage</span>
                 <ArrowRight className="h-3 w-3" />
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -498,26 +617,34 @@ export function FeatureSection({
 
   return (
     <section className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-14">
-      {/* Visual Image Preview */}
-      <div
-        className={`flex-1 w-full ${
-          imageLeft ? "md:order-1" : "md:order-2"
-        }`}
+      {/* Visual Image Preview with Spring Float & Hover */}
+      <motion.div
+        initial={{ opacity: 0, x: imageLeft ? -30 : 30, filter: "blur(4px)" }}
+        whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={springTransition}
+        className={`flex-1 w-full ${imageLeft ? "md:order-1" : "md:order-2"}`}
       >
-        <div className="relative rounded-3xl border border-white/[0.10] bg-[#161616] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden">
+        <motion.div
+          whileHover={{ y: -6, scale: 1.01 }}
+          transition={cardHoverSpring}
+          className="relative rounded-3xl border border-white/[0.10] bg-[#161616] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden"
+        >
           <img
             src={imageUrl}
             alt={imageAlt}
             className="w-full h-[300px] sm:h-[360px] rounded-2xl object-cover object-top border border-white/10"
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      {/* Content Text */}
-      <div
-        className={`flex-1 space-y-4 ${
-          imageLeft ? "md:order-2" : "md:order-1"
-        }`}
+      {/* Content Text with Staggered Entrance */}
+      <motion.div
+        initial={{ opacity: 0, x: imageLeft ? 30 : -30, filter: "blur(4px)" }}
+        whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={springTransition}
+        className={`flex-1 space-y-4 ${imageLeft ? "md:order-2" : "md:order-1"}`}
       >
         {badge && <Eyebrow tone={tone}>{badge}</Eyebrow>}
 
@@ -542,7 +669,7 @@ export function FeatureSection({
             <ArrowRight className="h-3.5 w-3.5" />
           </LandingButton>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -624,40 +751,60 @@ const FEATURE_SET_DATA: FeatureNode[] = [
 
 export function FeatureShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
-
   const activeFeature = FEATURE_SET_DATA[activeIndex];
 
   return (
-    <section
-      id="engines"
-      className="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto"
-    >
-      <div className="rounded-3xl border border-white/[0.08] bg-[#161616] p-6 sm:p-10 lg:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
-        {/* Header Text */}
-        <div className="text-center max-w-3xl mx-auto mb-8">
-          <Eyebrow tone={activeFeature.tone}>
-            {activeFeature.tagline}
-          </Eyebrow>
+    <section id="engines" className="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={springTransition}
+        className="rounded-3xl border border-white/[0.08] bg-[#161616] p-6 sm:p-10 lg:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
+      >
+        {/* Header Text with Smooth AnimatePresence */}
+        <div className="text-center max-w-3xl mx-auto mb-8 min-h-[140px] flex flex-col justify-center items-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeFeature.id}
+              initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col items-center"
+            >
+              <Eyebrow tone={activeFeature.tone}>
+                {activeFeature.tagline}
+              </Eyebrow>
 
-          <h3 className="font-display mt-3 text-2xl sm:text-4xl font-bold text-white tracking-tight">
-            {activeFeature.title}
-          </h3>
+              <h3 className="font-display mt-3 text-2xl sm:text-4xl font-bold text-white tracking-tight">
+                {activeFeature.title}
+              </h3>
 
-          <p className="mt-3 text-xs sm:text-sm text-white/60 leading-relaxed max-w-2xl mx-auto">
-            {activeFeature.description}
-          </p>
+              <p className="mt-3 text-xs sm:text-sm text-white/60 leading-relaxed max-w-2xl mx-auto">
+                {activeFeature.description}
+              </p>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {/* Display Mockup Frame */}
+        {/* Display Mockup Frame with Smooth Crossfade */}
         <div className="relative w-full max-w-4xl mx-auto aspect-16/10 rounded-2xl overflow-hidden border border-white/[0.10] bg-black shadow-2xl">
-          <img
-            src={activeFeature.screenPath}
-            alt={activeFeature.title}
-            className="w-full h-full object-cover object-top"
-          />
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={activeFeature.screenPath}
+              src={activeFeature.screenPath}
+              alt={activeFeature.title}
+              initial={{ opacity: 0, scale: 1.02 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="w-full h-full object-cover object-top"
+            />
+          </AnimatePresence>
         </div>
 
-        {/* Tab Navigation Matrix */}
+        {/* Tab Navigation Matrix with Sliding layoutId Pill */}
         <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
           {FEATURE_SET_DATA.map((feat, idx) => {
             const Icon = feat.icon;
@@ -669,14 +816,22 @@ export function FeatureShowcase() {
                 key={feat.id}
                 type="button"
                 onClick={() => setActiveIndex(idx)}
-                className={`flex flex-col items-center text-center p-3 rounded-xl border transition-all cursor-pointer ${
+                className={`relative flex flex-col items-center text-center p-3 rounded-xl border transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-white/[0.08] border-white/20 text-white shadow-sm"
-                    : "bg-white/[0.02] border-white/[0.06] text-white/50 hover:bg-white/[0.05] hover:text-white"
+                    ? "border-white/20 text-white shadow-sm"
+                    : "border-white/[0.06] text-white/50 hover:text-white"
                 }`}
               >
+                {isSelected && (
+                  <motion.div
+                    layoutId="feature-active-pill"
+                    className="absolute inset-0 rounded-xl bg-white/[0.08] border border-white/25 -z-0"
+                    transition={springTransition}
+                  />
+                )}
+
                 <div
-                  className="flex h-8 w-8 items-center justify-center rounded-lg mb-2"
+                  className="relative z-10 flex h-8 w-8 items-center justify-center rounded-lg mb-2 transition-colors"
                   style={{
                     background: isSelected ? `${featColor}20` : "rgba(255,255,255,0.05)",
                     color: isSelected ? featColor : "inherit",
@@ -684,14 +839,14 @@ export function FeatureShowcase() {
                 >
                   <Icon className="h-4 w-4" />
                 </div>
-                <span className="text-xs font-semibold tracking-tight truncate w-full">
+                <span className="relative z-10 text-xs font-semibold tracking-tight truncate w-full">
                   {feat.title}
                 </span>
               </button>
             );
           })}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -726,8 +881,24 @@ export function BrainAndAgentsSection() {
         />
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
-          {/* Brand Brain Card */}
-          <div className="lg:col-span-5 rounded-3xl border border-[#ff0a8a]/25 bg-[#171717] p-7 sm:p-8 flex flex-col justify-between">
+          {/* Brand Brain Card with Glowing Memory Core */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-60px" }}
+            whileHover={{ y: -6 }}
+            transition={cardHoverSpring}
+            className="relative lg:col-span-5 rounded-3xl border border-[#ff0a8a]/25 bg-[#171717] p-7 sm:p-8 flex flex-col justify-between overflow-hidden"
+          >
+            <motion.div
+              animate={{
+                scale: [1, 1.15, 1],
+                opacity: [0.15, 0.3, 0.15],
+              }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-10 -right-10 w-48 h-48 bg-[#ff0a8a] rounded-full blur-3xl pointer-events-none"
+            />
+
             <div>
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ff0a8a]/15 text-[#ff0a8a] border border-[#ff0a8a]/30 mb-5">
                 <Brain className="h-6 w-6" />
@@ -761,17 +932,29 @@ export function BrainAndAgentsSection() {
             <div className="mt-8 pt-6 border-t border-white/[0.08]">
               <div className="flex items-center justify-between text-xs text-white/50">
                 <span>Memory Status: Active</span>
-                <span className="text-[#34d399] font-medium">100% Isolated RLS Data</span>
+                <span className="text-[#34d399] font-medium flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
+                  100% Isolated RLS Data
+                </span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* 8-Agent Swarm Grid */}
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          {/* 8-Agent Swarm Grid with Staggered Entrance */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3.5"
+          >
             {AGENT_SWARM.map((ag) => (
-              <div
+              <motion.div
                 key={ag.name}
-                className="flex items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-[#171717] p-4 transition-all duration-200 hover:border-white/15 hover:bg-[#1a1a1a]"
+                variants={itemFadeUp}
+                whileHover={{ x: 6, scale: 1.02, borderColor: "rgba(59,130,246,0.3)" }}
+                transition={cardHoverSpring}
+                className="flex items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-[#171717] p-4 transition-colors hover:bg-[#1a1a1a]"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#3b82f6]/15 text-[#3b82f6]">
                   <ag.icon className="h-5 w-5" />
@@ -780,9 +963,9 @@ export function BrainAndAgentsSection() {
                   <h4 className="text-xs font-bold text-white truncate">{ag.name}</h4>
                   <p className="text-[11px] text-white/50 truncate">{ag.role}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -847,15 +1030,24 @@ export function AgentTools() {
           sub="Everything you need to automate high-impact marketing workflows from ideation to revenue attribution."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
           {AGENT_TOOLS_LIST.map((tool) => {
             const isBlue = tool.tone === "blue";
             const iconColor = isBlue ? "#3b82f6" : "#ff0a8a";
 
             return (
-              <div
+              <motion.div
                 key={tool.title}
-                className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 flex flex-col justify-between transition-all hover:border-white/20 hover:bg-[#1a1a1a]"
+                variants={itemFadeUp}
+                whileHover={{ y: -8, scale: 1.02, borderColor: `${iconColor}40` }}
+                transition={cardHoverSpring}
+                className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 flex flex-col justify-between transition-colors hover:bg-[#1a1a1a]"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -880,10 +1072,10 @@ export function AgentTools() {
                     {tool.desc}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -911,7 +1103,13 @@ const PLATFORMS = [
 export function Integrations() {
   return (
     <section id="integrations" className="relative px-4 sm:px-6 lg:px-8 py-20">
-      <div className="mx-auto mb-10 max-w-2xl text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={springTransition}
+        className="mx-auto mb-10 max-w-2xl text-center"
+      >
         <Eyebrow tone="blue">Multi-Platform Ecosystem</Eyebrow>
         <h2 className="font-display mt-3 text-2xl sm:text-4xl font-bold text-white tracking-tight">
           Publish &amp; triage across <span className="text-[#3b82f6]">all your channels</span>
@@ -919,13 +1117,22 @@ export function Integrations() {
         <p className="mt-2 text-xs sm:text-sm text-white/60">
           Official OAuth 2.0 API integrations for instant scheduling and two-way messaging.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-40px" }}
+        className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto"
+      >
         {PLATFORMS.map((p) => (
-          <div
+          <motion.div
             key={p.name}
-            className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-[#171717] px-4 py-2.5 text-xs font-semibold text-white/80 transition-all hover:border-white/20 hover:bg-[#1c1c1c] hover:text-white cursor-pointer"
+            variants={scaleIn}
+            whileHover={{ y: -4, scale: 1.06, borderColor: "rgba(59,130,246,0.4)" }}
+            transition={cardHoverSpring}
+            className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-[#171717] px-4 py-2.5 text-xs font-semibold text-white/80 transition-colors hover:bg-[#1c1c1c] hover:text-white cursor-pointer"
           >
             <img
               src={p.iconPath}
@@ -933,9 +1140,9 @@ export function Integrations() {
               className="h-5 w-5 object-contain rounded select-none shrink-0"
             />
             <span>{p.name}</span>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -959,39 +1166,55 @@ export function RevenueAttributionSection() {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
           {/* Revenue Attribution Funnel Visual */}
-          <div className="lg:col-span-7 rounded-3xl border border-[#3b82f6]/25 bg-[#171717] p-6 sm:p-8 flex flex-col justify-between">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={springTransition}
+            className="lg:col-span-7 rounded-3xl border border-[#3b82f6]/25 bg-[#171717] p-6 sm:p-8 flex flex-col justify-between"
+          >
             <div>
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h3 className="font-display text-lg font-bold text-white">Social-to-Revenue Funnel</h3>
                   <p className="text-xs text-white/50">Real-time attribution powered by UTM tracking</p>
                 </div>
-                <span className="font-mono text-xs text-[#3b82f6] bg-[#3b82f6]/15 border border-[#3b82f6]/30 px-3 py-1 rounded-full font-bold">
+                <span className="font-mono text-xs text-[#3b82f6] bg-[#3b82f6]/15 border border-[#3b82f6]/30 px-3 py-1 rounded-full font-bold flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#3b82f6] animate-pulse" />
                   Live Sync
                 </span>
               </div>
 
               <div className="space-y-2.5 font-mono text-xs">
-                <div className="flex justify-between items-center bg-[#141414] p-3 rounded-xl border border-white/[0.06]">
-                  <span className="text-white">50,000 Social Impressions</span>
-                  <span className="text-white/50">Top of Funnel</span>
-                </div>
-                <div className="flex justify-between items-center bg-[#141414] p-3 rounded-xl border border-white/[0.06] ml-2 sm:ml-4">
-                  <span className="text-white">1,420 Profile Visits</span>
-                  <span className="text-[#ff0a8a]">2.84% Conv.</span>
-                </div>
-                <div className="flex justify-between items-center bg-[#141414] p-3 rounded-xl border border-white/[0.06] ml-4 sm:ml-8">
-                  <span className="text-white">310 Website Clicks</span>
-                  <span className="text-[#3b82f6]">UTM Verified</span>
-                </div>
-                <div className="flex justify-between items-center bg-[#141414] p-3 rounded-xl border border-white/[0.06] ml-6 sm:ml-12">
-                  <span className="text-white">48 Qualified Leads</span>
-                  <span className="text-[#34d399]">Social CRM Pipeline</span>
-                </div>
-                <div className="flex justify-between items-center bg-[#3b82f6]/15 border border-[#3b82f6]/30 p-3.5 rounded-xl font-bold ml-8 sm:ml-16 text-white">
+                {[
+                  { label: "50,000 Social Impressions", val: "Top of Funnel", tone: "text-white/50", ml: "" },
+                  { label: "1,420 Profile Visits", val: "2.84% Conv.", tone: "text-[#ff0a8a]", ml: "ml-2 sm:ml-4" },
+                  { label: "310 Website Clicks", val: "UTM Verified", tone: "text-[#3b82f6]", ml: "ml-4 sm:ml-8" },
+                  { label: "48 Qualified Leads", val: "Social CRM Pipeline", tone: "text-[#34d399]", ml: "ml-6 sm:ml-12" },
+                ].map((row, idx) => (
+                  <motion.div
+                    key={row.label}
+                    initial={{ opacity: 0, x: -15 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 * idx, duration: 0.4 }}
+                    className={`flex justify-between items-center bg-[#141414] p-3 rounded-xl border border-white/[0.06] ${row.ml}`}
+                  >
+                    <span className="text-white">{row.label}</span>
+                    <span className={row.tone}>{row.val}</span>
+                  </motion.div>
+                ))}
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.45, duration: 0.5 }}
+                  className="flex justify-between items-center bg-[#3b82f6]/15 border border-[#3b82f6]/30 p-3.5 rounded-xl font-bold ml-8 sm:ml-16 text-white shadow-[0_0_20px_rgba(59,130,246,0.15)]"
+                >
                   <span>14 Customers Closed</span>
-                  <span className="text-[#3b82f6] font-extrabold">₦1,450,000 Revenue</span>
-                </div>
+                  <span className="text-[#3b82f6] font-extrabold text-sm">₦1,450,000 Revenue</span>
+                </motion.div>
               </div>
             </div>
 
@@ -999,11 +1222,18 @@ export function RevenueAttributionSection() {
               <span>Attribution Model: Multi-Touch</span>
               <span className="text-white/80 font-medium">ROAS: 4.2x</span>
             </div>
-          </div>
+          </motion.div>
 
           {/* KoraScore & Opportunity Radar */}
           <div className="lg:col-span-5 space-y-4 flex flex-col justify-between">
-            <div className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6">
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              whileHover={{ y: -4 }}
+              transition={cardHoverSpring}
+              className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6"
+            >
               <div className="flex items-center justify-between">
                 <span className="font-mono text-xs uppercase tracking-wider text-white/50 font-bold">
                   Account Health Score
@@ -1017,9 +1247,16 @@ export function RevenueAttributionSection() {
               <p className="mt-2 text-xs text-[#34d399] font-medium leading-relaxed">
                 &quot;Top 5% posting consistency this week. Schedule 2 more short videos to hit peak reach.&quot;
               </p>
-            </div>
+            </motion.div>
 
-            <div className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6">
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              whileHover={{ y: -4 }}
+              transition={cardHoverSpring}
+              className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6"
+            >
               <div className="flex items-center justify-between">
                 <span className="font-mono text-xs uppercase tracking-wider text-white/50 font-bold">
                   Lead Opportunity Radar
@@ -1032,7 +1269,7 @@ export function RevenueAttributionSection() {
               <p className="mt-1 text-xs text-white/55 leading-relaxed font-normal">
                 3 high-intent lead questions in Instagram DMs + 1 trending competitor breakout format in your industry.
               </p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -1076,11 +1313,20 @@ export function Collaboration() {
           sub="Built for marketing agencies, brand teams, and growth operators managing multiple client brands under one roof."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-5"
+        >
           {COLLAB_FEATURES.map((collab) => (
-            <div
+            <motion.div
               key={collab.title}
-              className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 sm:p-7 flex gap-4 items-start transition-all hover:border-white/20 hover:bg-[#1a1a1a]"
+              variants={itemFadeUp}
+              whileHover={{ y: -6, scale: 1.01, borderColor: "rgba(59,130,246,0.3)" }}
+              transition={cardHoverSpring}
+              className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 sm:p-7 flex gap-4 items-start transition-colors hover:bg-[#1a1a1a]"
             >
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#3b82f6]/15 text-[#3b82f6] border border-[#3b82f6]/30">
                 <collab.icon className="h-5 w-5" />
@@ -1093,9 +1339,9 @@ export function Collaboration() {
                   {collab.desc}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -1165,15 +1411,24 @@ export function Stories() {
           sub="See how businesses across Nigeria and beyond scale their social presence and revenue with KoraSpace."
         />
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
+        >
           {STORIES.map((t) => {
             const isBlue = t.tone === "blue";
             const badgeColor = isBlue ? "#3b82f6" : "#ff0a8a";
 
             return (
-              <div
+              <motion.div
                 key={t.name}
-                className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 text-white flex flex-col justify-between transition-all hover:border-white/20 hover:bg-[#1a1a1a]"
+                variants={itemFadeUp}
+                whileHover={{ y: -8, scale: 1.02 }}
+                transition={cardHoverSpring}
+                className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 text-white flex flex-col justify-between transition-colors hover:border-white/20 hover:bg-[#1a1a1a]"
               >
                 <p className="text-xs leading-relaxed text-white/70 font-normal">
                   &ldquo;{t.text}&rdquo;
@@ -1204,10 +1459,10 @@ export function Stories() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -1318,29 +1573,39 @@ export function Pricing() {
           sub="Pay locally via Paystack, Flutterwave, or any Nigerian debit card. Every paid plan includes a 14-day free trial."
         />
 
-        {/* Monthly / Yearly Toggle */}
+        {/* Monthly / Yearly Toggle with layoutId sliding pill */}
         <div className="flex justify-center items-center gap-2 mb-12">
-          <div className="bg-[#171717] p-1 rounded-2xl border border-white/[0.08] inline-flex items-center">
+          <div className="relative bg-[#171717] p-1.5 rounded-2xl border border-white/[0.08] inline-flex items-center">
             <button
               type="button"
               onClick={() => setBillingPeriod("monthly")}
-              className={`px-5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-                billingPeriod === "monthly"
-                  ? "bg-white/[0.12] text-white shadow-sm"
-                  : "text-white/50 hover:text-white"
+              className={`relative px-5 py-2 text-xs font-bold rounded-xl transition-colors cursor-pointer z-10 ${
+                billingPeriod === "monthly" ? "text-white" : "text-white/50 hover:text-white"
               }`}
             >
+              {billingPeriod === "monthly" && (
+                <motion.div
+                  layoutId="billing-pill"
+                  className="absolute inset-0 rounded-xl bg-white/[0.12] border border-white/20 -z-10"
+                  transition={springTransition}
+                />
+              )}
               Monthly Billing
             </button>
             <button
               type="button"
               onClick={() => setBillingPeriod("yearly")}
-              className={`px-5 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
-                billingPeriod === "yearly"
-                  ? "bg-[#ff0a8a] text-white shadow-[0_4px_16px_rgba(255,10,138,0.3)]"
-                  : "text-white/50 hover:text-white"
+              className={`relative px-5 py-2 text-xs font-bold rounded-xl transition-colors flex items-center gap-2 cursor-pointer z-10 ${
+                billingPeriod === "yearly" ? "text-white" : "text-white/50 hover:text-white"
               }`}
             >
+              {billingPeriod === "yearly" && (
+                <motion.div
+                  layoutId="billing-pill"
+                  className="absolute inset-0 rounded-xl bg-[#ff0a8a] shadow-[0_4px_16px_rgba(255,10,138,0.3)] -z-10"
+                  transition={springTransition}
+                />
+              )}
               <span>Annual Billing</span>
               <span className="bg-black/30 text-white text-[10px] px-2 py-0.5 rounded-full font-black uppercase">
                 20% OFF
@@ -1349,8 +1614,14 @@ export function Pricing() {
           </div>
         </div>
 
-        {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 items-stretch mb-12">
+        {/* Pricing Cards Grid with Max Springs */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 items-stretch mb-12"
+        >
           {BASE_PLANS.map((p) => {
             const isPink = p.tone === "pink";
             const isBlue = p.tone === "blue";
@@ -1367,9 +1638,12 @@ export function Pricing() {
               : "bg-white/[0.06] text-white border border-white/[0.10] hover:bg-white/[0.10]";
 
             return (
-              <div
+              <motion.div
                 key={p.name}
-                className={`relative flex flex-col justify-between rounded-3xl border bg-[#171717] p-6 text-white transition-all ${borderColor}`}
+                variants={itemFadeUp}
+                whileHover={{ y: -10, scale: 1.02 }}
+                transition={cardHoverSpring}
+                className={`relative flex flex-col justify-between rounded-3xl border bg-[#171717] p-6 text-white transition-colors ${borderColor}`}
                 style={{
                   boxShadow: p.highlight ? "0 10px 40px rgba(255,10,138,0.15)" : undefined,
                 }}
@@ -1416,19 +1690,28 @@ export function Pricing() {
                 </div>
 
                 <Link href="/signup" className="mt-8">
-                  <button
-                    className={`w-full rounded-xl py-2.5 text-xs font-bold transition-all cursor-pointer ${buttonStyle}`}
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={cardHoverSpring}
+                    className={`w-full rounded-xl py-2.5 text-xs font-bold transition-colors cursor-pointer ${buttonStyle}`}
                   >
                     {p.cta}
-                  </button>
+                  </motion.button>
                 </Link>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Custom Enterprise Callout */}
-        <div className="rounded-2xl border border-white/[0.08] bg-[#161616] p-6 text-white flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4 max-w-3xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={springTransition}
+          className="rounded-2xl border border-white/[0.08] bg-[#161616] p-6 text-white flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4 max-w-3xl mx-auto"
+        >
           <div>
             <h4 className="font-display font-bold text-base text-white">
               Enterprise &amp; High-Volume Custom Workspaces
@@ -1438,17 +1721,21 @@ export function Pricing() {
             </p>
           </div>
           <Link href="mailto:support@koraspace.ai" className="shrink-0">
-            <button className="border border-white/[0.10] bg-white/[0.04] text-white px-5 py-2 rounded-xl font-semibold text-xs hover:bg-white/[0.08] transition-all cursor-pointer">
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="border border-white/[0.10] bg-white/[0.04] text-white px-5 py-2 rounded-xl font-semibold text-xs hover:bg-white/[0.08] transition-all cursor-pointer"
+            >
               Contact Enterprise Sales
-            </button>
+            </motion.button>
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 }
 
-/* ── 13. FAQ Accordion (#faq) ─────────────────────────────────────── */
+/* ── 13. FAQ Accordion (#faq) with Max Spring Animation ───────────── */
 
 const FAQS_DATA = [
   {
@@ -1494,8 +1781,12 @@ export function FAQ() {
           const isOpen = openIndex === i;
 
           return (
-            <div
+            <motion.div
               key={i}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.05 * i, duration: 0.35 }}
               className="rounded-2xl border border-white/[0.08] bg-[#161616] overflow-hidden transition-colors"
             >
               <button
@@ -1507,23 +1798,34 @@ export function FAQ() {
                   {faq.q}
                 </span>
 
-                <div
-                  className={`text-white/60 shrink-0 transition-transform duration-200 ${
-                    isOpen ? "rotate-180 text-[#ff0a8a]" : ""
-                  }`}
+                <motion.div
+                  animate={{ rotate: isOpen ? 180 : 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  className={`text-white/60 shrink-0 ${isOpen ? "text-[#ff0a8a]" : ""}`}
                 >
                   <ChevronDown size={18} />
-                </div>
+                </motion.div>
               </button>
 
-              {isOpen && (
-                <div className="px-5 pb-5 pt-0">
-                  <p className="text-xs sm:text-sm text-white/60 leading-relaxed font-normal border-t border-white/[0.06] pt-3">
-                    {faq.a}
-                  </p>
-                </div>
-              )}
-            </div>
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    key="content"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-5 pb-5 pt-0">
+                      <p className="text-xs sm:text-sm text-white/60 leading-relaxed font-normal border-t border-white/[0.06] pt-3">
+                        {faq.a}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           );
         })}
       </div>
@@ -1536,11 +1838,26 @@ export function FAQ() {
 export function FinalCTA() {
   return (
     <section className="px-4 sm:px-6 lg:px-8 py-16">
-      <div className="relative mx-auto max-w-6xl rounded-3xl border border-white/[0.10] bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden">
-        {/* Subtle accent border */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={springTransition}
+        className="relative mx-auto max-w-6xl rounded-3xl border border-white/[0.10] bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden"
+      >
+        {/* Animated breathing aura */}
+        <motion.div
+          animate={{
+            scale: [1, 1.25, 1],
+            opacity: [0.3, 0.55, 0.3],
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-r from-[#ff0a8a]/20 to-[#3b82f6]/20 rounded-full blur-3xl pointer-events-none"
+        />
+
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-[2px] bg-gradient-to-r from-[#ff0a8a] to-[#3b82f6] rounded-full" />
 
-        <div className="max-w-3xl mx-auto text-center">
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
           <Eyebrow tone="pink">14-Day Free Trial — No Credit Card Required</Eyebrow>
 
           <h2 className="mt-5 font-display text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
@@ -1579,7 +1896,7 @@ export function FinalCTA() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -1619,9 +1936,15 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-white/[0.10] bg-[#070d24] py-14 px-4 sm:px-6 lg:px-8 text-white">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12"
+        >
           {/* Brand Column */}
-          <div className="lg:col-span-1 space-y-3">
+          <motion.div variants={itemFadeUp} className="lg:col-span-1 space-y-3">
             <Link href="/" className="flex items-center gap-2.5 mb-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 p-[1px] border border-white/20">
                 <div className="flex h-full w-full items-center justify-center rounded-[7px] bg-[#0a1233]">
@@ -1639,20 +1962,22 @@ export function SiteFooter() {
 
             <div className="flex gap-2 pt-2">
               {[Globe, Send, Zap, MessageCircle].map((Icon, i) => (
-                <a
+                <motion.a
                   key={i}
                   href="#"
-                  className="w-8 h-8 rounded-lg border border-white/15 bg-white/5 flex items-center justify-center text-white hover:text-white hover:border-white/40 hover:bg-white/15 transition-all"
+                  whileHover={{ y: -3, scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-8 h-8 rounded-lg border border-white/15 bg-white/5 flex items-center justify-center text-white hover:text-white hover:border-white/40 hover:bg-white/15 transition-colors"
                 >
                   <Icon className="w-3.5 h-3.5 text-white stroke-white" />
-                </a>
+                </motion.a>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Links Columns */}
           {Object.entries(FOOTER_LINKS).map(([category, links]) => (
-            <div key={category}>
+            <motion.div key={category} variants={itemFadeUp}>
               <h4 className="text-xs font-bold uppercase font-mono tracking-wider text-white/70 mb-3.5">
                 {category}
               </h4>
@@ -1668,11 +1993,11 @@ export function SiteFooter() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
 
           {/* Contact Support Column */}
-          <div className="space-y-3">
+          <motion.div variants={itemFadeUp} className="space-y-3">
             <h4 className="text-xs font-bold uppercase font-mono tracking-wider text-white/80 mb-3.5">
               Direct Contact
             </h4>
@@ -1695,16 +2020,14 @@ export function SiteFooter() {
                 <span>Lagos, Nigeria</span>
               </li>
             </ul>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Bottom Credits Bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/45">
           <p>© {new Date().getFullYear()} KoraSpace by Techla. All rights reserved.</p>
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
-            <span className="text-white/60">Systems Normal</span>
-            <span className="mx-2 text-white/20">•</span>
             <span className="text-white/60">🇳🇬 Built in Nigeria</span>
           </div>
         </div>
@@ -1712,4 +2035,3 @@ export function SiteFooter() {
     </footer>
   );
 }
-
