@@ -1617,14 +1617,14 @@ const FOOTER_LINKS = {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-white/[0.08] bg-[#121212] py-14 px-4 sm:px-6 lg:px-8 text-white">
+    <footer className="border-t border-white/[0.10] bg-[#070d24] py-14 px-4 sm:px-6 lg:px-8 text-white">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-1 space-y-3">
             <Link href="/" className="flex items-center gap-2.5 mb-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[#ff0a8a] to-[#3b82f6] p-[1px]">
-                <div className="flex h-full w-full items-center justify-center rounded-[7px] bg-[#141414]">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 p-[1px] border border-white/20">
+                <div className="flex h-full w-full items-center justify-center rounded-[7px] bg-[#0a1233]">
                   <img src="/logo.png" alt="KoraSpace Logo" className="h-4 w-4 object-contain" />
                 </div>
               </div>
@@ -1633,7 +1633,7 @@ export function SiteFooter() {
               </span>
             </Link>
 
-            <p className="text-xs text-white/55 leading-relaxed font-normal">
+            <p className="text-xs text-white/60 leading-relaxed font-normal">
               Autonomous AI marketing operating system built for modern creators, startups, and marketing agencies.
             </p>
 
@@ -1642,9 +1642,9 @@ export function SiteFooter() {
                 <a
                   key={i}
                   href="#"
-                  className="w-8 h-8 rounded-lg border border-white/[0.08] flex items-center justify-center text-white/50 hover:text-white hover:border-[#ff0a8a]/40 hover:bg-[#ff0a8a]/10 transition-all"
+                  className="w-8 h-8 rounded-lg border border-white/15 bg-white/5 flex items-center justify-center text-white hover:text-white hover:border-white/40 hover:bg-white/15 transition-all"
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-3.5 h-3.5 text-white stroke-white" />
                 </a>
               ))}
             </div>
@@ -1653,7 +1653,7 @@ export function SiteFooter() {
           {/* Links Columns */}
           {Object.entries(FOOTER_LINKS).map(([category, links]) => (
             <div key={category}>
-              <h4 className="text-xs font-bold uppercase font-mono tracking-wider text-white/45 mb-3.5">
+              <h4 className="text-xs font-bold uppercase font-mono tracking-wider text-white/70 mb-3.5">
                 {category}
               </h4>
               <ul className="space-y-2 text-xs">
@@ -1673,12 +1673,12 @@ export function SiteFooter() {
 
           {/* Contact Support Column */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase font-mono tracking-wider text-[#ff0a8a] mb-3.5">
+            <h4 className="text-xs font-bold uppercase font-mono tracking-wider text-white/80 mb-3.5">
               Direct Contact
             </h4>
             <ul className="space-y-2.5 text-xs text-white/60">
               <li className="flex items-start gap-2.5">
-                <Mail size={14} className="text-[#ff0a8a] shrink-0 mt-0.5" />
+                <Mail size={14} className="text-white shrink-0 mt-0.5" />
                 <a
                   href="mailto:support@koraspace.ai"
                   className="hover:text-white transition-colors break-all"
@@ -1687,11 +1687,11 @@ export function SiteFooter() {
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
-                <Phone size={14} className="text-[#3b82f6] shrink-0 mt-0.5" />
+                <Phone size={14} className="text-white shrink-0 mt-0.5" />
                 <span>+234 701 313 4821</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <MapPin size={14} className="text-[#ff0a8a] shrink-0 mt-0.5" />
+                <MapPin size={14} className="text-white shrink-0 mt-0.5" />
                 <span>Lagos, Nigeria</span>
               </li>
             </ul>
@@ -1699,16 +1699,17 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom Credits Bar */}
-        <div className="border-t border-white/[0.08] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/40">
+        <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/45">
           <p>© {new Date().getFullYear()} KoraSpace by Techla. All rights reserved.</p>
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
-            <span>Systems Normal</span>
+            <span className="text-white/60">Systems Normal</span>
             <span className="mx-2 text-white/20">•</span>
-            <span>🇳🇬 Built in Nigeria</span>
+            <span className="text-white/60">🇳🇬 Built in Nigeria</span>
           </div>
         </div>
       </div>
     </footer>
   );
 }
+
