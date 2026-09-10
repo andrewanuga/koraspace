@@ -158,7 +158,7 @@ export function Hero() {
 
         <div className="relative flex flex-col z-10">
           {/* nav */}
-          <motion.nav
+          {/* <motion.nav
             variants={itemVariants}
             className="flex items-center justify-between px-5 py-5 sm:px-10 sm:py-7"
           >
@@ -215,10 +215,10 @@ export function Hero() {
                 </span>
               </Link>
             </motion.div>
-          </motion.nav>
+          </motion.nav> */}
 
           {/* content */}
-          <div className="grid gap-8 px-5 pb-8 pt-2 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-4 lg:pb-0 lg:pt-0">
+          <div className="grid gap-8 mt-10 px-5 pb-8 pt-2 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-4 lg:pb-0 lg:pt-0">
             <motion.div
               variants={itemVariants}
               className="flex flex-col justify-center gap-5 py-4 lg:py-16"
@@ -268,7 +268,7 @@ export function Hero() {
                   fill
                   priority
                   sizes="(min-width: 1024px) 340px, 280px"
-                  className="object-contain object-bottom drop-shadow-[0_30px_50px_rgba(0,0,0,0.6)]"
+                  className="object-contain mt-30 object-bottom drop-shadow-[0_30px_50px_rgba(0,0,0,0.6)]"
                 />
               </motion.div>
             </div>
@@ -309,4 +309,4 @@ export function Hero() {
   );
 }
 
-export default Hero;
+export default Hero;
