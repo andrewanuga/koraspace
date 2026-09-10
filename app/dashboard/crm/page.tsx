@@ -2,9 +2,17 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CrmClient } from "./CrmClient";
 
+export const metadata = {
+  title: "Lead Pipeline | CRM | KoraSpace",
+  description: "Track and manage leads progressing through automated outreach campaigns.",
+};
+
 export default async function CrmPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const supabase = (await createClient()) as any;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   if (!user) redirect("/login");
 
   // Fetch the user's plan and persona
@@ -14,35 +22,46 @@ export default async function CrmPage() {
     .eq("id", user.id)
     .single();
 
-  if ((profile?.plan !== "advanced" && profile?.plan !== "team") || profile?.persona !== "marketer") {
+  if (
+    (profile?.plan !== "advanced" && profile?.plan !== "team") ||
+    profile?.persona !== "marketer"
+  ) {
     redirect("/dashboard");
   }
 
-  // Fetch all leads for this user's campaigns
+  // Fetch all campaigns for this user
   const { data: campaigns } = await supabase
     .from("dm_campaigns")
-    .select("id, name, platform")
-    .eq("user_id", user.id);
-
-  const campaignIds = (campaigns || []).map(c => c.id);
-  
-  const { data: leads } = await supabase
-    .from("dm_campaign_leads")
-    .select("*")
-    .in("campaign_id", campaignIds)
+    .select("id, name, platform, status")
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  // Map campaign info to leads
-  const enrichedLeads = (leads || []).map(l => {
-    const c = campaigns?.find(camp => camp.id === l.campaign_id);
-    return {
-      ...l,
-      campaign_name: c?.name || "Unknown Campaign",
-      platform: c?.platform || "Unknown",
-    };
-  });
+  const userCampaigns = campaigns || [];
+  const campaignIds = userCampaigns.map((c: any) => c.id);
+
+  let enrichedLeads: any[] = [];
+
+  if (campaignIds.length > 0) {
+    const { data: leads } = await supabase
+      .from("dm_campaign_leads")
+      .select("*")
+      .in("campaign_id", campaignIds)
+      .order("created_at", { ascending: false });
+
+    enrichedLeads = (leads || []).map((l: any) => {
+      const camp = userCampaigns.find((c: any) => c.id === l.campaign_id);
+      return {
+        ...l,
+        campaign_name: camp?.name || "Unknown Campaign",
+        platform: camp?.platform || "instagram",
+      };
+    });
+  }
 
   return (
-    <CrmClient initialLeads={enrichedLeads} />
+    <CrmClient
+      initialLeads={enrichedLeads}
+      initialCampaigns={userCampaigns}
+    />
   );
 }
