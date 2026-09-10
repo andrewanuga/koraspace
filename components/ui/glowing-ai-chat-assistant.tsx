@@ -12,7 +12,7 @@ const STYLES = `
 
 const GREETING: Msg = {
   id: 0, role: "assistant",
-  content: "Hey — I'm your Socially agent. Ask me to draft a post, plan your week, or summarise your inbox.",
+  content: "Hey — I'm your kora agent. Ask me to draft a post, plan your week, or summarise your inbox.",
 };
 
 const FloatingAiAssistant = () => {
@@ -84,7 +84,7 @@ const FloatingAiAssistant = () => {
                   <Sparkles className="h-4 w-4 text-[var(--sai-indigo)]" />
                 </span>
                 <div>
-                  <p className="text-[13px] font-semibold text-[var(--fg)]">Socially agent</p>
+                  <p className="text-[13px] font-semibold text-[var(--fg)]">kora agent</p>
                   <p className="flex items-center gap-1 text-[11px] text-[var(--fg-4)]"><span className="h-1.5 w-1.5 rounded-full" style={{ background: "#34d399" }} /> Online</p>
                 </div>
               </div>
