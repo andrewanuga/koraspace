@@ -668,4 +668,27 @@ html.sai-js [data-reveal] { opacity: 0; }
   --info: var(--kora-blue);
 
   --info-soft: var(--kora-blue-soft);
+
+
+  --kora-bg: #121212;
+  --kora-surface: #15181d;
+  --kora-surface-2: #101419;
+
+  --kora-stroke: #28313d;
+  --kora-stroke-soft: #242b34;
+
+  /* Marketer primary */
+  --kora-blue: #3b82f6;
+  --kora-blue-soft: #10223b;
+
+  /* Secondary intelligence accent */
+  --kora-pink: #ff0a8a;
+  --kora-pink-soft: #24182a;
+
+  --kora-green: #35d69d;
+
+  --fg: #f0f3f7;
+  --fg-2: #c3cad4;
+  --fg-3: #7b8593;
+  --fg-4: #596473;
 }
