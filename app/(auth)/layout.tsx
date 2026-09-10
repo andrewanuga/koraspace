@@ -1,53 +1,11 @@
 import Link from "next/link";
 import {
   ArrowLeft,
-  ArrowUpRight,
-  Bot,
   Check,
-  MessageSquare,
   Sparkles,
   TrendingUp,
   Zap,
 } from "lucide-react";
-
-const HIGHLIGHTS = [
-  {
-    icon: Bot,
-    title: "Your AI agent",
-    description: "Creates, publishes and manages social work around the clock.",
-  },
-  {
-    icon: MessageSquare,
-    title: "Always-on engagement",
-    description: "Respond to conversations while surfacing the leads that matter.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Performance intelligence",
-    description: "Understand what actually drives attention, growth and revenue.",
-  },
-];
-
-const AGENT_ACTIVITY = [
-  {
-    label: "Content drafted",
-    detail: "3 posts ready for review",
-    time: "2m ago",
-    icon: Sparkles,
-  },
-  {
-    label: "Lead detected",
-    detail: "High-intent conversation",
-    time: "8m ago",
-    icon: MessageSquare,
-  },
-  {
-    label: "Performance updated",
-    detail: "Engagement +18.4%",
-    time: "14m ago",
-    icon: TrendingUp,
-  },
-];
 
 export default function AuthLayout({
   children,
@@ -56,223 +14,307 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen bg-[#121212] text-white">
-      <div className="flex min-h-screen lg:h-screen">
+      <div className="min-h-screen lg:grid lg:grid-cols-[minmax(0,1.08fr)_minmax(460px,0.92fr)] xl:grid-cols-[minmax(0,1.15fr)_minmax(500px,0.85fr)]">
         {/* =========================================================
-            LEFT — BRAND / PRODUCT EXPERIENCE
+            LEFT — PRODUCT / BRAND EXPERIENCE (Desktop)
         ========================================================= */}
-        <aside className="relative hidden w-[48%] shrink-0 overflow-hidden border-r border-white/[0.08] lg:flex">
-          {/* Structural background elements — intentionally no gradients */}
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute left-[-180px] top-[20%] h-[420px] w-[420px] rounded-full border border-[#ff0a8a]/[0.07]" />
-            <div className="absolute left-[-120px] top-[27%] h-[300px] w-[300px] rounded-full border border-[#ff0a8a]/[0.05]" />
-            <div className="absolute bottom-[-220px] right-[-160px] h-[460px] w-[460px] rounded-full border border-[#2f80ff]/[0.06]" />
+        <aside className="relative hidden min-h-screen overflow-hidden border-r border-white/[0.07] bg-[#121212] lg:flex">
+          {/* Subtle geometric lines */}
+          <div className="pointer-events-none absolute left-[-120px] top-[15%] h-[260px] w-[260px] rounded-full border border-[#ff0a8a]/10" />
+          <div className="pointer-events-none absolute bottom-[10%] right-[4%] h-[180px] w-[180px] rounded-full border border-[#3b82f6]/10" />
 
-            <div className="absolute left-0 top-0 h-px w-32 bg-[#ff0a8a]/40" />
-            <div className="absolute bottom-0 right-0 h-px w-32 bg-[#2f80ff]/30" />
-          </div>
-
-          <div className="relative z-10 flex w-full flex-col justify-between p-10 xl:p-14">
-            {/* Brand */}
-            <div>
-              <Link
-                href="/"
-                className="group inline-flex items-center gap-2.5"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/logo.png"
-                  alt="Koraspace"
-                  width={28}
-                  height={25}
-                  className="h-[25px] w-auto"
-                />
-
-                <span className="font-display text-[19px] font-semibold tracking-[-0.02em] text-white">
-                  Kora
-                  <span className="text-[#ff0a8a]">space</span>
-                </span>
+          <div className="relative z-10 flex w-full flex-col justify-between px-10 py-10 xl:px-14">
+            {/* Top brand header */}
+            <div className="flex items-center">
+              <Link href="/" className="group flex items-center gap-3">
+                <KoraLogo />
+                <div>
+                  <div className="text-[15px] font-semibold tracking-[-0.02em] text-white group-hover:text-white/90">
+                    KoraSpace
+                  </div>
+                  <div className="text-[10.5px] text-white/40">
+                    Marketing & Creator Intelligence
+                  </div>
+                </div>
               </Link>
             </div>
 
-            {/* Main brand statement */}
-            <div className="my-auto max-w-[620px] py-16">
-              <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-[#ff0a8a]/20 bg-[#ff0a8a]/[0.06] px-3 py-1.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ff0a8a]/50" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#ff0a8a]" />
-                </span>
-
-                <span className="font-data text-[10px] font-medium uppercase tracking-[0.16em] text-[#ff72b5]">
-                  Your social operating system
-                </span>
-              </div>
-
-              <h1 className="font-display text-[52px] font-semibold leading-[0.98] tracking-[-0.045em] text-white xl:text-[68px]">
-                Turn your
-                <br />
-                <span className="text-[#ff0a8a]">social presence</span>
-                <br />
-                into a system.
-              </h1>
-
-              <p className="mt-7 max-w-[490px] text-[15px] leading-7 text-white/50 xl:text-base">
-                Koraspace gives creators and marketers an intelligent agent
-                that can plan, create, engage and measure — without adding
-                another full-time job to your calendar.
-              </p>
-
-              {/* Product highlights */}
-              <div className="mt-10 space-y-3">
-                {HIGHLIGHTS.map((item) => {
-                  const Icon = item.icon;
-
-                  return (
-                    <div
-                      key={item.title}
-                      className="group flex max-w-[500px] items-center gap-4 rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 py-3.5 transition-colors duration-200 hover:border-white/[0.12] hover:bg-white/[0.04]"
-                    >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.04]">
-                        <Icon className="h-4 w-4 text-[#ff0a8a]" />
-                      </div>
-
-                      <div className="min-w-0">
-                        <p className="text-[13px] font-semibold text-white">
-                          {item.title}
-                        </p>
-
-                        <p className="mt-0.5 text-[11px] leading-5 text-white/40">
-                          {item.description}
-                        </p>
-                      </div>
-
-                      <ArrowUpRight className="ml-auto h-3.5 w-3.5 shrink-0 text-white/20 transition-colors group-hover:text-[#ff0a8a]" />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Bottom product telemetry */}
-            <div className="grid grid-cols-[1fr_auto] items-end gap-8">
-              <div>
-                <div className="mb-3 flex items-center gap-2">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#ff0a8a]/10">
-                    <Zap className="h-3 w-3 text-[#ff0a8a]" />
-                  </div>
-
-                  <span className="font-data text-[9px] uppercase tracking-[0.16em] text-white/30">
-                    Agent activity
+            {/* Main copy + Product Preview */}
+            <div className="my-auto py-8">
+              <div className="w-full max-w-[640px]">
+                {/* Badge */}
+                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#ff0a8a]/20 bg-[#ff0a8a]/[0.06] px-3.5 py-1.5">
+                  <span className="flex h-1.5 w-1.5 rounded-full bg-[#ff0a8a]" />
+                  <Sparkles className="h-3.5 w-3.5 text-[#ff0a8a]" />
+                  <span className="text-[11px] font-medium text-[#ff7fba]">
+                    Your marketing & creator command center
                   </span>
                 </div>
 
-                <div className="space-y-1.5">
-                  {AGENT_ACTIVITY.map((activity) => {
-                    const Icon = activity.icon;
+                {/* Hero Title */}
+                <h1 className="font-display text-[44px] font-semibold leading-[1.04] tracking-[-0.04em] text-white xl:text-[54px]">
+                  Turn your audience
+                  <span className="block text-[#ff0a8a]">
+                    into momentum.
+                  </span>
+                </h1>
 
-                    return (
-                      <div
-                        key={activity.label}
-                        className="flex items-center gap-2.5"
-                      >
-                        <Icon className="h-3 w-3 text-white/25" />
+                {/* Description */}
+                <p className="mt-5 max-w-[540px] text-[14.5px] leading-relaxed text-white/50">
+                  Manage multi-channel campaigns, draft in your signature brand voice,
+                  automate CRM workflows, and track real revenue growth across your accounts.
+                </p>
 
-                        <span className="text-[10px] font-medium text-white/55">
-                          {activity.label}
-                        </span>
+                {/* Product preview card */}
+                <div className="mt-8 max-w-[580px]">
+                  <ProductPreview />
+                </div>
 
-                        <span className="hidden text-[10px] text-white/25 xl:inline">
-                          {activity.detail}
-                        </span>
+                {/* Trust / feature checklist */}
+                <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2.5 text-[11.5px] text-white/40">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-[#ff0a8a]" />
+                    <span>Multi-channel workflows</span>
+                  </div>
 
-                        <span className="ml-auto font-data text-[9px] text-white/20">
-                          {activity.time}
-                        </span>
-                      </div>
-                    );
-                  })}
+                  <div className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-[#ff0a8a]" />
+                    <span>AI-powered intelligence</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-[#ff0a8a]" />
+                    <span>Real-time attribution</span>
+                  </div>
                 </div>
               </div>
+            </div>
 
-              <div className="hidden text-right xl:block">
-                <p className="font-data text-[9px] uppercase tracking-[0.18em] text-white/20">
-                  KORASPACE OS
-                </p>
-                <p className="mt-1 text-[10px] text-white/30">
-                  Built for modern teams
-                </p>
+            {/* Bottom meta row */}
+            <div className="flex items-center justify-between border-t border-white/[0.06] pt-5 text-[10.5px] text-white/30">
+              <span className="uppercase tracking-[0.16em]">
+                KoraSpace OS
+              </span>
+
+              <div className="flex items-center gap-4">
+                <span>Secure Cloud Workspace</span>
+                <span>•</span>
+                <span>Creator & Marketer Edition</span>
               </div>
             </div>
           </div>
         </aside>
 
         {/* =========================================================
-            RIGHT — AUTH AREA
+            RIGHT — AUTH FORM CONTAINER
         ========================================================= */}
-        <main className="relative flex min-w-0 flex-1 flex-col bg-[#121212]">
-          {/* Top navigation */}
-          <header className="flex items-center justify-between px-5 py-5 sm:px-8 sm:py-7">
-            {/* Mobile logo */}
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2.5 lg:hidden"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/logo.png"
-                alt="Koraspace"
-                width={25}
-                height={22}
-                className="h-[22px] w-auto"
-              />
-
-              <span className="font-display text-[16px] font-semibold tracking-[-0.02em] text-white">
-                Kora
-                <span className="text-[#ff0a8a]">space</span>
+        <main className="relative flex min-h-screen flex-1 flex-col justify-between">
+          {/* Top navigation row */}
+          <div className="flex items-center justify-between px-6 pt-6 sm:px-10">
+            {/* Mobile Brand */}
+            <Link href="/" className="flex items-center gap-2.5 lg:hidden">
+              <KoraLogo />
+              <span className="text-sm font-semibold tracking-[-0.02em] text-white">
+                KoraSpace
               </span>
             </Link>
 
-            {/* Desktop minimal brand marker */}
-            <div className="hidden items-center gap-2 lg:flex">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#ff0a8a]" />
-              <span className="font-data text-[9px] uppercase tracking-[0.2em] text-white/25">
-                Secure workspace access
-              </span>
-            </div>
-
+            {/* Back link */}
             <Link
               href="/"
-              className="group inline-flex items-center gap-1.5 text-[12px] font-medium text-white/35 transition-colors hover:text-white"
+              className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 text-[12px] font-medium text-white/50 transition-colors hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
             >
-              <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
-              <span className="hidden sm:inline">Back to site</span>
-              <span className="sm:hidden">Home</span>
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Back to site</span>
             </Link>
-          </header>
-
-          {/* Thin divider */}
-          <div className="mx-5 h-px bg-white/[0.06] sm:mx-8" />
-
-          {/* Form container */}
-          <div className="flex flex-1 items-center justify-center px-5 py-10 sm:px-8 sm:py-14">
-            <div className="w-full max-w-[430px]">
-              {children}
-            </div>
           </div>
 
-          {/* Footer */}
-          <footer className="px-5 pb-6 sm:px-8">
-            <div className="flex items-center justify-center gap-3 text-[10px] text-white/20">
-              <div className="flex items-center gap-1.5">
-                <Check className="h-3 w-3 text-emerald-400/60" />
-                <span>Secure authentication</span>
-              </div>
+          {/* Form wrapper */}
+          <div className="flex flex-1 items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
+            {children}
+          </div>
 
-              <span className="h-1 w-1 rounded-full bg-white/10" />
-
-              <span>© {new Date().getFullYear()} Koraspace</span>
-            </div>
-          </footer>
+          {/* Mobile footer */}
+          <div className="px-6 pb-6 text-center text-[11px] text-white/25 lg:hidden">
+            <span>© {new Date().getFullYear()} KoraSpace. All rights reserved.</span>
+          </div>
         </main>
+      </div>
+    </div>
+  );
+}
+
+/* ===============================================================
+   BRAND LOGO
+=============================================================== */
+
+function KoraLogo() {
+  return (
+    <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-[#ff0a8a] shadow-[0_6px_20px_rgba(255,10,138,0.22)]">
+      <div className="absolute h-3.5 w-3.5 rounded-[4px] border-[1.5px] border-white" />
+      <div className="absolute h-1.5 w-1.5 rounded-full bg-white" />
+      <div className="absolute right-[6px] top-[6px] h-1.5 w-1.5 rounded-full bg-[#3b82f6]" />
+    </div>
+  );
+}
+
+/* ===============================================================
+   PRODUCT PREVIEW MOCKUP
+=============================================================== */
+
+function ProductPreview() {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-white/[0.09] bg-[#171717] shadow-[0_25px_70px_rgba(0,0,0,0.45)]">
+      {/* Window header */}
+      <div className="flex h-10 items-center justify-between border-b border-white/[0.07] px-4">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-full bg-white/20" />
+          <span className="h-2 w-2 rounded-full bg-white/20" />
+          <span className="h-2 w-2 rounded-full bg-white/20" />
+        </div>
+
+        <div className="flex items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.025] px-3 py-1">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#ff0a8a]" />
+          <span className="text-[8.5px] font-medium text-white/40">
+            Workspace Command Center
+          </span>
+        </div>
+
+        <div className="h-4 w-4 rounded-full border border-white/10 bg-white/[0.04]" />
+      </div>
+
+      <div className="grid grid-cols-[105px_1fr]">
+        {/* Mini sidebar */}
+        <div className="border-r border-white/[0.06] p-2.5">
+          <div className="mb-4 flex items-center gap-2">
+            <div className="h-4 w-4 rounded-md bg-[#ff0a8a]" />
+            <div className="h-2 w-10 rounded-full bg-white/20" />
+          </div>
+
+          <div className="space-y-1">
+            <MiniNav active label="Overview" />
+            <MiniNav label="Create" />
+            <MiniNav label="Campaigns" />
+            <MiniNav label="Analytics" />
+            <MiniNav label="CRM & Leads" />
+          </div>
+
+          <div className="mt-5 border-t border-white/[0.06] pt-2">
+            <MiniNav label="Brand Kit" />
+            <MiniNav label="Settings" />
+          </div>
+        </div>
+
+        {/* Dashboard preview */}
+        <div className="min-w-0 p-3.5">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="h-2 w-24 rounded-full bg-white/25" />
+              <div className="mt-1.5 h-1.5 w-36 rounded-full bg-white/[0.08]" />
+            </div>
+
+            <div className="h-5 w-16 rounded-lg bg-[#ff0a8a]/20" />
+          </div>
+
+          {/* Stats */}
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            <MiniStat
+              label="Revenue"
+              value="₦8.4M"
+              accent="pink"
+            />
+            <MiniStat
+              label="ROAS"
+              value="3.42×"
+              accent="blue"
+            />
+            <MiniStat
+              label="Leads"
+              value="1,284"
+              accent="green"
+            />
+          </div>
+
+          {/* Mini chart bar strip */}
+          <div className="mt-3 rounded-xl border border-white/[0.07] bg-[#131313] p-2.5">
+            <div className="flex items-center justify-between">
+              <div className="h-1.5 w-16 rounded-full bg-white/20" />
+              <div className="flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#ff0a8a]" />
+                <span className="text-[7.5px] text-white/30">Growth</span>
+              </div>
+            </div>
+
+            <div className="mt-3 flex h-[60px] items-end gap-1.5">
+              {[28, 42, 35, 52, 48, 64, 58, 76, 68, 85, 74, 92].map(
+                (height, index) => (
+                  <div
+                    key={index}
+                    className="flex-1 rounded-t-[2px] transition-all"
+                    style={{
+                      height: `${height}%`,
+                      background:
+                        index >= 9
+                          ? "#ff0a8a"
+                          : "rgba(255, 255, 255, 0.08)",
+                    }}
+                  />
+                )
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MiniNav({
+  label,
+  active = false,
+}: {
+  label: string;
+  active?: boolean;
+}) {
+  return (
+    <div
+      className={`flex h-6 items-center rounded-md px-2 text-[7.5px] font-medium ${
+        active
+          ? "border border-[#ff0a8a]/20 bg-[#ff0a8a]/[0.10] text-[#ff7fba]"
+          : "text-white/30"
+      }`}
+    >
+      <span
+        className={`mr-1.5 h-1.5 w-1.5 rounded-sm ${
+          active ? "bg-[#ff0a8a]" : "bg-white/15"
+        }`}
+      />
+      {label}
+    </div>
+  );
+}
+
+function MiniStat({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string;
+  accent: "pink" | "blue" | "green";
+}) {
+  const accentClass =
+    accent === "pink"
+      ? "text-[#ff4da6]"
+      : accent === "blue"
+      ? "text-[#60a5fa]"
+      : "text-[#34d399]";
+
+  return (
+    <div className="rounded-xl border border-white/[0.07] bg-[#131313] p-2">
+      <div className="text-[7px] text-white/30">{label}</div>
+      <div className={`mt-1 text-[12px] font-bold ${accentClass}`}>
+        {value}
       </div>
     </div>
   );
