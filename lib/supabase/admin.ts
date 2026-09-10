@@ -1,12 +1,25 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-/**
- * Service-role client for trusted server code (webhooks, payment verification).
- * Bypasses RLS — never expose to the browser. Returns null if not configured.
- */
-export function createAdminClient() {
+let adminClient: SupabaseClient<any, any, any> | null = null;
+
+export function createAdminClient(): SupabaseClient<any, any, any> {
+  if (adminClient) {
+    return adminClient;
+  }
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return null;
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceRoleKey) {
+    throw new Error("Missing Supabase server environment variables (NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY).");
+  }
+
+  adminClient = createClient(url, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+
+  return adminClient;
 }

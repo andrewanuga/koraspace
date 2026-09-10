@@ -1,76 +1,299 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { randomBytes } from "crypto";
-import { PLANS, type PlanId } from "@/lib/billing/plans";
+import { createAdminClient } from "@/lib/supabase/admin";
 
-export async function POST(req: NextRequest) {
-  try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+const INVITABLE_ROLES = new Set(["admin", "manager", "member"]);
 
-    const { email, role } = await req.json();
-    if (!email || !role) return NextResponse.json({ error: "Missing email or role" }, { status: 400 });
+async function getContext() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    // Ensure the current user has permission (must be owner or manager to invite)
-    const { data: activeMembership } = await supabase.from("workspace_members")
-      .select("role")
-      .eq("workspace_id", user.id)
-      .eq("user_id", user.id)
-      .single();
+  if (!user) {
+    return {
+      supabase,
+      user: null,
+      workspaceId: null,
+      role: null,
+    };
+  }
 
-    // Only owner (if fetching self) or manager can invite. We'll simplify: only the workspace owner can invite for now.
-    // Wait, let's enforce that only the owner can invite.
-    const workspaceId = user.id; 
+  const { data: own } = await supabase
+    .from("workspace_members")
+    .select("workspace_id, role")
+    .eq("workspace_id", user.id)
+    .eq("user_id", user.id)
+    .maybeSingle();
 
-    // Check plan limits
-    const [{ data: profile }, { count: memberCount }, { count: inviteCount }] = await Promise.all([
-      supabase.from("profiles").select("plan").eq("id", workspaceId).single(),
-      supabase.from("workspace_members").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
-      supabase.from("workspace_invites").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
-    ]);
+  if (own) {
+    return {
+      supabase,
+      user,
+      workspaceId: user.id,
+      role: own.role,
+    };
+  }
 
-    const currentCount = (memberCount || 0) + (inviteCount || 0);
-    const planLimit = PLANS[(profile?.plan as PlanId) || "free"]?.collaborators || 0;
+  const { data: membership } = await supabase
+    .from("workspace_members")
+    .select("workspace_id, role")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
 
-    if (currentCount >= planLimit) {
-      return NextResponse.json({ error: "Plan limit reached. Upgrade to invite more members." }, { status: 403 });
+  return {
+    supabase,
+    user,
+    workspaceId: membership?.workspace_id ?? user.id,
+    role: membership?.role ?? "owner",
+  };
+}
+
+export async function POST(request: NextRequest) {
+  const { supabase, user, workspaceId, role: actorRole } = await getContext();
+
+  if (!user || !workspaceId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (actorRole !== "owner" && actorRole !== "admin") {
+    return NextResponse.json(
+      { error: "Only owners and admins can invite members." },
+      { status: 403 }
+    );
+  }
+
+  const body = await request.json().catch(() => ({}));
+  const email = String(body.email ?? "").trim().toLowerCase();
+  const role = String(body.role ?? "member");
+
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    return NextResponse.json(
+      { error: "Enter a valid email address." },
+      { status: 400 }
+    );
+  }
+
+  if (!INVITABLE_ROLES.has(role)) {
+    return NextResponse.json({ error: "Invalid team role." }, { status: 400 });
+  }
+
+  if (email === user.email?.toLowerCase()) {
+    return NextResponse.json(
+      { error: "You are already part of this workspace." },
+      { status: 409 }
+    );
+  }
+
+  // Check existing pending invitation
+  const { data: pendingInvite } = await supabase
+    .from("team_invitations")
+    .select("id")
+    .eq("workspace_id", workspaceId)
+    .eq("email", email)
+    .eq("status", "pending")
+    .maybeSingle();
+
+  if (pendingInvite) {
+    return NextResponse.json(
+      { error: "There is already a pending invitation for this email." },
+      { status: 409 }
+    );
+  }
+
+  const admin = createAdminClient();
+
+  // Search for an existing KoraSpace account
+  const { data: users, error: usersError } = await admin.auth.admin.listUsers({
+    page: 1,
+    perPage: 1000,
+  });
+
+  if (usersError) {
+    return NextResponse.json(
+      { error: "Unable to check existing account status." },
+      { status: 500 }
+    );
+  }
+
+  const existingUser = users.users.find(
+    (candidate) => candidate.email?.toLowerCase() === email
+  );
+
+  // Existing KoraSpace user: Add immediately
+  if (existingUser) {
+    const { data: alreadyMember } = await supabase
+      .from("workspace_members")
+      .select("user_id")
+      .eq("workspace_id", workspaceId)
+      .eq("user_id", existingUser.id)
+      .maybeSingle();
+
+    if (alreadyMember) {
+      return NextResponse.json(
+        { error: "This person is already a team member." },
+        { status: 409 }
+      );
     }
 
-    // Check if user is already invited or a member
-    const { data: existingMember } = await supabase.from("workspace_members")
-      .select("id")
-      .eq("workspace_id", workspaceId)
-      .eq("user_id", (await supabase.from("profiles").select("id").eq("username", email).single()).data?.id || "00000000-0000-0000-0000-000000000000");
+    const { error: memberError } = await supabase
+      .from("workspace_members")
+      .insert({
+        workspace_id: workspaceId,
+        user_id: existingUser.id,
+        role,
+      });
 
-    const { data: existingInvite } = await supabase.from("workspace_invites")
-      .select("id")
-      .eq("workspace_id", workspaceId)
-      .eq("email", email)
-      .single();
-
-    if (existingMember || existingInvite) {
-      return NextResponse.json({ error: "User is already in the workspace or has a pending invite." }, { status: 400 });
+    if (memberError) {
+      return NextResponse.json(
+        { error: memberError.message },
+        { status: 500 }
+      );
     }
 
-    // Create invite
-    const token = randomBytes(32).toString("hex");
-    
-    // In a real app, you would send an email here with Resend/SendGrid.
-    // e.g. await sendEmail(email, `${process.env.NEXT_PUBLIC_APP_URL}/invite/${token}`);
-
-    const { error } = await supabase.from("workspace_invites").insert({
+    await admin.from("team_invitations").insert({
       workspace_id: workspaceId,
       email,
+      invited_by: user.id,
       role,
-      token,
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      status: "accepted",
+      accepted_at: new Date().toISOString(),
     });
 
-    if (error) throw error;
+    await admin.from("team_activity_logs").insert({
+      workspace_id: workspaceId,
+      actor_id: user.id,
+      action: "added",
+      target: email,
+    });
 
-    return NextResponse.json({ success: true });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to invite" }, { status: 500 });
+    return NextResponse.json({
+      success: true,
+      type: "added",
+      message: "Team member added successfully.",
+    });
   }
+
+  // New user: Send Supabase invitation email
+  const redirectTo = `${
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+  }/auth/callback?next=/dashboard/team`;
+
+  const { data: invited, error: inviteError } =
+    await admin.auth.admin.inviteUserByEmail(email, {
+      redirectTo,
+      data: {
+        invited_workspace_id: workspaceId,
+        invited_workspace_role: role,
+      },
+    });
+
+  if (inviteError || !invited.user) {
+    return NextResponse.json(
+      { error: inviteError?.message ?? "Unable to send invitation." },
+      { status: 500 }
+    );
+  }
+
+  const { data: invitation, error: invitationError } = await admin
+    .from("team_invitations")
+    .insert({
+      workspace_id: workspaceId,
+      email,
+      invited_by: user.id,
+      role,
+      status: "pending",
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    })
+    .select("id")
+    .single();
+
+  if (invitationError) {
+    return NextResponse.json(
+      { error: invitationError.message },
+      { status: 500 }
+    );
+  }
+
+  await admin.from("team_activity_logs").insert({
+    workspace_id: workspaceId,
+    actor_id: user.id,
+    action: "invited",
+    target: email,
+  });
+
+  return NextResponse.json({
+    success: true,
+    type: "invited",
+    invitationId: invitation.id,
+    message: "Invitation sent successfully.",
+  });
+}
+
+export async function DELETE(request: NextRequest) {
+  const { supabase, user, workspaceId, role } = await getContext();
+
+  if (!user || !workspaceId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (role !== "owner" && role !== "admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const id = new URL(request.url).searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json(
+      { error: "Invitation id is required." },
+      { status: 400 }
+    );
+  }
+
+  const { data: invitation } = await supabase
+    .from("team_invitations")
+    .select("id, email, status")
+    .eq("id", id)
+    .eq("workspace_id", workspaceId)
+    .maybeSingle();
+
+  if (!invitation) {
+    return NextResponse.json(
+      { error: "Invitation not found." },
+      { status: 404 }
+    );
+  }
+
+  if (invitation.status !== "pending") {
+    return NextResponse.json(
+      { error: "Invitation is no longer pending." },
+      { status: 409 }
+    );
+  }
+
+  const admin = createAdminClient();
+
+  const { error } = await admin
+    .from("team_invitations")
+    .update({
+      status: "revoked",
+      revoked_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .eq("workspace_id", workspaceId);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  await admin.from("team_activity_logs").insert({
+    workspace_id: workspaceId,
+    actor_id: user.id,
+    action: "revoked the invitation for",
+    target: invitation.email,
+  });
+
+  return NextResponse.json({ success: true });
 }
