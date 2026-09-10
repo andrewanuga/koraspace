@@ -138,7 +138,7 @@ function getPlatformColor(platform: string) {
     case "youtube":
       return "bg-red-500";
     default:
-      return "bg-[var(--kora-pink)]";
+      return "bg-[var(--brand-primary)]";
   }
 }
 
@@ -168,7 +168,7 @@ function PlatformIcon({
       return <Music2 className={`${className} text-cyan-400`} />;
 
     default:
-      return <Bot className={`${className} text-[var(--kora-pink)]`} />;
+      return <Bot className={`${className} text-[var(--brand-primary)]`} />;
   }
 }
 
@@ -271,7 +271,7 @@ function MiniDatePicker({
                 ${
                   isSelected
                     ? `
-                      bg-[var(--kora-pink)]
+                      bg-[var(--brand-primary)]
                       text-[var(--fg)]
                       shadow-lg
                       shadow-pink-500/20
@@ -279,9 +279,9 @@ function MiniDatePicker({
                     : isCurrent
                     ? `
                       border
-                      border-[var(--kora-pink-border)]
-                      text-[var(--kora-pink)]
-                      hover:bg-[var(--kora-pink-soft)]
+                      border-[var(--brand-primary-border)]
+                      text-[var(--brand-primary)]
+                      hover:bg-[var(--brand-primary-soft)]
                     `
                     : `
                       text-[var(--fg-4)]
@@ -566,14 +566,14 @@ function DatePicker({
                         ? "opacity-0 pointer-events-none"
                         : isSelectedDay(dayNum)
                         ? `
-                          bg-[var(--kora-pink)]
+                          bg-[var(--brand-primary)]
                           text-[var(--fg)]
                         `
                         : isToday(dayNum)
                         ? `
                           border
-                          border-[var(--kora-pink-border)]/50
-                          text-[var(--kora-pink)]
+                          border-[var(--brand-primary-border)]/50
+                          text-[var(--brand-primary)]
                         `
                         : `
                           text-[var(--fg-4)]
@@ -611,7 +611,7 @@ function DatePicker({
           ${
             open
               ? `
-                border-[var(--kora-pink-border)]/60
+                border-[var(--brand-primary-border)]/60
                 bg-[var(--panel-fill-2)]
               `
               : `
@@ -797,7 +797,7 @@ function TimePicker({
                   ${
                     value?.hour === hour
                       ? `
-                        bg-[var(--kora-pink)]
+                        bg-[var(--brand-primary)]
                         text-[var(--fg)]
                       `
                       : `
@@ -842,7 +842,7 @@ function TimePicker({
                   ${
                     value?.minute === minute
                       ? `
-                        bg-[var(--kora-pink)]
+                        bg-[var(--brand-primary)]
                         text-[var(--fg)]
                       `
                       : `
@@ -887,7 +887,7 @@ function TimePicker({
                   ${
                     value?.ampm === ampm
                       ? `
-                        bg-[var(--kora-pink)]
+                        bg-[var(--brand-primary)]
                         text-[var(--fg)]
                       `
                       : `
@@ -927,7 +927,7 @@ function TimePicker({
           ${
             open
               ? `
-                border-[var(--kora-pink-border)]/60
+                border-[var(--brand-primary-border)]/60
                 bg-[var(--panel-fill-2)]
               `
               : `
@@ -1604,13 +1604,13 @@ ${aiTaskPrompt}
                 px-4
                 rounded-xl
                 border
-                border-[var(--kora-pink-border)]
-                bg-[var(--kora-pink-soft)]
-                text-[var(--kora-pink)]
+                border-[var(--brand-primary-border)]
+                bg-[var(--brand-primary-soft)]
+                text-[var(--brand-primary)]
                 text-xs
                 font-semibold
-                hover:bg-[var(--kora-pink-soft)]
-                hover:border-[var(--kora-pink-border)]/50
+                hover:bg-[var(--brand-primary-soft)]
+                hover:border-[var(--brand-primary-border)]/50
                 transition-all
               "
             >
@@ -1699,7 +1699,7 @@ ${aiTaskPrompt}
                   font-semibold
                   tracking-tight
                   text-[var(--fg)]
-                  hover:text-[var(--kora-pink)]
+                  hover:text-[var(--brand-primary)]
                   transition-colors
                 "
               >
@@ -1766,7 +1766,7 @@ ${aiTaskPrompt}
                   font-semibold
                   text-[var(--fg-4)]
                   hover:text-[var(--fg)]
-                  hover:border-[var(--kora-pink-border)]
+                  hover:border-[var(--brand-primary-border)]
                   transition-all
                 "
               >
@@ -1818,7 +1818,7 @@ ${aiTaskPrompt}
                     ${
                       platformFilter === platform
                         ? `
-                          bg-[var(--kora-pink)]
+                          bg-[var(--brand-primary)]
                           text-[var(--fg)]
                           shadow-lg
                           shadow-pink-500/20
@@ -1975,7 +1975,7 @@ ${aiTaskPrompt}
                           ${
                             isToday
                               ? `
-                                bg-[var(--kora-pink)]
+                                bg-[var(--brand-primary)]
                                 text-[var(--fg)]
                                 shadow-lg
                                 shadow-pink-500/30
@@ -2020,7 +2020,7 @@ ${aiTaskPrompt}
                               px-2.5
                               py-2
                               pl-3
-                              hover:border-[var(--kora-pink-border)]
+                              hover:border-[var(--brand-primary-border)]
                               hover:-translate-y-[1px]
                               hover:shadow-lg
                               transition-all
@@ -2130,7 +2130,7 @@ ${aiTaskPrompt}
                         ))}
 
                       {scheduledEvents.length > 3 && (
-                        <div className="text-[9px] text-[var(--kora-pink)] px-1">
+                        <div className="text-[9px] text-[var(--brand-primary)] px-1">
                           +{scheduledEvents.length - 3} more
                         </div>
                       )}
@@ -2163,15 +2163,15 @@ ${aiTaskPrompt}
                   w-12
                   h-12
                   rounded-xl
-                  bg-[var(--kora-pink-soft)]
+                  bg-[var(--brand-primary-soft)]
                   border
-                  border-[var(--kora-pink-border)]
+                  border-[var(--brand-primary-border)]
                   flex
                   items-center
                   justify-center
                 "
               >
-                <LayoutGrid className="w-6 h-6 text-[var(--kora-pink)]" />
+                <LayoutGrid className="w-6 h-6 text-[var(--brand-primary)]" />
               </div>
 
               <div>
@@ -2191,15 +2191,15 @@ ${aiTaskPrompt}
                 className="
                   rounded-xl
                   border
-                  border-[var(--kora-pink-border)]/15
-                  bg-[var(--kora-pink-soft)]
+                  border-[var(--brand-primary-border)]/15
+                  bg-[var(--brand-primary-soft)]
                   p-4
                 "
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="w-4 h-4 text-[var(--kora-pink)]" />
+                  <Sparkles className="w-4 h-4 text-[var(--brand-primary)]" />
 
-                  <span className="text-xs font-semibold text-[var(--kora-pink)]">
+                  <span className="text-xs font-semibold text-[var(--brand-primary)]">
                     Visual Planning
                   </span>
                 </div>
@@ -2245,7 +2245,7 @@ ${aiTaskPrompt}
                     w-16
                     h-16
                     rounded-full
-                    bg-[var(--kora-pink)]
+                    bg-[var(--brand-primary)]
                     flex
                     items-center
                     justify-center
@@ -2306,7 +2306,7 @@ ${aiTaskPrompt}
                             ? `
                               bg-[var(--panel-fill-2)]
                               border
-                              border-[var(--kora-pink-border)]
+                              border-[var(--brand-primary-border)]
                             `
                             : `
                               bg-[var(--hover)]
@@ -2320,8 +2320,8 @@ ${aiTaskPrompt}
                             tone="indigo"
                             className="
                               scale-75
-                              bg-[var(--kora-pink)]
-                              border-[var(--kora-pink-border)]
+                              bg-[var(--brand-primary)]
+                              border-[var(--brand-primary-border)]
                               text-[var(--fg)]
                               backdrop-blur-md
                             "
@@ -2367,7 +2367,7 @@ ${aiTaskPrompt}
               </p>
             </div>
 
-            <span className="text-[10px] text-[var(--kora-pink)] font-medium">
+            <span className="text-[10px] text-[var(--brand-primary)] font-medium">
               View all
             </span>
           </div>
@@ -2472,7 +2472,7 @@ ${aiTaskPrompt}
               </p>
             </div>
 
-            <span className="text-[10px] text-[var(--kora-pink)] font-medium">
+            <span className="text-[10px] text-[var(--brand-primary)] font-medium">
               Manage
             </span>
           </div>
@@ -2495,7 +2495,7 @@ ${aiTaskPrompt}
                 label: "Publishing",
                 count: 3,
                 icon: Send,
-                color: "text-[var(--kora-pink)]",
+                color: "text-[var(--brand-primary)]",
               },
               {
                 label: "Needs Approval",
@@ -2549,7 +2549,7 @@ ${aiTaskPrompt}
             overflow-hidden
             rounded-2xl
             border
-            border-[var(--kora-pink-border)]
+            border-[var(--brand-primary-border)]
             bg-[var(--panel-fill)]
             p-5
             shadow-lg
@@ -2565,7 +2565,7 @@ ${aiTaskPrompt}
               w-48
               h-48
               rounded-full
-              bg-[var(--kora-pink-soft)]
+              bg-[var(--brand-primary-soft)]
               blur-3xl
             "
           />
@@ -2592,13 +2592,13 @@ ${aiTaskPrompt}
                 flex
                 items-center
                 justify-center
-                bg-[var(--kora-pink-soft)]
+                bg-[var(--brand-primary-soft)]
                 border
-                border-[var(--kora-pink-border)]
+                border-[var(--brand-primary-border)]
                 mb-4
               "
             >
-              <Sparkles className="w-5 h-5 text-[var(--kora-pink)]" />
+              <Sparkles className="w-5 h-5 text-[var(--brand-primary)]" />
             </div>
 
             <h3 className="text-base font-semibold text-[var(--fg)]">
@@ -2620,7 +2620,7 @@ ${aiTaskPrompt}
                 w-full
                 h-10
                 rounded-xl
-                bg-[var(--kora-pink)]
+                bg-[var(--brand-primary)]
                 text-xs
                 font-semibold
                 text-[var(--fg)]
@@ -2683,13 +2683,13 @@ ${aiTaskPrompt}
                     items-center
                     justify-center
                     bg-[var(--panel-fill)]
-                    from-[var(--kora-pink-soft)]
+                    from-[var(--brand-primary-soft)]
                     to-pink-500/10
                     border
-                    border-[var(--kora-pink-border)]
+                    border-[var(--brand-primary-border)]
                   "
                 >
-                  <Bot className="w-5 h-5 text-[var(--kora-pink)]" />
+                  <Bot className="w-5 h-5 text-[var(--brand-primary)]" />
                 </div>
 
                 <div>
@@ -2758,9 +2758,9 @@ ${aiTaskPrompt}
                     outline-none
                     transition-all
                     hover:border-[var(--stroke-strong)]
-                    focus:border-[var(--kora-pink-border)]/60
+                    focus:border-[var(--brand-primary-border)]/60
                     focus:ring-2
-                    focus:ring-[var(--kora-pink-soft)]
+                    focus:ring-[var(--brand-primary-soft)]
                   "
                 />
               </div>
@@ -2796,9 +2796,9 @@ ${aiTaskPrompt}
                     outline-none
                     transition-all
                     hover:border-[var(--stroke-strong)]
-                    focus:border-[var(--kora-pink-border)]/60
+                    focus:border-[var(--brand-primary-border)]/60
                     focus:ring-2
-                    focus:ring-[var(--kora-pink-soft)]
+                    focus:ring-[var(--brand-primary-soft)]
                   "
                 />
               </div>
@@ -2983,8 +2983,8 @@ ${aiTaskPrompt}
                         items-center
                         justify-center
                         text-[var(--fg-4)]
-                        hover:text-[var(--kora-pink)]
-                        hover:border-[var(--kora-pink-border)]
+                        hover:text-[var(--brand-primary)]
+                        hover:border-[var(--brand-primary-border)]
                         transition-all
                       "
                     >
@@ -3011,7 +3011,7 @@ ${aiTaskPrompt}
                       gap-2
                       text-[var(--fg-4)]
                       hover:text-[var(--fg-4)]
-                      hover:border-[var(--kora-pink-border)]
+                      hover:border-[var(--brand-primary-border)]
                       hover:bg-[var(--panel-fill-2)]
                       transition-all
                     "
@@ -3092,7 +3092,7 @@ ${aiTaskPrompt}
                   items-center
                   justify-center
                   gap-2
-                  bg-[var(--kora-pink)]
+                  bg-[var(--brand-primary)]
                   text-xs
                   font-semibold
                   text-[var(--fg)]

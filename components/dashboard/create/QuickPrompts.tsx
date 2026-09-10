@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   Lightbulb,
@@ -44,9 +44,9 @@ export function QuickPrompts({ onSelect }: QuickPromptsProps) {
                 px-3.5 py-2.5
                 text-[11.5px] font-medium text-[var(--fg-3)]
                 transition-all duration-200
-                hover:border-[var(--kora-pink-border)]
-                hover:bg-[var(--kora-pink-soft)]
-                hover:text-[var(--kora-pink)]
+                hover:border-[var(--brand-primary-border)]
+                hover:bg-[var(--brand-primary-soft)]
+                hover:text-[var(--brand-primary)]
               "
             >
               <Icon className="h-3.5 w-3.5" />

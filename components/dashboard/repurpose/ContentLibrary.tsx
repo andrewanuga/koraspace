@@ -44,7 +44,7 @@ export function ContentLibrary({
             onClick={() => onSelect(item)}
             className={`group relative overflow-hidden rounded-2xl border p-4 text-left transition-all ${
               active
-                ? "border-[var(--kora-pink-border)] bg-[var(--kora-pink-soft)]"
+                ? "border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)]"
                 : "border-[var(--stroke)] bg-[var(--panel-fill-2)] hover:border-[var(--stroke-strong)] hover:bg-[var(--hover)]"
             }`}
           >
@@ -64,7 +64,7 @@ export function ContentLibrary({
               {active ? (
                 <div
                   className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
-                  style={{ background: "var(--kora-pink)" }}
+                  style={{ background: "var(--brand-primary)" }}
                 >
                   <Check className="h-3 w-3 text-white" />
                 </div>

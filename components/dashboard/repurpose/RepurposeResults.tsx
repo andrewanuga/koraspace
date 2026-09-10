@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Copy, Check, Pencil, Send, Sparkles, Loader2, Save } from "lucide-react";
+import { Copy, Check, Pencil, Send, Sparkles, Loader2, Save, Calendar, ArrowRight } from "lucide-react";
 import type { RepurposeOutput } from "@/lib/repurpose/types";
 import { REPURPOSE_PLATFORMS } from "@/lib/repurpose/platforms";
 import { GlassCard } from "@/components/dashboard/ui";
@@ -100,7 +100,7 @@ export function RepurposeResults({
       <div className="border-b border-[var(--stroke)] p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4" style={{ color: "var(--kora-pink)" }} />
+            <Sparkles className="h-4 w-4" style={{ color: "var(--brand-primary)" }} />
             <h2 className="text-sm font-semibold text-[var(--fg)]">
               Your Repurposed Content
             </h2>
@@ -121,7 +121,7 @@ export function RepurposeResults({
                 onClick={() => setActiveId(output.id)}
                 className={`flex shrink-0 items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-semibold transition-all ${
                   activeTab
-                    ? "border-[var(--kora-pink-border)] bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]"
+                    ? "border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]"
                     : "border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-3)] hover:bg-[var(--hover)] hover:text-[var(--fg)]"
                 }`}
               >
@@ -139,10 +139,10 @@ export function RepurposeResults({
           <div className="flex items-center gap-3">
             {Icon && (
               <div
-                className="flex h-10 w-10 items-center justify-center rounded-xl"
-                style={{ background: "var(--kora-pink-soft)" }}
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--brand-primary-border)]"
+                style={{ background: "var(--brand-primary-soft)" }}
               >
-                <Icon className="h-5 w-5" style={{ color: "var(--kora-pink)" }} />
+                <Icon className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />
               </div>
             )}
             <div>
@@ -177,7 +177,7 @@ export function RepurposeResults({
               )
             );
           }}
-          className="min-h-[380px] w-full resize-y rounded-2xl border border-[var(--stroke)] bg-[var(--app-bg)] p-5 text-sm leading-relaxed text-[var(--fg)] outline-none transition-all focus:border-[var(--kora-pink-border)] focus:ring-2 focus:ring-[var(--kora-pink-soft)]"
+          className="min-h-[380px] w-full resize-y rounded-2xl border border-[var(--stroke)] bg-[var(--app-bg)] p-5 text-sm leading-relaxed text-[var(--fg)] outline-none transition-all focus:border-[var(--brand-primary-border)] focus:ring-2 focus:ring-[var(--brand-primary-soft)]"
         />
 
         {/* -- Action Buttons (Phase 4) -- */}
@@ -210,8 +210,8 @@ export function RepurposeResults({
           <button
             onClick={sendToScheduler}
             disabled={scheduling}
-            className="ml-auto flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
-            style={{ background: "var(--kora-pink)" }}
+            className="ml-auto flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 shadow-[var(--brand-primary-shadow)]"
+            style={{ background: "var(--brand-primary)" }}
           >
             {scheduling ? (
               <>
@@ -220,8 +220,9 @@ export function RepurposeResults({
               </>
             ) : (
               <>
-                <Send className="h-4 w-4" />
-                Send to scheduler
+                <Calendar className="h-4 w-4" />
+                Send to Scheduler
+                <ArrowRight className="h-4 w-4" />
               </>
             )}
           </button>

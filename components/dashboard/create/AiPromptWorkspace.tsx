@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useRef } from "react";
 import {
@@ -96,7 +96,7 @@ export function AiPromptWorkspace({
       {/* ── Header ── */}
       <div className="flex items-center justify-between border-b border-[var(--stroke)] px-5 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--kora-blue-soft)] text-[var(--kora-blue)]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
@@ -111,7 +111,7 @@ export function AiPromptWorkspace({
             onClick={onToggleModelPicker}
             className="flex items-center gap-2 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 py-2 text-[11px] text-[var(--fg-3)] transition-colors hover:text-[var(--fg)]"
           >
-            <Bot className="h-3.5 w-3.5 text-[var(--kora-blue)]" />
+            <Bot className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
             <span className="max-w-[100px] truncate">
               {selectedModel ? modelDisplayName(selectedModel, models) : "Model"}
             </span>
@@ -135,7 +135,7 @@ export function AiPromptWorkspace({
                       key={model.id}
                       onClick={() => { onModelChange(model.id); }}
                       className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition-colors hover:bg-[var(--hover)]"
-                      style={selectedModel === model.id ? { background: "var(--kora-blue-soft)" } : undefined}
+                      style={selectedModel === model.id ? { background: "var(--brand-primary-soft)" } : undefined}
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
@@ -144,7 +144,7 @@ export function AiPromptWorkspace({
                         </div>
                         <span className="text-[10px] text-[var(--fg-4)]">{model.provider}</span>
                       </div>
-                      {selectedModel === model.id && <Check className="h-3.5 w-3.5 shrink-0 text-[var(--kora-blue)]" />}
+                      {selectedModel === model.id && <Check className="h-3.5 w-3.5 shrink-0 text-[var(--brand-primary)]" />}
                     </button>
                   ))
                 )}
@@ -173,8 +173,8 @@ export function AiPromptWorkspace({
             text-[13px] leading-relaxed text-[var(--fg)]
             placeholder:text-[var(--fg-4)]
             outline-none transition-all
-            focus:border-[var(--kora-blue-border)]
-            focus:ring-2 focus:ring-[var(--kora-blue-soft)]
+            focus:border-[var(--brand-primary-border)]
+            focus:ring-2 focus:ring-[var(--brand-primary-soft)]
           "
         />
 
@@ -195,7 +195,7 @@ export function AiPromptWorkspace({
                   </div>
                 ) : (
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--panel-fill-2)]">
-                    {a.type === "video" ? <Film className="h-4 w-4 text-[var(--kora-blue)]" /> : <FileText className="h-4 w-4 text-[var(--kora-blue)]" />}
+                    {a.type === "video" ? <Film className="h-4 w-4 text-[var(--brand-primary)]" /> : <FileText className="h-4 w-4 text-[var(--brand-primary)]" />}
                   </span>
                 )}
                 <span className="max-w-[120px] truncate text-[12px] text-[var(--fg-2)]">{a.name}</span>
@@ -237,7 +237,7 @@ export function AiPromptWorkspace({
               onClick={onToggleToolPicker}
               className="flex h-9 items-center gap-1.5 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-2.5 text-[11px] text-[var(--fg-3)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--fg)]"
             >
-              <Sparkles className="h-3.5 w-3.5 text-[var(--kora-blue)]" />
+              <Sparkles className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
               <span className="hidden sm:inline">Tools</span>
               <ChevronDown className="h-3 w-3" />
             </button>
@@ -255,7 +255,7 @@ export function AiPromptWorkspace({
                       onClick={() => onToolSelect(`Please use your ${tool.id} tool to ${tool.promptSuffix}`, tool.needsParams)}
                       className="group flex w-full flex-col rounded-lg px-3 py-2 text-left transition-colors hover:bg-[var(--hover)]"
                     >
-                      <span className="text-[12px] font-medium text-[var(--fg)] transition-colors group-hover:text-[var(--kora-blue)]">{tool.name}</span>
+                      <span className="text-[12px] font-medium text-[var(--fg)] transition-colors group-hover:text-[var(--brand-primary)]">{tool.name}</span>
                       <span className="text-[10px] text-[var(--fg-4)]">{tool.desc}</span>
                     </button>
                   ))}
@@ -271,12 +271,15 @@ export function AiPromptWorkspace({
             disabled={!prompt.trim() || isGenerating}
             className="
               ml-auto flex items-center gap-2 rounded-xl
-              bg-[var(--kora-pink)] px-5 py-2.5
+              bg-[var(--brand-primary)] px-5 py-2.5
               text-[12px] font-semibold text-white
               transition-all duration-200
               hover:brightness-110 active:scale-[0.98]
               disabled:cursor-not-allowed disabled:opacity-40
             "
+            style={{
+              boxShadow: "var(--brand-primary-shadow)",
+            }}
           >
             {isGenerating ? (
               <>

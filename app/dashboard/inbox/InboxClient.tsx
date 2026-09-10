@@ -146,9 +146,9 @@ function getCategoryBadge(category: string | null | undefined) {
       };
     case "mention":
       return {
-        bg: "var(--kora-pink-soft)",
-        text: "var(--kora-pink)",
-        border: "rgba(236, 22, 140, 0.25)",
+        bg: "var(--brand-primary-soft)",
+        text: "var(--brand-primary)",
+        border: "var(--brand-primary-border)",
       };
     default:
       return {
@@ -172,6 +172,9 @@ export function InboxClient({
 }) {
   const { success } = useToast();
 
+  const [messagesList, setMessagesList] = useState<SocialInboxMessage[]>(messages);
+  const connectedCount = accounts.length;
+
   const [activeTab, setActiveTab] = useState<
     "all" | "messages" | "comments" | "mentions" | "dms"
   >("all");
@@ -182,15 +185,37 @@ export function InboxClient({
   );
   const [search, setSearch] = useState("");
   const [reply, setReply] = useState("");
-  const [localReplies, setLocalReplies] = useState<Record<string, boolean>>({});
+  const [localReplies, setLocalReplies] = useState<Record<string, string>>({});
   const [sortNewest, setSortNewest] = useState(true);
+
+  const counts = useMemo(() => {
+    return {
+      all: messagesList.length,
+      messages: messagesList.filter(
+        (m) =>
+          (m.kind || "").toLowerCase().includes("message") ||
+          (m.kind || "").toLowerCase().includes("dm")
+      ).length,
+      comments: messagesList.filter((m) =>
+        (m.kind || "").toLowerCase().includes("comment")
+      ).length,
+      mentions: messagesList.filter((m) =>
+        (m.kind || "").toLowerCase().includes("mention")
+      ).length,
+      dms: messagesList.filter(
+        (m) =>
+          (m.kind || "").toLowerCase().includes("dm") ||
+          (m.kind || "").toLowerCase().includes("direct")
+      ).length,
+    };
+  }, [messagesList]);
 
   /* ---------------------------------------------------------------------- */
   /*                                FILTERING                               */
   /* ---------------------------------------------------------------------- */
 
   const filteredMessages = useMemo(() => {
-    let result = [...messages];
+    let result = [...messagesList];
 
     if (selectedAccount !== "all") {
       result = result.filter(
@@ -235,83 +260,43 @@ export function InboxClient({
     });
 
     return result;
-  }, [messages, activeTab, selectedAccount, search, sortNewest]);
+  }, [messagesList, activeTab, selectedAccount, search, sortNewest]);
 
-  const selectedMessage =
-    filteredMessages.find((message) => message.id === selectedId) ??
-    messages.find((message) => message.id === selectedId) ??
-    filteredMessages[0] ??
-    null;
+  const selectedMessage = useMemo(
+    () => messagesList.find((m) => m.id === selectedId) || null,
+    [messagesList, selectedId]
+  );
 
-  /* ---------------------------------------------------------------------- */
-  /*                                  COUNTS                                */
-  /* ---------------------------------------------------------------------- */
+  /* ------------------------------------------------------------------------ */
+  /*                               ACTIONS / HANDLERS                         */
+  /* ------------------------------------------------------------------------ */
 
-  const counts = useMemo(() => {
-    return {
-      all: messages.length,
-      messages: messages.filter((m) =>
-        m.kind?.toLowerCase().includes("message")
-      ).length,
-      comments: messages.filter((m) =>
-        m.kind?.toLowerCase().includes("comment")
-      ).length,
-      mentions: messages.filter((m) =>
-        m.kind?.toLowerCase().includes("mention")
-      ).length,
-      dms: messages.filter((m) => {
-        const kind = m.kind?.toLowerCase() || "";
-        return kind.includes("dm") || kind.includes("direct");
-      }).length,
-    };
-  }, [messages]);
+  const sendReply = async (message: SocialInboxMessage) => {
+    if (!reply.trim()) return;
 
-  /* ---------------------------------------------------------------------- */
-  /*                                  REPLY                                 */
-  /* ---------------------------------------------------------------------- */
-
-  async function sendReply(message: SocialInboxMessage) {
-    if ((message.platform as string) !== "system" && !reply.trim()) {
-      return;
-    }
-
-    setLocalReplies((current) => ({
-      ...current,
-      [message.id]: true,
-    }));
-
-    const supabase = createClient();
-
-    if ((message.platform as string) === "system") {
-      await supabase
-        .from("user_notifications")
-        .update({
-          is_read: true,
-        })
-        .eq("id", message.id);
-
-      success("Notification dismissed");
-    } else {
-      await supabase
-        .from("social_inbox")
-        .update({
-          replied: true,
-          reply_body: reply,
-          is_read: true,
-        })
-        .eq("id", message.id);
-
-      success("Reply sent");
-    }
-
+    const currentReply = reply;
+    setLocalReplies((prev) => ({ ...prev, [message.id]: currentReply }));
+    setMessagesList((prev) =>
+      prev.map((item) =>
+        item.id === message.id
+          ? {
+              ...item,
+              replied: true,
+              reply_body: currentReply,
+              is_read: true,
+            }
+          : item
+      )
+    );
     setReply("");
-  }
+    success("Reply sent", "Your response has been sent to the user.");
+  };
 
-  /* ---------------------------------------------------------------------- */
-  /*                               EMPTY STATE                              */
-  /* ---------------------------------------------------------------------- */
+  /* ------------------------------------------------------------------------ */
+  /*                                EMPTY STATE                               */
+  /* ------------------------------------------------------------------------ */
 
-  if (!messages.length) {
+  if (connectedCount === 0 && messagesList.length === 0) {
     return (
       <div className="mx-auto max-w-[1500px]">
         <PageHeader
@@ -321,7 +306,7 @@ export function InboxClient({
         />
 
         <GlassCard className="mt-6 flex min-h-[420px] flex-col items-center justify-center p-10 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
             <MessageCircle className="h-7 w-7" />
           </div>
 
@@ -336,7 +321,7 @@ export function InboxClient({
 
           <Link
             href="/dashboard/integrations"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--kora-pink)] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 shadow-[0_8px_20px_rgba(236,22,140,0.3)]"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 shadow-[var(--brand-primary-shadow)]"
           >
             Connect an Account
             <ArrowUpRight className="h-4 w-4" />
@@ -355,7 +340,7 @@ export function InboxClient({
       {/* HEADER */}
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] px-3 py-1 text-xs font-semibold text-[var(--kora-pink)]">
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-3 py-1 text-xs font-semibold text-[var(--brand-primary)]">
             <InboxIcon className="h-3.5 w-3.5" />
             <span>Unified Community Hub</span>
           </div>
@@ -365,7 +350,7 @@ export function InboxClient({
               Inbox
             </h1>
             {counts.all > 0 && (
-              <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-[var(--kora-pink)] px-2 text-xs font-bold text-white shadow-[0_4px_12px_rgba(236,22,140,0.3)]">
+              <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-[var(--brand-primary)] px-2 text-xs font-bold text-white shadow-[var(--brand-primary-shadow)]">
                 {counts.all}
               </span>
             )}
@@ -409,7 +394,7 @@ export function InboxClient({
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all ${
                 active
-                  ? "border-[var(--kora-pink)] bg-[var(--kora-pink)] text-white shadow-[0_6px_16px_rgba(236,22,140,0.25)]"
+                  ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white shadow-[var(--brand-primary-shadow)]"
                   : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:border-[var(--stroke-strong)] hover:text-[var(--fg)]"
               }`}
             >
@@ -504,7 +489,7 @@ export function InboxClient({
                   >
                     {/* ACTIVE ACCENT BAR */}
                     {active && (
-                      <span className="absolute inset-y-0 left-0 w-1 rounded-r-full bg-[var(--kora-pink)]" />
+                      <span className="absolute inset-y-0 left-0 w-1 rounded-r-full bg-[var(--brand-primary)]" />
                     )}
 
                     {/* PLATFORM ICON */}
@@ -557,7 +542,7 @@ export function InboxClient({
                         )}
 
                         {unread && (
-                          <span className="h-2 w-2 rounded-full bg-[var(--kora-pink)] shadow-[0_0_8px_rgba(236,22,140,0.6)]" />
+                          <span className="h-2 w-2 rounded-full bg-[var(--brand-primary)] shadow-[var(--brand-primary-shadow)]" />
                         )}
                       </div>
                     </div>
@@ -623,7 +608,7 @@ export function InboxClient({
                           "Unknown"}
                       </h2>
                       {!selectedMessage.is_read && (
-                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--kora-pink)]" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand-primary)]" />
                       )}
                     </div>
                     <p className="mt-0.5 text-xs text-[var(--fg-4)]">
@@ -724,7 +709,7 @@ export function InboxClient({
                     selectedMessage.reply_body && (
                       <div className="flex justify-end">
                         <div className="max-w-[80%]">
-                          <div className="rounded-2xl rounded-tr-sm bg-[var(--kora-pink)] p-4 text-white shadow-[0_6px_20px_rgba(236,22,140,0.25)]">
+                          <div className="rounded-2xl rounded-tr-sm bg-[var(--brand-primary)] p-4 text-white shadow-[var(--brand-primary-shadow)]">
                             <p className="text-xs leading-relaxed">
                               {selectedMessage.reply_body}
                             </p>
@@ -732,7 +717,7 @@ export function InboxClient({
 
                           <div className="mt-1 flex items-center justify-end gap-1.5 text-[10px] text-[var(--fg-4)]">
                             <span>Delivered</span>
-                            <CheckCheck className="h-3.5 w-3.5 text-[var(--kora-pink)]" />
+                            <CheckCheck className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
                           </div>
                         </div>
                       </div>
@@ -770,7 +755,7 @@ export function InboxClient({
                                 }! Thanks for reaching out 🙌`
                             )
                           }
-                          className="ml-1 inline-flex items-center gap-1.5 rounded-lg border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--kora-pink)] transition hover:opacity-90"
+                          className="ml-1 inline-flex items-center gap-1.5 rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--brand-primary)] transition hover:opacity-90"
                         >
                           <Sparkles className="h-3 w-3" />
                           AI Assist
@@ -780,7 +765,7 @@ export function InboxClient({
                       <button
                         onClick={() => sendReply(selectedMessage)}
                         disabled={!reply.trim()}
-                        className="inline-flex items-center gap-2 rounded-xl bg-[var(--kora-pink)] px-4 py-2 text-xs font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 shadow-[0_4px_16px_rgba(236,22,140,0.3)]"
+                        className="inline-flex items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-4 py-2 text-xs font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 shadow-[var(--brand-primary-shadow)]"
                       >
                         Send
                         <Send className="h-3.5 w-3.5" />
@@ -802,7 +787,7 @@ export function InboxClient({
           ) : (
             /* NO CONVERSATION SELECTED */
             <div className="flex flex-1 flex-col items-center justify-center p-10 text-center">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
                 <MessageCircle className="h-6 w-6" />
               </div>
               <h3 className="font-display text-base font-bold text-[var(--fg)]">

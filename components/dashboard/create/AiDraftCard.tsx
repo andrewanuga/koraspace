@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import {
@@ -48,7 +48,7 @@ export function AiDraftCard({
       <section className="min-h-[420px] rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
         <div className="mb-8 flex justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-7 w-7 rounded-lg bg-[var(--kora-blue-soft)] skeleton-shimmer" />
+            <div className="h-7 w-7 rounded-lg bg-[var(--brand-primary-soft)] skeleton-shimmer" />
             <div className="space-y-1.5">
               <div className="h-3.5 w-20 rounded bg-[var(--panel-fill-2)] skeleton-shimmer" />
               <div className="h-2.5 w-28 rounded bg-[var(--panel-fill-2)] skeleton-shimmer" />
@@ -78,10 +78,10 @@ export function AiDraftCard({
                 <Check className="h-3.5 w-3.5 text-[var(--success)]" />
               ) : (
                 <span className="flex h-3.5 w-3.5 items-center justify-center">
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[var(--kora-blue)]" style={{ animationDelay: `${i * 0.15}s` }} />
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[var(--brand-primary)]" style={{ animationDelay: `${i * 0.15}s` }} />
                 </span>
               )}
-              <span className={step.done ? "text-[var(--fg-3)]" : "text-[var(--kora-blue)]"}>
+              <span className={step.done ? "text-[var(--fg-3)]" : "text-[var(--brand-primary)]"}>
                 {step.label}
               </span>
             </div>
@@ -95,7 +95,7 @@ export function AiDraftCard({
   if (!content) {
     return (
       <section className="flex min-h-[420px] flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--stroke-strong)] bg-[var(--panel-fill)] p-8 text-center">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--kora-blue-soft)] text-[var(--kora-blue)]">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
           <Sparkles className="h-5 w-5" />
         </div>
         <h3 className="text-[15px] font-semibold text-[var(--fg)]">
@@ -115,7 +115,7 @@ export function AiDraftCard({
       {/* Header */}
       <div className="flex items-center justify-between border-b border-[var(--stroke)] px-5 py-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--kora-blue-soft)] text-[var(--kora-blue)]">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
             <Sparkles className="h-3.5 w-3.5" />
           </div>
           <div>
@@ -139,7 +139,7 @@ export function AiDraftCard({
             {hashtags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-lg bg-[var(--kora-blue-soft)] px-2.5 py-1.5 text-[10.5px] text-[var(--kora-blue)]"
+                className="rounded-lg bg-[var(--brand-primary-soft)] px-2.5 py-1.5 text-[10.5px] text-[var(--brand-primary)]"
               >
                 #{tag.replace("#", "")}
               </span>
@@ -155,7 +155,7 @@ export function AiDraftCard({
             onClick={onImprove}
             className="flex items-center gap-2 rounded-lg border border-[var(--stroke)] px-3 py-2 text-[11px] font-medium text-[var(--fg-3)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--fg)]"
           >
-            <WandSparkles className="h-3.5 w-3.5 text-[var(--kora-blue)]" />
+            <WandSparkles className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
             Improve
           </button>
 
@@ -186,7 +186,10 @@ export function AiDraftCard({
 
           <button
             onClick={onUse}
-            className="ml-auto flex items-center gap-2 rounded-lg bg-[var(--kora-pink)] px-4 py-2 text-[11px] font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+            className="ml-auto flex items-center gap-2 rounded-lg bg-[var(--brand-primary)] px-4 py-2 text-[11px] font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+            style={{
+              boxShadow: "var(--brand-primary-shadow)",
+            }}
           >
             Use this
             <ArrowRight className="h-3.5 w-3.5" />

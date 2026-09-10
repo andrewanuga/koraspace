@@ -116,8 +116,8 @@ function GrowthChart({ data }: { data: number[] }) {
       >
         <defs>
           <linearGradient id="growthGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ec168c" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#ec168c" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--brand-primary)" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="var(--brand-primary)" stopOpacity="0" />
           </linearGradient>
         </defs>
 
@@ -146,7 +146,7 @@ function GrowthChart({ data }: { data: number[] }) {
         <path
           d={linePath}
           fill="none"
-          stroke="#ec168c"
+          stroke="var(--brand-primary)"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -159,7 +159,7 @@ function GrowthChart({ data }: { data: number[] }) {
             cx={x(index)}
             cy={y(value)}
             r="4"
-            fill="#ec168c"
+            fill="var(--brand-primary)"
             stroke="#181818"
             strokeWidth="2"
           />
@@ -212,22 +212,27 @@ function AnalyticsStatCard({
   value,
   growth,
   icon: Icon,
-  tone = "pink",
+  tone = "primary",
 }: {
   label: string;
   value: string;
   growth?: string;
   icon: React.ElementType;
-  tone?: "pink" | "blue" | "green" | "purple" | "indigo" | "violet";
+  tone?: "primary" | "pink" | "blue" | "green" | "purple" | "indigo" | "violet";
 }) {
   const toneMap: Record<
     string,
     { bg: string; color: string; border: string }
   > = {
+    primary: {
+      bg: "var(--brand-primary-soft)",
+      color: "var(--brand-primary)",
+      border: "var(--brand-primary-border)",
+    },
     pink: {
-      bg: "var(--kora-pink-soft)",
-      color: "var(--kora-pink)",
-      border: "rgba(236, 22, 140, 0.2)",
+      bg: "var(--brand-primary-soft)",
+      color: "var(--brand-primary)",
+      border: "var(--brand-primary-border)",
     },
     blue: {
       bg: "var(--kora-blue-soft)",
@@ -256,7 +261,7 @@ function AnalyticsStatCard({
     },
   };
 
-  const currentTone = toneMap[tone] || toneMap.pink;
+  const currentTone = toneMap[tone] || toneMap.primary;
 
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--stroke-strong)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.3)]">
@@ -740,8 +745,8 @@ export function AnalyticsClient({
         />
 
         <GlassCard className="mt-6 flex min-h-[420px] flex-col items-center justify-center p-10 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)]">
-            <Plug className="h-7 w-7 text-[var(--kora-pink)]" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)]">
+            <Plug className="h-7 w-7 text-[var(--brand-primary)]" />
           </div>
 
           <h2 className="mt-5 font-display text-xl font-bold text-[var(--fg)]">
@@ -755,7 +760,7 @@ export function AnalyticsClient({
 
           <Link
             href="/dashboard/integrations"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--kora-pink)] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 shadow-[0_8px_20px_rgba(236,22,140,0.3)]"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 shadow-[var(--brand-primary-shadow)]"
           >
             Connect Accounts
             <ArrowUpRight className="h-4 w-4" />
@@ -774,7 +779,7 @@ export function AnalyticsClient({
       {/* HEADER */}
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] px-3 py-1 text-xs font-semibold text-[var(--kora-pink)]">
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-3 py-1 text-xs font-semibold text-[var(--brand-primary)]">
             <Activity className="h-3.5 w-3.5" />
             <span>
               {persona === "creator"
@@ -794,7 +799,7 @@ export function AnalyticsClient({
 
         <div className="flex items-center gap-3">
           <button className="inline-flex items-center gap-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3.5 py-2 text-xs font-medium text-[var(--fg-2)] transition hover:border-[var(--stroke-strong)] hover:bg-[var(--panel-fill-2)]">
-            <CalendarDays className="h-4 w-4 text-[var(--kora-pink)]" />
+            <CalendarDays className="h-4 w-4 text-[var(--brand-primary)]" />
             Last 30 days
             <ChevronRight className="h-3.5 w-3.5 rotate-90 text-[var(--fg-4)]" />
           </button>
@@ -875,7 +880,7 @@ export function AnalyticsClient({
 
             <Link
               href="/dashboard/library"
-              className="text-xs font-semibold text-[var(--kora-pink)] transition hover:underline"
+              className="text-xs font-semibold text-[var(--brand-primary)] transition hover:underline"
             >
               View all
             </Link>
@@ -937,7 +942,7 @@ export function AnalyticsClient({
                       {index + 1}
                     </div>
 
-                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]">
+                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
                       <Sparkles className="h-4 w-4" />
                     </div>
 
@@ -964,7 +969,7 @@ export function AnalyticsClient({
           value={fmtNum(totals.impressions)}
           growth="+24%"
           icon={Eye}
-          tone="pink"
+          tone="primary"
         />
 
         <AnalyticsStatCard
@@ -1120,14 +1125,14 @@ export function AnalyticsClient({
               </div>
             </div>
 
-            <span className="cursor-pointer text-xs font-semibold text-[var(--kora-pink)] transition hover:underline">
+            <span className="cursor-pointer text-xs font-semibold text-[var(--brand-primary)] transition hover:underline">
               Refresh
             </span>
           </div>
 
           <div className="mt-4 divide-y divide-[var(--stroke)]">
             <div className="flex gap-3 py-3.5 first:pt-0">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]">
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
                 <TrendingUp className="h-4 w-4" />
               </div>
               <div className="flex-1">
@@ -1253,7 +1258,7 @@ export function AnalyticsClient({
                   </div>
 
                   <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-center">
-                    <TrendingUp className="mx-auto h-4 w-4 text-[var(--kora-pink)]" />
+                    <TrendingUp className="mx-auto h-4 w-4 text-[var(--brand-primary)]" />
                     <p className="mt-1.5 font-display text-xs font-bold text-[var(--fg)]">
                       {safeNumber(campaign.ctr).toFixed(1)}%
                     </p>

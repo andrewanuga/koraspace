@@ -223,7 +223,7 @@ export function RepurposeClient({
         <div className="pointer-events-none absolute right-0 top-0 h-full w-[45%] opacity-20">
           <div
             className="absolute right-10 top-0 h-72 w-72 rounded-full blur-[140px]"
-            style={{ background: "var(--kora-pink)" }}
+            style={{ background: "var(--brand-primary)" }}
           />
           <div
             className="absolute bottom-0 right-40 h-64 w-64 rounded-full blur-[140px]"
@@ -235,9 +235,9 @@ export function RepurposeClient({
           <div className="mb-4 flex items-center gap-2">
             <div
               className="flex h-8 w-8 items-center justify-center rounded-xl"
-              style={{ background: "var(--kora-pink-soft)" }}
+              style={{ background: "var(--brand-primary-soft)" }}
             >
-              <Sparkles className="h-4 w-4" style={{ color: "var(--kora-pink)" }} />
+              <Sparkles className="h-4 w-4" style={{ color: "var(--brand-primary)" }} />
             </div>
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--fg-4)]">
               AI Content Repurposing
@@ -246,7 +246,7 @@ export function RepurposeClient({
 
           <h1 className="max-w-2xl font-display text-3xl font-bold tracking-tight text-[var(--fg)] md:text-5xl">
             Turn one idea into{" "}
-            <span style={{ color: "var(--kora-pink)" }}>
+            <span style={{ color: "var(--brand-primary)" }}>
               a content ecosystem.
             </span>
           </h1>
@@ -279,11 +279,11 @@ export function RepurposeClient({
                     onClick={() => setSourceMode(item.id as SourceType)}
                     className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all ${
                       active
-                        ? "text-white"
+                        ? "text-white shadow-[var(--brand-primary-shadow)]"
                         : "text-[var(--fg-3)] hover:bg-[var(--hover)] hover:text-[var(--fg)]"
                     }`}
                     style={
-                      active ? { background: "var(--kora-pink)" } : undefined
+                      active ? { background: "var(--brand-primary)" } : undefined
                     }
                   >
                     <Icon className="h-4 w-4" />
@@ -310,7 +310,7 @@ export function RepurposeClient({
                   }}
                   className={`relative flex min-h-[320px] flex-col items-center justify-center rounded-2xl border border-dashed p-8 text-center transition-all ${
                     dragging
-                      ? "border-[var(--kora-pink-border)] bg-[var(--kora-pink-soft)]"
+                      ? "border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)]"
                       : "border-[var(--stroke)] bg-[var(--panel-fill-2)]"
                   }`}
                 >
@@ -325,10 +325,10 @@ export function RepurposeClient({
                   />
 
                   <div
-                    className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
-                    style={{ background: "var(--kora-pink-soft)" }}
+                    className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)]"
+                    style={{ background: "var(--brand-primary-soft)" }}
                   >
-                    <Upload className="h-6 w-6" style={{ color: "var(--kora-pink)" }} />
+                    <Upload className="h-6 w-6" style={{ color: "var(--brand-primary)" }} />
                   </div>
 
                   {file ? (
@@ -378,7 +378,7 @@ Examples:
 - A blog article or essay
 - Notes from a client call
 - A rough stream-of-consciousness idea"
-                  className="min-h-[320px] w-full resize-y rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-5 text-sm leading-relaxed text-[var(--fg)] outline-none transition-all placeholder:text-[var(--fg-4)] focus:border-[var(--kora-pink-border)]"
+                  className="min-h-[320px] w-full resize-y rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-5 text-sm leading-relaxed text-[var(--fg)] outline-none transition-all placeholder:text-[var(--fg-4)] focus:border-[var(--brand-primary-border)]"
                 />
                 <div className="mt-3 flex items-center justify-between text-xs text-[var(--fg-4)]">
                   <span>KoraSpace extracts viral hooks and transforms format structure.</span>
@@ -441,7 +441,7 @@ Examples:
           <GlassCard className="p-5">
             <div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4" style={{ color: "var(--kora-pink)" }} />
+                <Sparkles className="h-4 w-4" style={{ color: "var(--brand-primary)" }} />
                 <h3 className="text-sm font-semibold text-[var(--fg)]">
                   Kora Repurpose AI
                 </h3>
@@ -458,7 +458,7 @@ Examples:
                   type="button"
                   onClick={handleAnalyze}
                   disabled={!canGenerate || analyzing}
-                  className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[var(--kora-blue-border)] bg-[var(--kora-blue-soft)] text-xs font-semibold text-[var(--kora-blue)] transition-all hover:bg-[var(--kora-blue-soft)] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-xs font-semibold text-[var(--brand-primary)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {analyzing ? (
                     <>
@@ -478,8 +478,8 @@ Examples:
                 type="button"
                 disabled={!canGenerate || generating}
                 onClick={handleGenerate}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded-xl text-xs font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
-                style={{ background: "var(--kora-pink)" }}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-xl text-xs font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 shadow-[var(--brand-primary-shadow)]"
+                style={{ background: "var(--brand-primary)" }}
               >
                 {generating ? (
                   <>

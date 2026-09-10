@@ -91,7 +91,7 @@ function Chip({
       onClick={onClick}
       className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
         active
-          ? "border-[var(--kora-pink)] bg-[var(--kora-pink)] text-white shadow-[0_4px_14px_rgba(236,22,140,0.3)]"
+          ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white shadow-[var(--brand-primary-shadow)]"
           : "border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-2)] hover:border-[var(--stroke-strong)] hover:text-[var(--fg)]"
       }`}
     >
@@ -149,7 +149,7 @@ function Field({
         value={value}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
-        className="h-10 w-full rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 text-xs text-[var(--fg)] outline-none transition focus:border-[var(--kora-pink)] focus:ring-2 focus:ring-[var(--kora-pink-soft)]"
+        className="h-10 w-full rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 text-xs text-[var(--fg)] outline-none transition focus:border-[var(--brand-primary)] focus:ring-2 focus:ring-[var(--brand-primary-soft)]"
       />
     </label>
   );
@@ -414,21 +414,21 @@ export function BrandClient({
   return (
     <div className="mx-auto max-w-[1500px] space-y-6 pb-12">
       {/* HERO BANNER */}
-      <div className="relative overflow-hidden rounded-3xl border border-[var(--stroke)] bg-gradient-to-r from-[#380b3d] via-[#521350] to-[#261353] px-6 py-8 text-white shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:px-8">
+      <div className="relative overflow-hidden rounded-3xl border border-[var(--stroke)] bg-gradient-to-r from-[#1e1b4b] via-[#311042] to-[#0f172a] px-6 py-8 text-white shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:px-8">
         <div className="absolute inset-0 pointer-events-none opacity-40">
-          <div className="absolute -right-20 -top-28 h-[320px] w-[320px] rounded-full bg-[var(--kora-pink)] blur-[80px]" />
-          <div className="absolute -bottom-28 left-[30%] h-[260px] w-[260px] rounded-full bg-[var(--kora-blue)] blur-[70px]" />
+          <div className="absolute -right-20 -top-28 h-[320px] w-[320px] rounded-full bg-[var(--brand-primary)] blur-[80px]" />
+          <div className="absolute -bottom-28 left-[30%] h-[260px] w-[260px] rounded-full bg-[var(--brand-primary-soft)] blur-[70px]" />
         </div>
 
         <div className="relative flex flex-col justify-between gap-6 md:flex-row md:items-center">
           <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold text-pink-200 backdrop-blur-sm">
-              <Sparkles className="h-3.5 w-3.5" />
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold text-white/90 backdrop-blur-sm">
+              <Sparkles className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
               <span>Personal Brand Brain</span>
             </div>
 
             <h1 className="font-display text-3xl font-bold tracking-tight text-white md:text-4xl">
-              Brand <span className="text-[var(--kora-pink)]">✦</span>
+              Brand <span className="text-[var(--brand-primary)]">✦</span>
             </h1>
 
             <p className="mt-2 max-w-2xl text-xs leading-relaxed text-white/80 sm:text-sm">
@@ -444,9 +444,9 @@ export function BrandClient({
             className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/15 px-4 py-2.5 text-xs font-bold text-white backdrop-blur-sm transition hover:bg-white/25 disabled:opacity-60 shadow-[0_4px_14px_rgba(0,0,0,0.2)]"
           >
             {generating ? (
-              <Loader2 className="h-4 w-4 animate-spin text-pink-300" />
+              <Loader2 className="h-4 w-4 animate-spin text-white/90" />
             ) : (
-              <WandSparkles className="h-4 w-4 text-pink-300" />
+              <WandSparkles className="h-4 w-4 text-white/90" />
             )}
             {generating ? "Analyzing Brand..." : "Refresh Brand Intelligence"}
           </button>
@@ -464,7 +464,7 @@ export function BrandClient({
               onClick={() => setActiveTab(tab.id)}
               className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl border px-4 py-2.5 text-xs font-semibold transition-all ${
                 active
-                  ? "border-[var(--kora-pink)] bg-[var(--kora-pink)] text-white shadow-[0_6px_16px_rgba(236,22,140,0.25)]"
+                  ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white shadow-[var(--brand-primary-shadow)]"
                   : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:border-[var(--stroke-strong)] hover:text-[var(--fg)]"
               }`}
             >
@@ -484,7 +484,7 @@ export function BrandClient({
             action={
               <button
                 onClick={() => setEditingProfile(!editingProfile)}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--kora-pink)] hover:underline"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand-primary)] hover:underline"
               >
                 {editingProfile ? (
                   <X className="h-3.5 w-3.5" />
@@ -497,7 +497,7 @@ export function BrandClient({
           >
             <div className="flex flex-col items-center text-center">
               <div className="relative">
-                <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[var(--stroke)] bg-gradient-to-br from-[var(--kora-pink)] to-[var(--kora-blue)] font-display text-xl font-bold text-white shadow-lg">
+                <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[var(--stroke)] bg-gradient-to-br from-[var(--brand-primary)] to-[var(--kora-blue)] font-display text-xl font-bold text-white shadow-lg">
                   {localProfile.avatar_url ? (
                     <img
                       src={localProfile.avatar_url}
@@ -521,7 +521,7 @@ export function BrandClient({
                   : "@yourhandle"}
               </p>
 
-              <span className="mt-2.5 inline-block rounded-full border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] px-3 py-0.5 text-[11px] font-semibold text-[var(--kora-pink)]">
+              <span className="mt-2.5 inline-block rounded-full border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-3 py-0.5 text-[11px] font-semibold text-[var(--brand-primary)]">
                 {localProfile.role || "Creator"}
               </span>
             </div>
@@ -624,13 +624,13 @@ export function BrandClient({
                         bio: event.target.value,
                       })
                     }
-                    className="min-h-[90px] w-full resize-none rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-2.5 text-xs text-[var(--fg)] outline-none focus:border-[var(--kora-pink)]"
+                    className="min-h-[90px] w-full resize-none rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-2.5 text-xs text-[var(--fg)] outline-none focus:border-[var(--brand-primary)]"
                   />
                 </label>
                 <button
                   onClick={saveProfile}
                   disabled={saving}
-                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--kora-pink)] py-2.5 text-xs font-bold text-white shadow-[0_4px_14px_rgba(236,22,140,0.3)] transition hover:opacity-90 disabled:opacity-60"
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--brand-primary)] py-2.5 text-xs font-bold text-white shadow-[var(--brand-primary-shadow)] transition hover:opacity-90 disabled:opacity-60"
                 >
                   {saving ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -715,11 +715,11 @@ export function BrandClient({
                     onChange={(e) => setNewPreference(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && addPreference()}
                     placeholder="Add topic (e.g. AI tools, Tech Career)..."
-                    className="h-9 flex-1 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--kora-pink)]"
+                    className="h-9 flex-1 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--brand-primary)]"
                   />
                   <button
                     onClick={addPreference}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--kora-pink)] text-white hover:opacity-90"
+                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--brand-primary)] text-white hover:opacity-90"
                   >
                     <Plus className="h-4 w-4" />
                   </button>
@@ -732,7 +732,7 @@ export function BrandClient({
                 action={
                   <button
                     onClick={() => setActiveTab("voice")}
-                    className="text-xs font-semibold text-[var(--kora-pink)] hover:underline"
+                    className="text-xs font-semibold text-[var(--brand-primary)] hover:underline"
                   >
                     Edit
                   </button>
@@ -752,7 +752,7 @@ export function BrandClient({
                 {localProfile.voice_summary && (
                   <div className="mt-4 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3">
                     <div className="flex items-start gap-2">
-                      <PenLine className="mt-0.5 h-3.5 w-3.5 text-[var(--kora-pink)] flex-shrink-0" />
+                      <PenLine className="mt-0.5 h-3.5 w-3.5 text-[var(--brand-primary)] flex-shrink-0" />
                       <p className="text-xs leading-relaxed text-[var(--fg-2)]">
                         {localProfile.voice_summary}
                       </p>
@@ -767,7 +767,7 @@ export function BrandClient({
                 action={
                   <button
                     onClick={() => setActiveTab("memory")}
-                    className="text-xs font-semibold text-[var(--kora-pink)] hover:underline"
+                    className="text-xs font-semibold text-[var(--brand-primary)] hover:underline"
                   >
                     Manage
                   </button>
@@ -803,7 +803,7 @@ export function BrandClient({
                 action={
                   <button
                     onClick={() => setActiveTab("knowledge")}
-                    className="text-xs font-semibold text-[var(--kora-pink)] hover:underline"
+                    className="text-xs font-semibold text-[var(--brand-primary)] hover:underline"
                   >
                     Manage
                   </button>
@@ -858,7 +858,7 @@ export function BrandClient({
                     {localWritingStyles.map((style) => (
                       <div
                         key={style.id}
-                        className="group flex items-center gap-1.5 rounded-full border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] px-3 py-1 text-xs font-medium text-[var(--kora-pink)]"
+                        className="group flex items-center gap-1.5 rounded-full border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-3 py-1 text-xs font-medium text-[var(--brand-primary)]"
                       >
                         <span>{style.label}</span>
                         <button
@@ -877,11 +877,11 @@ export function BrandClient({
                       onChange={(e) => setNewStyle(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && addWritingStyle()}
                       placeholder="Add trait (e.g. Sharp, Analytical)..."
-                      className="h-10 flex-1 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--kora-pink)]"
+                      className="h-10 flex-1 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--brand-primary)]"
                     />
                     <button
                       onClick={() => addWritingStyle()}
-                      className="rounded-xl bg-[var(--kora-pink)] px-4 text-xs font-bold text-white hover:opacity-90"
+                      className="rounded-xl bg-[var(--brand-primary)] px-4 text-xs font-bold text-white hover:opacity-90"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
@@ -922,13 +922,13 @@ export function BrandClient({
                       })
                     }
                     placeholder="Example: Clear, practical, and conversational. I avoid corporate buzzwords and prefer short paragraphs with bullet points..."
-                    className="mt-3 min-h-[160px] w-full resize-none rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-xs leading-relaxed text-[var(--fg)] outline-none focus:border-[var(--kora-pink)]"
+                    className="mt-3 min-h-[160px] w-full resize-none rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-xs leading-relaxed text-[var(--fg)] outline-none focus:border-[var(--brand-primary)]"
                   />
 
                   <button
                     onClick={saveProfile}
                     disabled={saving}
-                    className="mt-3 inline-flex items-center gap-2 rounded-xl bg-[var(--kora-pink)] px-4 py-2 text-xs font-bold text-white shadow-[0_4px_14px_rgba(236,22,140,0.3)] transition hover:opacity-90 disabled:opacity-60"
+                    className="mt-3 inline-flex items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-4 py-2 text-xs font-bold text-white shadow-[var(--brand-primary-shadow)] transition hover:opacity-90 disabled:opacity-60"
                   >
                     {saving ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -976,11 +976,11 @@ export function BrandClient({
                       value={newPreference}
                       onChange={(e) => setNewPreference(e.target.value)}
                       placeholder="Add a topic..."
-                      className="h-10 flex-1 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--kora-pink)]"
+                      className="h-10 flex-1 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--brand-primary)]"
                     />
                     <button
                       onClick={addPreference}
-                      className="rounded-xl bg-[var(--kora-pink)] px-4 text-xs font-bold text-white hover:opacity-90"
+                      className="rounded-xl bg-[var(--brand-primary)] px-4 text-xs font-bold text-white hover:opacity-90"
                     >
                       Add
                     </button>
@@ -989,7 +989,7 @@ export function BrandClient({
 
                 <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-5">
                   <div className="flex items-center gap-2">
-                    <Lightbulb className="h-4 w-4 text-[var(--kora-pink)]" />
+                    <Lightbulb className="h-4 w-4 text-[var(--brand-primary)]" />
                     <h4 className="font-display text-xs font-bold text-[var(--fg)]">
                       AI Content Resonance Checklist
                     </h4>
@@ -1052,7 +1052,7 @@ export function BrandClient({
                         onClick={() => toggleMemory(memory)}
                         className={`mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition ${
                           memory.enabled
-                            ? "border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]"
+                            ? "border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]"
                             : "bg-[var(--panel-fill)] text-[var(--fg-4)]"
                         }`}
                       >
@@ -1110,19 +1110,19 @@ export function BrandClient({
                     value={newMemoryTitle}
                     onChange={(e) => setNewMemoryTitle(e.target.value)}
                     placeholder="Memory title (e.g. Tone rule)"
-                    className="mt-3 h-10 w-full rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--kora-pink)]"
+                    className="mt-3 h-10 w-full rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--brand-primary)]"
                   />
 
                   <textarea
                     value={newMemoryContent}
                     onChange={(e) => setNewMemoryContent(e.target.value)}
                     placeholder="Example: I prefer practical step-by-step advice and never use clickbait language."
-                    className="mt-2.5 min-h-[100px] w-full resize-none rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3 text-xs leading-relaxed text-[var(--fg)] outline-none focus:border-[var(--kora-pink)]"
+                    className="mt-2.5 min-h-[100px] w-full resize-none rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3 text-xs leading-relaxed text-[var(--fg)] outline-none focus:border-[var(--brand-primary)]"
                   />
 
                   <button
                     onClick={addMemory}
-                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--kora-pink)] py-2 text-xs font-bold text-white shadow-[0_4px_14px_rgba(236,22,140,0.3)] transition hover:opacity-90"
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--brand-primary)] py-2 text-xs font-bold text-white shadow-[var(--brand-primary-shadow)] transition hover:opacity-90"
                   >
                     <Plus className="h-4 w-4" />
                     Add to AI Memory
@@ -1195,7 +1195,7 @@ export function BrandClient({
                               href={item.source_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-[11px] text-[var(--kora-pink)] hover:underline"
+                              className="inline-flex items-center gap-1 text-[11px] text-[var(--brand-primary)] hover:underline"
                             >
                               Source <ExternalLink className="h-3 w-3" />
                             </a>
@@ -1219,7 +1219,7 @@ export function BrandClient({
                     value={newKnowledgeTitle}
                     onChange={(e) => setNewKnowledgeTitle(e.target.value)}
                     placeholder="Title (e.g. Product Pitch)"
-                    className="mt-3 h-10 w-full rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--kora-pink)]"
+                    className="mt-3 h-10 w-full rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--brand-primary)]"
                   />
 
                   <div className="mt-2.5 flex gap-2">
@@ -1238,7 +1238,7 @@ export function BrandClient({
                       value={newKnowledgeUrl}
                       onChange={(e) => setNewKnowledgeUrl(e.target.value)}
                       placeholder="URL (optional)"
-                      className="h-9 flex-1 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--kora-pink)]"
+                      className="h-9 flex-1 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 text-xs text-[var(--fg)] outline-none focus:border-[var(--brand-primary)]"
                     />
                   </div>
 
@@ -1246,12 +1246,12 @@ export function BrandClient({
                     value={newKnowledgeContent}
                     onChange={(e) => setNewKnowledgeContent(e.target.value)}
                     placeholder="Add the core knowledge, facts, or guidelines..."
-                    className="mt-2.5 min-h-[110px] w-full resize-none rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3 text-xs leading-relaxed text-[var(--fg)] outline-none focus:border-[var(--kora-pink)]"
+                    className="mt-2.5 min-h-[110px] w-full resize-none rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3 text-xs leading-relaxed text-[var(--fg)] outline-none focus:border-[var(--brand-primary)]"
                   />
 
                   <button
                     onClick={addKnowledge}
-                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--kora-pink)] py-2 text-xs font-bold text-white shadow-[0_4px_14px_rgba(236,22,140,0.3)] transition hover:opacity-90"
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--brand-primary)] py-2 text-xs font-bold text-white shadow-[var(--brand-primary-shadow)] transition hover:opacity-90"
                   >
                     <Plus className="h-4 w-4" />
                     Save Knowledge
@@ -1266,7 +1266,7 @@ export function BrandClient({
             <SectionCard
               title="Brand Intelligence"
               subtitle="Automated strategic insights generated from your Brand Brain profile"
-              action={<Sparkles className="h-4 w-4 text-[var(--kora-pink)]" />}
+              action={<Sparkles className="h-4 w-4 text-[var(--brand-primary)]" />}
             >
               <div className="grid gap-3.5 md:grid-cols-2">
                 {localInsights.map((insight) => (
@@ -1274,7 +1274,7 @@ export function BrandClient({
                     key={insight.id || insight.title}
                     className="flex items-start gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4"
                   >
-                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--kora-pink-soft)] bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]">
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
                       <Zap className="h-4 w-4" />
                     </div>
 
@@ -1286,7 +1286,7 @@ export function BrandClient({
                         <Pill
                           tone={
                             insight.priority === "high"
-                              ? "pink"
+                              ? "primary"
                               : insight.priority === "medium"
                               ? "blue"
                               : "neutral"
@@ -1357,7 +1357,7 @@ function MemorySummary({
   return (
     <div className="flex items-center justify-between rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 py-2.5">
       <div className="flex items-center gap-2.5">
-        <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[var(--panel-fill)] text-[var(--kora-pink)]">
+        <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[var(--panel-fill)] text-[var(--brand-primary)]">
           <Icon className="h-3.5 w-3.5" />
         </div>
         <span className="text-xs text-[var(--fg-2)]">{label}</span>
@@ -1366,7 +1366,7 @@ function MemorySummary({
         className={`text-xs font-bold ${
           value === "Active" || value === "On"
             ? "text-[var(--success)]"
-            : "text-[var(--kora-pink)]"
+            : "text-[var(--brand-primary)]"
         }`}
       >
         {value}

@@ -51,7 +51,7 @@ export function RepurposeHistory({
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-medium text-[var(--fg)] group-hover:text-[var(--kora-pink)]">
+                <p className="truncate text-xs font-medium text-[var(--fg)] group-hover:text-[var(--brand-primary)]">
                   {project.title}
                 </p>
                 <div className="mt-0.5 flex items-center gap-2 text-[10px] text-[var(--fg-4)]">

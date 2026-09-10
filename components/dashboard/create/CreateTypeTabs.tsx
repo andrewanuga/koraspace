@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   FileText,
@@ -39,7 +39,7 @@ export function CreateTypeTabs({ value, onChange }: CreateTypeTabsProps) {
               text-[12px] font-semibold transition-all duration-200
               ${
                 active
-                  ? "border-[var(--kora-pink-border)] bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]"
+                  ? "border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]"
                   : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:border-[var(--stroke-strong)] hover:bg-[var(--hover)] hover:text-[var(--fg)]"
               }
             `}

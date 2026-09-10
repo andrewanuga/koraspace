@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 /* -------------------------------------------------------------------------- */
 
 type AccentTone =
+  | "primary"
+  | "accent"
   | "pink"
   | "blue"
   | "success"
@@ -29,16 +31,28 @@ const TONE_MAP: Record<
     border: string;
   }
 > = {
+  primary: {
+    color: "var(--brand-primary)",
+    bg: "var(--brand-primary-soft)",
+    border: "var(--brand-primary-border)",
+  },
+
+  accent: {
+    color: "var(--brand-primary)",
+    bg: "var(--brand-primary-soft)",
+    border: "var(--brand-primary-border)",
+  },
+
   pink: {
     color: "var(--kora-pink)",
     bg: "var(--kora-pink-soft)",
-    border: "rgba(255, 0, 122, 0.28)",
+    border: "rgba(236, 72, 153, 0.28)",
   },
 
   blue: {
     color: "var(--kora-blue)",
     bg: "var(--kora-blue-soft)",
-    border: "rgba(0, 153, 255, 0.28)",
+    border: "rgba(59, 130, 246, 0.28)",
   },
 
   success: {
@@ -84,15 +98,15 @@ const TONE_MAP: Record<
   },
 
   indigo: {
-    color: "var(--kora-blue)",
-    bg: "var(--kora-blue-soft)",
-    border: "rgba(0, 153, 255, 0.28)",
+    color: "var(--brand-primary)",
+    bg: "var(--brand-primary-soft)",
+    border: "var(--brand-primary-border)",
   },
 
   violet: {
-    color: "var(--kora-pink)",
-    bg: "var(--kora-pink-soft)",
-    border: "rgba(255, 0, 122, 0.28)",
+    color: "var(--brand-primary)",
+    bg: "var(--brand-primary-soft)",
+    border: "var(--brand-primary-border)",
   },
 
   muted: {
@@ -232,7 +246,7 @@ export function PageHeader({
                   font-semibold
                   uppercase
                   tracking-[0.22em]
-                  text-[var(--kora-pink)]
+                  text-[var(--brand-primary)]
                 "
               >
                 {eyebrow}
@@ -326,7 +340,7 @@ export function SectionHeader({
               rounded-xl
               border border-[var(--stroke)]
               bg-[var(--panel-fill-2)]
-              text-[var(--kora-pink)]
+              text-[var(--brand-primary)]
             "
           >
             {icon}
@@ -389,11 +403,11 @@ export function StatTile({
   value,
   delta,
   icon: Icon,
-  tone = "pink",
+  tone = "primary",
   footer,
   className,
 }: StatTileProps) {
-  const theme = TONE_MAP[tone];
+  const theme = TONE_MAP[tone] || TONE_MAP.primary;
 
   return (
     <GlassCard
@@ -487,7 +501,7 @@ interface PrimaryButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 
-  tone?: "pink" | "blue";
+  tone?: "primary" | "pink" | "blue";
 
   size?: "sm" | "md" | "lg";
 
@@ -497,7 +511,7 @@ interface PrimaryButtonProps
 export function PrimaryButton({
   className,
   children,
-  tone = "pink",
+  tone = "primary",
   size = "md",
   fullWidth = false,
   ...props
@@ -511,7 +525,16 @@ export function PrimaryButton({
   const color =
     tone === "blue"
       ? "var(--kora-blue)"
-      : "var(--kora-pink)";
+      : tone === "pink"
+      ? "var(--kora-pink)"
+      : "var(--brand-primary)";
+
+  const shadow =
+    tone === "blue"
+      ? "var(--kora-blue-shadow)"
+      : tone === "pink"
+      ? "var(--kora-pink-shadow)"
+      : "var(--brand-primary-shadow)";
 
   return (
     <button
@@ -532,7 +555,7 @@ export function PrimaryButton({
 
         "focus-visible:outline-none",
         "focus-visible:ring-2",
-        "focus-visible:ring-[var(--kora-pink)]/40",
+        "focus-visible:ring-[var(--brand-primary)]/40",
 
         "disabled:pointer-events-none",
         "disabled:opacity-50",
@@ -545,11 +568,7 @@ export function PrimaryButton({
       )}
       style={{
         background: color,
-
-        boxShadow:
-          tone === "pink"
-            ? "0 8px 24px rgba(255,0,122,0.18)"
-            : "0 8px 24px rgba(0,153,255,0.18)",
+        boxShadow: shadow,
       }}
       {...props}
     >
@@ -566,7 +585,7 @@ interface SecondaryButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 
-  tone?: "neutral" | "pink" | "blue";
+  tone?: "primary" | "neutral" | "pink" | "blue";
 
   size?: "sm" | "md";
 
@@ -591,6 +610,8 @@ export function SecondaryButton({
       ? TONE_MAP.pink
       : tone === "blue"
       ? TONE_MAP.blue
+      : tone === "primary"
+      ? TONE_MAP.primary
       : TONE_MAP.neutral;
 
   return (
@@ -608,7 +629,7 @@ export function SecondaryButton({
 
         "focus-visible:outline-none",
         "focus-visible:ring-2",
-        "focus-visible:ring-[var(--kora-pink)]/30",
+        "focus-visible:ring-[var(--brand-primary)]/30",
 
         "disabled:pointer-events-none",
         "disabled:opacity-50",
@@ -712,9 +733,9 @@ export function IconButton({
 
         active
           ? [
-              "border-[var(--kora-pink)]/30",
-              "bg-[var(--kora-pink-soft)]",
-              "text-[var(--kora-pink)]",
+              "border-[var(--brand-primary-border)]",
+              "bg-[var(--brand-primary-soft)]",
+              "text-[var(--brand-primary)]",
             ]
           : [
               "border-[var(--stroke)]",
@@ -755,12 +776,12 @@ interface PillProps {
 
 export function Pill({
   children,
-  tone = "pink",
+  tone = "primary",
   size = "md",
   dot = false,
   className,
 }: PillProps) {
-  const theme = TONE_MAP[tone];
+  const theme = TONE_MAP[tone] || TONE_MAP.primary;
 
   return (
     <span
@@ -877,7 +898,7 @@ export function TabGroup({
                 className={cn(
                   "flex items-center",
                   isActive
-                    ? "text-[var(--kora-pink)]"
+                    ? "text-[var(--brand-primary)]"
                     : ""
                 )}
               >
@@ -894,7 +915,7 @@ export function TabGroup({
                   "text-[9px] font-semibold",
 
                   isActive
-                    ? "bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]"
+                    ? "bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]"
                     : "bg-[var(--panel-fill-3)] text-[var(--fg-4)]"
                 )}
               >
@@ -952,10 +973,10 @@ export function EmptyState({
 
             rounded-2xl
 
-            border border-[var(--kora-pink)]/20
-            bg-[var(--kora-pink-soft)]
+            border border-[var(--brand-primary-border)]
+            bg-[var(--brand-primary-soft)]
 
-            text-[var(--kora-pink)]
+            text-[var(--brand-primary)]
           "
         >
           {icon}

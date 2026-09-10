@@ -247,7 +247,7 @@ export function IdeasClient({
                   inline-flex shrink-0 items-center gap-2 rounded-xl border px-4 py-2.5
                   text-[12px] font-medium transition-all
                   ${active
-                    ? "border-transparent bg-[var(--kora-pink)] text-white"
+                    ? "border-transparent bg-[var(--brand-primary)] text-white shadow-[var(--brand-primary-shadow)]"
                     : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:border-[var(--stroke-strong)] hover:text-[var(--fg)]"
                   }
                 `}
@@ -269,7 +269,7 @@ export function IdeasClient({
           {/* Section header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
                 <TrendingUp className="h-4 w-4" />
               </div>
               <div>
@@ -295,7 +295,7 @@ export function IdeasClient({
               <button
                 onClick={refresh}
                 disabled={busy}
-                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[var(--kora-pink)] px-4 py-2.5 text-[13px] font-semibold text-white"
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-4 py-2.5 text-[13px] font-semibold text-white shadow-[var(--brand-primary-shadow)]"
               >
                 <RefreshCw className="h-4 w-4" />
                 Refresh trends
@@ -308,7 +308,7 @@ export function IdeasClient({
             {filteredTrends.map((trend) => {
               const momentum    = getMomentumConfig(trend.momentum);
               const account     = findAccount(trend.suggested_account_id);
-              const PlatformIcon = getPlatformIcon(account?.platform);
+              const PlatformIcon = account ? getPlatformIcon(account.platform) : Sparkles;
               const isSaved     = savedIds.includes(trend.id);
 
               return (
@@ -318,7 +318,7 @@ export function IdeasClient({
                     group relative flex min-h-[260px] cursor-pointer flex-col
                     overflow-hidden p-5 transition-all
                     hover:-translate-y-[2px]
-                    hover:border-[var(--kora-pink-border)]
+                    hover:border-[var(--brand-primary-border)]
                     hover:shadow-[0_18px_40px_rgba(0,0,0,0.2)]
                   "
                   onClick={() => setSelectedTrend(trend)}
@@ -343,12 +343,12 @@ export function IdeasClient({
 
                       <button
                         onClick={(e) => { e.stopPropagation(); toggleSaved(trend.id); }}
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--fg-4)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--kora-pink)]"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--fg-4)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--brand-primary)]"
                       >
                         <Bookmark
                           className="h-4 w-4"
                           fill={isSaved ? "currentColor" : "none"}
-                          style={isSaved ? { color: "var(--kora-pink)" } : undefined}
+                          style={isSaved ? { color: "var(--brand-primary)" } : undefined}
                         />
                       </button>
                     </div>
@@ -360,7 +360,7 @@ export function IdeasClient({
                       <h3 className="text-[16px] font-semibold leading-snug text-[var(--fg)]">
                         {trend.topic}
                       </h3>
-                      <div className="shrink-0 rounded-lg bg-[var(--kora-pink-soft)] px-2 py-1 text-[12px] font-bold text-[var(--kora-pink)]">
+                      <div className="shrink-0 rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-2 py-1 text-[12px] font-bold text-[var(--brand-primary)]">
                         {trend.score ?? "—"}
                       </div>
                     </div>
@@ -375,8 +375,8 @@ export function IdeasClient({
                   {/* Footer */}
                   <div className="mt-auto pt-5">
                     {account && (
-                      <div className="mb-4 flex items-center gap-2 rounded-xl border border-[var(--kora-blue-border)] bg-[var(--kora-blue-soft)] px-3 py-2">
-                        <PlatformIcon className="h-3.5 w-3.5 text-[var(--kora-blue)]" />
+                      <div className="mb-4 flex items-center gap-2 rounded-xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-3 py-2">
+                        <PlatformIcon className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
                         <span className="text-[11px] text-[var(--fg-3)]">
                           Opportunity for{" "}
                           <span className="font-medium text-[var(--fg)]">{formatPlatform(account.platform)}</span>
@@ -388,7 +388,7 @@ export function IdeasClient({
                       {trend.source_name && (
                         <span className="text-[10.5px] text-[var(--fg-4)]">{trend.source_name}</span>
                       )}
-                      <div className="ml-auto flex items-center gap-1 text-[11px] font-medium text-[var(--kora-pink)]">
+                      <div className="ml-auto flex items-center gap-1 text-[11px] font-medium text-[var(--brand-primary)]">
                         Explore
                         <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                       </div>
@@ -404,7 +404,7 @@ export function IdeasClient({
             <GlassCard className="p-5">
               <div className="mb-5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-[var(--kora-pink)]" />
+                  <Sparkles className="h-4 w-4 text-[var(--brand-primary)]" />
                   <div>
                     <h3 className="text-[14px] font-semibold text-[var(--fg)]">Fresh ideas for you</h3>
                     <p className="text-[11px] text-[var(--fg-4)]">Generated from your prompt</p>
@@ -424,11 +424,11 @@ export function IdeasClient({
                       flex items-center justify-between rounded-xl
                       border border-[var(--stroke)] bg-[var(--panel-fill)]
                       px-4 py-3 transition-colors
-                      hover:border-[var(--kora-pink-border)] hover:bg-[var(--hover)]
+                      hover:border-[var(--brand-primary-border)] hover:bg-[var(--hover)]
                     "
                   >
                     <div className="flex items-center gap-3">
-                      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--kora-pink-soft)] text-[11px] font-semibold text-[var(--kora-pink)]">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[11px] font-semibold text-[var(--brand-primary)]">
                         {i + 1}
                       </span>
                       <span className="text-[12.5px] text-[var(--fg-2)]">{idea}</span>
@@ -448,7 +448,7 @@ export function IdeasClient({
           <GlassCard className="overflow-hidden">
             <div className="border-b border-[var(--stroke)] p-5">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
                   <WandSparkles className="h-4 w-4" />
                 </div>
                 <div>
@@ -472,7 +472,7 @@ export function IdeasClient({
                   border border-[var(--stroke)] bg-[var(--panel-fill-2)]
                   p-3 text-[12px] text-[var(--fg)] outline-none
                   placeholder:text-[var(--fg-4)] transition-all
-                  focus:border-[var(--kora-pink-border)]
+                  focus:border-[var(--brand-primary-border)]
                 "
               />
 
@@ -481,8 +481,8 @@ export function IdeasClient({
                 disabled={generatingIdeas}
                 className="
                   mt-3 flex h-10 w-full items-center justify-center gap-2
-                  rounded-xl bg-[var(--kora-pink)] text-[12px] font-semibold text-white
-                  transition-all hover:brightness-110 disabled:opacity-60
+                  rounded-xl bg-[var(--brand-primary)] text-[12px] font-semibold text-white
+                  transition-all hover:brightness-110 disabled:opacity-60 shadow-[var(--brand-primary-shadow)]
                 "
               >
                 {generatingIdeas ? (
@@ -503,7 +503,7 @@ export function IdeasClient({
                       className="
                         rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)]
                         px-2.5 py-1.5 text-[10.5px] text-[var(--fg-3)]
-                        transition-colors hover:border-[var(--kora-pink-border)] hover:text-[var(--fg)]
+                        transition-colors hover:border-[var(--brand-primary-border)] hover:text-[var(--fg)]
                       "
                     >
                       {p}
@@ -521,7 +521,7 @@ export function IdeasClient({
                 <h3 className="text-[14px] font-semibold text-[var(--fg)]">Popular topics</h3>
                 <p className="text-[10.5px] text-[var(--fg-4)]">Moving fastest right now</p>
               </div>
-              <TrendingUp className="h-4 w-4 text-[var(--kora-pink)]" />
+              <TrendingUp className="h-4 w-4 text-[var(--brand-primary)]" />
             </div>
 
             <div className="space-y-1">
@@ -563,8 +563,8 @@ export function IdeasClient({
                 href={`/dashboard/create?idea=${encodeURIComponent(popularTopics[0].topic)}`}
                 className="
                   mt-4 flex h-10 items-center justify-center gap-2
-                  rounded-xl bg-[var(--kora-pink)] text-[12px] font-semibold text-white
-                  transition-all hover:brightness-110
+                  rounded-xl bg-[var(--brand-primary)] text-[12px] font-semibold text-white
+                  transition-all hover:brightness-110 shadow-[var(--brand-primary-shadow)]
                 "
               >
                 Create content <ArrowRight className="h-4 w-4" />
@@ -590,7 +590,7 @@ export function IdeasClient({
             {/* Close */}
             <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-[var(--kora-pink)]" />
+                <Sparkles className="h-4 w-4 text-[var(--brand-primary)]" />
                 <span className="text-[11px] font-medium uppercase tracking-[0.15em] text-[var(--fg-4)]">
                   Trend intelligence
                 </span>
@@ -609,7 +609,7 @@ export function IdeasClient({
                 <h2 className="text-2xl font-semibold text-[var(--fg)]">{selectedTrend.topic}</h2>
                 <p className="mt-2 text-sm leading-relaxed text-[var(--fg-3)]">{selectedTrend.summary}</p>
               </div>
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--kora-pink-soft)] text-lg font-bold text-[var(--kora-pink)]">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-lg font-bold text-[var(--brand-primary)]">
                 {selectedTrend.score ?? "—"}
               </div>
             </div>
@@ -627,16 +627,16 @@ export function IdeasClient({
                 <p className="mt-1 text-[12px] font-medium text-[var(--fg)]">{selectedTrend.score ?? "—"}</p>
               </div>
               <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3">
-                <MessageCircle className="mb-2 h-4 w-4 text-[var(--kora-pink)]" />
+                <MessageCircle className="mb-2 h-4 w-4 text-[var(--brand-primary)]" />
                 <p className="text-[10px] text-[var(--fg-4)]">Source</p>
                 <p className="mt-1 truncate text-[12px] font-medium text-[var(--fg)]">{selectedTrend.source_name || "Web"}</p>
               </div>
             </div>
 
             {/* Kora's take */}
-            <div className="mb-6 rounded-2xl border border-[var(--kora-pink-border)] bg-[var(--kora-pink-soft)] p-5">
+            <div className="mb-6 rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] p-5">
               <div className="mb-2 flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-[var(--kora-pink)]" />
+                <Sparkles className="h-4 w-4 text-[var(--brand-primary)]" />
                 <span className="text-[12px] font-semibold text-[var(--fg)]">Kora&apos;s take</span>
               </div>
               <p className="text-[12.5px] leading-relaxed text-[var(--fg-2)]">
@@ -651,8 +651,8 @@ export function IdeasClient({
                 href={`/dashboard/create?idea=${encodeURIComponent(selectedTrend.topic)}`}
                 className="
                   flex h-11 items-center justify-center gap-2
-                  rounded-xl bg-[var(--kora-pink)] text-[13px] font-semibold text-white
-                  transition-all hover:brightness-110
+                  rounded-xl bg-[var(--brand-primary)] text-[13px] font-semibold text-white
+                  transition-all hover:brightness-110 shadow-[var(--brand-primary-shadow)]
                 "
               >
                 <Sparkles className="h-4 w-4" />

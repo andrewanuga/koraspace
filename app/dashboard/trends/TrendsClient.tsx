@@ -320,7 +320,7 @@ export function TrendsClient({
               font-medium
               text-[var(--fg)]
               transition-all
-              hover:border-[var(--kora-pink)]/40
+              hover:border-[var(--brand-primary)]/40
               hover:bg-[var(--hover)]
               disabled:opacity-60
             "
@@ -379,9 +379,9 @@ export function TrendsClient({
                 outline-none
                 transition-all
                 placeholder:text-[var(--fg-4)]
-                focus:border-[var(--kora-blue)]/60
+                focus:border-[var(--brand-primary)]/60
                 focus:ring-4
-                focus:ring-[var(--kora-blue)]/10
+                focus:ring-[var(--brand-primary)]/10
               "
             />
 
@@ -471,10 +471,10 @@ export function TrendsClient({
                   ${
                     active
                       ? `
-                        border-[var(--kora-pink)]/40
-                        bg-[var(--kora-pink)]
+                        border-[var(--brand-primary)]/40
+                        bg-[var(--brand-primary)]
                         text-white
-                        shadow-[0_8px_24px_rgba(236,72,153,0.18)]
+                        shadow-[var(--brand-primary-shadow)]
                       `
                       : `
                         border-[var(--stroke)]
@@ -525,8 +525,8 @@ export function TrendsClient({
                     items-center
                     justify-center
                     rounded-lg
-                    bg-[var(--kora-pink-soft)]
-                    text-[var(--kora-pink)]
+                    bg-[var(--brand-primary-soft)]
+                    text-[var(--brand-primary)]
                   "
                 >
                   <TrendingUp className="h-4 w-4" />
@@ -579,7 +579,7 @@ export function TrendsClient({
                   items-center
                   gap-2
                   rounded-xl
-                  bg-[var(--kora-pink)]
+                  bg-[var(--brand-primary)]
                   px-4
                   py-2.5
                   text-[13px]
@@ -635,7 +635,7 @@ export function TrendsClient({
                     p-5
                     transition-all
                     hover:-translate-y-[2px]
-                    hover:border-[var(--kora-pink)]/30
+                    hover:border-[var(--brand-primary)]/30
                     hover:shadow-[0_18px_40px_rgba(0,0,0,0.2)]
                   "
                   onClick={() =>
@@ -706,7 +706,7 @@ export function TrendsClient({
                           text-[var(--fg-4)]
                           transition-colors
                           hover:bg-[var(--hover)]
-                          hover:text-[var(--kora-pink)]
+                          hover:text-[var(--brand-primary)]
                         "
                       >
                         <Bookmark
@@ -720,7 +720,7 @@ export function TrendsClient({
                             isSaved
                               ? {
                                   color:
-                                    "var(--kora-pink)",
+                                    "var(--brand-primary)",
                                 }
                               : undefined
                           }
@@ -754,12 +754,12 @@ export function TrendsClient({
                         className="
                           shrink-0
                           rounded-lg
-                          bg-[var(--kora-pink-soft)]
+                          bg-[var(--brand-primary-soft)]
                           px-2
                           py-1
                           text-[12px]
                           font-bold
-                          text-[var(--kora-pink)]
+                          text-[var(--brand-primary)]
                         "
                       >
                         {trend.score ?? "—"}
@@ -853,7 +853,7 @@ export function TrendsClient({
                           gap-1
                           text-[11px]
                           font-medium
-                          text-[var(--kora-pink)]
+                          text-[var(--brand-primary)]
                         "
                       >
                         Explore
@@ -884,7 +884,7 @@ export function TrendsClient({
 
                 <div className="flex items-center gap-2">
 
-                  <Sparkles className="h-4 w-4 text-[var(--kora-pink)]" />
+                  <Sparkles className="h-4 w-4 text-[var(--brand-primary)]" />
 
                   <div>
 
@@ -938,7 +938,7 @@ export function TrendsClient({
                         px-4
                         py-3
                         transition-colors
-                        hover:border-[var(--kora-pink)]/30
+                        hover:border-[var(--brand-primary)]/30
                         hover:bg-[var(--hover)]
                       "
                     >
@@ -953,10 +953,10 @@ export function TrendsClient({
                             items-center
                             justify-center
                             rounded-lg
-                            bg-[var(--kora-pink-soft)]
+                            bg-[var(--brand-primary-soft)]
                             text-[11px]
                             font-semibold
-                            text-[var(--kora-pink)]
+                            text-[var(--brand-primary)]
                           "
                         >
                           {index + 1}
@@ -1013,8 +1013,8 @@ export function TrendsClient({
                     items-center
                     justify-center
                     rounded-lg
-                    bg-[var(--kora-pink-soft)]
-                    text-[var(--kora-pink)]
+                    bg-[var(--brand-primary-soft)]
+                    text-[var(--brand-primary)]
                   "
                 >
                   <WandSparkles className="h-4 w-4" />
@@ -1068,7 +1068,7 @@ export function TrendsClient({
                   text-[var(--fg)]
                   outline-none
                   placeholder:text-[var(--fg-4)]
-                  focus:border-[var(--kora-pink)]/50
+                  focus:border-[var(--brand-primary)]/50
                 "
               />
 
@@ -1085,7 +1085,7 @@ export function TrendsClient({
                   justify-center
                   gap-2
                   rounded-xl
-                  bg-[var(--kora-pink)]
+                  bg-[var(--brand-primary)]
                   text-[12px]
                   font-semibold
                   text-white
@@ -1146,7 +1146,7 @@ export function TrendsClient({
                         py-1.5
                         text-[10.5px]
                         text-[var(--fg-3)]
-                        hover:border-[var(--kora-pink)]/30
+                        hover:border-[var(--brand-primary)]/30
                         hover:text-[var(--fg)]
                       "
                     >
@@ -1182,7 +1182,7 @@ export function TrendsClient({
 
               </div>
 
-              <TrendingUp className="h-4 w-4 text-[var(--kora-pink)]" />
+              <TrendingUp className="h-4 w-4 text-[var(--brand-primary)]" />
 
             </div>
 
@@ -1308,7 +1308,7 @@ export function TrendsClient({
                   justify-center
                   gap-2
                   rounded-xl
-                  bg-[var(--kora-pink)]
+                  bg-[var(--brand-primary)]
                   text-[12px]
                   font-semibold
                   text-white
@@ -1375,7 +1375,7 @@ export function TrendsClient({
 
               <div className="flex items-center gap-2">
 
-                <Sparkles className="h-4 w-4 text-[var(--kora-pink)]" />
+                <Sparkles className="h-4 w-4 text-[var(--brand-primary)]" />
 
                 <span className="text-[11px] font-medium uppercase tracking-[0.15em] text-[var(--fg-4)]">
                   Trend intelligence
@@ -1431,10 +1431,10 @@ export function TrendsClient({
                   items-center
                   justify-center
                   rounded-2xl
-                  bg-[var(--kora-pink-soft)]
+                  bg-[var(--brand-primary-soft)]
                   text-lg
                   font-bold
-                  text-[var(--kora-pink)]
+                  text-[var(--brand-primary)]
                 "
               >
                 {selectedTrend.score ?? "—"}
@@ -1479,7 +1479,7 @@ export function TrendsClient({
 
               <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3">
 
-                <MessageCircle className="mb-2 h-4 w-4 text-[var(--kora-pink)]" />
+                <MessageCircle className="mb-2 h-4 w-4 text-[var(--brand-primary)]" />
 
                 <p className="text-[10px] text-[var(--fg-4)]">
                   Source
@@ -1501,15 +1501,15 @@ export function TrendsClient({
                 mb-6
                 rounded-2xl
                 border
-                border-[var(--kora-pink)]/20
-                bg-[var(--kora-pink-soft)]
+                border-[var(--brand-primary)]/20
+                bg-[var(--brand-primary-soft)]
                 p-5
               "
             >
 
               <div className="mb-2 flex items-center gap-2">
 
-                <Sparkles className="h-4 w-4 text-[var(--kora-pink)]" />
+                <Sparkles className="h-4 w-4 text-[var(--brand-primary)]" />
 
                 <span className="text-[12px] font-semibold text-[var(--fg)]">
                   Kora's take
@@ -1545,7 +1545,7 @@ export function TrendsClient({
                   justify-center
                   gap-2
                   rounded-xl
-                  bg-[var(--kora-pink)]
+                  bg-[var(--brand-primary)]
                   text-[13px]
                   font-semibold
                   text-white

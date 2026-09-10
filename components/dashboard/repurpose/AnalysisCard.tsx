@@ -102,7 +102,7 @@ export function AnalysisCard({
                   onClick={() => onSelectAngle?.(active ? "" : angle.title)}
                   className={`rounded-xl border p-3 text-left transition-all ${
                     active
-                      ? "border-[var(--kora-pink-border)] bg-[var(--kora-pink-soft)]"
+                      ? "border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)]"
                       : "border-[var(--stroke)] bg-[var(--panel-fill-2)] hover:border-[var(--stroke-strong)]"
                   }`}
                 >
@@ -113,7 +113,7 @@ export function AnalysisCard({
                     {active && (
                       <div
                         className="flex h-4 w-4 items-center justify-center rounded-full"
-                        style={{ background: "var(--kora-pink)" }}
+                        style={{ background: "var(--brand-primary)" }}
                       >
                         <Check className="h-2.5 w-2.5 text-white" />
                       </div>
@@ -145,7 +145,7 @@ export function AnalysisCard({
                   onClick={() => onSelectHook?.(active ? "" : hook)}
                   className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-left text-xs transition-all ${
                     active
-                      ? "border-[var(--kora-pink-border)] bg-[var(--kora-pink-soft)] text-[var(--kora-pink)]"
+                      ? "border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]"
                       : "border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-3)] hover:border-[var(--stroke-strong)] hover:text-[var(--fg)]"
                   }`}
                 >

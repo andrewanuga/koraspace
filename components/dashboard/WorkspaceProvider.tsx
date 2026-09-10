@@ -692,6 +692,12 @@ export function WorkspaceProvider({
     ]
   );
 
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.setAttribute("data-persona", persona);
+    }
+  }, [persona]);
+
   return (
     <WorkspaceContext.Provider value={value}>
       {children}
@@ -700,7 +706,7 @@ export function WorkspaceProvider({
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                 HOOK                                       */
+/*                                 HOOKS                                      */
 /* -------------------------------------------------------------------------- */
 
 export function useWorkspace() {
@@ -713,4 +719,31 @@ export function useWorkspace() {
   }
 
   return context;
+}
+
+export function usePersonaTheme() {
+  const { persona } = useWorkspace();
+  const isMarketer = persona === "marketer";
+  const isCreator = persona === "creator";
+
+  return useMemo(
+    () => ({
+      persona,
+      isMarketer,
+      isCreator,
+      brandColor: isMarketer ? "var(--kora-blue)" : "var(--kora-pink)",
+      brandHex: isMarketer ? "#3b82f6" : "#ec4899",
+      brandHover: isMarketer ? "#2563eb" : "#db2777",
+      brandSoft: isMarketer
+        ? "rgba(59, 130, 246, 0.12)"
+        : "rgba(236, 72, 153, 0.12)",
+      brandBorder: isMarketer
+        ? "rgba(59, 130, 246, 0.28)"
+        : "rgba(236, 72, 153, 0.28)",
+      brandShadow: isMarketer
+        ? "0 8px 24px rgba(59, 130, 246, 0.18)"
+        : "0 8px 24px rgba(236, 72, 153, 0.18)",
+    }),
+    [persona, isMarketer, isCreator]
+  );
 }

@@ -13,11 +13,14 @@ import { cn } from "@/lib/utils";
 
 const SIDEBAR_STORAGE_KEY = "koraspace-sidebar-collapsed";
 
-export default function DashboardLayout({
+import { useWorkspace } from "@/components/dashboard/WorkspaceProvider";
+
+function DashboardShell({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { persona } = useWorkspace();
   const pathname = usePathname();
 
   const [collapsed, setCollapsed] = useState(false);
@@ -83,103 +86,116 @@ export default function DashboardLayout({
   };
 
   return (
-    <WorkspaceProvider>
-      <div className="sai-app relative min-h-screen overflow-x-hidden bg-[#121212] text-[var(--fg)]">
-        {/* Desktop Sidebar */}
+    <div
+      data-persona={persona}
+      className="sai-app relative min-h-screen overflow-x-hidden bg-[#121212] text-[var(--fg)]"
+    >
+      {/* Desktop Sidebar */}
 
-        <aside
-          className={cn(
-            "fixed inset-y-0 left-0 z-40 hidden md:block",
-            "transition-[width] duration-300 ease-out"
-          )}
-        >
-          <Sidebar
-            collapsed={mounted ? collapsed : false}
-            onToggle={toggleSidebar}
-          />
-        </aside>
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-40 hidden md:block",
+          "transition-[width] duration-300 ease-out"
+        )}
+      >
+        <Sidebar
+          collapsed={mounted ? collapsed : false}
+          onToggle={toggleSidebar}
+        />
+      </aside>
 
-        {/* Mobile Backdrop */}
+      {/* Mobile Backdrop */}
 
-        <div
-          aria-hidden={!mobileOpen}
-          onClick={closeMobileSidebar}
-          className={cn(
-            "fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px] transition-opacity duration-300 md:hidden",
-            mobileOpen
-              ? "pointer-events-auto opacity-100"
-              : "pointer-events-none opacity-0"
-          )}
+      <div
+        aria-hidden={!mobileOpen}
+        onClick={closeMobileSidebar}
+        className={cn(
+          "fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px] transition-opacity duration-300 md:hidden",
+          mobileOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        )}
+      />
+
+      {/* Mobile Sidebar */}
+
+      <aside
+        aria-label="Mobile navigation"
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-[280px] max-w-[85vw]",
+          "transform transition-transform duration-300 ease-out md:hidden",
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        <Sidebar
+          collapsed={false}
+          isMobile
+          onToggle={closeMobileSidebar}
+        />
+      </aside>
+
+      {/* Main Application Area */}
+
+      <div
+        className={cn(
+          "relative flex min-h-screen flex-col",
+          "transition-[padding-left] duration-300 ease-out",
+          mounted && collapsed
+            ? "md:pl-[72px]"
+            : "md:pl-[260px]"
+        )}
+      >
+        {/* Global announcement / status */}
+
+        <GlobalBanner />
+
+        {/* Header */}
+
+        <DashboardHeader
+          onMobileMenuToggle={() => setMobileOpen((open) => !open)}
+          onToggleSidebar={toggleSidebar}
         />
 
-        {/* Mobile Sidebar */}
+        {/* Main Content */}
 
-        <aside
-          aria-label="Mobile navigation"
+        <main
+          id="main-content"
           className={cn(
-            "fixed inset-y-0 left-0 z-50 w-[280px] max-w-[85vw]",
-            "transform transition-transform duration-300 ease-out md:hidden",
-            mobileOpen ? "translate-x-0" : "-translate-x-full"
+            "relative flex-1",
+            "min-w-0 overflow-x-hidden"
           )}
         >
-          <Sidebar
-            collapsed={false}
-            isMobile
-            onToggle={closeMobileSidebar}
-          />
-        </aside>
-
-        {/* Main Application Area */}
-
-        <div
-          className={cn(
-            "relative flex min-h-screen flex-col",
-            "transition-[padding-left] duration-300 ease-out",
-            mounted && collapsed
-              ? "md:pl-[72px]"
-              : "md:pl-[260px]"
-          )}
-        >
-          {/* Global announcement / status */}
-
-          <GlobalBanner />
-
-          {/* Header */}
-
-          <DashboardHeader
-            onMobileMenuToggle={() => setMobileOpen((open) => !open)}
-            onToggleSidebar={toggleSidebar}
-          />
-
-          {/* Main Content */}
-
-          <main
-            id="main-content"
+          <div
             className={cn(
-              "relative flex-1",
-              "min-w-0 overflow-x-hidden"
+              "mx-auto w-full",
+              "px-4 py-5",
+              "sm:px-6 sm:py-6",
+              "lg:px-8 lg:py-8",
+              "2xl:px-10"
             )}
           >
-            <div
-              className={cn(
-                "mx-auto w-full",
-                "px-4 py-5",
-                "sm:px-6 sm:py-6",
-                "lg:px-8 lg:py-8",
-                "2xl:px-10"
-              )}
-            >
-              <div className="mx-auto w-full max-w-[1600px]">
-                {children}
-              </div>
+            <div className="mx-auto w-full max-w-[1600px]">
+              {children}
             </div>
-          </main>
-        </div>
-
-        {/* Global AI Assistant */}
-
-        <FloatingAiAssistant />
+          </div>
+        </main>
       </div>
+
+      {/* Global AI Assistant */}
+
+      <FloatingAiAssistant />
+    </div>
+  );
+}
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <WorkspaceProvider>
+      <DashboardShell>{children}</DashboardShell>
     </WorkspaceProvider>
   );
 }

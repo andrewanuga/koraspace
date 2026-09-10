@@ -35,7 +35,7 @@ export function ContentFormats({ onSelect }: ContentFormatsProps) {
               group rounded-xl border border-[var(--stroke)]
               bg-[var(--panel-fill)] p-4 text-left
               transition-all duration-200
-              hover:border-[var(--kora-blue-border)]
+              hover:border-[var(--brand-primary-border)]
               hover:bg-[var(--hover)]
             "
           >
@@ -44,8 +44,8 @@ export function ContentFormats({ onSelect }: ContentFormatsProps) {
                 mb-5 flex h-9 w-9 items-center justify-center
                 rounded-lg bg-[var(--panel-fill-2)] text-[var(--fg-3)]
                 transition-colors
-                group-hover:bg-[var(--kora-blue-soft)]
-                group-hover:text-[var(--kora-blue)]
+                group-hover:bg-[var(--brand-primary-soft)]
+                group-hover:text-[var(--brand-primary)]
               "
             >
               <Icon className="h-4 w-4" />

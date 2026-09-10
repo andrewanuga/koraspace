@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -211,16 +211,16 @@ export default function CreatePage() {
       <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="mb-2 flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--kora-pink)]" />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--kora-pink)]">
-              Creator workspace
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand-primary)]" />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--brand-primary)]">
+              Workspace AI Studio
             </span>
           </div>
           <h1 className="text-[28px] font-semibold tracking-tight text-[var(--fg)] sm:text-[32px]">
             Create content
           </h1>
           <p className="mt-2 text-[13px] text-[var(--fg-3)]">
-            Turn your ideas into content your audience wants to engage with.
+            Turn your ideas into high-converting content with autonomous AI assistance.
           </p>
         </div>
 

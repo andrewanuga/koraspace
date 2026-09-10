@@ -583,11 +583,13 @@ export function Sidebar({
           {/* LOGO MARK */}
 
           <div
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl transition-all duration-300"
             style={{
-              background: "#EC4899",
+              background: persona === "marketer" ? "#3B82F6" : "#EC4899",
               boxShadow:
-                "0 0 20px rgba(236,72,153,0.18)",
+                persona === "marketer"
+                  ? "0 0 20px rgba(59,130,246,0.25)"
+                  : "0 0 20px rgba(236,72,153,0.25)",
             }}
           >
             <Sparkles className="h-4 w-4 text-white" />
@@ -866,13 +868,13 @@ export function Sidebar({
                     className="flex h-8 w-8 items-center justify-center rounded-xl"
                     style={{
                       background:
-                        "rgba(236,72,153,0.10)",
+                        "var(--brand-primary-soft)",
                     }}
                   >
                     <Crown
                       className="h-4 w-4"
                       style={{
-                        color: "#EC4899",
+                        color: "var(--brand-primary)",
                       }}
                     />
                   </div>
@@ -881,8 +883,8 @@ export function Sidebar({
                     className="rounded-md px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.1em]"
                     style={{
                       background:
-                        "rgba(236,72,153,0.10)",
-                      color: "#EC4899",
+                        "var(--brand-primary-soft)",
+                      color: "var(--brand-primary)",
                     }}
                   >
                     Premium
@@ -903,7 +905,7 @@ export function Sidebar({
                   href="/dashboard/billing"
                   className="mt-4 block rounded-xl py-2 text-center text-[11.5px] font-semibold text-white transition-all hover:brightness-110"
                   style={{
-                    background: "#EC4899",
+                    background: "var(--brand-primary)",
                   }}
                 >
                   Upgrade plan
@@ -942,7 +944,7 @@ export function Sidebar({
               <div
                 className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white"
                 style={{
-                  background: "#EC4899",
+                  background: "var(--brand-primary)",
                 }}
               >
                 {initial}

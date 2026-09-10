@@ -215,7 +215,7 @@ function buildRecommendations(
   return [
     {
       icon: Video,
-      color: "#EC4899",
+      color: "var(--brand-primary)",
       title: "Content opportunity",
       text: topAccount
         ? `Post more video — ${platformLabel(
@@ -443,7 +443,7 @@ export default async function DashboardPage() {
       label: "Followers",
       value: fmtNum(totalFollowers),
       icon: Users,
-      color: "#EC4899",
+      color: "var(--brand-primary)",
       ...pctChange(
         totalFollowers,
         prevTotals.followers
@@ -630,7 +630,7 @@ export default async function DashboardPage() {
         color:
           PLATFORM_COLORS[
             acc.platform
-          ] ?? "#EC4899",
+          ] ?? "var(--brand-primary)",
       };
     });
 
@@ -683,7 +683,7 @@ export default async function DashboardPage() {
             <Sparkles
               className="ml-1 inline h-6 w-6"
               style={{
-                color: "#EC4899",
+                color: "var(--brand-primary)",
               }}
             />
           </h1>
@@ -710,9 +710,9 @@ export default async function DashboardPage() {
             href="/dashboard/create"
             className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[12.5px] font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98]"
             style={{
-              background: "#EC4899",
+              background: "var(--brand-primary)",
               boxShadow:
-                "0 10px 30px rgba(236,72,153,0.18)",
+                "var(--brand-primary-shadow)",
             }}
           >
             <Zap className="h-4 w-4" />
@@ -733,16 +733,16 @@ export default async function DashboardPage() {
               className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl"
               style={{
                 background:
-                  "rgba(236,72,153,0.10)",
+                  "var(--brand-primary-soft)",
 
                 border:
-                  "1px solid rgba(236,72,153,0.18)",
+                  "1px solid var(--brand-primary-border)",
               }}
             >
               <Plug
                 className="h-6 w-6"
                 style={{
-                  color: "#EC4899",
+                  color: "var(--brand-primary)",
                 }}
               />
             </div>
@@ -761,7 +761,8 @@ export default async function DashboardPage() {
               href="/dashboard/integrations"
               className="mt-6 rounded-xl px-5 py-2.5 text-[13px] font-semibold text-white transition-all hover:brightness-110"
               style={{
-                background: "#EC4899",
+                background: "var(--brand-primary)",
+                boxShadow: "var(--brand-primary-shadow)",
               }}
             >
               Connect an account
@@ -878,7 +879,7 @@ export default async function DashboardPage() {
                     background: `color-mix(in srgb, ${
                       PLATFORM_COLORS[
                         topPost.platform
-                      ] ?? "#EC4899"
+                      ] ?? "var(--brand-primary)"
                     } 15%, var(--panel-fill-2))`,
                   }}
                 >
@@ -1043,13 +1044,13 @@ export default async function DashboardPage() {
               className="flex h-8 w-8 items-center justify-center rounded-lg"
               style={{
                 background:
-                  "rgba(236,72,153,0.10)",
+                  "var(--brand-primary-soft)",
               }}
             >
               <Sparkles
                 className="h-4 w-4"
                 style={{
-                  color: "#EC4899",
+                  color: "var(--brand-primary)",
                 }}
               />
             </div>
@@ -1119,7 +1120,7 @@ export default async function DashboardPage() {
 
             <Link
               href="/dashboard/calendar"
-              className="text-[12px] font-medium text-[#EC4899] transition-opacity hover:opacity-70"
+              className="text-[12px] font-medium text-[var(--brand-primary)] transition-opacity hover:opacity-70"
             >
               View calendar
             </Link>
@@ -1141,7 +1142,8 @@ export default async function DashboardPage() {
                 href="/dashboard/calendar"
                 className="mt-4 rounded-lg px-3.5 py-2 text-[11.5px] font-semibold text-white"
                 style={{
-                  background: "#EC4899",
+                  background: "var(--brand-primary)",
+                  boxShadow: "var(--brand-primary-shadow)",
                 }}
               >
                 Plan a post
@@ -1154,7 +1156,7 @@ export default async function DashboardPage() {
                   const platformColor =
                     PLATFORM_COLORS[
                       post.platform
-                    ] ?? "#EC4899";
+                    ] ?? "var(--brand-primary)";
 
                   return (
                     <div
@@ -1254,7 +1256,8 @@ export default async function DashboardPage() {
               href="/dashboard/create"
               className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-[13px] font-semibold text-white transition-all hover:brightness-110 active:scale-[0.99]"
               style={{
-                background: "#EC4899",
+                background: "var(--brand-primary)",
+                boxShadow: "var(--brand-primary-shadow)",
               }}
             >
               <Zap className="h-4 w-4" />
@@ -1338,7 +1341,7 @@ export default async function DashboardPage() {
 
           <Link
             href="/dashboard/trends"
-            className="text-[12px] font-medium text-[#EC4899] transition-opacity hover:opacity-70"
+            className="text-[12px] font-medium text-[var(--brand-primary)] transition-opacity hover:opacity-70"
           >
             Explore ideas
           </Link>

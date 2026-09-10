@@ -564,17 +564,26 @@ html.sai-js [data-reveal] { opacity: 0; }
   --fg-3: #96969f;
   --fg-4: #65656e;
 
-  /* KoraSpace brand — Electric Pink */
-  --kora-pink: #ff0080;
-  --kora-pink-hover: #e60073;
-  --kora-pink-soft: rgba(255, 0, 128, 0.14);
-  --kora-pink-border: rgba(255, 0, 128, 0.28);
+  /* KoraSpace brand — Electric Pink (Creator Mode) */
+  --kora-pink: #ec4899;
+  --kora-pink-hover: #db2777;
+  --kora-pink-soft: rgba(236, 72, 153, 0.12);
+  --kora-pink-border: rgba(236, 72, 153, 0.28);
+  --kora-pink-shadow: 0 8px 24px rgba(236, 72, 153, 0.18);
 
-  /* KoraSpace brand — Electric Blue */
+  /* KoraSpace brand — Electric Blue (Marketer Mode) */
   --kora-blue: #3b82f6;
   --kora-blue-hover: #2563eb;
-  --kora-blue-soft: rgba(59, 130, 246, 0.14);
+  --kora-blue-soft: rgba(59, 130, 246, 0.12);
   --kora-blue-border: rgba(59, 130, 246, 0.28);
+  --kora-blue-shadow: 0 8px 24px rgba(59, 130, 246, 0.18);
+
+  /* Dynamic Brand Primary Tokens (default = creator pink) */
+  --brand-primary: var(--kora-pink);
+  --brand-primary-hover: var(--kora-pink-hover);
+  --brand-primary-soft: var(--kora-pink-soft);
+  --brand-primary-border: var(--kora-pink-border);
+  --brand-primary-shadow: var(--kora-pink-shadow);
 
   /* Semantic */
   --success: #34d399;
@@ -591,6 +600,30 @@ html.sai-js [data-reveal] { opacity: 0; }
 
   background: var(--app-bg);
   color: var(--fg);
+}
+
+/* ── Creator Mode Active Persona Theming ── */
+[data-persona="creator"],
+.sai-app[data-persona="creator"] {
+  --brand-primary: #ec4899;
+  --brand-primary-hover: #db2777;
+  --brand-primary-soft: rgba(236, 72, 153, 0.12);
+  --brand-primary-border: rgba(236, 72, 153, 0.28);
+  --brand-primary-shadow: 0 8px 24px rgba(236, 72, 153, 0.18);
+  --sai-indigo: #ec4899;
+  --sai-violet: #db2777;
+}
+
+/* ── Marketer Mode Active Persona Theming ── */
+[data-persona="marketer"],
+.sai-app[data-persona="marketer"] {
+  --brand-primary: #3b82f6;
+  --brand-primary-hover: #2563eb;
+  --brand-primary-soft: rgba(59, 130, 246, 0.12);
+  --brand-primary-border: rgba(59, 130, 246, 0.28);
+  --brand-primary-shadow: 0 8px 24px rgba(59, 130, 246, 0.18);
+  --sai-indigo: #3b82f6;
+  --sai-violet: #2563eb;
 }
 
 /* ── KoraSpace global design tokens ─────────────────── */

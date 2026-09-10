@@ -129,15 +129,10 @@ export function RecentAnalyticsCard({
         <div>
           <div className="flex items-center gap-2">
             <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg"
-              style={{
-                background: "rgba(59,130,246,0.10)",
-                border: "1px solid rgba(59,130,246,0.18)",
-              }}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]"
             >
               <TrendingUp
                 className="h-4 w-4"
-                style={{ color: "#3b82f6" }}
               />
             </div>
 
@@ -155,7 +150,7 @@ export function RecentAnalyticsCard({
 
         <Link
           href="/dashboard/analytics"
-          className="flex items-center gap-1 text-[12px] font-medium text-[#ec4899] transition-opacity hover:opacity-70"
+          className="flex items-center gap-1 text-[12px] font-medium text-[var(--brand-primary)] transition-opacity hover:opacity-70"
         >
           View analytics
           <ArrowUpRight className="h-3.5 w-3.5" />
@@ -183,13 +178,13 @@ export function RecentAnalyticsCard({
                   className="relative rounded-lg px-3 py-1.5 text-[11.5px] font-medium transition-all"
                   style={{
                     background: active
-                      ? "#ec4899"
+                      ? "var(--brand-primary)"
                       : "transparent",
                     color: active
                       ? "#ffffff"
                       : "var(--fg-3)",
                     border: active
-                      ? "1px solid #ec4899"
+                      ? "1px solid var(--brand-primary)"
                       : "1px solid var(--stroke)",
                   }}
                 >
@@ -245,7 +240,7 @@ export function RecentAnalyticsCard({
 
                   <path
                     d={area}
-                    fill="rgba(59,130,246,0.07)"
+                    fill="var(--brand-primary-soft)"
                   />
 
                   {/* Main line */}
@@ -253,7 +248,7 @@ export function RecentAnalyticsCard({
                   <path
                     d={line}
                     fill="none"
-                    stroke="#3b82f6"
+                    stroke="var(--brand-primary)"
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -293,7 +288,7 @@ export function RecentAnalyticsCard({
                             cy={point.y}
                             r="5"
                             fill="#121212"
-                            stroke="#3b82f6"
+                            stroke="var(--brand-primary)"
                             strokeWidth="2.5"
                           />
                         </>

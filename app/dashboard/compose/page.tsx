@@ -236,7 +236,7 @@ export default function ComposePage() {
           {content.length > 30 && (
             <GlassCard className="p-4" style={scoreData ? { borderColor: `color-mix(in srgb, ${scoreColor} 35%, transparent)` } : undefined}>
               <p className="flex items-center gap-2 text-[13px] font-medium text-[var(--fg)]">
-                <Zap className="h-4 w-4 text-[var(--sai-indigo)]" /> Socially Score™
+                <Zap className="h-4 w-4 text-[var(--sai-indigo)]" /> koraspace Score™
                 {scoring && <Loader2 className="ml-auto h-3 w-3 animate-spin text-[var(--fg-4)]" />}
               </p>
               {scoreData ? (

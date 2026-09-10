@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   Fingerprint,
@@ -16,12 +16,12 @@ export function BrandIntelligence() {
       <section className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Fingerprint className="h-4 w-4 text-[var(--kora-blue)]" />
+            <Fingerprint className="h-4 w-4 text-[var(--brand-primary)]" />
             <h3 className="text-[13px] font-semibold text-[var(--fg)]">
               Brand voice
             </h3>
           </div>
-          <button className="flex items-center gap-1 text-[10px] text-[var(--fg-4)] transition-colors hover:text-[var(--kora-pink)]">
+          <button className="flex items-center gap-1 text-[10px] text-[var(--fg-4)] transition-colors hover:text-[var(--brand-primary)]">
             <Pencil className="h-3 w-3" />
             Edit
           </button>
@@ -41,14 +41,14 @@ export function BrandIntelligence() {
       {/* Content intelligence */}
       <section className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
         <div className="mb-5 flex items-center gap-2">
-          <Target className="h-4 w-4 text-[var(--kora-blue)]" />
+          <Target className="h-4 w-4 text-[var(--brand-primary)]" />
           <h3 className="text-[13px] font-semibold text-[var(--fg)]">
             Content intelligence
           </h3>
         </div>
 
         <div className="flex items-center gap-5">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-[var(--kora-blue)]">
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-4 border-[var(--brand-primary)]">
             <div className="text-center">
               <p className="text-[22px] font-bold text-[var(--fg)]">92</p>
               <p className="text-[9px] text-[var(--fg-4)]">SCORE</p>

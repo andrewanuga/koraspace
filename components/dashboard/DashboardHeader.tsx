@@ -167,10 +167,10 @@ export function DashboardHeader({
             className="h-9 w-[280px] rounded-xl border bg-[var(--panel-fill)] pl-9 pr-16 text-[12.5px] text-[var(--fg)] outline-none transition-all placeholder:text-[var(--fg-4)]"
             style={{
               borderColor: searchFocused
-                ? "rgba(236,72,153,0.55)"
+                ? "var(--brand-primary-border)"
                 : "var(--stroke)",
               boxShadow: searchFocused
-                ? "0 0 0 3px rgba(236,72,153,0.08)"
+                ? "0 0 0 3px var(--brand-primary-soft)"
                 : "none",
             }}
           />
@@ -194,9 +194,8 @@ export function DashboardHeader({
           href="/dashboard/create"
           className="hidden items-center gap-2 rounded-xl px-3.5 py-2 text-[12.5px] font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98] sm:flex"
           style={{
-            background: "#ec4899",
-            boxShadow:
-              "0 8px 24px rgba(236,72,153,0.18)",
+            background: "var(--brand-primary)",
+            boxShadow: "var(--brand-primary-shadow)",
           }}
         >
           <Plus className="h-4 w-4" />
@@ -211,7 +210,7 @@ export function DashboardHeader({
           aria-label="Create content"
           className="flex h-9 w-9 items-center justify-center rounded-xl text-white sm:hidden"
           style={{
-            background: "#ec4899",
+            background: "var(--brand-primary)",
           }}
         >
           <Plus className="h-4 w-4" />

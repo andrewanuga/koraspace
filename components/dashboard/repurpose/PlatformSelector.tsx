@@ -26,8 +26,8 @@ export function PlatformSelector({
         <span
           className="rounded-full px-2.5 py-1 text-[10px] font-bold"
           style={{
-            background: "var(--kora-pink-soft)",
-            color: "var(--kora-pink)",
+            background: "var(--brand-primary-soft)",
+            color: "var(--brand-primary)",
           }}
         >
           {selected.length} selected
@@ -45,7 +45,7 @@ export function PlatformSelector({
               onClick={() => onToggle(platform.id)}
               className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-all ${
                 active
-                  ? "border-[var(--kora-pink-border)] bg-[var(--kora-pink-soft)]"
+                  ? "border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)]"
                   : "border-[var(--stroke)] bg-[var(--panel-fill-2)] hover:border-[var(--stroke-strong)] hover:bg-[var(--hover)]"
               }`}
             >
@@ -53,7 +53,7 @@ export function PlatformSelector({
                 <Icon
                   className="h-4 w-4"
                   style={{
-                    color: active ? "var(--kora-pink)" : "var(--fg-3)",
+                    color: active ? "var(--brand-primary)" : "var(--fg-3)",
                   }}
                 />
               </div>
@@ -70,7 +70,7 @@ export function PlatformSelector({
               {active && (
                 <div
                   className="flex h-5 w-5 items-center justify-center rounded-full"
-                  style={{ background: "var(--kora-pink)" }}
+                  style={{ background: "var(--brand-primary)" }}
                 >
                   <Check className="h-3 w-3 text-white" />
                 </div>
