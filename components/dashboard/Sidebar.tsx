@@ -582,17 +582,12 @@ export function Sidebar({
         >
           {/* LOGO MARK */}
 
-          <div
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl transition-all duration-300"
-            style={{
-              background: persona === "marketer" ? "#3B82F6" : "#EC4899",
-              boxShadow:
-                persona === "marketer"
-                  ? "0 0 20px rgba(59,130,246,0.25)"
-                  : "0 0 20px rgba(236,72,153,0.25)",
-            }}
-          >
-            <Sparkles className="h-4 w-4 text-white" />
+          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-white p-1 shadow-sm transition-all duration-300">
+            <img
+              src={persona === "marketer" ? "/logo-blue.png" : "/logo.png"}
+              alt="KoraSpace"
+              className="h-5 w-5 object-contain"
+            />
           </div>
 
           {/* BRAND */}
