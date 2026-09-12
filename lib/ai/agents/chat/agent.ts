@@ -102,7 +102,7 @@ export class ChatAgent {
       } as any; // ContextRequest type
       const engine = new ContextEngine();
       const assembly = await engine.assemble(contextRequest);
-      // Load brand directly for compliance checks (separate from ContextEngine)
+      // Load brand directly for compliance checks
       const brand = await BrandIntelligenceLoader.load(context.workspaceId, context.supabase);
 
     // 2. Dev / offline fallback
@@ -115,7 +115,17 @@ export class ChatAgent {
       }
 
     // 3. Planning and Intent Decomposition
+    
     const plan = ChatPlanner.plan(messages);
+    // Policy decision for the plan
+    const { decidePlan } = await import('./policyEngine');
+    const planDecision = decidePlan(plan, context);
+    if (planDecision.action !== 'ALLOW') {
+      const errorMsg = `Policy ${planDecision.action}: ${planDecision.reasons.join('; ')}`;
+      return { success: false, error: { code: planDecision.action, message: errorMsg }, metadata: { latencyMs: Date.now() - startTime } } as any;
+    }
+    // Attach plan to context for later invocation checks
+    (context as any).currentPlan = plan;
     const steps: AgentStep[] = [];
 
     // 4. Construct System Prompt with ContextEngine output

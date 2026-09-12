@@ -22,8 +22,32 @@ export class ChatExecutor {
     context: AgentContext
   ): Promise<{ step: AgentStep; observationText: string }> {
     const startTime = Date.now();
-    const { toolName, args } = invocation;
+    const { toolName } = invocation;
 
+    // Policy check for this invocation
+    const { decideInvocation } = await import('./policyEngine');
+    const plan = (context as any).currentPlan as any;
+    const decision = decideInvocation({ toolInvocation: invocation, plan, context });
+    if (decision.action !== 'ALLOW') {
+      const errorMsg = `Policy ${decision.action}: ${decision.reasons.join('; ')}`;
+      const observation: ToolObservation = {
+        toolName,
+        success: false,
+        output: null,
+        error: errorMsg,
+        latencyMs: Date.now() - startTime,
+      };
+      const step: AgentStep = {
+        stepIndex,
+        type: "observation",
+        toolInvocation: invocation,
+        observation,
+        timestamp: Date.now(),
+      };
+      return { step, observationText: errorMsg };
+    }
+
+    const { args } = invocation;
     let success = false;
     let output: any = null;
     let error: string | undefined = undefined;
@@ -72,9 +96,6 @@ export class ChatExecutor {
       timestamp: Date.now(),
     };
 
-    return {
-      step,
-      observationText,
-    };
+    return { step, observationText };
   }
 }
