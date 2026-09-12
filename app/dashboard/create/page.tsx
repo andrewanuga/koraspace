@@ -51,7 +51,7 @@ const GREETING: Msg = {
   id: 0,
   role: "assistant",
   content:
-    "Hey — I'm your Socially agent. Tell me what you're working on and I'll draft it in your voice.\n\nAttach images or documents for context, pick your AI model below, and I'll handle the rest. ✨",
+    "Hey — I'm your Koraspace agent. Tell me what you're working on and I'll draft it in your voice.\n\nAttach images or documents for context, pick your AI model below, and I'll handle the rest. ✨",
 };
 
 /* ── Model display name helper ────────────────────────────────── */
@@ -418,7 +418,7 @@ export default function CreatePage() {
           </span>
           <div>
             <h1 className="font-display text-[17px] font-semibold text-[var(--fg)]">Create</h1>
-            <p className="text-[12px] text-[var(--fg-3)]">Your personal Socially agent</p>
+            <p className="text-[12px] text-[var(--fg-3)]">Your personal Koraspace agent</p>
           </div>
         </div>
         <button
@@ -689,7 +689,7 @@ export default function CreatePage() {
         </div>
 
         <p className="mt-2 text-center text-[11px] text-[var(--fg-4)]">
-          Socially can draft and refine — always review before you post.
+          Koraspace can draft and refine — always review before you post.
         </p>
         </div>
       </div>

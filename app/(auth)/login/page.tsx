@@ -59,7 +59,7 @@ export default function LoginPage() {
           Welcome back
         </h1>
         <p className="mt-2 text-sm text-white/50">
-          Sign in to your Socially AI workspace.
+          Sign in to your Koraspace AI workspace.
         </p>
       </div>
 

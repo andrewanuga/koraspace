@@ -43,8 +43,8 @@ export function Navbar() {
             <Zap className="w-4 h-4 text-white fill-white" />
           </div>
           <span className="font-bold text-lg tracking-tight">
-            <span className="gradient-text">Socially</span>
-            <span className="text-foreground">AI</span>
+            <span className="gradient-text">Koraspace</span>
+            <span className="text-foreground"> AI</span>
           </span>
         </Link>
 

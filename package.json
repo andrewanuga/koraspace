@@ -1,5 +1,5 @@
 {
-  "name": "socially-ai",
+  "name": "koraspace-ai",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,18 @@
     "dev:secure": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:contracts": "vitest run tests/contracts",
+    "test:security": "vitest run tests/security",
+    "test:e2e": "vitest run tests/e2e",
+    "test:eval": "vitest run tests/evaluations",
+    "test:live": "vitest run tests/live",
+    "test:all": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
@@ -35,7 +46,8 @@
     "nodemailer": "^9.0.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "tailwind-merge": "^3.6.0"
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -43,9 +55,11 @@
     "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.11"
   }
 }

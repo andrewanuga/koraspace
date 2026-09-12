@@ -3,7 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { OnboardingFlow } from "./OnboardingFlow";
 
-export const metadata = { title: "Set up your workspace — Socially AI" };
+export const metadata = { title: "Set up your workspace — Koraspace AI" };
 
 export default async function OnboardingPage() {
   const supabase = await createClient();
@@ -38,7 +38,7 @@ export default async function OnboardingPage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="" width={26} height={23} className="h-[24px] w-auto" />
         <span className="font-display text-lg font-semibold text-white">
-          Socially<span className="text-[var(--sai-indigo)]"> AI</span>
+          Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
         </span>
       </Link>
 

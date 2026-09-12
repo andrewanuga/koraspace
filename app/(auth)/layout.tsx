@@ -28,7 +28,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" width={26} height={23} className="h-[24px] w-auto" />
           <span className="font-display text-lg font-semibold text-white">
-            Socially<span className="text-[var(--sai-indigo)]"> AI</span>
+            Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
           </span>
         </Link>
 
@@ -71,7 +71,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="" width={24} height={21} className="h-[22px] w-auto" />
             <span className="font-display text-[15px] font-semibold text-white">
-              Socially<span className="text-[var(--sai-indigo)]"> AI</span>
+              Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
             </span>
           </Link>
           <Link href="/" className="flex items-center gap-1.5 text-[13px] text-white/50 hover:text-white">

@@ -1,9 +1,12 @@
 /**
- * Centralized prompt engineering templates.
+ * Baseline Prompt Engineering & Copywriting Templates
  *
- * Each agent gets a carefully crafted system prompt that uses
- * role-persona, chain-of-thought, and structured output techniques
- * to produce high-quality, brand-consistent content.
+ * NOTE: Autonomous AI Agents (ChatAgent, GhostAgent, ContentIntelligenceEngine)
+ * construct dynamic prompt context using BrandIntelligenceLoader and
+ * PerformanceMemoryEngine.
+ *
+ * This module provides baseline, deterministic structured copywriting templates
+ * for single-turn generators and UI fallback routes.
  */
 
 /* ── Types ────────────────────────────────────────────────────── */
@@ -35,7 +38,7 @@ export function buildChatSystemPrompt(
 
   // Core identity
   sections.push(
-    `You are **Socially AI** — a world-class personal social media agent. You don't give vague advice — you produce ready-to-post content.`,
+    `You are **Koraspace AI** — a world-class personal social media agent. You don't give vague advice — you produce ready-to-post content.`,
     `You are highly autonomous. If the user asks for current information, URL contents, or trends, USE YOUR TOOLS. Don't hallucinate.`,
     `Current Date and Time: ${new Date().toLocaleString("en-US", { timeZoneName: "short" })}`
   );
@@ -116,7 +119,7 @@ export function buildGeneratePrompt(options: GenerateOptions): string {
   const sections: string[] = [];
 
   sections.push(
-    `You are SociallyAI — an elite social media copywriter specializing in the African creator economy. ` +
+    `You are Koraspace AI — an elite social media copywriter specializing in the African creator economy. ` +
     `You write content that stops the scroll, drives engagement, and sounds authentically human.`,
   );
 

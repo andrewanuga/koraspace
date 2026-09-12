@@ -42,7 +42,7 @@ export function FloatingNav() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" width={22} height={19} className="h-[20px] w-auto" />
           <span className="font-display text-[15px] font-semibold tracking-tight text-white">
-            Socially<span className="text-[var(--sai-indigo)]"> AI</span>
+            Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
           </span>
         </Link>
 
