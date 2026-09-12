@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { evaluateIncomingMessage } from "@/lib/ai/engine";
 import { dispatchReply } from "@/lib/social/dispatch";
 import { startBotTask, finishBotTask } from "@/lib/ai/bot_tasks";
+import { decryptToken } from "@/lib/security/tokenCrypto";
 
 // Helper to handle Meta's verification challenge
 export async function GET(
@@ -58,8 +59,9 @@ export async function POST(
       
       // Let's just pick the first one that has a ghost bot active for now.
       for (const account of accounts) {
-        const token = (account.auth_data as any)?.token;
-        if (!token) continue;
+        const rawToken = (account.auth_data as any)?.token || (account as any).access_token;
+        if (!rawToken) continue;
+        const token = decryptToken(rawToken);
 
         const { data: bot } = await supabase
           .from("social_bots")
@@ -184,8 +186,9 @@ async function handleInstagramInteraction(
 
   if (!account) return;
 
-  const token = (account.auth_data as any)?.access_token;
-  if (!token) return;
+  const rawToken = (account.auth_data as any)?.access_token || (account as any).access_token;
+  if (!rawToken) return;
+  const token = decryptToken(rawToken);
 
   // Check if Ghost Mode / Bot is active
   const { data: bot } = await supabase

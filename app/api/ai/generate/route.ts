@@ -1,9 +1,10 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { callAI, isConfigured } from "@/lib/ai/openrouter";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { buildGeneratePrompt } from "@/lib/ai/prompts";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
+import { scanForPromptInjection } from "@/lib/security/enforcement";
 
 /* â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
@@ -33,6 +34,20 @@ export async function POST(req: NextRequest) {
 
     const body: GenerateBody = await req.json();
     const { prompt, platform, framework, tone, context, type = "caption", useTrends } = body;
+
+    // Zero-Trust Defense Against Prompt Injection & Evasion (Mandate 5)
+    if (prompt) {
+      const scan = scanForPromptInjection(prompt, "Generate Prompt");
+      if (!scan.safe) {
+        return NextResponse.json({ error: "Security Alert: Prompt flagged for injection attempt.", reason: scan.reason }, { status: 400 });
+      }
+    }
+    if (context) {
+      const scan = scanForPromptInjection(context, "Generate Context");
+      if (!scan.safe) {
+        return NextResponse.json({ error: "Security Alert: Context flagged for injection attempt.", reason: scan.reason }, { status: 400 });
+      }
+    }
 
     let finalPrompt = prompt || "";
     let trendUsed = "";

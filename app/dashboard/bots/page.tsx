@@ -38,8 +38,12 @@ export default function BotsPage() {
       if (!user) return;
       setUserId(user.id);
       const [{ data: acc }, { data: b }] = await Promise.all([
-        supabase.from("social_accounts").select("*").eq("status", "connected"),
-        supabase.from("social_bots").select("*").order("created_at", { ascending: false }),
+        supabase
+          .from("social_accounts")
+          .select("id, user_id, platform, account_type, external_id, handle, display_name, avatar_url, scopes, status, followers, following, runs_ads, connected_at, last_synced_at, meta")
+          .eq("user_id", user.id)
+          .eq("status", "connected"),
+        supabase.from("social_bots").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
       ]);
       if (acc) setAccounts(acc as SocialAccount[]);
       if (b) setBots(b as SocialBot[]);

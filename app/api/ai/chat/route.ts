@@ -8,6 +8,7 @@ import { RECOMMENDED_MODELS } from "@/lib/ai/models";
 import type { ChatMessage } from "@/lib/ai/openrouter";
 import { AI_TOOLS, executeTool } from "@/lib/ai/tools";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
+import { scanForPromptInjection } from "@/lib/security/enforcement";
 
 /* ── Types ────────────────────────────────────────────────────── */
 
@@ -42,6 +43,19 @@ export async function POST(req: NextRequest) {
     };
     if (!messages?.length) {
       return NextResponse.json({ error: "messages required" }, { status: 400 });
+    }
+
+    // Zero-Trust Defense Against Prompt Injection & Evasion (Mandate 5)
+    for (const m of messages) {
+      if (m.role === "user" && m.content) {
+        const check = scanForPromptInjection(m.content, "Chat User Prompt");
+        if (!check.safe) {
+          return NextResponse.json(
+            { error: "Security Alert: Input flagged for prompt injection or policy evasion attempt.", reason: check.reason },
+            { status: 400 }
+          );
+        }
+      }
     }
 
     // ── Per-user AI preferences from profile ───────────────────

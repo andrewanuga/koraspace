@@ -1,4 +1,9 @@
 import * as cheerio from "cheerio";
+import {
+  verifyExecutionGate,
+  sanitizeRetrievedContext,
+  scanForPromptInjection,
+} from "@/lib/security/enforcement";
 
 /* ── Tool Definitions ─────────────────────────────────────────── */
 
@@ -162,14 +167,7 @@ export const AI_TOOLS = [
       },
     },
   },
-  {
-    type: "function",
-    function: {
-      name: "fetch_unread_messages",
-      description: "Fetch unread messages or comments from the user's social inbox.",
-      parameters: { type: "object", properties: {}, required: [] },
-    },
-  },
+
   {
     type: "function",
     function: {
@@ -193,33 +191,7 @@ export const AI_TOOLS = [
       parameters: { type: "object", properties: {}, required: [] },
     },
   },
-  // ── Messaging & Social Action Tools ──
-  {
-    type: "function",
-    function: {
-      name: "send_message",
-      description: "Send a direct message to someone on a connected social platform. Use this when the user asks to message, DM, or reach out to someone.",
-      parameters: {
-        type: "object",
-        properties: {
-          platform: {
-            type: "string",
-            enum: ["telegram", "twitter", "x", "instagram", "facebook", "whatsapp", "linkedin"],
-            description: "The social platform to send the message on",
-          },
-          recipient: {
-            type: "string",
-            description: "The recipient's username (@handle), user ID, phone number (WhatsApp), or chat ID (Telegram)",
-          },
-          message: {
-            type: "string",
-            description: "The message content to send",
-          },
-        },
-        required: ["platform", "recipient", "message"],
-      },
-    },
-  },
+
   {
     type: "function",
     function: {
@@ -253,6 +225,21 @@ interface ToolContext {
 }
 
 export async function executeTool(name: string, args: Record<string, any>, ctx: ToolContext): Promise<string> {
+  // 1. Scan tool parameters against prompt injection
+  for (const [key, val] of Object.entries(args)) {
+    if (typeof val === "string") {
+      const scan = scanForPromptInjection(val, `Tool argument [${name}.${key}]`);
+      if (!scan.safe) {
+        return `[SECURITY HALT]: Prohibited instruction detected in tool parameter. Tool execution aborted.`;
+      }
+    }
+  }
+
+  // 2. Hard scope blacklist guard: DM and inbox operations are blocked under Least-Privilege Mandate 1
+  if (name === "send_message" || name === "fetch_unread_messages" || name === "draft_reply") {
+    return `[AUTHORIZATION ERROR]: Direct messaging and private inbox operations are strictly blacklisted under Koraspace Zero-Trust Least-Privilege policy.`;
+  }
+
   switch (name) {
     case "get_current_time":
       return new Date().toLocaleString("en-US", { timeZoneName: "short" });
@@ -268,7 +255,8 @@ export async function executeTool(name: string, args: Record<string, any>, ctx: 
         $("script, style, nav, footer, header, noscript, iframe").remove();
         let text = $("body").text().replace(/\s+/g, " ").trim();
         if (text.length > 5000) text = text.slice(0, 5000) + "... (truncated)";
-        return text || "No text found on the page.";
+        // Defense against prompt injection in retrieved external data
+        return sanitizeRetrievedContext(text) || "No text found on the page.";
       } catch (err: any) {
         return `Error scraping URL: ${err.message}`;
       }
@@ -306,15 +294,26 @@ export async function executeTool(name: string, args: Record<string, any>, ctx: 
     case "search_past_chats":
       if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
       try {
+        verifyExecutionGate({ workspaceId: ctx.workspaceId, action: "read", targetScope: "analytics" });
+        // Enforce strict multi-tenant boundary: only search messages belonging to this workspace's chats
+        const { data: userChats } = await ctx.supabase
+          .from("chats")
+          .select("id")
+          .eq("workspace_id", ctx.workspaceId);
+
+        const chatIds = (userChats || []).map((c: any) => c.id);
+        if (!chatIds.length) return "No past chats found matching query.";
+
         const { data } = await ctx.supabase
           .from("chat_messages")
           .select("content, created_at")
+          .in("chat_id", chatIds)
           .ilike("content", `%${args.query}%`)
           .limit(5);
         if (!data || data.length === 0) return "No past chats found matching query.";
         return JSON.stringify(data);
-      } catch (e) {
-        return "Error querying past chats.";
+      } catch (e: any) {
+        return `Security/Query error: ${e.message}`;
       }
 
     // ── New Premium Content & Strategy Tools ──
@@ -362,6 +361,13 @@ Suggestion: Tweak claim to specify "For B2B enterprises...".`;
     case "schedule_post":
       if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
       try {
+        verifyExecutionGate({
+          workspaceId: ctx.workspaceId,
+          action: "publish",
+          targetScope: "post",
+          untrustedInput: args.content,
+        });
+
         const { error } = await ctx.supabase.from("scheduled_posts").insert({
           user_id: ctx.workspaceId,
           platform: args.platform,
@@ -388,27 +394,14 @@ Suggestion: Tweak claim to specify "For B2B enterprises...".`;
       }
 
     case "fetch_unread_messages":
-      if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
-      try {
-        const { data, error } = await ctx.supabase
-          .from("social_inbox")
-          .select("id, platform, sender_name, message, created_at")
-          .eq("user_id", ctx.workspaceId)
-          .eq("status", "unread")
-          .limit(3);
-        if (error) return `Error fetching inbox: ${error.message}`;
-        if (!data || data.length === 0) return "No unread messages found.";
-        return JSON.stringify(data);
-      } catch (e: any) {
-        return `Failed to fetch inbox: ${e.message}`;
-      }
-
     case "draft_reply":
-      return `Drafted reply for message ${args.message_id}. Reply content: "${args.reply_content}". (Note: Connect to inbox integration to auto-send).`;
+    case "send_message":
+      return `[AUTHORIZATION ERROR]: Direct messaging and private inbox operations are strictly blacklisted under Koraspace Zero-Trust Least-Privilege policy.`;
 
     case "fetch_post_analytics":
       if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
       try {
+        verifyExecutionGate({ workspaceId: ctx.workspaceId, action: "read", targetScope: "analytics" });
         const { data, error } = await ctx.supabase
           .from("post_history")
           .select("platform, content, metrics, posted_at")
@@ -421,32 +414,10 @@ Suggestion: Tweak claim to specify "For B2B enterprises...".`;
         return `Failed to fetch analytics: ${e.message}`;
       }
 
-    // ── Messaging Tools ──
-    case "send_message": {
-      const { platform, recipient, message: msgContent } = args;
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-        const res = await fetch(`${baseUrl}/api/social/send-dm`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ platform, recipient, message: msgContent }),
-        });
-        const data = await res.json();
-        if (data.success) {
-          return `✅ Message sent successfully to ${recipient} on ${platform}${
-            data.message_id ? ` (ID: ${data.message_id})` : ""
-          }.`;
-        } else {
-          return `❌ Failed to send message on ${platform}: ${data.error}`;
-        }
-      } catch (e: any) {
-        return `Error sending message: ${e.message}`;
-      }
-    }
-
     case "get_connected_accounts": {
       if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
       try {
+        verifyExecutionGate({ workspaceId: ctx.workspaceId, action: "read", targetScope: "analytics" });
         const { data, error } = await ctx.supabase
           .from("social_accounts")
           .select("platform, handle, display_name, followers, status, last_synced_at")
@@ -468,11 +439,13 @@ Suggestion: Tweak claim to specify "For B2B enterprises...".`;
     case "get_social_analytics": {
       if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
       try {
+        verifyExecutionGate({ workspaceId: ctx.workspaceId, action: "read", targetScope: "analytics" });
         const days = args.days || 30;
         const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
         let query = ctx.supabase
           .from("social_posts")
           .select("platform, impressions, likes, comments, shares, video_views, posted_at")
+          .eq("user_id", ctx.workspaceId)
           .gte("posted_at", since);
         if (args.platform) query = query.eq("platform", args.platform);
         const { data, error } = await query;

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { PLATFORMS, type PlatformId } from "@/lib/social/platforms";
+import { validateOAuthScopes } from "@/lib/security/enforcement";
+import { encryptToken } from "@/lib/security/tokenCrypto";
 
 function back(origin: string, params: Record<string, string>) {
   const url = new URL("/dashboard/integrations", origin);
@@ -71,6 +73,13 @@ export async function GET(
     // ── Best-effort profile lookup (fills handle/id; sync fills the rest) ──
     const profile = await fetchProfile(platform as PlatformId, token.access_token);
 
+    // Enforce Zero-Trust Least-Privilege OAuth Scoping
+    const { sanitizedScopes } = validateOAuthScopes(p.oauth.scopes);
+
+    // Cryptographic Token Handling: AES-256-GCM Authenticated Encryption at Rest
+    const encryptedAccessToken = encryptToken(token.access_token);
+    const encryptedRefreshToken = token.refresh_token ? encryptToken(token.refresh_token) : null;
+
     const { error } = await supabase.from("social_accounts").upsert(
       {
         user_id: user.id,
@@ -80,10 +89,10 @@ export async function GET(
         handle: providedHandle || profile.handle || null,
         display_name: profile.name ?? p.name,
         avatar_url: profile.avatar ?? null,
-        access_token: token.access_token,
-        refresh_token: token.refresh_token ?? null,
+        access_token: encryptedAccessToken,
+        refresh_token: encryptedRefreshToken,
         token_expires_at: token.expires_in ? new Date(Date.now() + token.expires_in * 1000).toISOString() : null,
-        scopes: p.oauth.scopes,
+        scopes: sanitizedScopes,
         status: "connected",
       },
       { onConflict: "user_id,platform,external_id" }
