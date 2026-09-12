@@ -18,8 +18,8 @@ create table if not exists public.profiles (
   brand_website text,
   brand_voice text,                          -- Extracted brand voice from URL
   niche text,                                -- e.g. "Tech / Startups"
-  plan text not null default 'free'          -- free | basic | pro | advanced
-    check (plan in ('free', 'basic', 'pro', 'advanced')),
+  plan text not null default 'free'          -- free | basic | pro | advanced | team
+    check (plan in ('free', 'basic', 'pro', 'advanced', 'team')),
 
   -- ── Onboarding ──────────────────────────────────────────
   persona text                               -- who they are using Socially as

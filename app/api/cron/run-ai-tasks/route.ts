@@ -10,6 +10,13 @@ const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 // GET request for Vercel Cron
 export async function GET(req: Request) {
+  // Protect cron route against unauthorized execution
+  const authHeader = req.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     // 1. Fetch pending tasks where trigger_at is in the past
     const { data: scheduledTasks, error: fetchError } = await supabaseAdmin

@@ -19,6 +19,22 @@ export async function POST(request: Request) {
         ? body.workspaceId.trim()
         : user.id;
 
+    if (targetUserId !== user.id) {
+      const { data: membership } = await supabase
+        .from("workspace_members")
+        .select("role")
+        .eq("workspace_id", targetUserId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!membership) {
+        return NextResponse.json(
+          { error: "Forbidden: You do not have access to this workspace." },
+          { status: 403 }
+        );
+      }
+    }
+
     const [{ data: posts }, { data: campaigns }] = await Promise.all([
       supabase
         .from("social_posts")

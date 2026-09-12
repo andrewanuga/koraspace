@@ -75,6 +75,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
         workspace_id: workspaceId,
         actor_id: user.id,
         action: "role_updated",
+        target: `Role updated to ${role}`,
         details: { target_member_id: memberId, target_user_id: targetMember.user_id, new_role: role },
       });
     }
@@ -158,6 +159,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
       workspace_id: workspaceId,
       actor_id: user.id,
       action: isSelf ? "member_left" : "member_removed",
+      target: targetMember.user_id,
       details: { target_member_id: memberId, target_user_id: targetMember.user_id },
     });
 

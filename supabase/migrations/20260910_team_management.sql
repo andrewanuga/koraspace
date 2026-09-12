@@ -77,8 +77,13 @@ create table if not exists public.team_activity_logs (
 
   target text,
 
+  details jsonb not null default '{}'::jsonb,
+
   created_at timestamptz not null default now()
 );
+
+alter table public.team_activity_logs add column if not exists details jsonb default '{}'::jsonb;
+alter table public.team_activity_logs add column if not exists target text;
 
 create index if not exists team_activity_workspace_idx
 on public.team_activity_logs (
@@ -227,16 +232,26 @@ with check (
 -- PRESENCE
 -- ------------------------------------------------------------
 
-create or replace function public.touch_team_presence()
+create or replace function public.touch_team_presence(
+  p_user_id uuid default null
+)
 returns void
-language sql
-security invoker
+language plpgsql
+security definer
+set search_path = public
 as $$
-  update public.profiles
-  set last_active_at = now()
-  where id = auth.uid();
+declare
+  target_id uuid;
+begin
+  target_id := coalesce(p_user_id, auth.uid());
+  if target_id is not null then
+    update public.profiles
+    set last_active_at = now()
+    where id = target_id;
+  end if;
+end;
 $$;
 
 grant execute on function
-public.touch_team_presence()
-to authenticated;
+public.touch_team_presence(uuid)
+to authenticated, service_role;

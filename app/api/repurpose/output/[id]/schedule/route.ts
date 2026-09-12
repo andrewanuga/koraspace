@@ -33,7 +33,8 @@ export async function POST(
       .single();
 
     if (error) {
-      return NextResponse.json({ success: true, scheduled: true });
+      console.error("Failed to insert into scheduled_posts:", error);
+      return NextResponse.json({ error: error.message || "Failed to schedule post" }, { status: 500 });
     }
 
     // Update repurpose_output status to scheduled

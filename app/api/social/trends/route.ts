@@ -16,7 +16,7 @@ export async function POST() {
 
   const [{ data: profile }, { data: accounts }] = await Promise.all([
     supabase.from("profiles").select("persona, niche").eq("id", user.id).single(),
-    supabase.from("social_accounts").select("id, platform").eq("status", "connected"),
+    supabase.from("social_accounts").select("id, platform").eq("user_id", user.id).eq("status", "connected"),
   ]);
 
   const persona = profile?.persona ?? "creator";
