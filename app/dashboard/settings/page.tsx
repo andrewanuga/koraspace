@@ -34,10 +34,24 @@ import {
   Crown,
   Zap,
   FileText,
+  Moon,
+  Sun,
+  Type,
 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
+import {
+  ANALYTICS_STYLES,
+  FONT_FAMILIES,
+  THEME_MODES,
+  DASHBOARD_DENSITIES,
+  type AnalyticsStyle,
+  type FontFamily,
+  type ThemeMode,
+  type DashboardDensity,
+} from "@/lib/preferences/types";
 
 type Section =
   | "account"
@@ -245,7 +259,29 @@ export default function SettingsPage() {
 
   const [language, setLanguage] = useState("English");
   const [timezone, setTimezone] = useState("Europe/Amsterdam");
-  const [theme, setTheme] = useState("Dark");
+
+  const { preferences, updatePreferences, setThemeMode: setGlobalTheme } = usePreferences();
+  const [prefAnalyticsStyle, setPrefAnalyticsStyle] = useState<AnalyticsStyle>(
+    preferences.analytics_style || "auto"
+  );
+  const [prefFontFamily, setPrefFontFamily] = useState<FontFamily>(
+    preferences.font_family || "inter"
+  );
+  const [prefThemeMode, setPrefThemeMode] = useState<ThemeMode>(
+    preferences.theme_mode || "dark"
+  );
+  const [prefDensity, setPrefDensity] = useState<DashboardDensity>(
+    preferences.dashboard_density || "balanced"
+  );
+
+  useEffect(() => {
+    if (preferences) {
+      setPrefAnalyticsStyle(preferences.analytics_style);
+      setPrefFontFamily(preferences.font_family);
+      setPrefThemeMode(preferences.theme_mode);
+      setPrefDensity(preferences.dashboard_density);
+    }
+  }, [preferences]);
 
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [inboxNotifications, setInboxNotifications] = useState(true);
@@ -332,11 +368,24 @@ export default function SettingsPage() {
   const savePreferences = async () => {
     setSaving(true);
 
-    // These can later be persisted to a user_settings/preferences table.
-    await new Promise((resolve) => setTimeout(resolve, 400));
+    try {
+      const ok = await updatePreferences({
+        analytics_style: prefAnalyticsStyle,
+        font_family: prefFontFamily,
+        theme_mode: prefThemeMode,
+        dashboard_density: prefDensity,
+      });
 
-    setSaving(false);
-    success("Preferences saved");
+      if (ok) {
+        success("Personalization preferences saved");
+      } else {
+        toastError("Could not save preferences to server");
+      }
+    } catch (err: any) {
+      toastError(err?.message || "Failed to save preferences");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const saveNotifications = async () => {
@@ -601,27 +650,108 @@ export default function SettingsPage() {
   const renderPreferences = () => (
     <div className="space-y-5">
       <SectionCard
-        eyebrow="Experience"
-        title="Preferences"
-        description="Control how KoraSpace looks and behaves for you."
+        eyebrow="Personalization"
+        title="Experience & Visual Identity"
+        description="Configure your analytics visualization, typography, theme, and dashboard density."
       >
+        {/* Appearance Mode */}
         <SettingRow
           icon={Palette}
-          title="Appearance"
-          description="Choose the interface appearance."
+          title="Theme Mode"
+          description="Choose between deep obsidian dark mode, crisp daylight light mode, or system sync."
         >
           <div className="flex rounded-lg border border-[#303030] bg-[#121212] p-1">
-            {["Dark", "System"].map((value) => (
+            {THEME_MODES.map((mode) => (
               <button
-                key={value}
-                onClick={() => setTheme(value)}
-                className="rounded-md px-3 py-1.5 text-[10px] font-medium transition"
+                key={mode.id}
+                type="button"
+                onClick={() => {
+                  setPrefThemeMode(mode.id);
+                  setGlobalTheme(mode.id);
+                }}
+                className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-medium transition cursor-pointer"
                 style={{
-                  background: theme === value ? "#292929" : "transparent",
-                  color: theme === value ? "#fff" : "#666",
+                  background: prefThemeMode === mode.id ? "#292929" : "transparent",
+                  color: prefThemeMode === mode.id ? "#fff" : "#888",
                 }}
               >
-                {value}
+                {mode.id === "dark" && <Moon className="h-3 w-3" />}
+                {mode.id === "light" && <Sun className="h-3 w-3" />}
+                {mode.id === "system" && <Monitor className="h-3 w-3" />}
+                <span>{mode.label}</span>
+              </button>
+            ))}
+          </div>
+        </SettingRow>
+
+        {/* Typography / Font Family */}
+        <SettingRow
+          icon={Type}
+          title="Typography"
+          description="Choose the primary font family that powers all typography and metrics across Koraspace."
+        >
+          <select
+            value={prefFontFamily}
+            onChange={(e) => {
+              const val = e.target.value as FontFamily;
+              setPrefFontFamily(val);
+              updatePreferences({ font_family: val });
+            }}
+            className="rounded-lg border border-[#303030] bg-[#121212] px-3 py-2 text-[12px] text-white outline-none cursor-pointer"
+          >
+            {FONT_FAMILIES.map((font) => (
+              <option key={font.id} value={font.id}>
+                {font.label} ({font.category})
+              </option>
+            ))}
+          </select>
+        </SettingRow>
+
+        {/* Analytics Visualization Style */}
+        <SettingRow
+          icon={BarChart3}
+          title="Default Analytics Chart"
+          description="Choose which chart style to use when plotting growth, performance, and conversion signals."
+        >
+          <select
+            value={prefAnalyticsStyle}
+            onChange={(e) => {
+              const val = e.target.value as AnalyticsStyle;
+              setPrefAnalyticsStyle(val);
+              updatePreferences({ analytics_style: val });
+            }}
+            className="rounded-lg border border-[#303030] bg-[#121212] px-3 py-2 text-[12px] text-white outline-none cursor-pointer"
+          >
+            {ANALYTICS_STYLES.map((style) => (
+              <option key={style.id} value={style.id}>
+                {style.title} — {style.subtitle}
+              </option>
+            ))}
+          </select>
+        </SettingRow>
+
+        {/* Dashboard Density */}
+        <SettingRow
+          icon={Monitor}
+          title="Dashboard Density"
+          description="Control the spacing and compactness of cards, tables, and metrics."
+        >
+          <div className="flex rounded-lg border border-[#303030] bg-[#121212] p-1">
+            {DASHBOARD_DENSITIES.map((dens) => (
+              <button
+                key={dens.id}
+                type="button"
+                onClick={() => {
+                  setPrefDensity(dens.id);
+                  updatePreferences({ dashboard_density: dens.id });
+                }}
+                className="rounded-md px-3 py-1.5 text-[11px] font-medium transition cursor-pointer"
+                style={{
+                  background: prefDensity === dens.id ? "#292929" : "transparent",
+                  color: prefDensity === dens.id ? "#fff" : "#888",
+                }}
+              >
+                {dens.label}
               </button>
             ))}
           </div>
@@ -661,21 +791,13 @@ export default function SettingsPage() {
             <option value="Asia/Dubai">Dubai</option>
           </select>
         </SettingRow>
-
-        <SettingRow
-          icon={Monitor}
-          title="Reduce motion"
-          description="Reduce interface animations and transitions."
-        >
-          <Toggle enabled={false} onChange={() => {}} />
-        </SettingRow>
       </SectionCard>
 
       <div className="flex justify-end">
         <button
           onClick={savePreferences}
           disabled={saving}
-          className="flex items-center gap-2 rounded-xl bg-[#ff0a8a] px-4 py-2.5 text-[12px] font-semibold text-white disabled:opacity-50"
+          className="flex items-center gap-2 rounded-xl bg-[#ff0a8a] px-4 py-2.5 text-[12px] font-semibold text-white disabled:opacity-50 cursor-pointer"
         >
           <Save className="h-3.5 w-3.5" />
           {saving ? "Saving…" : "Save preferences"}

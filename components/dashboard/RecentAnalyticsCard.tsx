@@ -2,8 +2,11 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, TrendingUp } from "lucide-react";
+import { ArrowUpRight, TrendingUp, SlidersHorizontal } from "lucide-react";
 import { fmtNum, platformLabel } from "@/lib/dashboard/helpers";
+import { DynamicAnalyticsChart } from "@/components/dashboard/DynamicAnalyticsChart";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
+import { ANALYTICS_STYLES, type AnalyticsStyle } from "@/lib/preferences/types";
 
 type DayPoint = {
   label: string;
@@ -30,66 +33,6 @@ const TABS = [
 
 type TabKey = (typeof TABS)[number]["key"];
 
-function buildPath(
-  values: number[],
-  width: number,
-  height: number,
-  padding = 8
-) {
-  if (!values.length) {
-    return {
-      line: "",
-      area: "",
-      points: [] as { x: number; y: number; value: number }[],
-    };
-  }
-
-  const max = Math.max(...values, 1);
-  const min = Math.min(...values, 0);
-  const range = max - min || 1;
-
-  const chartWidth = width - padding * 2;
-  const chartHeight = height - padding * 2;
-
-  const stepX =
-    values.length > 1 ? chartWidth / (values.length - 1) : 0;
-
-  const points = values.map((value, index) => {
-    const x = padding + index * stepX;
-    const y =
-      padding +
-      chartHeight -
-      ((value - min) / range) * chartHeight;
-
-    return {
-      x,
-      y,
-      value,
-    };
-  });
-
-  const line = points
-    .map(
-      (point, index) =>
-        `${index === 0 ? "M" : "L"}${point.x.toFixed(
-          1
-        )} ${point.y.toFixed(1)}`
-    )
-    .join(" ");
-
-  const area = `${line} L${points[
-    points.length - 1
-  ].x.toFixed(1)} ${height - padding} L${padding} ${
-    height - padding
-  } Z`;
-
-  return {
-    line,
-    area,
-    points,
-  };
-}
-
 export function RecentAnalyticsCard({
   series,
   platforms,
@@ -97,19 +40,22 @@ export function RecentAnalyticsCard({
   series: DayPoint[];
   platforms: PlatformRow[];
 }) {
+  const { preferences, setAnalyticsStyle } = usePreferences();
   const [tab, setTab] = useState<TabKey>("views");
-  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const [overrideStyle, setOverrideStyle] = useState<AnalyticsStyle | null>(null);
+  const [showStyleMenu, setShowStyleMenu] = useState(false);
 
-  const values = useMemo(
-    () => series.map((item) => item[tab]),
-    [series, tab]
-  );
+  const activeStyle = overrideStyle || preferences.analytics_style || "auto";
 
-  const { line, area, points } = useMemo(
-    () => buildPath(values, 640, 220),
-    [values]
-  );
+  const chartData = useMemo(() => {
+    return series.map((item) => ({
+      label: item.label,
+      value: item[tab],
+      category: item.label,
+    }));
+  }, [series, tab]);
 
+  const values = useMemo(() => series.map((item) => item[tab]), [series, tab]);
   const latest = values.at(-1) ?? 0;
   const previous = values.at(-2) ?? latest;
 
@@ -118,29 +64,20 @@ export function RecentAnalyticsCard({
       ? ((latest - previous) / previous) * 100
       : 0;
 
-  const hoveredPoint =
-    hoverIndex !== null ? points[hoverIndex] : null;
-
   return (
     <section className="glass-panel group relative overflow-hidden rounded-2xl border border-[var(--stroke)] p-5 sm:p-6">
       {/* Header */}
-
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]"
-            >
-              <TrendingUp
-                className="h-4 w-4"
-              />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
+              <TrendingUp className="h-4 w-4" />
             </div>
 
             <div>
               <h3 className="font-display text-[15px] font-semibold text-[var(--fg)]">
                 Recent analytics
               </h3>
-
               <p className="mt-0.5 text-[12px] text-[var(--fg-4)]">
                 Performance over the last period
               </p>
@@ -148,41 +85,76 @@ export function RecentAnalyticsCard({
           </div>
         </div>
 
-        <Link
-          href="/dashboard/analytics"
-          className="flex items-center gap-1 text-[12px] font-medium text-[var(--brand-primary)] transition-opacity hover:opacity-70"
-        >
-          View analytics
-          <ArrowUpRight className="h-3.5 w-3.5" />
-        </Link>
+        <div className="flex items-center gap-3">
+          {/* Quick Style Switcher */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowStyleMenu(!showStyleMenu)}
+              className="flex items-center gap-1.5 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)] px-2.5 py-1 text-[11px] font-medium text-[var(--fg-3)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--fg)]"
+            >
+              <SlidersHorizontal className="h-3 w-3" />
+              <span className="capitalize">{activeStyle}</span>
+            </button>
+
+            {showStyleMenu && (
+              <div className="absolute right-0 top-full mt-1 z-30 w-44 rounded-xl border border-[var(--stroke)] bg-[var(--app-surface)] p-1.5 shadow-2xl backdrop-blur-xl">
+                <p className="px-2 py-1 text-[9.5px] font-semibold uppercase tracking-wider text-[var(--fg-4)]">
+                  Visualization Style
+                </p>
+                <div className="space-y-0.5">
+                  {ANALYTICS_STYLES.map((styleOpt) => (
+                    <button
+                      key={styleOpt.id}
+                      type="button"
+                      onClick={() => {
+                        setOverrideStyle(styleOpt.id);
+                        setAnalyticsStyle(styleOpt.id);
+                        setShowStyleMenu(false);
+                      }}
+                      className={`flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-xs transition-colors ${
+                        activeStyle === styleOpt.id
+                          ? "bg-[var(--brand-primary)] text-white font-medium"
+                          : "text-[var(--fg-2)] hover:bg-[var(--hover)] hover:text-[var(--fg)]"
+                      }`}
+                    >
+                      <span>{styleOpt.title}</span>
+                      {activeStyle === styleOpt.id && (
+                        <span className="text-[10px] opacity-80">✓</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <Link
+            href="/dashboard/analytics"
+            className="flex items-center gap-1 text-[12px] font-medium text-[var(--brand-primary)] transition-opacity hover:opacity-70"
+          >
+            View analytics
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_210px]">
-        {/* Chart */}
-
+        {/* Main Chart Area */}
         <div className="min-w-0">
-          {/* Tabs */}
-
-          <div className="mb-5 flex items-center gap-1 overflow-x-auto pb-1">
+          {/* Metric Tabs */}
+          <div className="mb-4 flex items-center gap-1 overflow-x-auto pb-1">
             {TABS.map((item) => {
               const active = tab === item.key;
-
               return (
                 <button
                   key={item.key}
                   type="button"
-                  onClick={() => {
-                    setTab(item.key);
-                    setHoverIndex(null);
-                  }}
+                  onClick={() => setTab(item.key)}
                   className="relative rounded-lg px-3 py-1.5 text-[11.5px] font-medium transition-all"
                   style={{
-                    background: active
-                      ? "var(--brand-primary)"
-                      : "transparent",
-                    color: active
-                      ? "#ffffff"
-                      : "var(--fg-3)",
+                    background: active ? "var(--brand-primary)" : "transparent",
+                    color: active ? "#ffffff" : "var(--fg-3)",
                     border: active
                       ? "1px solid var(--brand-primary)"
                       : "1px solid var(--stroke)",
@@ -200,7 +172,6 @@ export function RecentAnalyticsCard({
                 <p className="text-sm font-medium text-[var(--fg-2)]">
                   No analytics yet
                 </p>
-
                 <p className="mt-1 text-[12px] text-[var(--fg-4)]">
                   Connect an account to start tracking performance.
                 </p>
@@ -208,137 +179,22 @@ export function RecentAnalyticsCard({
             </div>
           ) : (
             <>
-              {/* Chart */}
-
+              {/* Dynamic Chart */}
               <div className="relative h-[220px]">
-                <svg
-                  viewBox="0 0 640 220"
-                  className="h-full w-full overflow-visible"
-                  preserveAspectRatio="none"
-                  onMouseLeave={() => setHoverIndex(null)}
-                >
-                  {/* Grid */}
-
-                  {[0, 1, 2, 3].map((row) => {
-                    const y = 8 + row * 68;
-
-                    return (
-                      <line
-                        key={row}
-                        x1="8"
-                        x2="632"
-                        y1={y}
-                        y2={y}
-                        stroke="var(--stroke)"
-                        strokeWidth="1"
-                        strokeDasharray="3 5"
-                      />
-                    );
-                  })}
-
-                  {/* Area */}
-
-                  <path
-                    d={area}
-                    fill="var(--brand-primary-soft)"
-                  />
-
-                  {/* Main line */}
-
-                  <path
-                    d={line}
-                    fill="none"
-                    stroke="var(--brand-primary)"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-
-                  {/* Hover columns */}
-
-                  {points.map((point, index) => (
-                    <g
-                      key={index}
-                      onMouseEnter={() =>
-                        setHoverIndex(index)
-                      }
-                      className="cursor-pointer"
-                    >
-                      <rect
-                        x={point.x - 24}
-                        y="0"
-                        width="48"
-                        height="220"
-                        fill="transparent"
-                      />
-
-                      {hoverIndex === index && (
-                        <>
-                          <line
-                            x1={point.x}
-                            x2={point.x}
-                            y1="8"
-                            y2="212"
-                            stroke="rgba(255,255,255,0.12)"
-                            strokeDasharray="4 4"
-                          />
-
-                          <circle
-                            cx={point.x}
-                            cy={point.y}
-                            r="5"
-                            fill="#121212"
-                            stroke="var(--brand-primary)"
-                            strokeWidth="2.5"
-                          />
-                        </>
-                      )}
-                    </g>
-                  ))}
-                </svg>
-
-                {/* Tooltip */}
-
-                {hoveredPoint && hoverIndex !== null && (
-                  <div
-                    className="pointer-events-none absolute z-10 rounded-lg px-3 py-2 shadow-xl"
-                    style={{
-                      left: `${(hoveredPoint.x / 640) * 100}%`,
-                      top: `${(hoveredPoint.y / 220) * 100}%`,
-                      transform: "translate(-50%, -120%)",
-                      background: "#181818",
-                      border: "1px solid var(--stroke)",
-                    }}
-                  >
-                    <p className="text-[10px] text-[var(--fg-4)]">
-                      {series[hoverIndex]?.label}
-                    </p>
-
-                    <p className="mt-0.5 text-[12px] font-semibold text-[var(--fg)]">
-                      {fmtNum(hoveredPoint.value)}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* X labels */}
-
-              <div className="mt-2 flex justify-between px-1 text-[10.5px] text-[var(--fg-4)]">
-                {series.map((item, index) => (
-                  <span key={`${item.label}-${index}`}>
-                    {item.label}
-                  </span>
-                ))}
+                <DynamicAnalyticsChart
+                  data={chartData}
+                  style={activeStyle}
+                  height={220}
+                  metricLabel={tab}
+                />
               </div>
 
               {/* Summary */}
-
               <div className="mt-5 flex items-center gap-4 border-t border-[var(--stroke)] pt-4">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.12em] text-[var(--fg-4)]">
                     Latest
                   </p>
-
                   <p className="mt-1 text-[20px] font-semibold text-[var(--fg)]">
                     {fmtNum(latest)}
                   </p>
@@ -350,14 +206,10 @@ export function RecentAnalyticsCard({
                   <p className="text-[10px] uppercase tracking-[0.12em] text-[var(--fg-4)]">
                     Change
                   </p>
-
                   <p
                     className="mt-1 text-[13px] font-semibold"
                     style={{
-                      color:
-                        change >= 0
-                          ? "#34d399"
-                          : "#f87171",
+                      color: change >= 0 ? "#34d399" : "#f87171",
                     }}
                   >
                     {change >= 0 ? "+" : ""}
@@ -369,14 +221,12 @@ export function RecentAnalyticsCard({
           )}
         </div>
 
-        {/* Platforms */}
-
+        {/* Platforms Sidebar */}
         <aside className="border-t border-[var(--stroke)] pt-5 xl:border-l xl:border-t-0 xl:pl-6 xl:pt-0">
           <div className="mb-4 flex items-center justify-between">
             <p className="font-data text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--fg-4)]">
               Top platforms
             </p>
-
             <span className="text-[10px] text-[var(--fg-4)]">
               This period
             </span>
@@ -399,11 +249,8 @@ export function RecentAnalyticsCard({
                     <div className="flex min-w-0 items-center gap-2">
                       <span
                         className="h-2 w-2 flex-shrink-0 rounded-full"
-                        style={{
-                          background: platform.color,
-                        }}
+                        style={{ background: platform.color }}
                       />
-
                       <span className="truncate text-[12px] font-medium text-[var(--fg-2)]">
                         {platformLabel(platform.platform)}
                       </span>
@@ -425,9 +272,7 @@ export function RecentAnalyticsCard({
                               8,
                               (platform.value /
                                 Math.max(
-                                  ...platforms.map(
-                                    (item) => item.value
-                                  ),
+                                  ...platforms.map((item) => item.value),
                                   1
                                 )) *
                                 100
@@ -441,9 +286,7 @@ export function RecentAnalyticsCard({
                     <span
                       className="ml-3 text-[10.5px] font-medium"
                       style={{
-                        color: platform.positive
-                          ? "#34d399"
-                          : "#f87171",
+                        color: platform.positive ? "#34d399" : "#f87171",
                       }}
                     >
                       {platform.pct}

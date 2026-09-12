@@ -31,9 +31,26 @@ import {
   WandSparkles,
   X,
   Briefcase,
+  Sun,
+  Moon,
+  Monitor,
+  Type,
+  PieChart,
+  Layers,
 } from "lucide-react";
 
 import { useToast } from "@/components/ui/toast";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
+import {
+  ANALYTICS_STYLES,
+  FONT_FAMILIES,
+  THEME_MODES,
+  DASHBOARD_DENSITIES,
+  type AnalyticsStyle,
+  type FontFamily,
+  type ThemeMode,
+  type DashboardDensity,
+} from "@/lib/preferences/types";
 
 type IconComponent = ComponentType<{ className?: string; style?: CSSProperties }>;
 
@@ -409,6 +426,104 @@ function SectionLabel({
   );
 }
 
+function MiniChartPreview({
+  style,
+  accentColor,
+}: {
+  style: AnalyticsStyle;
+  accentColor: string;
+}) {
+  switch (style) {
+    case "line":
+      return (
+        <svg viewBox="0 0 56 28" className="h-6 w-12">
+          <path
+            d="M 4 22 L 16 16 L 28 20 L 40 8 L 52 12"
+            fill="none"
+            stroke={accentColor}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle cx="40" cy="8" r="2.5" fill="#fff" stroke={accentColor} strokeWidth="1.5" />
+        </svg>
+      );
+    case "bar":
+      return (
+        <svg viewBox="0 0 56 28" className="h-6 w-12">
+          <rect x="6" y="14" width="7" height="12" rx="2" fill={accentColor} fillOpacity="0.4" />
+          <rect x="18" y="8" width="7" height="18" rx="2" fill={accentColor} fillOpacity="0.7" />
+          <rect x="30" y="18" width="7" height="8" rx="2" fill={accentColor} fillOpacity="0.3" />
+          <rect x="42" y="4" width="7" height="22" rx="2" fill={accentColor} />
+        </svg>
+      );
+    case "area":
+      return (
+        <svg viewBox="0 0 56 28" className="h-6 w-12">
+          <path
+            d="M 4 22 L 16 14 L 28 17 L 42 6 L 52 10 L 52 26 L 4 26 Z"
+            fill={accentColor}
+            fillOpacity="0.25"
+          />
+          <path
+            d="M 4 22 L 16 14 L 28 17 L 42 6 L 52 10"
+            fill="none"
+            stroke={accentColor}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+    case "donut":
+      return (
+        <svg viewBox="0 0 28 28" className="h-6 w-6">
+          <circle cx="14" cy="14" r="10" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="4" />
+          <circle
+            cx="14"
+            cy="14"
+            r="10"
+            fill="none"
+            stroke={accentColor}
+            strokeWidth="4"
+            strokeDasharray="62.8"
+            strokeDashoffset="25"
+          />
+        </svg>
+      );
+    case "scatter":
+      return (
+        <svg viewBox="0 0 56 28" className="h-6 w-12">
+          <circle cx="10" cy="20" r="3" fill={accentColor} fillOpacity="0.6" />
+          <circle cx="22" cy="14" r="3.5" fill={accentColor} fillOpacity="0.8" />
+          <circle cx="34" cy="17" r="2.5" fill={accentColor} fillOpacity="0.5" />
+          <circle cx="46" cy="7" r="4" fill={accentColor} />
+        </svg>
+      );
+    case "funnel":
+      return (
+        <svg viewBox="0 0 56 28" className="h-6 w-12">
+          <polygon points="6,4 50,4 42,11 14,11" fill={accentColor} />
+          <polygon points="14,12 42,12 36,19 20,19" fill={accentColor} fillOpacity="0.7" />
+          <polygon points="20,20 36,20 31,26 25,26" fill={accentColor} fillOpacity="0.4" />
+        </svg>
+      );
+    case "radar":
+      return (
+        <svg viewBox="0 0 28 28" className="h-6 w-6">
+          <polygon points="14,3 24,11 20,23 8,23 4,11" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+          <polygon points="14,7 21,12 18,20 10,20 7,12" fill={accentColor} fillOpacity="0.4" stroke={accentColor} strokeWidth="1.5" />
+        </svg>
+      );
+    case "auto":
+    default:
+      return (
+        <div className="flex items-center gap-1">
+          <Sparkles className="h-4 w-4" style={{ color: accentColor }} />
+        </div>
+      );
+  }
+}
+
 export function OnboardingFlow({
   initialName,
   initialUsername,
@@ -418,6 +533,7 @@ export function OnboardingFlow({
 }) {
   const router = useRouter();
   const { error: toastError, success: toastSuccess } = useToast();
+  const { preferences, updatePreferences } = usePreferences();
 
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -435,7 +551,21 @@ export function OnboardingFlow({
   const [industry, setIndustry] = useState("");
   const [automationLevel, setAutomationLevel] = useState<AutomationLevel | null>(null);
 
-  const TOTAL_STEPS = 6;
+  // Personalization Choices
+  const [analyticsStyle, setAnalyticsStyle] = useState<AnalyticsStyle>(
+    preferences.analytics_style || "auto"
+  );
+  const [fontFamily, setFontFamily] = useState<FontFamily>(
+    preferences.font_family || "inter"
+  );
+  const [themeMode, setThemeMode] = useState<ThemeMode>(
+    preferences.theme_mode || "dark"
+  );
+  const [dashboardDensity, setDashboardDensity] = useState<DashboardDensity>(
+    preferences.dashboard_density || "balanced"
+  );
+
+  const TOTAL_STEPS = 9;
   const firstName = initialName?.trim().split(/\s+/)[0] ?? "";
 
   const isMarketer = persona === "marketer";
@@ -520,6 +650,15 @@ export function OnboardingFlow({
       case 5:
         return automationLevel !== null;
 
+      case 6:
+        return Boolean(analyticsStyle);
+
+      case 7:
+        return Boolean(fontFamily);
+
+      case 8:
+        return Boolean(themeMode && dashboardDensity);
+
       default:
         return false;
     }
@@ -537,6 +676,10 @@ export function OnboardingFlow({
     targetAudience,
     industry,
     automationLevel,
+    analyticsStyle,
+    fontFamily,
+    themeMode,
+    dashboardDensity,
   ]);
 
   const next = () => {
@@ -585,6 +728,14 @@ export function OnboardingFlow({
         return;
       }
 
+      // Persist user personalization preferences
+      await updatePreferences({
+        analytics_style: analyticsStyle,
+        font_family: fontFamily,
+        theme_mode: themeMode,
+        dashboard_density: dashboardDensity,
+      });
+
       toastSuccess(
         "Workspace ready",
         "Your Koraspace experience has been personalized."
@@ -609,6 +760,9 @@ export function OnboardingFlow({
     "Your content",
     "Your audience",
     "Your workflow",
+    "Analytics style",
+    "Typography",
+    "Appearance",
   ];
 
   return (
@@ -1225,6 +1379,264 @@ export function OnboardingFlow({
                         )}
                       </div>
                     </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* STEP 6: Analytics Style */}
+            {step === 6 && (
+              <>
+                <StepEyebrow number="07" accentColor={accentColor} accentSoft={accentSoft} />
+
+                <h1 className="mt-3 font-display text-[30px] font-semibold leading-[1.05] tracking-[-0.045em] text-white sm:text-[38px]">
+                  Choose your
+                  <br />
+                  <span className="text-white/40">
+                    analytics style.
+                  </span>
+                </h1>
+
+                <p className="mt-4 max-w-xl text-sm leading-6 text-white/40">
+                  Select your default chart visualization. This shapes how performance, growth, and conversion data are plotted across your dashboard.
+                </p>
+
+                <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                  {ANALYTICS_STYLES.map((style) => {
+                    const active = analyticsStyle === style.id;
+                    return (
+                      <button
+                        key={style.id}
+                        type="button"
+                        onClick={() => setAnalyticsStyle(style.id)}
+                        className="group relative flex flex-col justify-between rounded-2xl border p-4 text-left transition-all duration-200 cursor-pointer"
+                        style={{
+                          borderColor: active
+                            ? `${accentColor}80`
+                            : "rgba(255,255,255,0.08)",
+                          background: active
+                            ? `${accentColor}12`
+                            : "rgba(255,255,255,0.025)",
+                        }}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-2.5">
+                            <div
+                              className="flex h-9 w-9 items-center justify-center rounded-xl border"
+                              style={{
+                                borderColor: active ? `${accentColor}40` : "rgba(255,255,255,0.08)",
+                                background: active ? `${accentColor}25` : "rgba(255,255,255,0.03)",
+                              }}
+                            >
+                              <MiniChartPreview style={style.id} accentColor={active ? accentColor : "#ffffff"} />
+                            </div>
+                            <div>
+                              <div className="text-sm font-semibold text-white">{style.title}</div>
+                              <div className="text-[11px] text-white/40">{style.subtitle}</div>
+                            </div>
+                          </div>
+
+                          <div
+                            className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-all ${
+                              active ? "border-transparent" : "border-white/20"
+                            }`}
+                            style={{
+                              background: active ? accentColor : "transparent",
+                            }}
+                          >
+                            {active && <Check className="h-2.5 w-2.5 text-white stroke-[3]" />}
+                          </div>
+                        </div>
+
+                        <div className="mt-3.5 border-t border-white/[0.06] pt-2.5">
+                          <div className="text-[10px] uppercase tracking-wider text-white/30 font-medium">Best for:</div>
+                          <div className="mt-0.5 text-xs text-white/60">{style.bestFor}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            {/* STEP 7: Typography */}
+            {step === 7 && (
+              <>
+                <StepEyebrow number="08" accentColor={accentColor} accentSoft={accentSoft} />
+
+                <h1 className="mt-3 font-display text-[30px] font-semibold leading-[1.05] tracking-[-0.045em] text-white sm:text-[38px]">
+                  Choose your
+                  <br />
+                  <span className="text-white/40">
+                    typography & font.
+                  </span>
+                </h1>
+
+                <p className="mt-4 max-w-xl text-sm leading-6 text-white/40">
+                  Select the primary typeface that sets the tone for your interface, metrics telemetry, and post drafts.
+                </p>
+
+                <div className="mt-8 space-y-2.5">
+                  {FONT_FAMILIES.map((font) => {
+                    const active = fontFamily === font.id;
+                    return (
+                      <button
+                        key={font.id}
+                        type="button"
+                        onClick={() => setFontFamily(font.id)}
+                        className="group flex w-full items-center justify-between rounded-2xl border p-4 text-left transition-all duration-200 cursor-pointer"
+                        style={{
+                          borderColor: active
+                            ? `${accentColor}80`
+                            : "rgba(255,255,255,0.08)",
+                          background: active
+                            ? `${accentColor}12`
+                            : "rgba(255,255,255,0.025)",
+                          fontFamily: font.cssFamily,
+                        }}
+                      >
+                        <div className="min-w-0 flex-1 pr-4">
+                          <div className="flex items-center gap-2">
+                            <span className="text-base font-semibold text-white">{font.label}</span>
+                            <span className="rounded-md border border-white/[0.08] bg-white/[0.04] px-2 py-0.5 text-[10px] font-mono text-white/40">
+                              {font.category}
+                            </span>
+                          </div>
+                          <div className="mt-1 text-xs text-white/50 tracking-wide">
+                            {font.preview}
+                          </div>
+                        </div>
+
+                        <div
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${
+                            active ? "border-transparent" : "border-white/20"
+                          }`}
+                          style={{
+                            background: active ? accentColor : "transparent",
+                          }}
+                        >
+                          {active && <Check className="h-3 w-3 text-white stroke-[3]" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            {/* STEP 8: Appearance & Density */}
+            {step === 8 && (
+              <>
+                <StepEyebrow number="09" accentColor={accentColor} accentSoft={accentSoft} />
+
+                <h1 className="mt-3 font-display text-[30px] font-semibold leading-[1.05] tracking-[-0.045em] text-white sm:text-[38px]">
+                  Appearance &
+                  <br />
+                  <span className="text-white/40">
+                    dashboard density.
+                  </span>
+                </h1>
+
+                <p className="mt-4 max-w-xl text-sm leading-6 text-white/40">
+                  Tune your color scheme and interface density before entering your live workspace.
+                </p>
+
+                {/* Theme Selector */}
+                <div className="mt-8">
+                  <SectionLabel>Theme Mode</SectionLabel>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    {THEME_MODES.map((mode) => {
+                      const active = themeMode === mode.id;
+                      return (
+                        <button
+                          key={mode.id}
+                          type="button"
+                          onClick={() => setThemeMode(mode.id)}
+                          className="flex flex-col items-center justify-center rounded-2xl border p-4 text-center transition-all cursor-pointer"
+                          style={{
+                            borderColor: active ? `${accentColor}80` : "rgba(255,255,255,0.08)",
+                            background: active ? `${accentColor}12` : "rgba(255,255,255,0.025)",
+                          }}
+                        >
+                          <div
+                            className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border"
+                            style={{
+                              borderColor: active ? `${accentColor}50` : "rgba(255,255,255,0.1)",
+                              background: active ? `${accentColor}20` : "rgba(255,255,255,0.04)",
+                            }}
+                          >
+                            {mode.id === "dark" && <Moon className="h-5 w-5" style={{ color: active ? accentColor : "white" }} />}
+                            {mode.id === "light" && <Sun className="h-5 w-5" style={{ color: active ? accentColor : "white" }} />}
+                            {mode.id === "system" && <Monitor className="h-5 w-5" style={{ color: active ? accentColor : "white" }} />}
+                          </div>
+                          <span className="text-sm font-semibold text-white">{mode.label}</span>
+                          <span className="mt-1 text-[11px] text-white/40">
+                            {mode.id === "light" ? "Crisp daylight" : mode.id === "dark" ? "Deep obsidian" : "Follows OS"}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Density Selector */}
+                <div className="mt-8">
+                  <SectionLabel>Dashboard Density</SectionLabel>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    {DASHBOARD_DENSITIES.map((dens) => {
+                      const active = dashboardDensity === dens.id;
+                      return (
+                        <button
+                          key={dens.id}
+                          type="button"
+                          onClick={() => setDashboardDensity(dens.id)}
+                          className="flex flex-col justify-between rounded-2xl border p-4 text-left transition-all cursor-pointer"
+                          style={{
+                            borderColor: active ? `${accentColor}80` : "rgba(255,255,255,0.08)",
+                            background: active ? `${accentColor}12` : "rgba(255,255,255,0.025)",
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold text-white">{dens.label}</span>
+                            <span className="rounded-md border border-white/[0.08] bg-white/[0.04] px-1.5 py-0.5 text-[9.5px] font-medium text-white/40">
+                              {dens.badge}
+                            </span>
+                          </div>
+                          <p className="mt-2 text-[11px] leading-relaxed text-white/40">{dens.description}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Final Launch Summary Box */}
+                <div className="mt-8 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                      style={{ background: `${accentColor}20`, color: accentColor }}
+                    >
+                      <Sparkles className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-white">Your Workspace Is Ready</h4>
+                      <p className="text-xs text-white/40">Everything will be configured and saved to your Supabase profile.</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2 border-t border-white/[0.06] pt-3 text-[11px]">
+                    <span className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 text-white/60">
+                      Chart: <strong className="text-white capitalize">{analyticsStyle}</strong>
+                    </span>
+                    <span className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 text-white/60">
+                      Font: <strong className="text-white capitalize">{fontFamily}</strong>
+                    </span>
+                    <span className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 text-white/60">
+                      Theme: <strong className="text-white capitalize">{themeMode}</strong>
+                    </span>
+                    <span className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 text-white/60">
+                      Density: <strong className="text-white capitalize">{dashboardDensity}</strong>
+                    </span>
                   </div>
                 </div>
               </>

@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
 import { fmtNum, fmtNaira, platformLabel } from "@/lib/dashboard/helpers";
+import { DynamicAnalyticsChart } from "@/components/dashboard/DynamicAnalyticsChart";
 import type { SocialPost, Campaign } from "@/lib/social/types";
 
 /* -------------------------------------------------------------------------- */
@@ -73,110 +74,9 @@ function getPlatformIcon(platform: string) {
 /* -------------------------------------------------------------------------- */
 
 function GrowthChart({ data }: { data: number[] }) {
-  const chartWidth = 720;
-  const chartHeight = 240;
-  const paddingTop = 20;
-  const paddingBottom = 35;
-  const paddingLeft = 20;
-  const paddingRight = 12;
-
-  const safeData = data.length >= 2 ? data : [0, ...data, 0];
-  const max = Math.max(...safeData, 1);
-  const min = Math.min(...safeData, 0);
-
-  const x = (index: number) =>
-    paddingLeft +
-    (index / Math.max(safeData.length - 1, 1)) *
-      (chartWidth - paddingLeft - paddingRight);
-
-  const y = (value: number) =>
-    paddingTop +
-    (1 - (value - min) / Math.max(max - min, 1)) *
-      (chartHeight - paddingTop - paddingBottom);
-
-  const linePath = safeData
-    .map((value, index) => `${index === 0 ? "M" : "L"} ${x(index)} ${y(value)}`)
-    .join(" ");
-
-  const areaPath = `
-    ${linePath}
-    L ${x(safeData.length - 1)} ${chartHeight - paddingBottom}
-    L ${x(0)} ${chartHeight - paddingBottom}
-    Z
-  `;
-
-  const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
   return (
-    <div className="relative mt-4 h-[240px] w-full">
-      <svg
-        viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-        className="h-full w-full overflow-visible"
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <linearGradient id="growthGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--brand-primary)" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="var(--brand-primary)" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-
-        {/* Horizontal grid lines */}
-        {[0, 0.25, 0.5, 0.75, 1].map((step) => {
-          const gridY =
-            paddingTop + step * (chartHeight - paddingTop - paddingBottom);
-          return (
-            <line
-              key={step}
-              x1={paddingLeft}
-              x2={chartWidth - paddingRight}
-              y1={gridY}
-              y2={gridY}
-              stroke="rgba(255,255,255,0.06)"
-              strokeWidth="1"
-              strokeDasharray="4 4"
-            />
-          );
-        })}
-
-        {/* Area */}
-        <path d={areaPath} fill="url(#growthGradient)" />
-
-        {/* Line */}
-        <path
-          d={linePath}
-          fill="none"
-          stroke="var(--brand-primary)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-
-        {/* Data points */}
-        {safeData.map((value, index) => (
-          <circle
-            key={index}
-            cx={x(index)}
-            cy={y(value)}
-            r="4"
-            fill="var(--brand-primary)"
-            stroke="#181818"
-            strokeWidth="2"
-          />
-        ))}
-      </svg>
-
-      {/* Axis labels */}
-      <div className="absolute bottom-0 left-0 right-0 flex justify-between px-3">
-        {labels.slice(0, safeData.length).map((label) => (
-          <span
-            key={label}
-            className="font-data text-[11px] font-medium text-[var(--fg-4)]"
-          >
-            {label}
-          </span>
-        ))}
-      </div>
+    <div className="mt-4">
+      <DynamicAnalyticsChart data={data} height={240} />
     </div>
   );
 }

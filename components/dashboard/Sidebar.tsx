@@ -557,7 +557,7 @@ export function Sidebar({
     <aside
       className="fixed left-0 top-0 z-40 flex h-full border-r border-[var(--stroke)]"
       style={{
-        background: "#101010",
+        background: "var(--app-surface)",
       }}
     >
       <div

@@ -88,7 +88,7 @@ function DashboardShell({
   return (
     <div
       data-persona={persona}
-      className="sai-app relative min-h-screen overflow-x-hidden bg-[#121212] text-[var(--fg)]"
+      className="sai-app relative min-h-screen overflow-x-hidden bg-[var(--app-bg)] text-[var(--fg)]"
     >
       {/* Desktop Sidebar */}
 

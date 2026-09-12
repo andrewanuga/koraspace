@@ -114,7 +114,7 @@ export function DashboardHeader({
     <header
       className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[var(--stroke)] px-4 sm:px-6"
       style={{
-        background: "rgba(18,18,18,0.88)",
+        background: "var(--app-header)",
         backdropFilter: "blur(20px)",
       }}
     >
