@@ -292,7 +292,7 @@ export class ChatAgent {
     }
 
     // 10. Brand Compliance Guardrail Verification
-    const compliance = BrandIntelligenceLoader.checkCompliance(finalContent, undefined);
+    const compliance = BrandIntelligenceLoader.checkCompliance(finalContent, (memoryBundle.brand as any));
     if (!compliance.compliant && compliance.violations.length > 0 && finalContent.length > 20) {
       steps.push({
         stepIndex: ++iterations,
