@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { callAI, isConfigured } from "@/lib/ai/openrouter";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { buildGeneratePrompt } from "@/lib/ai/prompts";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
-/* ── Types ────────────────────────────────────────────────────── */
+/* â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 interface GenerateBody {
   prompt?: string;
@@ -16,7 +17,7 @@ interface GenerateBody {
   useTrends?: boolean;
 }
 
-/* ── POST /api/ai/generate ────────────────────────────────────── */
+/* â”€â”€ POST /api/ai/generate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,6 +26,10 @@ export async function POST(req: NextRequest) {
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) return new Response("Unauthorized", { status: 401 });
     const workspaceId = workspace.workspaceId;
+
+    // Rate limit: 30 requests/min per user.
+    const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
+    if (guard) return guard;
 
     const body: GenerateBody = await req.json();
     const { prompt, platform, framework, tone, context, type = "caption", useTrends } = body;
@@ -76,13 +81,13 @@ export async function POST(req: NextRequest) {
       ? `Brand context: ${context}\n\nCreate a compelling ${platform || "social media"} post about: ${finalPrompt || "our brand"}`
       : `Create a compelling ${platform || "social media"} post about: ${finalPrompt}`;
 
-    // ── No API key → mock ───────────────────────────────────────
+    // â”€â”€ No API key â†’ mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (!isConfigured()) {
       await new Promise((r) => setTimeout(r, 800));
       return NextResponse.json({ content: getMockContent(platform, framework, tone) });
     }
 
-    // ── Call OpenRouter ─────────────────────────────────────────
+    // â”€â”€ Call OpenRouter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const result = await callAI(
       [
         { role: "system", content: systemPrompt },
@@ -108,22 +113,23 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/* ── Mock content for dev ─────────────────────────────────────── */
+/* â”€â”€ Mock content for dev â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 function getMockContent(platform?: string, framework?: string, tone?: string): string {
   const mocks: Record<string, string> = {
-    aida: `🧵 Most founders are sleeping on this growth hack in 2026...\n\nI went from 0 to 10K followers in 60 days without spending a single Naira on ads.\n\nHere's the exact 5-step system I used 👇\n\n• Stop posting content. Start sharing insights.\n• The 80/20 engagement rule — spend 80% of your time commenting.\n• Post at 6am or 8pm WAT. Most creators post during work hours.\n• Every thread needs a retention hook at the end.\n• Auto-Plug when posts blow up.\n\nWhich step are you missing? 👇`,
-    pas: `The biggest problem with social media in 2026?\n\nYou're working 3x harder for half the results.\n\nAlgorithms changed. Attention spans dropped. Competition tripled.\n\nAnd the playbook everyone taught you in 2022 is dead.\n\nHere's what actually works now → [Link in bio]`,
-    hook: `"I post every day and still get zero engagement."\n\nI hear this from 9 out of 10 founders I talk to.\n\nHere's the uncomfortable truth:\n\nPosting more is not the solution.\n\nPosting smarter is.\n\nDrop a 🙋 if you want me to break down the system that changed everything for my clients.`,
+    aida: `ðŸ§µ Most founders are sleeping on this growth hack in 2026...\n\nI went from 0 to 10K followers in 60 days without spending a single Naira on ads.\n\nHere's the exact 5-step system I used ðŸ‘‡\n\nâ€¢ Stop posting content. Start sharing insights.\nâ€¢ The 80/20 engagement rule â€” spend 80% of your time commenting.\nâ€¢ Post at 6am or 8pm WAT. Most creators post during work hours.\nâ€¢ Every thread needs a retention hook at the end.\nâ€¢ Auto-Plug when posts blow up.\n\nWhich step are you missing? ðŸ‘‡`,
+    pas: `The biggest problem with social media in 2026?\n\nYou're working 3x harder for half the results.\n\nAlgorithms changed. Attention spans dropped. Competition tripled.\n\nAnd the playbook everyone taught you in 2022 is dead.\n\nHere's what actually works now â†’ [Link in bio]`,
+    hook: `"I post every day and still get zero engagement."\n\nI hear this from 9 out of 10 founders I talk to.\n\nHere's the uncomfortable truth:\n\nPosting more is not the solution.\n\nPosting smarter is.\n\nDrop a ðŸ™‹ if you want me to break down the system that changed everything for my clients.`,
     story: `18 months ago, I was ready to quit social media entirely.\n\n47 posts. 230 followers. Zero clients.\n\nThen I discovered one thing that changed everything.\n\nI stopped writing for the algorithm and started writing for one person.\n\nMy ideal client. Her exact problem. Her exact words.\n\nNext month? 4 inbound leads from a single thread.\n\nThe lesson: specificity beats volume every single time.`,
   };
 
   let content = mocks[framework || "aida"] || mocks.aida;
   
   if (platform === "linkedin") {
-    content = `Bold first line that stops the scroll.\n\nI've been quiet about this for months, but it's time to share.\n\nHere's what I learned after working with 50+ ${platform || "brands"} this quarter:\n\n• Insight 1\n• Insight 2\n• Insight 3\n\nThe lesson? Consistency compounds. But only if you're consistent about the RIGHT things.\n\nWhat's your biggest challenge right now? 👇`;
+    content = `Bold first line that stops the scroll.\n\nI've been quiet about this for months, but it's time to share.\n\nHere's what I learned after working with 50+ ${platform || "brands"} this quarter:\n\nâ€¢ Insight 1\nâ€¢ Insight 2\nâ€¢ Insight 3\n\nThe lesson? Consistency compounds. But only if you're consistent about the RIGHT things.\n\nWhat's your biggest challenge right now? ðŸ‘‡`;
   }
 
   // Inject tone indicator for mock mode so the user knows it's applying
   return `[Mock Mode | Tone: ${tone || "Professional"} | Framework: ${framework || "AIDA"}]\n\n${content}`;
 }
+

@@ -2,12 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { PLANS, isPlan, toKobo } from "@/lib/billing/plans";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
+import { checkoutSchema } from "@/lib/security/schemas";
 
 /** Start a Paystack checkout for a plan; returns an authorization_url to redirect to. */
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Rate limit: 10 checkout attempts/min per user (prevent abuse).
+  const guardCheckout = await checkRequest(req, requestKey(req, user.id), 10);
+  if (guardCheckout) return guardCheckout;
 
   const workspace = await getActiveWorkspace(supabase);
   if (!workspace || !user) return new Response("Unauthorized", { status: 401 });
@@ -18,8 +24,15 @@ export async function POST(req: NextRequest) {
 
   const workspaceId = workspace.workspaceId;
 
-  const { plan } = await req.json();
-  if (!isPlan(plan)) return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
+  const rawBody = await req.json().catch(() => ({}));
+  const parsed = checkoutSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Validation failed.", issues: parsed.error.issues.map((i) => `${i.path}: ${i.message}`) },
+      { status: 400 }
+    );
+  }
+  const { plan } = parsed.data;
 
   // Downgrade to Free needs no payment.
   if (plan === "free") {
@@ -55,3 +68,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Couldn't reach Paystack." }, { status: 502 });
   }
 }
+

@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
+import { onboardingSchema } from "@/lib/security/schemas";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
 
@@ -18,7 +20,22 @@ export async function POST(req: Request) {
       );
     }
 
+    // Rate limit: 5 onboarding submissions/min per user.
+    const guard = await checkRequest(req, requestKey(req, user.id), 5);
+    if (guard) return guard;
+
+
     const body = await req.json();
+
+    // Validate with schema.
+    const parsed = onboardingSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Validation failed.", issues: parsed.error.issues.map((i) => `${i.path}: ${i.message}`) },
+        { status: 400 }
+      );
+    }
+
     const {
       persona,
       username,
@@ -26,15 +43,16 @@ export async function POST(req: Request) {
       platforms,
       contentFormats,
       niche,
-      postingCadence,
-      audienceRange,
-      targetAudience,
-      businessType,
       industry,
+      audienceRange,
+      postingCadence,
       automationLevel,
-    } = body;
+    } = parsed.data;
 
-    const cleanUsername = (username || "").trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
+    // Preserve extra unvalidated fields from body for DB upsert.
+    const { targetAudience, businessType } = (body as Record<string, unknown>);
+
+    const cleanUsername = username;
 
     if (!cleanUsername || cleanUsername.length < 2) {
       return NextResponse.json(
@@ -77,8 +95,8 @@ export async function POST(req: Request) {
       niche: niche ? niche.trim() : null,
       posts_per_week: typeof postingCadence === "number" ? postingCadence : 3,
       audience_range: persona === "creator" ? audienceRange || null : null,
-      target_audience: (persona === "creator" || persona === "client") && targetAudience ? targetAudience.trim() : null,
-      business_type: (persona === "client" || persona === "marketer") ? businessType || null : null,
+      target_audience: (persona as string) === "creator" || (persona as string) === "client" ? (typeof targetAudience === "string" ? targetAudience.trim() : null) : null,
+      business_type: (persona as string) === "client" || persona === "marketer" ? businessType || null : null,
       industry: persona === "marketer" && industry ? industry.trim() : null,
       automation_level: automationLevel || "suggestions",
       onboarded: true,
@@ -102,7 +120,7 @@ export async function POST(req: Request) {
         niche: niche ? niche.trim() : null,
         posts_per_week: typeof postingCadence === "number" ? postingCadence : 3,
         audience_range: persona === "creator" ? audienceRange || null : null,
-        business_type: (persona === "client" || persona === "marketer") ? businessType || null : null,
+        business_type: (persona as string) === "client" || persona === "marketer" ? businessType || null : null,
         onboarded: true,
         onboarded_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -134,3 +152,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

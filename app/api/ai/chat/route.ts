@@ -7,6 +7,7 @@ import { buildChatSystemPrompt } from "@/lib/ai/prompts";
 import { RECOMMENDED_MODELS } from "@/lib/ai/models";
 import type { ChatMessage } from "@/lib/ai/openrouter";
 import { AI_TOOLS, executeTool } from "@/lib/ai/tools";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
 /* ── Types ────────────────────────────────────────────────────── */
 
@@ -27,6 +28,10 @@ export async function POST(req: NextRequest) {
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) return new Response("Unauthorized", { status: 401 });
     const workspaceId = workspace.workspaceId;
+
+    // Rate limit: 30 requests/min per user.
+    const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
+    if (guard) return guard;
 
     const { messages, attachments, model, stream: wantsStream, chatId: inputChatId } = (await req.json()) as {
       messages: InputMessage[];

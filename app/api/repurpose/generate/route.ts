@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { callAI } from "@/lib/ai/openrouter";
 import { buildRepurposePrompt } from "@/lib/repurpose/prompts";
 import type { RepurposePlatform, RepurposeOutput, RepurposeProject } from "@/lib/repurpose/types";
 import { randomUUID } from "crypto";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,6 +16,10 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Rate limit: 20 repurpose requests/min per user.
+    const guard = await checkRequest(request, requestKey(request, user.id), 20);
+    if (guard) return guard;
 
     const body = await request.json();
     const {
@@ -199,3 +204,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

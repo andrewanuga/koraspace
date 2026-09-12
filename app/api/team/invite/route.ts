@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
+import { teamInviteSchema } from "@/lib/security/schemas";
 const INVITABLE_ROLES = new Set(["admin", "manager", "member"]);
 
 async function getContext() {
@@ -58,6 +60,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Rate limit: 20 invite requests/min per user.
+  const guard = await checkRequest(request, requestKey(request, user.id), 20);
+  if (guard) return guard;
+
   if (actorRole !== "owner" && actorRole !== "admin") {
     return NextResponse.json(
       { error: "Only owners and admins can invite members." },
@@ -66,19 +72,14 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json().catch(() => ({}));
-  const email = String(body.email ?? "").trim().toLowerCase();
-  const role = String(body.role ?? "member");
-
-  if (!/^\S+@\S+\.\S+$/.test(email)) {
+  const parsed = teamInviteSchema.safeParse(body);
+  if (!parsed.success) {
     return NextResponse.json(
-      { error: "Enter a valid email address." },
+      { error: "Validation failed.", issues: parsed.error.issues.map((i) => `${i.path}: ${i.message}`) },
       { status: 400 }
     );
   }
-
-  if (!INVITABLE_ROLES.has(role)) {
-    return NextResponse.json({ error: "Invalid team role." }, { status: 400 });
-  }
+  const { email, role } = parsed.data;
 
   if (email === user.email?.toLowerCase()) {
     return NextResponse.json(
@@ -297,3 +298,4 @@ export async function DELETE(request: NextRequest) {
 
   return NextResponse.json({ success: true });
 }
+

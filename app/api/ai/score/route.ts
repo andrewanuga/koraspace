@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { callAI, isConfigured } from "@/lib/ai/openrouter";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { buildScorePrompt } from "@/lib/ai/prompts";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
-/* ── Types ────────────────────────────────────────────────────── */
+/* â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 interface ScoreResponse {
   score: number;
@@ -14,7 +15,7 @@ interface ScoreResponse {
   improvements: string[];
 }
 
-/* ── POST /api/ai/score ───────────────────────────────────────── */
+/* â”€â”€ POST /api/ai/score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,6 +23,10 @@ export async function POST(req: NextRequest) {
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) return new Response("Unauthorized", { status: 401 });
     const workspaceId = workspace.workspaceId;
+
+    // Rate limit: 30 requests/min per user.
+    const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
+    if (guard) return guard;
 
     const { content, platform } = await req.json();
     if (!content) {
@@ -35,13 +40,13 @@ export async function POST(req: NextRequest) {
       .eq("id", workspaceId)
       .single();
 
-    // ── No API key → mock ───────────────────────────────────────
+    // â”€â”€ No API key â†’ mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (!isConfigured()) {
       await new Promise((r) => setTimeout(r, 500));
       return NextResponse.json(mockScore(content));
     }
 
-    // ── Call OpenRouter ─────────────────────────────────────────
+    // â”€â”€ Call OpenRouter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const prompt = buildScorePrompt(content, platform);
 
     const result = await callAI(
@@ -74,14 +79,14 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/* ── Mock fallback ────────────────────────────────────────────── */
+/* â”€â”€ Mock fallback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 function mockScore(content: string): ScoreResponse {
   const length = content.length;
   const hasEmoji = /\p{Emoji}/u.test(content);
   const hasNumbers = /\d/.test(content);
   const hasQuestion = content.includes("?");
-  const hasThread = content.includes("🧵") || content.includes("1/");
+  const hasThread = content.includes("ðŸ§µ") || content.includes("1/");
 
   let score = 55;
   if (hasEmoji) score += 8;
@@ -98,7 +103,7 @@ function mockScore(content: string): ScoreResponse {
     reasoning:
       score >= 75
         ? "Strong hook, clear value proposition, and engagement driver."
-        : "Solid content — a stronger opening hook would boost reach.",
+        : "Solid content â€” a stronger opening hook would boost reach.",
     improvements: [
       "Add a specific number in the first line (e.g. '3 things', '47% of creators')",
       "End with a direct question to boost comment engagement",
@@ -108,3 +113,4 @@ function mockScore(content: string): ScoreResponse {
     ],
   };
 }
+

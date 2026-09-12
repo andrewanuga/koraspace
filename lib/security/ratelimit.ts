@@ -2,6 +2,7 @@
 // fixed-window rate limiting, repeat-offender auto-blocking, and a cached
 // view of admin-blocked IPs. For multi-instance/production scale, back this
 // with Redis (or put a CDN/WAF like Cloudflare in front).
+import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type Window = { count: number; reset: number };
@@ -86,4 +87,83 @@ export function logSecurityEvent(evt: { type: string; ip?: string; path?: string
     if (!admin) return;
     void admin.from("security_events").insert({ severity: "info", ...evt });
   } catch { /* ignore */ }
+}
+
+// ── Convenience helpers for API routes ─────────────────────────────────────
+
+/** Build a rate limit key from a user ID (preferred) or IP address. */
+export function requestKey(req: NextRequest, userId?: string): string {
+  if (userId) return `user:${userId}`;
+  const ip =
+    req.headers.get("x-client-ip") ||
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown";
+  return `ip:${ip}`;
+}
+
+/** Extract raw client IP from a NextRequest. */
+export function reqIp(req: NextRequest): string {
+  return (
+    req.headers.get("x-client-ip") ||
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown"
+  );
+}
+
+/**
+ * One-call security guard for API routes.
+ *
+ * @param req      - Incoming NextRequest
+ * @param key      - Rate limit key (use requestKey() to build one)
+ * @param limit    - Max requests allowed in the window
+ * @param windowMs - Window duration in ms (default: 60 000 = 1 min)
+ * @returns NextResponse (403/429) if the request should be rejected, else null.
+ *
+ * Usage:
+ *   const guard = await checkRequest(req, requestKey(req, userId), 30);
+ *   if (guard) return guard;
+ */
+export async function checkRequest(
+  req: NextRequest,
+  key: string,
+  limit: number,
+  windowMs = 60_000
+): Promise<NextResponse | null> {
+  const ip = reqIp(req);
+  const path = req.nextUrl.pathname;
+
+  // Refresh and check admin blocklist.
+  await refreshBlocklist();
+  if (isBlocked(ip)) {
+    logSecurityEvent({ type: "blocked_ip_request", ip, path, severity: "warning", detail: "Request from blocked IP" });
+    return NextResponse.json({ error: "Access denied." }, { status: 403 });
+  }
+
+  // Apply rate limit.
+  const result = rateLimit(key, limit, windowMs);
+  if (!result.ok) {
+    const wasAutoBlocked = noteViolation(ip);
+    logSecurityEvent({
+      type: wasAutoBlocked ? "ip_auto_blocked" : "rate_limit_exceeded",
+      ip,
+      path,
+      severity: wasAutoBlocked ? "critical" : "warning",
+      detail: `Rate limit exceeded on ${path}`,
+    });
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down." },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(result.retryAfter),
+          "X-RateLimit-Limit": String(limit),
+          "X-RateLimit-Remaining": "0",
+        },
+      }
+    );
+  }
+
+  return null; // Request is allowed.
 }

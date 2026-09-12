@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { callAI, isConfigured } from "@/lib/ai/openrouter";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { buildGhostSystemPrompt } from "@/lib/ai/prompts";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
-/* ── POST /api/ai/ghost ───────────────────────────────────────── */
+/* â”€â”€ POST /api/ai/ghost â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,6 +13,10 @@ export async function POST(req: NextRequest) {
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) return new Response("Unauthorized", { status: 401 });
     const workspaceId = workspace.workspaceId;
+
+    // Rate limit: 30 requests/min per user.
+    const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
+    if (guard) return guard;
 
     const { comment, brandVoice, platform, mode = "reply" } = await req.json();
     if (!comment) {
@@ -25,14 +30,14 @@ export async function POST(req: NextRequest) {
       .eq("id", workspaceId)
       .single();
 
-    // ── No API key → mock ───────────────────────────────────────
+    // â”€â”€ No API key â†’ mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (!isConfigured()) {
       const result = mockGhost(comment);
       await logAction(supabase, workspaceId, comment, result, platform);
       return NextResponse.json(result);
     }
 
-    // ── Call OpenRouter ─────────────────────────────────────────
+    // â”€â”€ Call OpenRouter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const systemPrompt = buildGhostSystemPrompt(
       mode === "classify" ? "classify" : "reply",
       brandVoice,
@@ -58,7 +63,7 @@ export async function POST(req: NextRequest) {
     } catch {
       // If JSON parsing fails, construct a safe response
       result = mode === "classify"
-        ? { action: "auto_reply", reason: "Could not classify — defaulting to auto_reply", confidence: 0.5 }
+        ? { action: "auto_reply", reason: "Could not classify â€” defaulting to auto_reply", confidence: 0.5 }
         : { action: "auto_reply", reply: aiResult.content, reason: "Raw AI response", confidence: 0.7 };
     }
 
@@ -72,7 +77,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/* ── Types ────────────────────────────────────────────────────── */
+/* â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 interface GhostResult {
   action: string;
@@ -81,7 +86,7 @@ interface GhostResult {
   confidence?: number;
 }
 
-/* ── Log to database ──────────────────────────────────────────── */
+/* â”€â”€ Log to database â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 async function logAction(
   supabase: any,
@@ -100,11 +105,11 @@ async function logAction(
       reason: result.reason,
     });
   } catch {
-    // Non-fatal — log and continue
+    // Non-fatal â€” log and continue
   }
 }
 
-/* ── Mock fallback ────────────────────────────────────────────── */
+/* â”€â”€ Mock fallback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 function mockGhost(comment: string): GhostResult {
   const lower = comment.toLowerCase();
@@ -115,7 +120,7 @@ function mockGhost(comment: string): GhostResult {
     lower.includes("failed") || lower.includes("broken") ||
     lower.includes("not working") || lower.includes("problem") || lower.includes("issue");
   const isFluff =
-    /^[🔥❤️😍🙌👏✨💯]+$/.test(comment.trim()) ||
+    /^[ðŸ”¥â¤ï¸ðŸ˜ðŸ™ŒðŸ‘âœ¨ðŸ’¯]+$/.test(comment.trim()) ||
     lower === "great post" || lower === "amazing" || lower.includes("love this");
 
   if (isLead) {
@@ -135,15 +140,16 @@ function mockGhost(comment: string): GhostResult {
   if (isFluff) {
     return {
       action: "auto_reply",
-      reply: "Thank you so much! Really appreciate the support 🙌 Stay tuned for more.",
-      reason: "Positive engagement — auto-reply appropriate",
+      reply: "Thank you so much! Really appreciate the support ðŸ™Œ Stay tuned for more.",
+      reason: "Positive engagement â€” auto-reply appropriate",
       confidence: 0.9,
     };
   }
   return {
     action: "auto_reply",
-    reply: "Great point! Drop any questions below 👇",
-    reason: "General engagement — auto-reply appropriate",
+    reply: "Great point! Drop any questions below ðŸ‘‡",
+    reason: "General engagement â€” auto-reply appropriate",
     confidence: 0.75,
   };
 }
+

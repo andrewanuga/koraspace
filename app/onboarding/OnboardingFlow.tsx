@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ComponentType, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -8,13 +8,14 @@ import {
   AtSign,
   BarChart3,
   BriefcaseBusiness,
+  Calendar,
+  Camera,
   Check,
   CheckCircle2,
   Clapperboard,
   FileText,
-  Instagram,
+  Play,
   Layers3,
-  Linkedin,
   Loader2,
   Megaphone,
   MessageCircle,
@@ -29,10 +30,12 @@ import {
   Video,
   WandSparkles,
   X,
-  Youtube,
+  Briefcase,
 } from "lucide-react";
 
 import { useToast } from "@/components/ui/toast";
+
+type IconComponent = ComponentType<{ className?: string; style?: CSSProperties }>;
 
 type Persona = "client" | "creator" | "marketer";
 
@@ -165,13 +168,13 @@ const PLATFORMS: {
   id: Platform;
   title: string;
   short: string;
-  icon: typeof Instagram;
+  icon: IconComponent;
 }[] = [
   {
     id: "instagram",
     title: "Instagram",
     short: "IG",
-    icon: Instagram,
+    icon: Camera,
   },
   {
     id: "tiktok",
@@ -189,13 +192,13 @@ const PLATFORMS: {
     id: "linkedin",
     title: "LinkedIn",
     short: "IN",
-    icon: Linkedin,
+    icon: Briefcase,
   },
   {
     id: "youtube",
     title: "YouTube",
     short: "YT",
-    icon: Youtube,
+    icon: Play,
   },
   {
     id: "threads",
@@ -215,7 +218,7 @@ const CONTENT_FORMATS: {
   id: ContentFormat;
   title: string;
   description: string;
-  icon: typeof Video;
+  icon: IconComponent;
 }[] = [
   {
     id: "short_video",
@@ -239,13 +242,13 @@ const CONTENT_FORMATS: {
     id: "image",
     title: "Images & Visuals",
     description: "Photos, graphics, visuals",
-    icon: Instagram,
+    icon: Camera,
   },
   {
     id: "long_form",
     title: "Long-form",
     description: "Articles, newsletters, scripts",
-    icon: Youtube,
+    icon: Play,
   },
   {
     id: "mixed",
@@ -282,7 +285,7 @@ const AUTOMATION_LEVELS: {
   id: AutomationLevel;
   title: string;
   description: string;
-  icon: typeof Search;
+  icon: IconComponent;
 }[] = [
   {
     id: "suggestions",
@@ -300,7 +303,7 @@ const AUTOMATION_LEVELS: {
     id: "create_schedule",
     title: "Create & Auto-Schedule",
     description: "Generate drafts and place them onto the visual calendar.",
-    icon: CalendarIcon,
+    icon: Calendar,
   },
   {
     id: "automate",
@@ -309,25 +312,6 @@ const AUTOMATION_LEVELS: {
     icon: WandSparkles,
   },
 ];
-
-function CalendarIcon(props: React.ComponentProps<"svg">) {
-  return (
-    <svg
-      {...props}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="3" y="4" width="18" height="18" rx="2" />
-      <line x1="16" y1="2" x2="16" y2="6" />
-      <line x1="8" y1="2" x2="8" y2="6" />
-      <line x1="3" y1="10" x2="21" y2="10" />
-    </svg>
-  );
-}
 
 function ChoiceCard({
   active,
@@ -341,7 +325,7 @@ function ChoiceCard({
 }: {
   active: boolean;
   onClick: () => void;
-  icon?: typeof Sparkles;
+  icon?: IconComponent;
   title: string;
   description?: string;
   compact?: boolean;
