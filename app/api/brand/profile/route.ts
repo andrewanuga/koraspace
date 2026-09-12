@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
+import { scanForPromptInjection } from "@/lib/security/enforcement";
 
 export async function GET() {
   try {
@@ -42,7 +44,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Rate limit profile updates: 20 per minute
+    const guard = await checkRequest(request, requestKey(request, user.id), 20);
+    if (guard) return guard;
+
     const body = await request.json();
+
+    // Defend against prompt injection in brand profile fields used in AI context
+    for (const field of ["bio", "mission", "voice_summary"] as const) {
+      const val = body[field];
+      if (typeof val === "string" && val.trim()) {
+        const scan = scanForPromptInjection(val);
+        if (!scan.safe) {
+          return NextResponse.json(
+            { error: `Security violation in ${field}: ${scan.reason}` },
+            { status: 400 }
+          );
+        }
+      }
+    }
 
     const payload = {
       user_id: user.id,

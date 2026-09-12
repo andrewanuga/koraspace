@@ -71,7 +71,18 @@ function LoginForm() {
         return;
       }
 
-      router.push("/dashboard");
+      const nextParam = searchParams.get("next");
+      const safeNext =
+        nextParam &&
+        nextParam.startsWith("/") &&
+        !nextParam.startsWith("//") &&
+        !nextParam.startsWith("/\\") &&
+        !nextParam.includes(":") &&
+        !nextParam.includes("\\")
+          ? nextParam
+          : "/dashboard";
+
+      router.push(safeNext);
       router.refresh();
     } catch (error) {
       console.error(error);

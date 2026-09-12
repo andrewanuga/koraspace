@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { TOOLS, type ToolId } from "@/lib/social/tools";
+import { validateOAuthScopes } from "@/lib/security/enforcement";
+import { encryptToken } from "@/lib/security/tokenCrypto";
 
 function back(origin: string, params: Record<string, string>) {
   const url = new URL("/dashboard/integrations", origin);
@@ -53,14 +55,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ prov
     const token = await tokenRes.json();
     if (!tokenRes.ok || !(token.access_token)) return back(origin, { error: "token_failed", tool: provider });
 
+    // Enforce Zero-Trust Least-Privilege OAuth Scoping
+    const { sanitizedScopes } = validateOAuthScopes(t.oauth.scopes);
+
+    // Cryptographic Token Storage: AES-256-GCM at rest
+    const encryptedAccessToken = encryptToken(token.access_token);
+    const encryptedRefreshToken = token.refresh_token ? encryptToken(token.refresh_token) : null;
+
     const { error } = await supabase.from("integrations").upsert(
       {
         user_id: user.id, provider, status: "connected",
         account_label: token.team?.name || token.workspace_name || t.name,
         config: {
-          access_token: token.access_token,
-          refresh_token: token.refresh_token ?? null,
-          scope: token.scope ?? t.oauth.scopes.join(" "),
+          access_token: encryptedAccessToken,
+          refresh_token: encryptedRefreshToken,
+          scope: token.scope ?? sanitizedScopes.join(" "),
         },
       },
       { onConflict: "user_id,provider" }

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
+import { scanForPromptInjection } from "@/lib/security/enforcement";
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,6 +14,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Rate limit memory creation: 20 per minute
+    const guard = await checkRequest(request, requestKey(request, user.id), 20);
+    if (guard) return guard;
+
     const body = await request.json();
 
     if (!body.title?.trim()) {
@@ -19,6 +25,25 @@ export async function POST(request: NextRequest) {
         { error: "Title is required" },
         { status: 400 }
       );
+    }
+
+    // Defend against Brand Brain poisoning / Prompt Injection
+    const titleScan = scanForPromptInjection(body.title);
+    if (!titleScan.safe) {
+      return NextResponse.json(
+        { error: `Security violation in title: ${titleScan.reason}` },
+        { status: 400 }
+      );
+    }
+
+    if (body.content) {
+      const contentScan = scanForPromptInjection(body.content);
+      if (!contentScan.safe) {
+        return NextResponse.json(
+          { error: `Security violation in content: ${contentScan.reason}` },
+          { status: 400 }
+        );
+      }
     }
 
     const { data, error } = await supabase

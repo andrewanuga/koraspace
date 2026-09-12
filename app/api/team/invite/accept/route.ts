@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
     const {
@@ -15,6 +16,10 @@ export async function POST() {
         { status: 401 }
       );
     }
+
+    // Rate limit invite acceptances: 10 per minute per user
+    const guard = await checkRequest(req, requestKey(req, user.id), 10);
+    if (guard) return guard;
 
     const email = user.email.trim().toLowerCase();
     const admin = createAdminClient();
