@@ -268,3 +268,34 @@ Navigate to [http://localhost:3000](http://localhost:3000) to view the applicati
 - [Production Readiness Checklist](file:///docs/architecture/production-readiness.md)
 
 Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 🔐 Milestone 2 — Policy & Authorization (Planned)
+
+**Goal:** Introduce a strict policy layer that enforces permissions, autonomy mode, and risk assessments *before* any execution step. This creates the invariant:
+
+> The AI can reason about an action, but reasoning does **not** grant permission to execute it.
+
+**Proposed Architecture**
+
+```text
+                 Plan
+                   │
+                   ▼
+          Policy / Authorization
+                   │
+       ┌───────────┼───────────┐
+       ▼           ▼           ▼
+   Permissions  Autonomy      Risk
+       │           │           │
+       └───────────┼───────────┘
+                   ▼
+             ALLOW / DENY
+                   │
+                   ▼
+             ExecutionEngine
+```
+
+This layer will sit between the **Planner** and **ExecutionEngine**, ensuring that only authorized actions reach the executor. Future work will implement the `PolicyEngine` and extend the `ExecutionEngine` to respect these decisions.
+
+---
