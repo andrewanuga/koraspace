@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { LegalShell, Section, Bullets } from "@/components/legal/LegalShell";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Socially AI",
-  description: "How Socially AI collects, uses, and protects your data.",
+  title: "Privacy Policy — Koraspace AI",
+  description: "How Koraspace AI collects, uses, and protects your data.",
 };
 
 const CONTACT = "socially.ai.io@gmail.com";
@@ -13,11 +13,11 @@ export default function PrivacyPage() {
     <LegalShell
       title="Privacy Policy"
       updated="July 30, 2026"
-      intro="Socially AI helps you manage your social media accounts. This policy explains, in plain language, what we collect, why, and the control you have. We only ever access what you explicitly connect, and we never sell your data."
+      intro="Koraspace AI helps you manage your social media accounts. This policy explains, in plain language, what we collect, why, and the control you have. We only ever access what you explicitly connect, and we never sell your data."
       other={{ href: "/terms", label: "Terms of Service" }}
     >
       <Section title="Who we are">
-        <p>Socially AI (“Socially”, “we”, “us”) provides an AI-powered workspace for scheduling, publishing, engaging, and analyzing social media across connected platforms. This policy covers our website, app, and services.</p>
+        <p>Koraspace AI (“Koraspace”, “we”, “us”) provides an AI-powered workspace for scheduling, publishing, engaging, and analyzing social media across connected platforms. This policy covers our website, app, and services.</p>
       </Section>
 
       <Section title="What we collect">
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
       </Section>
 
       <Section title="Children">
-        <p>Socially AI is not intended for anyone under 16. We do not knowingly collect data from children.</p>
+        <p>Koraspace AI is not intended for anyone under 16. We do not knowingly collect data from children.</p>
       </Section>
 
       <Section title="Changes & contact">

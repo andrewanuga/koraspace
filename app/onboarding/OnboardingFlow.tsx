@@ -151,7 +151,7 @@ export function OnboardingFlow({ initialName }: { initialName?: string }) {
                 Step 01
               </span>
               <h1 className="font-display mt-3 text-2xl font-semibold text-white sm:text-3xl">
-                What are you using Socially for?
+                What are you using Koraspace for?
               </h1>
               <p className="mt-2 text-sm text-white/55">
                 We&apos;ll tailor the agent, dashboard, and suggestions to you.
@@ -351,7 +351,7 @@ export function OnboardingFlow({ initialName }: { initialName?: string }) {
               className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-transform duration-200 hover:scale-[1.03] disabled:opacity-40 disabled:hover:scale-100"
               style={{ background: "linear-gradient(135deg,#6366f1 0%,#a855f7 70%,#f5c451 130%)", boxShadow: "0 0 34px -8px rgba(99,102,241,0.8)" }}
             >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Enter Socially <ArrowRight className="h-4 w-4" /></>}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Enter Koraspace <ArrowRight className="h-4 w-4" /></>}
             </button>
           )}
         </div>

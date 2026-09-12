@@ -33,7 +33,7 @@ export function AdminNav() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="" width={24} height={21} className="h-[22px] w-auto" />
         <div>
-          <span className="font-display text-[15px] font-semibold text-[var(--fg)]">Socially</span>
+          <span className="font-display text-[15px] font-semibold text-[var(--fg)]">Koraspace</span>
           <span className="ml-1.5 rounded-md px-1.5 py-0.5 font-data text-[9px] uppercase tracking-wider" style={{ color: "var(--sai-red)", background: "color-mix(in srgb, var(--sai-red) 14%, transparent)" }}>Admin</span>
         </div>
       </div>

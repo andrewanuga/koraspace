@@ -59,7 +59,7 @@ export default function AdminOverview() {
 
   return (
     <div className="mx-auto max-w-6xl">
-      <PageHeader eyebrow="Security operations" title="SOC Overview" sub="Live view of users, revenue, and security across Socially AI." />
+      <PageHeader eyebrow="Security operations" title="SOC Overview" sub="Live view of users, revenue, and security across Koraspace AI." />
 
       <div className="mb-5 grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
         <StatTile label="Total users" value={fmtNum(stats.users)} icon={Users} tone="indigo" />

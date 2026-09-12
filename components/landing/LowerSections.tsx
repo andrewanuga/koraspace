@@ -55,7 +55,7 @@ const MUST_HAVES = [
 ];
 
 const GAME_CHANGERS = [
-  { icon: Brain, title: "Predictive Socially Score", desc: "Know a post's engagement odds before you schedule. No more guessing.", tone: "indigo", badge: "Pro" },
+  { icon: Brain, title: "Predictive Koraspace Score", desc: "Know a post's engagement odds before you schedule. No more guessing.", tone: "indigo", badge: "Pro" },
   { icon: Ghost, title: "Ghost Mode™ Agent", desc: "Replies to the noise in your voice, escalates real leads to you.", tone: "violet", badge: "Pro" },
   { icon: TrendingUp, title: "Trend-to-Draft", desc: "Three drafts waiting the moment something breaks in your niche.", tone: "indigo", badge: "Pro" },
   { icon: DollarSign, title: "Auto-Plug Loop", desc: "Hits your threshold, drops the conversion comment automatically.", tone: "gold", badge: "Pro" },
@@ -74,7 +74,7 @@ export function Features() {
         <SectionHead
           eyebrow="Full feature suite"
           title={<>Everything you need.<br /><span className="sai-gradient-text">Then some.</span></>}
-          sub="Most tools tell you what happened. Socially AI tells you what will — and often handles it before you open the app."
+          sub="Most tools tell you what happened. Koraspace AI tells you what will — and often handles it before you open the app."
         />
 
         <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -278,7 +278,7 @@ export function HowItWorks() {
 /* --- Stories (testimonials) ──────────────────────────────────────── */
 
 const STORIES = [
-  { name: "Adaeze Okonkwo", role: "Fintech Founder, Lagos", avatar: "AO", text: "I replaced Buffer and a freelance manager with Socially AI. Ghost Mode handles engagement while I close deals. ROI in week one.", highlight: "Replaced a freelance manager" },
+  { name: "Adaeze Okonkwo", role: "Fintech Founder, Lagos", avatar: "AO", text: "I replaced Buffer and a freelance manager with Koraspace AI. Ghost Mode handles engagement while I close deals. ROI in week one.", highlight: "Replaced a freelance manager" },
   { name: "Chukwuemeka Dike", role: "Digital Agency, Abuja", avatar: "CD", text: "Eight client accounts used to need three people. Now it's me and the agent. Inbox Triage alone saves two hours a day.", highlight: "Manages 8 clients solo" },
   { name: "Fatima Al-Hassan", role: "E-commerce, Kano", avatar: "FA", text: "ROI Pulse is wild. I can show 'this post made us ₦340,000 this week.' The marketing budget stopped being a question.", highlight: "₦340k from one post" },
   { name: "Tunde Fashola", role: "Brand Coach, Lagos", avatar: "TF", text: "Trend-to-Draft is a ghostwriter that never sleeps. It caught the news cycle before I woke up — three drafts waiting.", highlight: "Trend content before it peaks" },
@@ -332,7 +332,7 @@ export function Stories() {
       <div className="mx-auto mb-14 max-w-2xl px-5 text-center">
         <div data-reveal><Eyebrow tone="gold">Loved by operators</Eyebrow></div>
         <h2 data-reveal className="font-display mt-4 text-4xl font-semibold tracking-[-0.02em] text-white sm:text-5xl">
-          Creators & businesses<br /><span className="sai-gradient-text">love Socially AI</span>
+          Creators & businesses<br /><span className="sai-gradient-text">love Koraspace AI</span>
         </h2>
         <div data-reveal className="mt-4 flex items-center justify-center gap-1.5 text-white/60">
           {[...Array(5)].map((_, i) => (
@@ -481,7 +481,7 @@ export function SiteFooter() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" width={24} height={21} className="h-[22px] w-auto" />
           <span className="font-display text-[15px] font-semibold text-white">
-            Socially<span className="text-[var(--sai-indigo)]"> AI</span>
+            Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
           </span>
         </Link>
         <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2 text-[13px] text-white/50">
@@ -493,7 +493,7 @@ export function SiteFooter() {
         </div>
       </div>
       <p className="mx-auto mt-8 max-w-6xl text-center text-xs text-white/30 sm:text-left">
-        © {new Date().getFullYear()} Socially AI — Personal Social Agent. Powered by Llama 3.3 70B.
+        © {new Date().getFullYear()} Koraspace AI — Personal Social Agent. Powered by Llama 3.3 70B.
       </p>
     </footer>
   );

@@ -7,17 +7,19 @@ import {
   User, Palette, Bot, CreditCard, Bell, Save, Loader2,
   ShieldAlert, Check, Sun, Moon, Monitor, Sparkles,
   Search, Eye, Zap, Crown, Gift, ChevronDown, ChevronUp,
-  ExternalLink, Users, Trash2, Mail, UserPlus
+  ExternalLink, Users, Trash2, Mail, UserPlus, Brain
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
 import { TeamSettingsTab } from "@/components/dashboard/TeamSettingsTab";
+import { AIMemorySettingsTab } from "@/components/dashboard/AIMemorySettingsTab";
 
 const TABS = [
   { id: "profile", label: "Profile", icon: User },
   { id: "appearance", label: "Appearance", icon: Palette },
   { id: "ai", label: "AI", icon: Bot },
+  { id: "memory", label: "AI Memory", icon: Brain },
   { id: "team", label: "Team", icon: Users },
   { id: "billing", label: "Billing", icon: CreditCard },
   { id: "notifications", label: "Notifications", icon: Bell },
@@ -320,7 +322,7 @@ export default function SettingsPage() {
             <>
               <GlassCard className="p-6">
                 <p className="font-display text-[15px] font-semibold text-[var(--fg)]">Theme</p>
-                <p className="mt-1 text-[13px] text-[var(--fg-3)]">Socially is designed for dark. Light is available.</p>
+                <p className="mt-1 text-[13px] text-[var(--fg-3)]">Koraspace is designed for dark. Light is available.</p>
                 <div className="mt-4 grid grid-cols-3 gap-3">
                   {[{ id: "dark", label: "Dark", icon: Moon }, { id: "light", label: "Light", icon: Sun }, { id: "system", label: "System", icon: Monitor }].map((o) => (
                     <button
@@ -582,6 +584,10 @@ export default function SettingsPage() {
                 <div className="mt-1 flex justify-between text-[11px] text-[var(--fg-4)]"><span>Precise</span><span>Balanced</span><span>Wild</span></div>
               </GlassCard>
             </>
+          )}
+
+          {tab === "memory" && (
+            <AIMemorySettingsTab />
           )}
 
           {tab === "team" && (

@@ -22,7 +22,7 @@ export function LegalShell({
         <Link href="/" className="flex items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" width={24} height={21} className="h-[22px] w-auto" />
-          <span className="font-display text-[15px] font-semibold">Socially<span className="text-[var(--sai-indigo)]"> AI</span></span>
+          <span className="font-display text-[15px] font-semibold">Koraspace<span className="text-[var(--sai-indigo)]"> AI</span></span>
         </Link>
         <Link href="/" className="flex items-center gap-1.5 text-[13px] text-white/50 transition-colors hover:text-white">
           <ArrowLeft className="h-3.5 w-3.5" /> Home
@@ -40,8 +40,8 @@ export function LegalShell({
         {/* footer cross-links */}
         <div className="mt-16 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-white/[0.08] pt-8 text-[13px] text-white/50">
           <Link href={other.href} className="transition-colors hover:text-white">{other.label} →</Link>
-          <Link href="/" className="transition-colors hover:text-white">Back to Socially AI</Link>
-          <span className="ml-auto text-white/30">© {new Date().getFullYear()} Socially AI</span>
+          <Link href="/" className="transition-colors hover:text-white">Back to Koraspace AI</Link>
+          <span className="ml-auto text-white/30">© {new Date().getFullYear()} Koraspace AI</span>
         </div>
       </main>
     </div>

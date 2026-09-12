@@ -101,7 +101,7 @@ export async function callAI(
     "Content-Type": "application/json",
     Authorization: `Bearer ${apiKey}`,
     "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-    "X-Title": "Socially AI",
+    "X-Title": "Koraspace AI",
   };
 
   const res = await fetch(`${OPENROUTER_BASE}/chat/completions`, {
@@ -159,7 +159,7 @@ export async function callAIStream(
     "Content-Type": "application/json",
     Authorization: `Bearer ${apiKey}`,
     "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-    "X-Title": "Socially AI",
+    "X-Title": "Koraspace AI",
   };
 
   const res = await fetch(`${OPENROUTER_BASE}/chat/completions`, {

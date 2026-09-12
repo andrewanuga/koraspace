@@ -1,4 +1,4 @@
-// Single source of truth for every social platform Socially supports.
+// Single source of truth for every social platform Koraspace supports.
 // Pure data (no React) so it's safe to import in server OAuth routes too.
 
 export type PlatformId =
