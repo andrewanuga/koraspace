@@ -18,10 +18,10 @@ import { AI_TOOLS } from "../../tools";
 import {
   BrandIntelligenceLoader,
   MemoryFormationEngine,
-  MemoryRetrievalEngine,
   type BrandComplianceReport,
   type BrandIntelligence,
 } from "../../memory";
+import { ContextEngine } from "../../context/engine";
 import type {
   AgentStep,
   ChatAgentInput,
@@ -88,34 +88,45 @@ export class ChatAgent {
     const lastUserText = [...messages].reverse().find((m) => m.role === "user")?.content || "";
 
     // 1. Contextual Memory Retrieval (Brand, Semantic, Performance)
-    const memoryBundle = await MemoryRetrievalEngine.retrieveContext(
-      lastUserText,
-      context
-    );
+    const contextRequest = {
+        workspaceId: context.workspaceId,
+        userId: context.userId,
+        chatId: context.chatId,
+        messages: input.messages,
+        attachments,
+        model: model,
+        supabase: context.supabase,
+        permissions: context.permissions,
+        // other optional fields can be added as needed
+      } as any; // ContextRequest type
+      const engine = new ContextEngine();
+      const assembly = await engine.assemble(contextRequest);
+      // No longer using memoryBundle for context; keep placeholder for fallback if needed
+      const memoryBundle = { brand: undefined } as any;
 
     // 2. Dev / offline fallback
     if (!isConfigured()) {
-      return {
-        success: true,
-        data: generateFallbackResponse(input, memoryBundle.brand),
-        metadata: { latencyMs: Date.now() - startTime },
-      };
-    }
+        return {
+          success: true,
+          data: generateFallbackResponse(input, undefined),
+          metadata: { latencyMs: Date.now() - startTime },
+        };
+      }
 
     // 3. Planning and Intent Decomposition
     const plan = ChatPlanner.plan(messages);
     const steps: AgentStep[] = [];
 
-    // 4. Construct System Prompt with Memory Context
+    // 4. Construct System Prompt with ContextEngine output
     const baseSystem = userSystemPrompt || "You are Koraspace AI, an elite autonomous social media agent.";
-    const consolidatedSystemPrompt = [
+    const systemPrompt = [
       baseSystem,
       "",
-      memoryBundle.formattedSystemContext,
+      assembly.systemPrompt,
     ].join("\n\n");
 
     // 5. Assemble system and user messages
-    const aiMessages: ChatMessage[] = [{ role: "system", content: consolidatedSystemPrompt }];
+    const aiMessages: ChatMessage[] = [{ role: "system", content: systemPrompt }];
 
     for (const msg of messages) {
       if (msg.role === "system") continue;
@@ -281,7 +292,7 @@ export class ChatAgent {
     }
 
     // 10. Brand Compliance Guardrail Verification
-    const compliance = BrandIntelligenceLoader.checkCompliance(finalContent, memoryBundle.brand);
+    const compliance = BrandIntelligenceLoader.checkCompliance(finalContent, undefined);
     if (!compliance.compliant && compliance.violations.length > 0 && finalContent.length > 20) {
       steps.push({
         stepIndex: ++iterations,
