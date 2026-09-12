@@ -69,7 +69,7 @@ export class SemanticSource implements ContextSource {
       // retrieval engine.
       const memories: SemanticMemory[] = await MemoryRetrievalEngine.querySemanticMemories(
         { query: "", workspaceId, limit: 10 },
-        { workspaceId, supabase },
+        { workspaceId, supabase, userId: request.userId ?? "" },
       );
 
       if (!memories || memories.length === 0) {
@@ -78,7 +78,6 @@ export class SemanticSource implements ContextSource {
           sections: [],
           latencyMs: Date.now() - startTime,
           success: true,
-          rawData: { semanticMemories: memories },
         };
       }
 
@@ -109,7 +108,6 @@ export class SemanticSource implements ContextSource {
         sections,
         latencyMs: Date.now() - startTime,
         success: true,
-        rawData: { semanticMemories: memories },
       };
     } catch (err: any) {
       console.warn("[SemanticSource] Non‑fatal error loading semantic memories:", err);

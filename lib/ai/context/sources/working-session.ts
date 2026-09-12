@@ -55,7 +55,6 @@ export class WorkingSessionSource implements ContextSource {
         sections: [],
         latencyMs: Date.now() - startTime,
         success: true,
-        rawData: { messages, attachments },
       };
     }
 
@@ -63,7 +62,7 @@ export class WorkingSessionSource implements ContextSource {
     const recentMessages = messages.slice(-5);
     const messageLines = recentMessages.map((msg) => `- ${msg.role}: ${msg.content}`);
 
-    const attachmentLines = attachments.map((att) => `- Attachment: ${att.name || att.url || 'unknown'}`);
+    const attachmentLines = attachments.map((att) => `- Attachment: ${att.name || att.mime || 'unknown'}`);
 
     const contentLines = [...messageLines, ...attachmentLines];
     const content = contentLines.join("\n");
@@ -90,7 +89,6 @@ export class WorkingSessionSource implements ContextSource {
       sections: [section],
       latencyMs: Date.now() - startTime,
       success: true,
-      rawData: { messages, attachments },
     };
   }
 }
