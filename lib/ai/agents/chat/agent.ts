@@ -101,8 +101,8 @@ export class ChatAgent {
       } as any; // ContextRequest type
       const engine = new ContextEngine();
       const assembly = await engine.assemble(contextRequest);
-      // No longer using memoryBundle for context; keep placeholder for fallback if needed
-      const memoryBundle = { brand: undefined } as any;
+      // Load brand directly for compliance checks (separate from ContextEngine)
+      const brand = await BrandIntelligenceLoader.load(context.workspaceId, context.supabase);
 
     // 2. Dev / offline fallback
     if (!isConfigured()) {
@@ -292,7 +292,7 @@ export class ChatAgent {
     }
 
     // 10. Brand Compliance Guardrail Verification
-    const compliance = BrandIntelligenceLoader.checkCompliance(finalContent, (memoryBundle.brand as any));
+      const compliance = BrandIntelligenceLoader.checkCompliance(finalContent, brand);
     if (!compliance.compliant && compliance.violations.length > 0 && finalContent.length > 20) {
       steps.push({
         stepIndex: ++iterations,
