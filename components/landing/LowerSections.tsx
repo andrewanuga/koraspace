@@ -302,7 +302,7 @@ export function ProblemSolverSection() {
 
 export function DualModeShowcaseSection() {
   return (
-    <section id="dual-modes" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+    <section id="dual-modes" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28 scroll-mt-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead
           eyebrow="Two Distinct Operating Modes"
@@ -594,6 +594,7 @@ export function GrowthLoopSection() {
 /* ── 4. Alternating FeatureSection Layout ─────────────────────────── */
 
 interface FeatureProps {
+  id?: string;
   badge?: string;
   tone?: "pink" | "blue";
   title: string;
@@ -604,6 +605,7 @@ interface FeatureProps {
 }
 
 export function FeatureSection({
+  id,
   badge,
   tone = "pink",
   title,
@@ -616,7 +618,10 @@ export function FeatureSection({
   const brandColor = isBlue ? "#3b82f6" : "#ff0a8a";
 
   return (
-    <section className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-14">
+    <section
+      id={id}
+      className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-14 scroll-mt-24"
+    >
       {/* Visual Image Preview with Spring Float & Hover */}
       <motion.div
         initial={{ opacity: 0, x: imageLeft ? -30 : 30, filter: "blur(4px)" }}
@@ -1021,7 +1026,7 @@ const AGENT_TOOLS_LIST = [
 
 export function AgentTools() {
   return (
-    <section id="features" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+    <section id="features" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28 scroll-mt-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead
           eyebrow="Autonomous Toolkit"
@@ -1102,7 +1107,7 @@ const PLATFORMS = [
 
 export function Integrations() {
   return (
-    <section id="integrations" className="relative px-4 sm:px-6 lg:px-8 py-20">
+    <section id="integrations" className="relative px-4 sm:px-6 lg:px-8 py-20 scroll-mt-24">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -1402,7 +1407,7 @@ const STORIES = [
 
 export function Stories() {
   return (
-    <section id="stories" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+    <section id="stories" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28 scroll-mt-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead
           eyebrow="Success Stories"
@@ -1559,7 +1564,7 @@ export function Pricing() {
   };
 
   return (
-    <section id="pricing" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+    <section id="pricing" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28 scroll-mt-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead
           eyebrow="Transparent NGN Pricing"
@@ -1768,7 +1773,7 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto scroll-mt-24">
       <SectionHead
         eyebrow="Frequently Asked Questions"
         tone="pink"

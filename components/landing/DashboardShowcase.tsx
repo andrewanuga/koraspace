@@ -28,7 +28,7 @@ export function DashboardShowcase() {
   const brandBorder = isCreator ? "rgba(255,10,138,0.28)" : "rgba(59,130,246,0.28)";
 
   return (
-    <section className="relative px-4 sm:px-6 lg:px-8 pt-6 pb-20 sm:pb-28">
+    <section id="how-it-works" className="relative px-4 sm:px-6 lg:px-8 pt-6 pb-20 sm:pb-28 scroll-mt-24">
       {/* Background ambient lighting */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div

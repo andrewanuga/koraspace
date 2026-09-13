@@ -70,6 +70,7 @@ export default function LandingPage() {
         />
 
         <FeatureSection
+          id="agency-workspaces"
           badge="Agency Workspaces"
           tone="blue"
           title="Multi-seat team approval & client portals"

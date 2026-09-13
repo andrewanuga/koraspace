@@ -1,9 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Space_Grotesk, Inter } from "next/font/google";
 import { motion, type Variants } from "framer-motion";
+import { GrowthRail } from "@/components/landing/GrowthRail";
+import { IntelligenceCanvas } from "@/components/landing/IntelligenceCanvas";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -17,13 +18,6 @@ const body = Inter({
   variable: "--font-body",
 });
 
-const loopStages = [
-  { n: "01", label: "Understand" },
-  { n: "02", label: "Create" },
-  { n: "03", label: "Publish" },
-  { n: "04", label: "Optimize" },
-];
-
 function ArrowIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -34,6 +28,14 @@ function ArrowIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+    </svg>
+  );
+}
+
+function SparkleIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M7 0L8.4 5.6L14 7L8.4 8.4L7 14L5.6 8.4L0 7L5.6 5.6L7 0Z" fill="currentColor" />
     </svg>
   );
 }
@@ -218,80 +220,74 @@ export function Hero() {
           </motion.nav> */}
 
           {/* content */}
-          <div className="grid gap-8 mt-10 px-5 pb-8 pt-2 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-4 lg:pb-0 lg:pt-0">
+          <div className="grid gap-8 mt-24 px-5 pb-8 pt-2 sm:px-10 lg:mt-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-4 lg:pb-0 lg:pt-0">
             <motion.div
               variants={itemVariants}
               className="flex flex-col justify-center gap-5 py-4 lg:py-16"
             >
-              <div className="inline-flex items-center gap-2 w-fit rounded-full bg-white/10 px-3.5 py-1 text-xs font-semibold text-white/90 border border-white/15 backdrop-blur-md">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#FF2E7A] animate-ping" />
-                <span>Autonomous AI Marketing OS</span>
-              </div>
+              <p className="text-xs font-bold tracking-[0.2em] text-[#ff9fc9]">
+                AI MARKETING OPERATING SYSTEM
+              </p>
 
-              <h1 className="font-[family-name:var(--font-display)] text-[2.5rem] font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[4rem]">
-                Marketing that
-                <br />
-                markets itself.
+              <h1 className="font-[family-name:var(--font-display)] text-[2rem] font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                Your marketing should get smarter every time you post.
               </h1>
+
+              <p className="max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
+                KoraSpace learns your brand, understands your audience,
+                creates and distributes content, and turns your results
+                into your next best move.
+              </p>
+
+              <div className="flex flex-col gap-3 pt-4">
+                <div className="relative w-fit">
+                  <motion.div
+                    aria-hidden="true"
+                    animate={{ opacity: [0.35, 0.6, 0.35], scale: [1, 1.08, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    className="pointer-events-none absolute -inset-3 rounded-full bg-[#ff0a8a]/50 blur-2xl"
+                  />
+                  <motion.div
+                    whileHover={{ scale: 1.04, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="relative"
+                  >
+                    <Link
+                      href="/signup"
+                      className="inline-flex items-center gap-2.5 rounded-full bg-[#ff0a8a] py-4 pl-7 pr-3 text-base font-bold text-white shadow-[0_8px_32px_rgba(255,10,138,0.5)] transition-all hover:bg-[#ff299b] hover:shadow-[0_10px_40px_rgba(255,10,138,0.65)] active:scale-[0.98] sm:text-lg"
+                    >
+                      <SparkleIcon />
+                      <span>Start Growing</span>
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white">
+                        <ArrowIcon />
+                      </span>
+                    </Link>
+                  </motion.div>
+                </div>
+
+                <p className="text-xs text-white/50">
+                  No credit card required · 14-day free trial
+                </p>
+
+                <a
+                  href="#how-it-works"
+                  className="w-fit text-sm text-white/60 underline-offset-4 transition-colors hover:text-white hover:underline"
+                >
+                  See how it works
+                </a>
+              </div>
             </motion.div>
 
-            <div className="relative flex flex-col lg:min-h-[440px]">
-              <motion.div
-                variants={itemVariants}
-                className="max-w-xs self-start pt-1 sm:self-end sm:text-right lg:pt-14"
-              >
-                <p className="font-[family-name:var(--font-display)] text-lg font-semibold text-white">
-                  Growth should feel automatic.
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-white/70">
-                  KoraSpace learns your brand, creates and publishes content, and
-                  optimizes what performs — so your strategy keeps improving on
-                  its own.
-                </p>
-              </motion.div>
-
-              <motion.div
-                variants={imageVariants}
-                animate={{
-                  y: [0, -8, 0],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="relative mx-auto -mb-8 mt-6 h-[280px] w-[220px] sm:h-[360px] sm:w-[280px] lg:absolute lg:bottom-[-2rem] lg:right-[-1rem] lg:mx-0 lg:mt-0 lg:h-[440px] lg:w-[340px]"
-              >
-                <Image
-                  src="/hero-img.png"
-                  alt="A KoraSpace creator, arms crossed, looking at the camera"
-                  fill
-                  priority
-                  sizes="(min-width: 1024px) 340px, 280px"
-                  className="object-contain mt-30 object-bottom drop-shadow-[0_30px_50px_rgba(0,0,0,0.6)]"
-                />
+            <div className="relative flex flex-col items-center justify-center py-6 lg:min-h-[440px] lg:py-0">
+              <motion.div variants={imageVariants} className="w-full">
+                <IntelligenceCanvas />
               </motion.div>
             </div>
           </div>
 
-          {/* growth loop stage strip */}
-          <motion.div
-            variants={itemVariants}
-            className="relative mt-2 grid grid-cols-2 gap-x-4 gap-y-6 border-t border-white/15 px-5 py-6 sm:grid-cols-4 sm:px-10 sm:py-8 backdrop-blur-sm"
-          >
-            {loopStages.map((stage) => (
-              <motion.div
-                key={stage.n}
-                whileHover={{ y: -3, scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-                className="p-2 rounded-xl transition-colors hover:bg-white/[0.04] cursor-default"
-              >
-                <span className="text-xs font-mono font-bold text-[#ff9fc9]">
-                  #{stage.n}
-                </span>
-                <p className="mt-1 text-sm font-semibold text-white/90">{stage.label}</p>
-              </motion.div>
-            ))}
+          {/* the intelligence rail — hero's interactive centerpiece */}
+          <motion.div variants={itemVariants} className="mt-2">
+            <GrowthRail />
           </motion.div>
         </div>
       </motion.div>
