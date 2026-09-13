@@ -57,9 +57,13 @@ const stages: Stage[] = [
     label: "Audience",
     canvasKey: "publish",
     Icon: Users,
-    kicker: "Understand",
-    body: "Discover what your audience responds to — and why.",
-    action: "Explore audience",
+    // Reads as distribution, not analysis: this stage sits between Content and
+    // Results, so it is the moment the work reaches people — Results is where
+    // the reading of it happens. The old copy described analysis, which made
+    // this and Results say the same thing twice in a row.
+    kicker: "Reach",
+    body: "Your content goes out where and when your audience is actually paying attention.",
+    action: "View schedule",
   },
   {
     label: "Results",
