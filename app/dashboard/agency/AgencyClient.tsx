@@ -53,11 +53,12 @@ import type {
 
 interface AgencyClientProps {
   initialOverview: MarketerOverview;
+  initialApprovals: ApprovalItem[];
 }
 
 type AgentStatus = "active" | "paused";
 
-type ApprovalItem = {
+export type ApprovalItem = {
   id: string;
   type: "campaign" | "message" | "optimization" | "content";
   title: string;
@@ -67,78 +68,19 @@ type ApprovalItem = {
   action: string;
 };
 
-const APPROVALS: ApprovalItem[] = [
-  {
-    id: "approval-1",
-    type: "optimization",
-    title: "Increase Spring Product Launch budget",
-    description:
-      "The campaign is outperforming its ROAS target. The agent recommends increasing daily spend by 18%.",
-    client: "Spring Product Launch",
-    priority: "high",
-    action: "Increase budget",
-  },
-  {
-    id: "approval-2",
-    type: "message",
-    title: "Approve lead follow-up sequence",
-    description:
-      "3 high-intent leads are waiting for personalized follow-up messages.",
-    client: "Outbound Campaign",
-    priority: "high",
-    action: "Review messages",
-  },
-  {
-    id: "approval-3",
-    type: "campaign",
-    title: "Launch retargeting campaign",
-    description:
-      "A high-value audience segment has accumulated enough traffic to activate a retargeting campaign.",
-    client: "Retargeting",
-    priority: "medium",
-    action: "Review campaign",
-  },
-];
+/** Map activity type to colour tone for the activity feed */
+function activityTypeToTone(type: string): "green" | "blue" | "neutral" {
+  if (["campaign_launched", "lead_generated", "budget_approved"].includes(type))
+    return "green";
+  if (["budget_updated", "content_approved", "optimization_suggested"].includes(type))
+    return "blue";
+  return "neutral";
+}
 
-const AGENT_ACTIVITY = [
-  {
-    id: "1",
-    icon: TrendingUp,
-    title: "Detected ROAS improvement",
-    description:
-      "Spring Product Launch is now 31% above its target efficiency.",
-    time: "8 min ago",
-    tone: "green",
-  },
-  {
-    id: "2",
-    icon: Users,
-    title: "Found 14 high-intent leads",
-    description:
-      "New prospects were identified from recent engagement activity.",
-    time: "24 min ago",
-    tone: "blue",
-  },
-  {
-    id: "3",
-    icon: BrainCircuit,
-    title: "Generated optimization",
-    description:
-      "Suggested reallocating spend from low-performing ad sets.",
-    time: "42 min ago",
-    tone: "blue",
-  },
-  {
-    id: "4",
-    icon: CalendarDays,
-    title: "Scheduled campaign review",
-    description: "Next portfolio review is scheduled for tomorrow.",
-    time: "1 hr ago",
-    tone: "neutral",
-  },
-];
-
-export function AgencyClient({ initialOverview }: AgencyClientProps) {
+export function AgencyClient({
+  initialOverview,
+  initialApprovals,
+}: AgencyClientProps) {
   const { setActiveWorkspace } = useWorkspace();
 
   const [overview, setOverview] =
@@ -156,7 +98,7 @@ export function AgencyClient({ initialOverview }: AgencyClientProps) {
   const [search, setSearch] = useState("");
 
   const [approvalItems, setApprovalItems] =
-    useState<ApprovalItem[]>(APPROVALS);
+    useState<ApprovalItem[]>(initialApprovals);
 
   const [selectedApproval, setSelectedApproval] =
     useState<ApprovalItem | null>(null);
@@ -514,47 +456,60 @@ export function AgencyClient({ initialOverview }: AgencyClientProps) {
           />
 
           <GlassCard padding="none" className="overflow-hidden">
-            <div className="divide-y divide-[var(--stroke)]/60">
-              {AGENT_ACTIVITY.map((activity) => {
-                const Icon = activity.icon;
+            {!overview.recentActivity || overview.recentActivity.length === 0 ? (
+              <EmptyPanel
+                icon={Activity}
+                title="No activity recorded yet"
+                description="As the agent monitors your portfolio and runs automation workflows, events will appear here."
+              />
+            ) : (
+              <div className="divide-y divide-[var(--stroke)]/60">
+                {(overview.recentActivity || []).map((activity) => {
+                  const tone = activityTypeToTone(activity.type);
 
-                return (
-                  <div
-                    key={activity.id}
-                    className="flex gap-3.5 p-4 transition hover:bg-[var(--panel-fill-2)]"
-                  >
+                  return (
                     <div
-                      className={cn(
-                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border",
-                        activity.tone === "green"
-                          ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
-                          : activity.tone === "blue"
-                          ? "border-blue-500/20 bg-blue-500/10 text-blue-400"
-                          : "border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-4)]"
-                      )}
+                      key={activity.id}
+                      className="flex gap-3.5 p-4 transition hover:bg-[var(--panel-fill-2)]"
                     >
-                      <Icon className="h-4 w-4" />
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-3">
-                        <p className="text-xs font-semibold text-[var(--fg)]">
-                          {activity.title}
-                        </p>
-
-                        <span className="shrink-0 text-[10px] text-[var(--fg-4)]">
-                          {activity.time}
-                        </span>
+                      <div
+                        className={cn(
+                          "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border",
+                          tone === "green"
+                            ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
+                            : tone === "blue"
+                            ? "border-blue-500/20 bg-blue-500/10 text-blue-400"
+                            : "border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-4)]"
+                        )}
+                      >
+                        <Activity className="h-4 w-4" />
                       </div>
 
-                      <p className="mt-0.5 text-xs leading-relaxed text-[var(--fg-3)]">
-                        {activity.description}
-                      </p>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-xs font-semibold text-[var(--fg)]">
+                            {activity.title}
+                          </p>
+
+                          <span className="shrink-0 text-[10px] text-[var(--fg-4)]">
+                            {new Date(activity.createdAt).toLocaleTimeString(
+                              "en-US",
+                              { hour: "numeric", minute: "2-digit" }
+                            )}
+                          </span>
+                        </div>
+
+                        {activity.description && (
+                          <p className="mt-0.5 text-xs leading-relaxed text-[var(--fg-3)]">
+                            {activity.description}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </GlassCard>
         </section>
       )}
