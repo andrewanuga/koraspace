@@ -85,7 +85,7 @@ export interface ConditionRule {
   value?: unknown;
 }
 
-export interface AutomationNodeData {
+export interface AutomationNodeData extends Record<string, unknown> {
   label: string;
   description?: string;
   provider?: string;
@@ -112,6 +112,8 @@ export interface AutomationEdge {
   target: string;
   sourceHandle?: string;
   targetHandle?: string;
+  animated?: boolean;
+  style?: Record<string, unknown>;
 }
 
 export interface AutomationWorkflowSettings {
