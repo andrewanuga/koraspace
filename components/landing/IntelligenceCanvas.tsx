@@ -8,6 +8,7 @@ import {
   canvasStates,
   STATE_DURATION_MS,
   type CanvasCard,
+  type CanvasStateKey,
 } from "@/components/landing/canvas-states";
 
 /** Organic, slightly asymmetric radius — a boundary, not a photo frame. */
@@ -245,24 +246,50 @@ function IntelligenceCard({ card }: { card: CanvasCard }) {
   );
 }
 
-export function IntelligenceCanvas() {
+type IntelligenceCanvasProps = {
+  /**
+   * When the GrowthRail below has a stage under the pointer, it names the
+   * canvas state here and the canvas holds it — so exploring the loop drives
+   * the intelligence rather than the two animating past each other.
+   */
+  focusedKey?: CanvasStateKey | null;
+};
+
+export function IntelligenceCanvas({
+  focusedKey = null,
+}: IntelligenceCanvasProps) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const reduce = useReducedMotion();
   const timer = useRef<number | null>(null);
 
-  const state = canvasStates[index];
+  // Derived, not pushed into state, so the canvas answers the rail on the same
+  // render as the hover — no frame of lag and nothing to keep in sync.
+  const focusedIndex = focusedKey
+    ? canvasStates.findIndex((s) => s.key === focusedKey)
+    : -1;
+  const activeIndex = focusedIndex >= 0 ? focusedIndex : index;
+  const state = canvasStates[activeIndex];
 
   useEffect(() => {
-    if (paused) return;
-    timer.current = window.setTimeout(
-      () => setIndex((i) => (i + 1) % canvasStates.length),
-      state.durationMs ?? STATE_DURATION_MS
-    );
+    if (focusedIndex >= 0) {
+      // The rail is driving: hold this stage, no auto-advance. Adopting it as
+      // the new base means releasing the rail carries on from the stage you
+      // were just looking at instead of snapping back. Deferred by a tick
+      // rather than set synchronously here, which would be a setState in an
+      // effect body.
+      if (focusedIndex === index) return;
+      timer.current = window.setTimeout(() => setIndex(focusedIndex), 0);
+    } else if (!paused) {
+      timer.current = window.setTimeout(
+        () => setIndex((i) => (i + 1) % canvasStates.length),
+        state.durationMs ?? STATE_DURATION_MS
+      );
+    }
     return () => {
       if (timer.current !== null) window.clearTimeout(timer.current);
     };
-  }, [index, paused, state.durationMs]);
+  }, [index, focusedIndex, paused, state.durationMs]);
 
   return (
     <div
@@ -378,7 +405,7 @@ export function IntelligenceCanvas() {
           continuous system, and rhymes with the GrowthRail below. */}
       <div className="mt-6 flex items-center gap-1.5">
         {canvasStates.map((s, i) => {
-          const active = i === index;
+          const active = i === activeIndex;
           return (
             <button
               key={s.key}

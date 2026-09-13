@@ -36,8 +36,19 @@ export type CanvasCard = {
   depth: "front" | "back";
 };
 
+/**
+ * Stable ids for the five states. Exported so the GrowthRail below the hero
+ * can point each of its stages at one of them by name rather than by index.
+ */
+export type CanvasStateKey =
+  | "understand"
+  | "create"
+  | "publish"
+  | "learn"
+  | "next-move";
+
 export type CanvasState = {
-  key: string;
+  key: CanvasStateKey;
   stage: string;
   cards: CanvasCard[];
   /** Defaults to STATE_DURATION_MS. CREATE needs longer once it animates. */

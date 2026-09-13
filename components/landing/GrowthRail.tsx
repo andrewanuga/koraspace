@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import type { CanvasStateKey } from "@/components/landing/canvas-states";
 import {
   Brain,
   Palette,
@@ -14,6 +15,13 @@ import {
 
 type Stage = {
   label: string;
+  /**
+   * The hero canvas state this stage drives on hover. The rail and the canvas
+   * are the same loop told twice, so they map in order: the rail's six stages
+   * fold onto the canvas's five, with Your Brand and AI both resolving to
+   * Understand (learning the brand *is* the understanding step).
+   */
+  canvasKey: CanvasStateKey;
   Icon: LucideIcon;
   kicker: string;
   body: string;
@@ -23,6 +31,7 @@ type Stage = {
 const stages: Stage[] = [
   {
     label: "Your Brand",
+    canvasKey: "understand",
     Icon: Palette,
     kicker: "Brand Brain",
     body: "KoraSpace learns your voice, products, positioning, and brand guidelines.",
@@ -30,6 +39,7 @@ const stages: Stage[] = [
   },
   {
     label: "AI",
+    canvasKey: "understand",
     Icon: Brain,
     kicker: "Intelligence",
     body: "Multiple AI engines turn your brand data into marketing decisions.",
@@ -37,6 +47,7 @@ const stages: Stage[] = [
   },
   {
     label: "Content",
+    canvasKey: "create",
     Icon: PenLine,
     kicker: "Create",
     body: "Generate content tailored to your brand, audience, and platform.",
@@ -44,6 +55,7 @@ const stages: Stage[] = [
   },
   {
     label: "Audience",
+    canvasKey: "publish",
     Icon: Users,
     kicker: "Understand",
     body: "Discover what your audience responds to — and why.",
@@ -51,6 +63,7 @@ const stages: Stage[] = [
   },
   {
     label: "Results",
+    canvasKey: "learn",
     Icon: TrendingUp,
     kicker: "Learn",
     body: "Your audience engages 34% more with founder-led content.",
@@ -58,6 +71,7 @@ const stages: Stage[] = [
   },
   {
     label: "Next Move",
+    canvasKey: "next-move",
     Icon: Sparkles,
     kicker: "Kora Intelligence",
     body: "Turn your best-performing founder post into a 3-part campaign.",
@@ -67,7 +81,16 @@ const stages: Stage[] = [
 
 const CARD_WIDTH = 300;
 
-export function GrowthRail() {
+type GrowthRailProps = {
+  /**
+   * Fires with the hovered stage's canvas state, or null when the pointer
+   * leaves the rail. The Hero passes this straight to the IntelligenceCanvas
+   * so exploring the loop down here drives the intelligence up there.
+   */
+  onFocusStage?: (key: CanvasStateKey | null) => void;
+};
+
+export function GrowthRail({ onFocusStage }: GrowthRailProps) {
   const [active, setActive] = useState<number | null>(null);
   const reduceMotion = useReducedMotion();
 
@@ -96,13 +119,19 @@ export function GrowthRail() {
     }
 
     setActive(i);
+    onFocusStage?.(stages[i].canvasKey);
+  };
+
+  const clearStage = () => {
+    setActive(null);
+    onFocusStage?.(null);
   };
 
   const activeStage = active === null ? null : stages[active];
 
   return (
     <div
-      onMouseLeave={() => setActive(null)}
+      onMouseLeave={clearStage}
       className="relative border-t border-white/10 px-5 pb-10 pt-8 sm:px-10 sm:pb-12 sm:pt-10"
     >
       <p className="text-center text-[10px] font-bold tracking-[0.2em] text-white/40 sm:text-xs">
@@ -140,7 +169,7 @@ export function GrowthRail() {
                 type="button"
                 onMouseEnter={() => focusStage(i)}
                 onFocus={() => focusStage(i)}
-                onClick={() => (isActive ? setActive(null) : focusStage(i))}
+                onClick={() => (isActive ? clearStage() : focusStage(i))}
                 animate={{ scale: isActive && !reduceMotion ? 1.06 : 1 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
                 className={`relative flex items-center gap-2 rounded-full border px-3.5 py-2 outline-none backdrop-blur-md transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-[#ff9fc9] sm:px-4 ${
