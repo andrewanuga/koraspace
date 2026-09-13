@@ -21,12 +21,14 @@ export function Preloader() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     async function warm() {
+      // Only what the hero actually paints. This list used to warm hero1-hero5,
+      // left behind when the hero moved to the portrait + canvas: two of them
+      // didn't exist (a 404 each per load) and the rest were rendered nowhere,
+      // so it blocked on ~6.4MB of nothing while skipping the one image that
+      // does render. Those files have since been deleted from the repo.
       const WARM_IMAGES = [
-        "/landing-img/hero1.jpg",
-        "/landing-img/hero2.jpg",
-        "/landing-img/hero3.jpg",
-        "/landing-img/hero4.jpg",
-        "/landing-img/hero5.avif",
+        "/landing-img/founder-portrait.png",
+        "/logo.png",
       ];
       const total = WARM_IMAGES.length;
       let loaded = 0;
