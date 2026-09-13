@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
 import type {
   MarketerOverview,
   OverviewRange,
@@ -16,9 +16,7 @@ interface GetMarketerOverviewParams {
 }
 
 function calcPctChange(current: number, previous: number): number {
-  if (previous === 0) {
-    return current > 0 ? 100 : 0;
-  }
+  if (previous === 0) return current > 0 ? 100 : 0;
   const change = ((current - previous) / previous) * 100;
   return Number.isFinite(change) ? Math.round(change * 10) / 10 : 0;
 }
@@ -29,17 +27,16 @@ export async function getMarketerOverview({
 }: GetMarketerOverviewParams): Promise<MarketerOverview> {
   const supabase = await createClient();
 
-  // 1. Calculate Period Windows
+  // ── Period Windows ──────────────────────────────────────────
   const now = new Date();
-  const currentEnd = new Date(now);
-  const currentStart = new Date(now);
-  const previousEnd = new Date(now);
-  const previousStart = new Date(now);
-
   const days = range === "7d" ? 7 : range === "90d" ? 90 : 30;
 
+  const currentEnd = new Date(now);
+  const currentStart = new Date(now);
   currentStart.setDate(currentEnd.getDate() - days);
-  previousEnd.setDate(currentStart.getDate());
+
+  const previousEnd = new Date(currentStart);
+  const previousStart = new Date(currentStart);
   previousStart.setDate(previousEnd.getDate() - days);
 
   const currentStartISO = currentStart.toISOString();
@@ -47,18 +44,16 @@ export async function getMarketerOverview({
   const previousStartISO = previousStart.toISOString();
   const previousEndISO = previousEnd.toISOString();
 
-  // 2. Query Workspaces & Client Accounts accessible by this marketer
-  const [
-    { data: workspaces },
-    { data: userProfile },
-  ] = await Promise.all([
+  const currentStartDate = currentStartISO.slice(0, 10);
+  const currentEndDate = currentEndISO.slice(0, 10);
+  const previousStartDate = previousStartISO.slice(0, 10);
+  const previousEndDate = previousEndISO.slice(0, 10);
+
+  // ── Workspaces ──────────────────────────────────────────────
+  const [{ data: workspaces }, { data: userProfile }] = await Promise.all([
     supabase
       .from("workspace_members")
-      .select(`
-        workspace_id,
-        role,
-        profiles!workspace_members_workspace_id_fkey(full_name, avatar_url)
-      `)
+      .select("workspace_id, role")
       .eq("user_id", userId),
     supabase
       .from("profiles")
@@ -70,147 +65,193 @@ export async function getMarketerOverview({
   const workspaceMap: Record<string, { name: string; role: string }> = {};
 
   (workspaces || []).forEach((w: any) => {
-    const wId = w.workspace_id;
-    const name = (w.profiles as any)?.full_name || "Client Workspace";
-    workspaceMap[wId] = { name, role: w.role || "member" };
+    workspaceMap[w.workspace_id] = {
+      name: "Client Workspace",
+      role: w.role || "member",
+    };
   });
 
-  // Always include marketer's personal workspace
   if (!workspaceMap[userId]) {
     workspaceMap[userId] = {
-      name: userProfile?.full_name ? `${userProfile.full_name} (Direct)` : "Primary Account",
+      name: userProfile?.full_name
+        ? `${userProfile.full_name} (Direct)`
+        : "Primary Account",
       role: "owner",
     };
   }
 
   const workspaceIds = Object.keys(workspaceMap);
 
-  // 3. Query Campaigns across accessible workspaces
-  const { data: rawCampaigns } = await supabase
-    .from("social_campaigns")
-    .select(`
-      id,
-      user_id,
-      name,
-      platform,
-      status,
-      budget,
-      spend,
-      revenue,
-      conversions,
-      impressions,
-      clicks,
-      roas,
-      start_date,
-      end_date,
-      created_at
-    `)
-    .in("user_id", workspaceIds);
+  // ── Parallel DB Queries ─────────────────────────────────────
+  const [
+    { data: rawCampaigns },
+    { data: dailyMetrics },
+    { data: dbActivity },
+    { data: dbTasks },
+    { data: dbOpportunities },
+    { data: prevSnapshots },
+  ] = await Promise.all([
+    // Current period campaigns
+    supabase
+      .from("social_campaigns")
+      .select(
+        "id, user_id, name, platform, status, budget, spend, revenue, conversions, impressions, clicks, roas, ctr, cpc, start_date, end_date, created_at"
+      )
+      .in("user_id", workspaceIds),
 
+    // Campaign daily metrics for trend chart
+    supabase
+      .from("campaign_daily_metrics")
+      .select("date, workspace_id, spend, impressions, clicks, conversions, revenue")
+      .in("workspace_id", workspaceIds)
+      .gte("date", currentStartDate)
+      .lte("date", currentEndDate)
+      .order("date", { ascending: true }),
+
+    // Recent workspace activity
+    supabase
+      .from("workspace_activity")
+      .select("id, workspace_id, type, title, description, created_at, actor_name")
+      .in("workspace_id", workspaceIds)
+      .order("created_at", { ascending: false })
+      .limit(10),
+
+    // Upcoming tasks
+    supabase
+      .from("marketing_tasks")
+      .select("id, workspace_id, title, description, type, priority, due_at, status")
+      .in("workspace_id", workspaceIds)
+      .neq("status", "completed")
+      .neq("status", "cancelled")
+      .order("due_at", { ascending: true })
+      .limit(8),
+
+    // AI-generated opportunities
+    supabase
+      .from("marketing_opportunities")
+      .select("id, workspace_id, category, title, description, impact, action_label, action_href")
+      .in("workspace_id", workspaceIds)
+      .eq("dismissed", false)
+      .eq("applied", false)
+      .order("created_at", { ascending: false })
+      .limit(6),
+
+    // Previous period snapshots for real delta calculation
+    supabase
+      .from("campaign_period_snapshots")
+      .select("campaign_id, workspace_id, spend, revenue, impressions, clicks, conversions, roas")
+      .in("workspace_id", workspaceIds)
+      .gte("period_start", previousStartDate)
+      .lte("period_end", previousEndDate),
+  ]);
+
+  // ── Process Campaigns ───────────────────────────────────────
   const campaigns = (rawCampaigns || []).map((c: any) => {
     const spend = Number(c.spend) || 0;
-    const rawRev = Number(c.revenue) || 0;
-    const storedRoas = Number(c.roas) || 0;
-    // Derive true revenue if not explicitly stored
-    const revenue = rawRev > 0 ? rawRev : spend > 0 && storedRoas > 0 ? spend * storedRoas : spend * 2.2;
-    const impressions = Number(c.impressions) || Math.max(1200, Math.round(spend * 14));
-    const clicks = Number(c.clicks) || Math.max(40, Math.round(impressions * 0.032));
-    const conversions = Number(c.conversions) || Math.max(4, Math.round(clicks * 0.085));
-    const roas = spend > 0 ? revenue / spend : storedRoas || 0;
-    const ctr = impressions > 0 ? (clicks / impressions) * 100 : 0;
-    const cpc = clicks > 0 ? spend / clicks : 0;
+    const revenue = Number(c.revenue) || 0;
+    const impressions = Number(c.impressions) || 0;
+    const clicks = Number(c.clicks) || 0;
+    const conversions = Number(c.conversions) || 0;
+    const roas = spend > 0 && revenue > 0 ? revenue / spend : Number(c.roas) || 0;
+    const ctr = Number(c.ctr) || (impressions > 0 ? (clicks / impressions) * 100 : 0);
+    const cpc = Number(c.cpc) || (clicks > 0 ? spend / clicks : 0);
     const cpa = conversions > 0 ? spend / conversions : 0;
 
     return {
-      id: c.id,
-      workspaceId: c.user_id,
-      workspaceName: workspaceMap[c.user_id]?.name || "Client Account",
-      name: c.name || "Growth Campaign",
-      platform: c.platform || "instagram",
-      status: c.status || "active",
+      id: c.id as string,
+      workspaceId: c.user_id as string,
+      workspaceName: workspaceMap[c.user_id as string]?.name || "Client Account",
+      name: (c.name as string) || "Campaign",
+      platform: (c.platform as string) || "instagram",
+      status: (c.status as string) || "active",
       spend,
       revenue,
-      roas,
+      roas: Math.round(roas * 100) / 100,
       conversions,
       impressions,
       clicks,
       ctr: Math.round(ctr * 100) / 100,
       cpc: Math.round(cpc),
       cpa: Math.round(cpa),
-      changePct: 14.5,
-      createdAt: c.created_at,
+      changePct: 0, // will be computed per-campaign below from snapshots
+      createdAt: c.created_at as string,
     };
   });
 
-  // 4. Try querying daily metrics, activity, and tasks
-  const [
-    { data: dailyMetrics },
-    { data: dbActivity },
-    { data: dbTasks },
-  ] = await Promise.all([
-    supabase
-      .from("campaign_daily_metrics")
-      .select("*")
-      .in("workspace_id", workspaceIds)
-      .gte("date", previousStartISO.slice(0, 10))
-      .lte("date", currentEndISO.slice(0, 10))
-      .order("date", { ascending: true }),
+  // ── Previous Period Totals (from real snapshots) ────────────
+  const prevSnapshotList = prevSnapshots || [];
 
-    supabase
-      .from("workspace_activity")
-      .select("*")
-      .in("workspace_id", workspaceIds)
-      .order("created_at", { ascending: false })
-      .limit(10),
+  const prevTotals = prevSnapshotList.reduce(
+    (acc: { spend: number; revenue: number; impressions: number; clicks: number; conversions: number }, s: any) => ({
+      spend: acc.spend + (Number(s.spend) || 0),
+      revenue: acc.revenue + (Number(s.revenue) || 0),
+      impressions: acc.impressions + (Number(s.impressions) || 0),
+      clicks: acc.clicks + (Number(s.clicks) || 0),
+      conversions: acc.conversions + (Number(s.conversions) || 0),
+    }),
+    { spend: 0, revenue: 0, impressions: 0, clicks: 0, conversions: 0 }
+  );
 
-    supabase
-      .from("marketing_tasks")
-      .select("*")
-      .in("workspace_id", workspaceIds)
-      .order("due_at", { ascending: true })
-      .limit(8),
-  ]);
+  // Build prev snapshot lookup per campaign
+  const prevByCampaign = new Map<string, { spend: number; revenue: number; roas: number }>();
+  prevSnapshotList.forEach((s: any) => {
+    if (s.campaign_id) {
+      prevByCampaign.set(s.campaign_id as string, {
+        spend: Number(s.spend) || 0,
+        revenue: Number(s.revenue) || 0,
+        roas: Number(s.roas) || 0,
+      });
+    }
+  });
 
-  // 5. Calculate Current and Previous Period Totals (True Weighted ROAS)
-  const totalSpend = campaigns.reduce((sum, c) => sum + c.spend, 0);
-  const totalRevenue = campaigns.reduce((sum, c) => sum + c.revenue, 0);
-  const totalConversions = campaigns.reduce((sum, c) => sum + c.conversions, 0);
-  const totalImpressions = campaigns.reduce((sum, c) => sum + c.impressions, 0);
-  const totalClicks = campaigns.reduce((sum, c) => sum + c.clicks, 0);
-  const activeCampaigns = campaigns.filter((c) => c.status === "active").length;
+  // Annotate changePct on each campaign using real snapshot
+  const annotatedCampaigns = campaigns.map((c) => {
+    const prev = prevByCampaign.get(c.id);
+    const prevRevenue = prev?.revenue ?? 0;
+    const changePct = prevRevenue > 0 ? calcPctChange(c.revenue, prevRevenue) : 0;
+    return { ...c, changePct };
+  });
+
+  // ── Aggregate Totals ────────────────────────────────────────
+  const totalSpend = annotatedCampaigns.reduce((s, c) => s + c.spend, 0);
+  const totalRevenue = annotatedCampaigns.reduce((s, c) => s + c.revenue, 0);
+  const totalConversions = annotatedCampaigns.reduce((s, c) => s + c.conversions, 0);
+  const totalImpressions = annotatedCampaigns.reduce((s, c) => s + c.impressions, 0);
+  const totalClicks = annotatedCampaigns.reduce((s, c) => s + c.clicks, 0);
+  const activeCampaigns = annotatedCampaigns.filter((c) => c.status === "active").length;
+  const prevActiveCampaigns = prevSnapshotList.length; // rough proxy
 
   const weightedRoas = totalSpend > 0 ? totalRevenue / totalSpend : 0;
   const portfolioCtr = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
   const portfolioCpc = totalClicks > 0 ? totalSpend / totalClicks : 0;
   const portfolioCpa = totalConversions > 0 ? totalSpend / totalConversions : 0;
 
-  // Previous period baseline (with realistic previous-period multiplier for delta calculation)
-  const prevMultiplier = 0.84;
-  const prevSpend = Math.round(totalSpend * prevMultiplier);
-  const prevRevenue = Math.round(totalRevenue * (prevMultiplier - 0.03));
-  const prevConversions = Math.round(totalConversions * prevMultiplier);
-  const prevImpressions = Math.round(totalImpressions * prevMultiplier);
-  const prevActiveCampaigns = Math.max(1, Math.round(activeCampaigns * 0.9));
-  const prevRoas = prevSpend > 0 ? prevRevenue / prevSpend : 0;
+  const prevRoas = prevTotals.spend > 0 ? prevTotals.revenue / prevTotals.spend : 0;
 
   const changes = {
-    spendPct: calcPctChange(totalSpend, prevSpend),
-    revenuePct: calcPctChange(totalRevenue, prevRevenue),
+    spendPct: calcPctChange(totalSpend, prevTotals.spend),
+    revenuePct: calcPctChange(totalRevenue, prevTotals.revenue),
     roasPct: calcPctChange(weightedRoas, prevRoas),
-    conversionsPct: calcPctChange(totalConversions, prevConversions),
+    conversionsPct: calcPctChange(totalConversions, prevTotals.conversions),
     activeCampaignsPct: calcPctChange(activeCampaigns, prevActiveCampaigns),
-    impressionsPct: calcPctChange(totalImpressions, prevImpressions),
+    impressionsPct: calcPctChange(totalImpressions, prevTotals.impressions),
   };
 
-  // 6. Build Client Health Directory
+  // ── Client Health ───────────────────────────────────────────
   const clientHealth: ClientHealth[] = workspaceIds.map((wId) => {
     const info = workspaceMap[wId];
-    const clientCampaigns = campaigns.filter((c) => c.workspaceId === wId);
-    const clientSpend = clientCampaigns.reduce((sum, c) => sum + c.spend, 0);
-    const clientRevenue = clientCampaigns.reduce((sum, c) => sum + c.revenue, 0);
-    const clientConversions = clientCampaigns.reduce((sum, c) => sum + c.conversions, 0);
+    const clientCampaigns = annotatedCampaigns.filter((c) => c.workspaceId === wId);
+    const clientPrevSnapshots = prevSnapshotList.filter((s: any) => s.workspace_id === wId);
+
+    const clientSpend = clientCampaigns.reduce((s, c) => s + c.spend, 0);
+    const clientRevenue = clientCampaigns.reduce((s, c) => s + c.revenue, 0);
+    const clientConversions = clientCampaigns.reduce((s, c) => s + c.conversions, 0);
     const clientActive = clientCampaigns.filter((c) => c.status === "active").length;
     const clientRoas = clientSpend > 0 ? clientRevenue / clientSpend : 0;
+
+    const prevClientSpend = clientPrevSnapshots.reduce((s: number, p: any) => s + (Number(p.spend) || 0), 0);
+    const prevClientRevenue = clientPrevSnapshots.reduce((s: number, p: any) => s + (Number(p.revenue) || 0), 0);
+    const prevClientRoas = prevClientSpend > 0 ? prevClientRevenue / prevClientSpend : 0;
 
     let status: "healthy" | "attention" | "critical" = "healthy";
     if (clientRoas >= 2.0 && clientActive > 0) {
@@ -231,173 +272,107 @@ export async function getMarketerOverview({
       roas: Math.round(clientRoas * 100) / 100,
       activeCampaigns: clientActive,
       conversions: clientConversions,
-      spendChange: 18.2,
-      revenueChange: 24.5,
-      roasChange: 5.3,
-      lastActivityAt: clientCampaigns[0]?.createdAt || currentStartISO,
+      spendChange: calcPctChange(clientSpend, prevClientSpend),
+      revenueChange: calcPctChange(clientRevenue, prevClientRevenue),
+      roasChange: calcPctChange(clientRoas, prevClientRoas),
+      lastActivityAt: clientCampaigns[0]?.createdAt || null,
     };
   });
 
-  // 7. Generate Spend & Revenue Trend Points for Chart
+  // ── Spend Trend from Real Daily Metrics ────────────────────
+  const metricsByDate = new Map<
+    string,
+    { spend: number; revenue: number; impressions: number; clicks: number; conversions: number }
+  >();
+
+  (dailyMetrics || []).forEach((m: any) => {
+    const key = m.date as string;
+    const existing = metricsByDate.get(key) || {
+      spend: 0, revenue: 0, impressions: 0, clicks: 0, conversions: 0,
+    };
+    metricsByDate.set(key, {
+      spend: existing.spend + (Number(m.spend) || 0),
+      revenue: existing.revenue + (Number(m.revenue) || 0),
+      impressions: existing.impressions + (Number(m.impressions) || 0),
+      clicks: existing.clicks + (Number(m.clicks) || 0),
+      conversions: existing.conversions + (Number(m.conversions) || 0),
+    });
+  });
+
+  // Build date range buckets
   const numPoints = range === "7d" ? 7 : range === "90d" ? 12 : 10;
   const spendTrend: TrendPoint[] = Array.from({ length: numPoints }, (_, i) => {
     const pointDate = new Date(currentStart);
     pointDate.setDate(pointDate.getDate() + Math.round((i * days) / numPoints));
     const dateStr = pointDate.toISOString().slice(0, 10);
-    const monthDay = pointDate.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    const monthDay = pointDate.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    });
 
-    const stepFactor = (0.7 + (i / numPoints) * 0.5 + Math.sin(i) * 0.12);
-    const pointSpend = Math.round((totalSpend / numPoints) * stepFactor);
-    const pointRoas = Math.max(1.2, Math.round((weightedRoas + (Math.cos(i) * 0.4)) * 10) / 10);
-    const pointRevenue = Math.round(pointSpend * pointRoas);
-    const pointConversions = Math.round((totalConversions / numPoints) * stepFactor);
-    const pointImpressions = Math.round((totalImpressions / numPoints) * stepFactor);
+    const bucket = metricsByDate.get(dateStr) || {
+      spend: 0, revenue: 0, impressions: 0, clicks: 0, conversions: 0,
+    };
+
+    const pointRoas =
+      bucket.spend > 0 && bucket.revenue > 0
+        ? Math.round((bucket.revenue / bucket.spend) * 10) / 10
+        : Math.round(weightedRoas * 10) / 10;
 
     return {
       date: dateStr,
       label: monthDay,
-      spend: Math.max(0, pointSpend),
-      revenue: Math.max(0, pointRevenue),
+      spend: bucket.spend,
+      revenue: bucket.revenue,
       roas: pointRoas,
-      conversions: Math.max(0, pointConversions),
-      impressions: Math.max(0, pointImpressions),
+      conversions: bucket.conversions,
+      impressions: bucket.impressions,
     };
   });
 
-  // 8. Rank Top Campaigns
-  const topCampaigns: CampaignPerformance[] = [...campaigns]
+  // ── Top Campaigns ───────────────────────────────────────────
+  const topCampaigns: CampaignPerformance[] = [...annotatedCampaigns]
     .sort((a, b) => b.roas * b.spend - a.roas * a.spend)
     .slice(0, 5);
 
-  // 9. Recent Activity List
-  const recentActivity: ActivityItem[] = (dbActivity && dbActivity.length > 0)
-    ? dbActivity.map((a: any) => ({
-        id: a.id,
-        workspaceId: a.workspace_id,
-        workspaceName: workspaceMap[a.workspace_id]?.name || "Portfolio",
-        type: a.type,
-        title: a.title,
-        description: a.description,
-        createdAt: a.created_at,
-      }))
-    : [
-        {
-          id: "act-1",
-          workspaceId: workspaceIds[0] || userId,
-          workspaceName: workspaceMap[workspaceIds[0] || userId]?.name || "Main Workspace",
-          type: "campaign_launched",
-          title: "Scale Campaign Launched",
-          description: "Spring ROAS booster activated across Instagram & TikTok.",
-          createdAt: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
-        },
-        {
-          id: "act-2",
-          workspaceId: workspaceIds[0] || userId,
-          workspaceName: workspaceMap[workspaceIds[0] || userId]?.name || "Main Workspace",
-          type: "budget_updated",
-          title: "Budget Reallocated (+25%)",
-          description: "Shifted ₦350,000 to top-performing 3.8× ROAS creative set.",
-          createdAt: new Date(Date.now() - 1000 * 60 * 85).toISOString(),
-        },
-        {
-          id: "act-3",
-          workspaceId: workspaceIds[1] || workspaceIds[0] || userId,
-          workspaceName: workspaceMap[workspaceIds[1] || workspaceIds[0] || userId]?.name || "Client Account",
-          type: "content_approved",
-          title: "Ad Creatives Approved",
-          description: "4 video hooks ready for automated deployment.",
-          createdAt: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
-        },
-        {
-          id: "act-4",
-          workspaceId: workspaceIds[0] || userId,
-          workspaceName: workspaceMap[workspaceIds[0] || userId]?.name || "Main Workspace",
-          type: "lead_generated",
-          title: "High-Value Conversion Spike",
-          description: "18 new customer acquisitions registered in the last 6 hours.",
-          createdAt: new Date(Date.now() - 1000 * 60 * 420).toISOString(),
-        },
-      ];
+  // ── Recent Activity (real DB only, no fallbacks) ────────────
+  const recentActivity: ActivityItem[] = (dbActivity || []).map((a: any) => ({
+    id: a.id as string,
+    workspaceId: a.workspace_id as string,
+    workspaceName: workspaceMap[a.workspace_id as string]?.name || "Portfolio",
+    type: a.type as string,
+    title: a.title as string,
+    description: (a.description as string | null) ?? null,
+    createdAt: a.created_at as string,
+  }));
 
-  // 10. Upcoming Deliverables & Tasks
-  const upcoming: UpcomingItem[] = (dbTasks && dbTasks.length > 0)
-    ? dbTasks.map((t: any) => ({
-        id: t.id,
-        workspaceId: t.workspace_id,
-        workspaceName: workspaceMap[t.workspace_id]?.name || "Portfolio",
-        title: t.title,
-        description: t.description,
-        type: t.type,
-        priority: t.priority,
-        dueAt: t.due_at,
-        status: t.status,
-      }))
-    : [
-        {
-          id: "task-1",
-          workspaceId: workspaceIds[0] || userId,
-          workspaceName: workspaceMap[workspaceIds[0] || userId]?.name || "Main Workspace",
-          title: "Weekly Portfolio ROAS Audit",
-          description: "Review CPM and spend efficiency across active clients.",
-          type: "campaign_review",
-          priority: "high",
-          dueAt: new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString(),
-          status: "pending",
-        },
-        {
-          id: "task-2",
-          workspaceId: workspaceIds[1] || workspaceIds[0] || userId,
-          workspaceName: workspaceMap[workspaceIds[1] || workspaceIds[0] || userId]?.name || "Client Account",
-          title: "Client Growth Strategy Alignment",
-          description: "Present Q3 scaling plan and creative refresh roadmap.",
-          type: "client_meeting",
-          priority: "medium",
-          dueAt: new Date(Date.now() + 1000 * 60 * 60 * 28).toISOString(),
-          status: "pending",
-        },
-        {
-          id: "task-3",
-          workspaceId: workspaceIds[0] || userId,
-          workspaceName: workspaceMap[workspaceIds[0] || userId]?.name || "Main Workspace",
-          title: "Retargeting Pixel & Audience Calibration",
-          description: "Exclude past 30-day purchasers from top-of-funnel sets.",
-          type: "creative_approval",
-          priority: "medium",
-          dueAt: new Date(Date.now() + 1000 * 60 * 60 * 52).toISOString(),
-          status: "pending",
-        },
-      ];
+  // ── Upcoming Tasks (real DB only, no fallbacks) ─────────────
+  const upcoming: UpcomingItem[] = (dbTasks || []).map((t: any) => ({
+    id: t.id as string,
+    workspaceId: t.workspace_id as string,
+    workspaceName: workspaceMap[t.workspace_id as string]?.name || "Portfolio",
+    title: t.title as string,
+    description: (t.description as string | null) ?? null,
+    type: t.type as string,
+    priority: t.priority as "low" | "medium" | "high" | "urgent",
+    dueAt: t.due_at as string,
+    status: t.status as string,
+  }));
 
-  // 11. AI Opportunities Engine
-  const opportunities: MarketingOpportunity[] = [
-    {
-      id: "opp-1",
-      category: "scale",
-      title: "Scale top performing ad set (+40% budget)",
-      description: `Your highest performing campaigns are operating at ${weightedRoas.toFixed(1)}× ROAS with room for profitable spend expansion.`,
-      impact: "high",
-      actionLabel: "Apply Scale Budget",
-      actionHref: "/dashboard/campaigns",
-    },
-    {
-      id: "opp-2",
-      category: "creative",
-      title: "Deploy video hook variations for fatigue prevention",
-      description: "Click-through rates can increase by ~28% by cycling top-funnel video creatives before frequency surpasses 3.5.",
-      impact: "high",
-      actionLabel: "Generate Hooks",
-      actionHref: "/dashboard/repurpose",
-    },
-    {
-      id: "opp-3",
-      category: "roas",
-      title: "Consolidate low-volume campaigns",
-      description: "Merging splintered ad sets will speed up platform machine learning and lower average CPA by up to 15%.",
-      impact: "medium",
-      actionLabel: "Review Campaigns",
-      actionHref: "/dashboard/campaigns",
-    },
-  ];
+  // ── Opportunities (real DB only) ────────────────────────────
+  const opportunities: MarketingOpportunity[] = (dbOpportunities || []).map(
+    (o: any) => ({
+      id: o.id as string,
+      workspaceId: o.workspace_id as string,
+      workspaceName: workspaceMap[o.workspace_id as string]?.name || "Portfolio",
+      category: o.category as MarketingOpportunity["category"],
+      title: o.title as string,
+      description: o.description as string,
+      impact: o.impact as "high" | "medium" | "low",
+      actionLabel: o.action_label as string,
+      actionHref: (o.action_href as string | undefined) ?? undefined,
+    })
+  );
 
   return {
     range,
