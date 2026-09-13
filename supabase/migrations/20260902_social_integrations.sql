@@ -38,10 +38,8 @@ create table if not exists public.social_accounts (
   meta jsonb not null default '{}'::jsonb,
   unique (user_id, platform, external_id)
 );
-create index if not exists social_accounts_user on public.social_accounts(user_id, platform);
-create index if not exists idx_social_accounts_external_id on public.social_accounts(external_id);
 
--- ── SOCIAL ACCOUNT METRICS (daily performance tracking) ─────
+-- ── SOCIAL ACCOUNT METRICS ──────────────────────────────────
 create table if not exists public.social_account_metrics (
   id uuid primary key default gen_random_uuid(),
   account_id uuid not null references public.social_accounts(id) on delete cascade,
@@ -54,7 +52,6 @@ create table if not exists public.social_account_metrics (
   created_at timestamptz not null default now(),
   unique(account_id, date)
 );
-create index if not exists idx_social_account_metrics_account_date on public.social_account_metrics(account_id, date desc);
 
 -- ── INBOX MESSAGES ──────────────────────────────────────────
 create table if not exists public.social_inbox (
@@ -82,9 +79,8 @@ create table if not exists public.social_inbox (
   received_at timestamptz not null default now(),
   created_at timestamptz not null default now()
 );
-create index if not exists social_inbox_feed on public.social_inbox(user_id, status, received_at desc);
 
--- ── POSTS + PERFORMANCE SNAPSHOTS ───────────────────────────
+-- ── POSTS ───────────────────────────────────────────────────
 create table if not exists public.social_posts (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
@@ -109,9 +105,8 @@ create table if not exists public.social_posts (
   created_at timestamptz not null default now(),
   unique (account_id, external_id)
 );
-create index if not exists social_posts_perf on public.social_posts(user_id, posted_at desc);
 
--- ── AD CAMPAIGNS + ANALYTICS ────────────────────────────────
+-- ── AD CAMPAIGNS ────────────────────────────────────────────
 create table if not exists public.social_campaigns (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
@@ -139,10 +134,8 @@ create table if not exists public.social_campaigns (
   synced_at timestamptz,
   created_at timestamptz not null default now()
 );
-alter table public.social_campaigns add column if not exists revenue numeric(14,2) not null default 0;
-create index if not exists social_campaigns_user on public.social_campaigns(user_id, status);
 
--- ── SOCIAL BOTS (per connected account / workspace) ─────────
+-- ── SOCIAL BOTS ─────────────────────────────────────────────
 create table if not exists public.social_bots (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
@@ -159,10 +152,8 @@ create table if not exists public.social_bots (
   config jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now()
 );
-create index if not exists social_bots_user on public.social_bots(user_id);
-create index if not exists idx_social_bots_user_id_status on public.social_bots(user_id, status);
 
--- ── MANAGED CHATS (Telegram / WhatsApp groups + DMs) ────────
+-- ── MANAGED CHATS ───────────────────────────────────────────
 create table if not exists public.managed_chats (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
@@ -197,7 +188,6 @@ create table if not exists public.scheduled_messages (
   sent_at timestamptz,
   created_at timestamptz not null default now()
 );
-create index if not exists scheduled_messages_due on public.scheduled_messages(status, send_at);
 
 -- ── NICHE TRENDS ────────────────────────────────────────────
 create table if not exists public.social_trends (
@@ -218,7 +208,6 @@ create table if not exists public.social_trends (
   fetched_at timestamptz not null default now(),
   expires_at timestamptz not null default (now() + interval '12 hours')
 );
-create index if not exists social_trends_scope on public.social_trends(user_id, expires_at desc);
 
 -- ── AI PERSONA ──────────────────────────────────────────────
 create table if not exists public.ai_persona (
@@ -239,10 +228,38 @@ create table if not exists public.ai_message_memory (
   content text not null,
   created_at timestamptz not null default now()
 );
+
+-- ============================================================
+-- DEFENSIVE COLUMN BACKFILL
+-- Guarantees columns referenced by indexes below exist, even if
+-- the tables were created by an earlier migration that lacked them.
+-- ============================================================
+alter table public.social_accounts        add column if not exists status text not null default 'connected';
+alter table public.social_inbox           add column if not exists status text not null default 'unread';
+alter table public.social_inbox           add column if not exists received_at timestamptz not null default now();
+alter table public.social_posts           add column if not exists posted_at timestamptz;
+alter table public.social_campaigns       add column if not exists status text not null default 'active';
+alter table public.social_campaigns       add column if not exists revenue numeric(14,2) not null default 0;
+alter table public.social_bots            add column if not exists status text not null default 'paused';
+alter table public.scheduled_messages     add column if not exists status text not null default 'scheduled';
+alter table public.scheduled_messages     add column if not exists send_at timestamptz not null default now();
+alter table public.social_trends          add column if not exists expires_at timestamptz not null default (now() + interval '12 hours');
+
+-- ── INDEXES ─────────────────────────────────────────────────
+create index if not exists social_accounts_user on public.social_accounts(user_id, platform);
+create index if not exists idx_social_accounts_external_id on public.social_accounts(external_id);
+create index if not exists idx_social_account_metrics_account_date on public.social_account_metrics(account_id, date desc);
+create index if not exists social_inbox_feed on public.social_inbox(user_id, status, received_at desc);
+create index if not exists social_posts_perf on public.social_posts(user_id, posted_at desc);
+create index if not exists social_campaigns_user on public.social_campaigns(user_id, status);
+create index if not exists social_bots_user on public.social_bots(user_id);
+create index if not exists idx_social_bots_user_id_status on public.social_bots(user_id, status);
+create index if not exists scheduled_messages_due on public.scheduled_messages(status, send_at);
+create index if not exists social_trends_scope on public.social_trends(user_id, expires_at desc);
 create index if not exists ai_message_memory_user on public.ai_message_memory(user_id, created_at desc);
 
 -- ── ROW-LEVEL SECURITY ──────────────────────────────────────
-alter table public.social_accounts       enable row level security;
+alter table public.social_accounts        enable row level security;
 alter table public.social_account_metrics enable row level security;
 alter table public.social_inbox           enable row level security;
 alter table public.social_posts           enable row level security;
