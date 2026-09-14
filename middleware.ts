@@ -72,12 +72,22 @@ function buildCsp(nonce: string): string {
     `default-src 'self'`,
     // Scripts: allow self, nonce-gated, strict-dynamic; dev allows eval for React HMR
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""} https://js.paystack.co`,
-    // Styles: allow self + nonce; dev allows inline for HMR style injection
-    `style-src 'self' 'nonce-${nonce}'${isDev ? " 'unsafe-inline'" : ""}`,
+    // Styles: self + inline, plus the two font stylesheet hosts the layout links.
+    //
+    // Deliberately NO nonce here. Per CSP, a nonce in style-src makes
+    // 'unsafe-inline' inert — so the previous value blocked every inline style
+    // attribute on the site (the browser reported ~276 refusals per page load),
+    // the hero's background gradient among them: it ships as a style attribute
+    // in the server HTML, was refused, and the hero lost its colour. A nonce on
+    // script-src is what actually carries weight; style injection is not a
+    // comparable risk, and React and framer-motion both require inline styles.
+    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com`,
     // Images: allow self, blob, data, and the third-party avatar CDNs
     `img-src 'self' blob: data: ${supabaseUrl} https://lh3.googleusercontent.com https://pbs.twimg.com https://media.licdn.com`,
-    // Fonts: only from self
-    `font-src 'self'`,
+    // Fonts: self + the CDNs those two stylesheets pull their font files from.
+    // Without these the linked faces (General Sans, Inter et al) are requested
+    // and then refused, silently falling back to system fonts.
+    `font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com`,
     // Connect: self + Supabase + OpenRouter AI API + Paystack
     `connect-src 'self' ${supabaseUrl} https://openrouter.ai https://api.paystack.co wss://*.supabase.co`,
     // Media: self only
