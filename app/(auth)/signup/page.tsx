@@ -16,6 +16,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
 import { createClient } from "@/lib/supabase/client";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 const PASSWORD_REQUIREMENTS = [
   { label: "At least 8 characters", test: (p: string) => p.length >= 8 },
@@ -38,6 +39,7 @@ export default function SignupPage() {
   const [success, setSuccess] = useState(false);
 
   const { error: toastError, success: toastSuccess } = useToast();
+  const { t } = useLanguage();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,15 +122,15 @@ export default function SignupPage() {
       <div className="mb-7">
         <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#ff0a8a]/20 bg-[#ff0a8a]/[0.06] px-3 py-1 text-[11px] font-medium text-[#ff7fba]">
           <Sparkles className="h-3.5 w-3.5 text-[#ff0a8a]" />
-          <span>14-day free trial</span>
+          <span>{t.authPages.marketingSuite}</span>
         </div>
 
         <h1 className="font-display text-[30px] font-semibold tracking-[-0.035em] text-white sm:text-[34px]">
-          Create your workspace
+          {t.authPages.signupTitle}
         </h1>
 
         <p className="mt-2 text-[14px] leading-relaxed text-white/45">
-          Get started with all Creator and Marketer intelligence tools. No credit card required.
+          {t.authPages.signupSubtitle}
         </p>
       </div>
 
@@ -138,7 +140,7 @@ export default function SignupPage() {
           {/* Full Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-[12px] font-medium text-white/70">
-              Full name
+              {t.authPages.nameLabel}
             </Label>
             <input
               id="name"
@@ -155,7 +157,7 @@ export default function SignupPage() {
           {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email" className="text-[12px] font-medium text-white/70">
-              Work or personal email
+              {t.authPages.emailLabel}
             </Label>
             <input
               id="email"
@@ -172,7 +174,7 @@ export default function SignupPage() {
           {/* Password */}
           <div className="space-y-2">
             <Label htmlFor="password" className="text-[12px] font-medium text-white/70">
-              Password
+              {t.authPages.passwordLabel}
             </Label>
             <div className="relative">
               <input
@@ -244,7 +246,7 @@ export default function SignupPage() {
                 </>
               ) : (
                 <>
-                  <span>Create workspace</span>
+                  <span>{t.authPages.signupButton}</span>
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </>
               )}
@@ -267,12 +269,12 @@ export default function SignupPage() {
 
       {/* Login link */}
       <p className="mt-6 text-center text-[13px] text-white/40">
-        Already have an account?{" "}
+        {t.authPages.haveAccount}{" "}
         <Link
           href="/login"
           className="font-semibold text-[#ff4da6] transition-colors hover:text-[#ff7fba]"
         >
-          Sign in
+          {t.authPages.loginButton}
         </Link>
       </p>
     </div>

@@ -167,23 +167,7 @@ export const enNG: TranslationDictionary = {
       stageLabels: ["Understand", "Create", "Publish", "Learn", "Next Move"],
     },
   },
-  dashboardShowcase: {
-    eyebrow: "Live Interactive Workspace Preview",
-    title: "See KoraSpace in action:",
-    subtitle:
-      "Switch between Creator Mode and Marketer Mode to preview how KoraSpace adapts to your workflow.",
-    creatorMode: "Creator Studio",
-    marketerMode: "Marketing Operator",
-    composerTitle: "AI Composing Pipeline",
-    composerDesc: "8-step voice matching, draft scoring & reflections.",
-    calendarTitle: "Visual 6-Platform Calendar",
-    calendarDesc: "Drag-and-drop scheduling across Instagram, TikTok, LinkedIn, YouTube, X & Threads.",
-    crmTitle: "Social CRM & Lead Triage",
-    crmDesc: "Detect high-intent buying signals in DMs & comments.",
-    pipelineScore: "KoraScore 88/100",
-    engagementRate: "3.8% Engagement Rate",
-    revenueAttributed: "₦1,450,000 Pipeline Revenue",
-  },
+  
   problemSolver: {
     eyebrow: "The Old Way vs The KoraSpace Way",
     heading:

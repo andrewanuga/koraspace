@@ -167,23 +167,7 @@ export const nl: TranslationDictionary = {
       stageLabels: ["Begrijpen", "Creëren", "Publiceren", "Leren", "Volgende Stap"],
     },
   },
-  dashboardShowcase: {
-    eyebrow: "Interactief Live Workspace Preview",
-    title: "Ervaar KoraSpace in actie:",
-    subtitle:
-      "Schakel tussen de Creator Mode en de Marketer Mode om te zien hoe KoraSpace naadloos aansluit op jouw workflow.",
-    creatorMode: "Creator Studio",
-    marketerMode: "Marketing Operator",
-    composerTitle: "AI-Schrijfpipeline in 8 Stappen",
-    composerDesc: "Merkstem-afstemming, conceptscoring en grondige webreflectie.",
-    calendarTitle: "Visuele Kalender voor 6 Platformen",
-    calendarDesc: "Slepen en neerzetten voor Instagram, TikTok, LinkedIn, YouTube, X en Threads.",
-    crmTitle: "Social CRM & Lead-Triage",
-    crmDesc: "Detecteer direct koopintenties in reacties en directe berichten.",
-    pipelineScore: "KoraScore Gezondheidsscore 88/100",
-    engagementRate: "3,8% Betrokkenheidsgraad",
-    revenueAttributed: "€ 12.450 Toegeschreven Omzet",
-  },
+  
   problemSolver: {
     eyebrow: "De Oude Manier vs De KoraSpace Aanpak",
     heading:

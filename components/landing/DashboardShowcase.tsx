@@ -147,7 +147,7 @@ export function DashboardShowcase() {
                 className="rounded px-1.5 py-0.5 text-[10px] font-semibold text-white uppercase"
                 style={{ background: brandColor }}
               >
-                {persona}
+                {t.dashboardShowcase.previewMode}
               </span>
             </div>
 
@@ -172,7 +172,7 @@ export function DashboardShowcase() {
                       Acme Workspace
                     </div>
                     <div className="text-[10px] text-slate-500 dark:text-white/35 capitalize">
-                      {persona} Mode
+                      {isCreator ? t.dashboardShowcase.creatorMode : t.dashboardShowcase.marketerMode}
                     </div>
                   </div>
                 </div>
@@ -181,21 +181,21 @@ export function DashboardShowcase() {
                 <div className="space-y-1">
                   {isCreator ? (
                     <>
-                      <MockNavItem active icon={Sparkles} label="AI Studio" color={brandColor} />
-                      <MockNavItem icon={Calendar} label="Visual Calendar" color={brandColor} />
-                      <MockNavItem icon={TrendingUp} label="Viral Trends" color={brandColor} />
-                      <MockNavItem icon={RefreshCw} label="Repurpose" color={brandColor} />
-                      <MockNavItem icon={Users} label="Audience" color={brandColor} />
-                      <MockNavItem icon={Layers3} label="Brand Kit" color={brandColor} />
+                      <MockNavItem active icon={Sparkles} label={t.dashboardShowcase.aiStudio} color={brandColor} />
+                      <MockNavItem icon={Calendar} label={t.dashboardShowcase.visualCalendar} color={brandColor} />
+                      <MockNavItem icon={TrendingUp} label={t.dashboardShowcase.viralTrends} color={brandColor} />
+                      <MockNavItem icon={RefreshCw} label={t.dashboardShowcase.repurpose} color={brandColor} />
+                      <MockNavItem icon={Users} label={t.dashboardShowcase.audience} color={brandColor} />
+                      <MockNavItem icon={Layers3} label={t.dashboardShowcase.brandKit} color={brandColor} />
                     </>
                   ) : (
                     <>
-                      <MockNavItem active icon={Bot} label="Agent Operator" color={brandColor} />
-                      <MockNavItem icon={Target} label="Campaigns" color={brandColor} />
-                      <MockNavItem icon={Users} label="CRM & Leads" color={brandColor} />
-                      <MockNavItem icon={Zap} label="Automations" color={brandColor} />
-                      <MockNavItem icon={BarChart3} label="Attribution" color={brandColor} />
-                      <MockNavItem icon={Layers3} label="Strategy" color={brandColor} />
+                      <MockNavItem active icon={Bot} label={t.dashboardShowcase.agentOperator} color={brandColor} />
+                      <MockNavItem icon={Target} label={t.dashboardShowcase.campaigns} color={brandColor} />
+                      <MockNavItem icon={Users} label={t.dashboardShowcase.crmLeads} color={brandColor} />
+                      <MockNavItem icon={Zap} label={t.dashboardShowcase.automations} color={brandColor} />
+                      <MockNavItem icon={BarChart3} label={t.dashboardShowcase.attribution} color={brandColor} />
+                      <MockNavItem icon={Layers3} label={t.dashboardShowcase.strategy} color={brandColor} />
                     </>
                   )}
                 </div>
@@ -205,7 +205,7 @@ export function DashboardShowcase() {
               <div className="hidden sm:block rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5">
                 <div className="flex items-center gap-2 text-[11px] text-white/60">
                   <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
-                  <span>Real-time Sync</span>
+                  <span>{t.dashboardShowcase.realTimeSync}</span>
                 </div>
               </div>
             </div>
@@ -224,10 +224,10 @@ export function DashboardShowcase() {
                   >
                     {/* Top Metric Strip */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      <MockStat label="Total Reach" value="482.4K" change="+28.4%" positive color="#ff0a8a" />
-                      <MockStat label="Engagement" value="6.82%" change="+1.4%" positive color="#ff0a8a" />
-                      <MockStat label="Scheduled" value="18 Posts" change="All synced" positive color="#ff0a8a" />
-                      <MockStat label="AI Content Score" value="96/100" change="Optimal voice" positive color="#ff0a8a" />
+                      <MockStat label={t.dashboardShowcase.totalReach} value="482.4K" change="+28.4%" positive color="#ff0a8a" />
+                      <MockStat label={t.dashboardShowcase.engagement} value="6.82%" change="+1.4%" positive color="#ff0a8a" />
+                      <MockStat label={t.dashboardShowcase.scheduled} value="18 Posts" change={t.dashboardShowcase.allSynced} positive color="#ff0a8a" />
+                      <MockStat label={t.dashboardShowcase.aiContentScore} value="96/100" change={t.dashboardShowcase.optimalVoice} positive color="#ff0a8a" />
                     </div>
 
                     {/* Main Workspace Card: AI Compose Studio */}
@@ -238,7 +238,7 @@ export function DashboardShowcase() {
                             <Sparkles className="h-3.5 w-3.5" />
                           </span>
                           <span className="text-xs font-semibold text-slate-900 dark:text-white">
-                            Active AI Generation • Signature Brand Voice
+                            {t.dashboardShowcase.activeAiGeneration}
                           </span>
                         </div>
 
@@ -252,11 +252,7 @@ export function DashboardShowcase() {
                       {/* Post content preview */}
                       <div className="rounded-xl border border-slate-200/80 bg-slate-50 p-3.5 dark:border-white/[0.06] dark:bg-[#141414]">
                         <p className="text-xs font-semibold text-[#ff0a8a] dark:text-[#ff7fba]">
-                          Hook: 3 AI strategies modern creators are using to scale audience in 2026.
-                        </p>
-                        <p className="mt-2 text-xs leading-relaxed text-slate-700 dark:text-white/70">
-                          Most creators focus on raw volume. The top 1% build repeatable audience loops.
-                          Here is the 4-step framework we used to 10x distribution while cutting editing time in half...
+                          {t.dashboardShowcase.hookPreview}
                         </p>
                         <div className="mt-3 flex items-center gap-2 text-[10px] text-slate-400 dark:text-white/40">
                           <span>#CreatorEconomy</span>
@@ -269,11 +265,11 @@ export function DashboardShowcase() {
                       <div className="mt-4 flex items-center justify-between">
                         <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-white/45">
                           <Check className="h-3.5 w-3.5 text-[#34d399]" />
-                          <span>8-step brand reflection passed</span>
+                          <span>{t.dashboardShowcase.eightStepReflection}</span>
                         </div>
 
                         <button className="rounded-xl bg-[#ff0a8a] px-4 py-2 text-xs font-semibold text-white shadow-[0_4px_16px_rgba(255,10,138,0.25)] hover:bg-[#ff299b] transition-colors">
-                          Schedule to 5 Platforms
+                          {t.dashboardShowcase.scheduleToPlatforms}
                         </button>
                       </div>
                     </div>
@@ -372,7 +368,7 @@ export function DashboardShowcase() {
               {/* Bottom mini status */}
               <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400 dark:text-white/35">
                 <span>KoraSpace v2.4 • Active Workspace Node</span>
-                <span>Unified Intelligence Cloud</span>
+                <span>{t.dashboardShowcase.unifiedIntelligenceCloud}</span>
               </div>
             </div>
           </div>
@@ -388,10 +384,10 @@ export function DashboardShowcase() {
           transition={{ duration: 0.7, delay: 0.15 }}
           className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto"
         >
-          <KpiMetricCard number="10×" label="Faster Content Speed" sub="From idea to 6-platform draft in seconds" />
-          <KpiMetricCard number="₦8.4M+" label="Managed Pipeline Revenue" sub="Attributed social sales and conversions" />
-          <KpiMetricCard number="4.2×" label="Higher Lead Intent" sub="Automated comment & DM lead classification" />
-          <KpiMetricCard number="6+" label="Connected Networks" sub="Instagram, TikTok, LinkedIn, YouTube, X, Threads" />
+          <KpiMetricCard number="10×" label={t.dashboardShowcase.fasterContentSpeed} sub={t.dashboardShowcase.fasterContentDesc} />
+          <KpiMetricCard number="₦8.4M+" label={t.dashboardShowcase.managedPipelineRevenue} sub={t.dashboardShowcase.managedPipelineDesc} />
+          <KpiMetricCard number="4.2×" label={t.dashboardShowcase.higherLeadIntent} sub={t.dashboardShowcase.higherLeadDesc} />
+          <KpiMetricCard number="6+" label={t.dashboardShowcase.connectedNetworks} sub={t.dashboardShowcase.connectedNetworksDesc} />
         </motion.div>
       </div>
     </section>

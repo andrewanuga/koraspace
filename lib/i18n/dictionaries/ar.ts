@@ -167,23 +167,7 @@ export const ar: TranslationDictionary = {
       stageLabels: ["الاستيعاب", "الإنشاء", "النشر", "التحليل", "الخطوة التالية"],
     },
   },
-  dashboardShowcase: {
-    eyebrow: "معاينة تفاعلية حية لمساحة العمل",
-    title: "شاهد KoraSpace أثناء العمل الفعلي:",
-    subtitle:
-      "تنقل بسلاسة بين «وضع صانع المحتوى» و «وضع مسؤول التسويق» لترى كيف يتكيف KoraSpace مع أسلوبك.",
-    creatorMode: "استوديو صانع المحتوى",
-    marketerMode: "مسؤول التسويق الآلي",
-    composerTitle: "مسار التأليف الذكي بـ 8 خطوات",
-    composerDesc: "مطابقة دقيقة لنبرة الصوت، تقييم جودة المسودة، والتحقق المزدوج من الويب.",
-    calendarTitle: "تقويم تفاعلي لـ 6 منصات",
-    calendarDesc: "سحب وإفلات لجدولة المنشورات على Instagram و TikTok و LinkedIn و YouTube و X و Threads.",
-    crmTitle: "نظام CRM الاجتماعي وفرز العملاء",
-    crmDesc: "رصد فوري لرسائل الشراء والاستفسارات عالية القيمة في التعليقات والخاص.",
-    pipelineScore: "مؤشر KoraScore الصحي 88/100",
-    engagementRate: "3.8% معدل التفاعل",
-    revenueAttributed: "45,700 ر.س إيرادات معزوة",
-  },
+  
   problemSolver: {
     eyebrow: "الطريقة التقليدية مقابل أسلوب KoraSpace",
     heading:

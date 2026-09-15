@@ -167,23 +167,7 @@ export const fr: TranslationDictionary = {
       stageLabels: ["Comprendre", "Créer", "Publier", "Apprendre", "Action Suivante"],
     },
   },
-  dashboardShowcase: {
-    eyebrow: "Aperçu Interactif de l'Espace de Travail",
-    title: "Découvrez KoraSpace en action :",
-    subtitle:
-      "Basculez entre le Mode Créateur et le Mode Marketing pour voir comment KoraSpace s'adapte à vos besoins.",
-    creatorMode: "Studio Créateur",
-    marketerMode: "Opérateur Marketing",
-    composerTitle: "Pipeline de Rédaction IA en 8 Étapes",
-    composerDesc: "Harmonisation du ton, notation des brouillons et vérification web réflexive.",
-    calendarTitle: "Calendrier Visuel 6 Réseaux",
-    calendarDesc: "Glisser-déposer intuitif pour planifier sur Instagram, TikTok, LinkedIn, YouTube, X et Threads.",
-    crmTitle: "CRM Social et Qualification de Leads",
-    crmDesc: "Détection immédiate des intentions d'achat dans les DMs et commentaires.",
-    pipelineScore: "Score de Santé KoraScore 88/100",
-    engagementRate: "3,8% Taux d'Engagement",
-    revenueAttributed: "12 450 € Revenus Attribués",
-  },
+  
   problemSolver: {
     eyebrow: "L'Ancienne Méthode vs L'Approche KoraSpace",
     heading:

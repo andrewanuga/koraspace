@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -7,12 +9,15 @@ import {
   Zap,
 } from "lucide-react";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-[#121212] text-white">
       <div className="min-h-screen lg:grid lg:grid-cols-[minmax(0,1.08fr)_minmax(460px,0.92fr)] xl:grid-cols-[minmax(0,1.15fr)_minmax(500px,0.85fr)]">
@@ -48,44 +53,43 @@ export default function AuthLayout({
                   <span className="flex h-1.5 w-1.5 rounded-full bg-[#ff0a8a]" />
                   <Sparkles className="h-3.5 w-3.5 text-[#ff0a8a]" />
                   <span className="text-[11px] font-medium text-[#ff7fba]">
-                    Your marketing & creator command center
+                    {t.authLayout.commandCenter}
                   </span>
                 </div>
 
                 {/* Hero Title */}
                 <h1 className="font-display text-[44px] font-semibold leading-[1.04] tracking-[-0.04em] text-white xl:text-[54px]">
-                  Turn your audience
+                  {t.authLayout.titleStart}
                   <span className="block text-[#ff0a8a]">
-                    into momentum.
+                    {t.authLayout.titleHighlight}
                   </span>
                 </h1>
 
                 {/* Description */}
                 <p className="mt-5 max-w-[540px] text-[14.5px] leading-relaxed text-white/50">
-                  Manage multi-channel campaigns, draft in your signature brand voice,
-                  automate CRM workflows, and track real revenue growth across your accounts.
+                  {t.authLayout.description}
                 </p>
 
                 {/* Product preview card */}
                 <div className="mt-8 max-w-[580px]">
-                  <ProductPreview />
+                  <ProductPreview t={t} />
                 </div>
 
                 {/* Trust / feature checklist */}
                 <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2.5 text-[11.5px] text-white/40">
                   <div className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#ff0a8a]" />
-                    <span>Multi-channel workflows</span>
+                    <span>{t.authLayout.feature1}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#ff0a8a]" />
-                    <span>AI-powered intelligence</span>
+                    <span>{t.authLayout.feature2}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#ff0a8a]" />
-                    <span>Real-time attribution</span>
+                    <span>{t.authLayout.feature3}</span>
                   </div>
                 </div>
               </div>
@@ -93,12 +97,10 @@ export default function AuthLayout({
 
             {/* Bottom meta row */}
             <div className="flex items-center justify-between border-t border-white/[0.06] pt-5 text-[10.5px] text-white/30">
-              <span className="uppercase tracking-[0.16em]">
-                KoraSpace OS
-              </span>
+              
 
               <div className="flex items-center gap-4">
-                <span>Secure Cloud Workspace</span>
+                <span>{t.authLayout.secureCloud}</span>
                 <span>•</span>
                 <span>Creator & Marketer Edition</span>
               </div>
@@ -166,7 +168,7 @@ function KoraLogo() {
    PRODUCT PREVIEW MOCKUP
 =============================================================== */
 
-function ProductPreview() {
+function ProductPreview({ t }: { t: any }) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/[0.09] bg-[#171717] shadow-[0_25px_70px_rgba(0,0,0,0.45)]">
       {/* Window header */}
@@ -180,7 +182,7 @@ function ProductPreview() {
         <div className="flex items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.025] px-3 py-1">
           <span className="h-1.5 w-1.5 rounded-full bg-[#ff0a8a]" />
           <span className="text-[8.5px] font-medium text-white/40">
-            Workspace Command Center
+            {t.authLayout.workspaceCommand}
           </span>
         </div>
 
@@ -196,16 +198,16 @@ function ProductPreview() {
           </div>
 
           <div className="space-y-1">
-            <MiniNav active label="Overview" />
-            <MiniNav label="Create" />
-            <MiniNav label="Campaigns" />
-            <MiniNav label="Analytics" />
-            <MiniNav label="CRM & Leads" />
+            <MiniNav active label={t.authLayout.overview} />
+            <MiniNav label={t.authLayout.create} />
+            <MiniNav label={t.authLayout.campaignsNav} />
+            <MiniNav label={t.authLayout.analytics} />
+            <MiniNav label={t.authLayout.crmNav} />
           </div>
 
           <div className="mt-5 border-t border-white/[0.06] pt-2">
-            <MiniNav label="Brand Kit" />
-            <MiniNav label="Settings" />
+            <MiniNav label={t.authLayout.brandKitNav} />
+            <MiniNav label={t.authLayout.settings} />
           </div>
         </div>
 
@@ -223,17 +225,17 @@ function ProductPreview() {
           {/* Stats */}
           <div className="mt-4 grid grid-cols-3 gap-2">
             <MiniStat
-              label="Revenue"
+              label={t.authLayout.revenue}
               value="₦8.4M"
               accent="pink"
             />
             <MiniStat
-              label="ROAS"
+              label={t.authLayout.roas}
               value="3.42×"
               accent="blue"
             />
             <MiniStat
-              label="Leads"
+              label={t.authLayout.leads}
               value="1,284"
               accent="green"
             />
@@ -245,7 +247,7 @@ function ProductPreview() {
               <div className="h-1.5 w-16 rounded-full bg-white/20" />
               <div className="flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#ff0a8a]" />
-                <span className="text-[7.5px] text-white/30">Growth</span>
+                <span className="text-[7.5px] text-white/30">{t.authLayout.growth}</span>
               </div>
             </div>
 

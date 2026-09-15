@@ -167,23 +167,7 @@ export const zh: TranslationDictionary = {
       stageLabels: ["深度洞察", "智能创作", "矩阵发布", "复盘学习", "决策建议"],
     },
   },
-  dashboardShowcase: {
-    eyebrow: "实时交互式工作区预览",
-    title: "亲身体验 KoraSpace 强大功能：",
-    subtitle:
-      "在「创作者模式」与「营销专家模式」之间自由切换，直观感受 KoraSpace 如何适配您的业务工作流。",
-    creatorMode: "创作者工作室",
-    marketerMode: "营销专家工作台",
-    composerTitle: "AI 8步智能写作管线",
-    composerDesc: "品牌音调匹配、文案质量打分与全网反思验证机制。",
-    calendarTitle: "6 大平台可视化拖拽排期日历",
-    calendarDesc: "在 Instagram、TikTok、LinkedIn、YouTube、X 和 Threads 之间自由排期。",
-    crmTitle: "社媒 CRM 与高意向客资识别",
-    crmDesc: "毫秒级捕捉私信与评论区中的高意向购买信号并归档。",
-    pipelineScore: "KoraScore 营销健康分 88/100",
-    engagementRate: "3.8% 综合互动率",
-    revenueAttributed: "¥89,500 归因销售线索总值",
-  },
+  
   problemSolver: {
     eyebrow: "传统运营方式 vs KoraSpace 全自动模式",
     heading:
