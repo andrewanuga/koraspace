@@ -37,7 +37,10 @@ export function FinalCTA() {
           </h2>
 
           <p className="mt-4 text-sm sm:text-base text-white/60 leading-relaxed font-normal max-w-xl mx-auto">
-            Join thousands of creators, founders, and marketing operators automating content creation, scheduling, CRM triage, and revenue growth.
+            {/* Was "Join thousands of creators, founders, and marketing
+                operators…" — a user count we cannot stand behind, in the most
+                prominent CTA on the site. Says what the product does instead. */}
+            Create, schedule, engage and measure in one workspace — with a brand brain that gets sharper every time you post.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">

@@ -1,5 +1,19 @@
 "use client";
 
+/**
+ * PARKED — imported nowhere, deliberately.
+ *
+ * The six testimonials this rendered were invented, including a named person
+ * crediting KoraSpace with a specific naira revenue figure. Publishing those
+ * would be fabricating customer evidence, so the section came off the homepage
+ * rather than being reworded.
+ *
+ * STORIES is emptied below so this cannot be re-mounted and quietly ship the
+ * old quotes. The originals are in git history if the styling is ever wanted.
+ * Restore it by filling STORIES with real, attributable quotes — with the
+ * subject's permission — and importing it again.
+ */
+
 import { motion } from "framer-motion";
 import {
   SectionHead,
@@ -10,56 +24,16 @@ import {
 
 /* ── 11. Customer Stories (Testimonials) (#stories) ────────────────── */
 
-const STORIES = [
-  {
-    name: "Adaeze Okonkwo",
-    role: "Fintech Founder, Lagos",
-    avatar: "AO",
-    text: "I replaced Buffer and a freelance manager with KoraSpace. The AI operator handles our comment triage and schedules weekly content while I close enterprise deals.",
-    highlight: "Saved 15 hrs / week",
-    tone: "pink" as const,
-  },
-  {
-    name: "Chukwuemeka Dike",
-    role: "Digital Agency Lead, Abuja",
-    avatar: "CD",
-    text: "Managing 8 client accounts used to require three junior managers. Now it is just me and KoraSpace. The client approval links make signoffs effortless.",
-    highlight: "Manages 8 brands solo",
-    tone: "blue" as const,
-  },
-  {
-    name: "Fatima Al-Hassan",
-    role: "E-Commerce Founder, Kano",
-    avatar: "FA",
-    text: "The Social CRM detected high-intent buyer questions in our Instagram comments and generated ₦480,000 in sales within 2 weeks of switching.",
-    highlight: "₦480,000 direct revenue",
-    tone: "blue" as const,
-  },
-  {
-    name: "Tunde Fashola",
-    role: "Executive Brand Coach, Lagos",
-    avatar: "TF",
-    text: "Trend-to-Draft is like having a ghostwriter that never sleeps. It catches breaking news cycles and prepares three multi-format drafts before I wake up.",
-    highlight: "Always on trend",
-    tone: "pink" as const,
-  },
-  {
-    name: "Ngozi Eze",
-    role: "Fashion Brand Director, PH",
-    avatar: "NE",
-    text: "I was skeptical about AI capturing my brand voice. The Brand Brain learned our tone from past top posts so well that my followers could not tell the difference.",
-    highlight: "Authentic voice matching",
-    tone: "pink" as const,
-  },
-  {
-    name: "Biodun Afolabi",
-    role: "B2B SaaS Growth Marketer",
-    avatar: "BA",
-    text: "Transparent NGN pricing and seamless Paystack billing made adoption a no-brainer for our team. The multi-channel attribution is top notch.",
-    highlight: "Predictable NGN billing",
-    tone: "blue" as const,
-  },
-];
+type Story = {
+  tone: string;
+  name: string;
+  role: string;
+  text: string;
+  highlight: string;
+  avatar: string;
+};
+
+const STORIES: Story[] = [];
 
 export function Stories() {
   return (

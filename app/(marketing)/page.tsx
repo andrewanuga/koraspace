@@ -1,88 +1,46 @@
 import { Preloader } from "@/components/landing/Preloader";
 import { Hero } from "@/components/landing/Hero";
 import { DashboardShowcase } from "@/components/landing/DashboardShowcase";
-import {
-  ProblemSolverSection,
-  DualModeShowcaseSection,
-  GrowthLoopSection,
-  FeatureSection,
-  FeatureShowcase,
-  BrainAndAgentsSection,
-  AgentTools,
-  Integrations,
-  RevenueAttributionSection,
-  Collaboration,
-  FAQ,
-  Stories,
-  Pricing,
-  FinalCTA,
-} from "@/components/landing/LowerSections";
+import { FinalCTA } from "@/components/landing/sections/FinalCTA";
 
+/**
+ * The homepage sells the outcome; the product pages carry the detail.
+ *
+ * It used to render twenty sections — the whole feature catalogue — which
+ * asked a first-time visitor to evaluate KoraSpace before understanding what
+ * it changes about their day. The six narrative sections that replace them
+ * land one at a time; this is the lean frame they slot into.
+ *
+ * Target order:
+ *   1 Hero                — the promise                        [here]
+ *   2 Old way vs KoraSpace— name the pain
+ *   3 What you get back   — sell the outcome
+ *   4 The difference      — data becomes a decision
+ *   5 Marketing that learns — the loop, and the curiosity
+ *   6 Product preview     — proof, then handoff                [DashboardShowcase]
+ */
 export default function LandingPage() {
   return (
     <>
       <Preloader />
 
       <Hero />
+
+      {/* SOCIAL PROOF STRIP — intentionally empty. Goes in when there are real
+          customers to name. Nothing invented sits on this page. */}
+
+      {/* 2 — Old way vs the KoraSpace way */}
+      {/* 3 — What KoraSpace gives back */}
+      {/* 4 — The KoraSpace difference */}
+      {/* 5 — Marketing that learns */}
+
+      {/* 6 — Product preview: one real environment, then the handoff into
+          /product/create, /product/understand and /product/grow. */}
       <DashboardShowcase />
-      <ProblemSolverSection />
-      <DualModeShowcaseSection />
-      <GrowthLoopSection />
 
-      {/* Alternating FeatureSection Showcase Rows */}
-      <FeatureSection
-        badge="AI Composing Pipeline"
-        tone="pink"
-        title="Turn your brand voice into ready-to-publish posts"
-        description="Executes an 8-step AI pipeline: checks client niche -> reads past posts -> scans active trends -> drafts post & caption -> assigns hashtags -> double web reflection."
-        imageUrl="/features/Kora-AI-Composer.jpg"
-        imageAlt="AI Composing Pipeline Showcase"
-        imageLeft={true}
-      />
+      {/* RESULTS / CASE STUDIES — insertion point, same rule as above. */}
+      {/* TESTIMONIAL WALL — insertion point, same rule as above. */}
 
-      <FeatureSection
-        badge="Visual Calendar 2.0"
-        tone="pink"
-        title="Drag-and-drop your social growth strategy"
-        description="Visual planning surface to schedule, organize, and drag-and-drop posts across Instagram, TikTok, LinkedIn, YouTube, X, and Threads effortlessly."
-        imageUrl="/features/Visual-Drag-and-Drop Calendar.jpg"
-        imageAlt="Visual Content Calendar Showcase"
-        imageLeft={false}
-      />
-
-      {/* Interactive Showcase Matrix Engine */}
-      <FeatureShowcase />
-
-      <BrainAndAgentsSection />
-
-      <FeatureSection
-        badge="Social Inbox & CRM"
-        tone="blue"
-        title="Classify leads & triage messages automatically"
-        description="Unified inbox that detects high-intent buying signals ('How much does this cost?'), tags leads, and logs dollar opportunities straight to CRM."
-        imageUrl="/features/social-ecommerce.jpg"
-        imageAlt="Social Inbox & CRM Showcase"
-        imageLeft={true}
-      />
-
-      <FeatureSection
-        id="agency-workspaces"
-        badge="Agency Workspaces"
-        tone="blue"
-        title="Multi-seat team approval & client portals"
-        description="Manage multiple client workspaces with strict row-level security. Teammates manage accounts, review drafts, while you control billing."
-        imageUrl="/features/manage-multiple-brands.jpg"
-        imageAlt="Agency Workspaces Showcase"
-        imageLeft={false}
-      />
-
-      <AgentTools />
-      <Integrations />
-      <RevenueAttributionSection />
-      <Collaboration />
-      <FAQ />
-      <Stories />
-      <Pricing />
       <FinalCTA />
     </>
   );

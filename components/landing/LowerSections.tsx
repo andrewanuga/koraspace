@@ -22,7 +22,7 @@ export { AgentTools } from "./sections/AgentTools";
 export { Integrations } from "./sections/Integrations";
 export { RevenueAttributionSection } from "./sections/RevenueAttributionSection";
 export { Collaboration } from "./sections/Collaboration";
-export { Stories } from "./sections/Stories";
+// Stories is parked in ./_parked/ — its testimonials were invented. Not exported.
 export { Pricing } from "./sections/Pricing";
 export { FAQ } from "./sections/FAQ";
 export { FinalCTA } from "./sections/FinalCTA";
