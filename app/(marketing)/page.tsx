@@ -3,6 +3,7 @@ import { Hero } from "@/components/landing/Hero";
 import { DashboardShowcase } from "@/components/landing/DashboardShowcase";
 import { WayContrast } from "@/components/landing/sections/WayContrast";
 import { OutcomesSection } from "@/components/landing/sections/OutcomesSection";
+import { DecisionFlow } from "@/components/landing/sections/DecisionFlow";
 import { FinalCTA } from "@/components/landing/sections/FinalCTA";
 
 /**
@@ -38,6 +39,8 @@ export default function LandingPage() {
       <OutcomesSection />
 
       {/* 4 — The KoraSpace difference */}
+      <DecisionFlow />
+
       {/* 5 — Marketing that learns */}
 
       {/* 6 — Product preview: one real environment, then the handoff into
