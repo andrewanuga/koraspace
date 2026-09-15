@@ -125,7 +125,7 @@ function Eyebrow({
     tone === "blue"
       ? "text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/25 shadow-[0_0_15px_rgba(59,130,246,0.15)]"
       : tone === "white"
-      ? "text-white/80 bg-white/5 border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+      ? "text-slate-700 bg-slate-100 border-slate-300 dark:text-white/80 dark:bg-white/5 dark:border-white/10 dark:shadow-[0_0_15px_rgba(255,255,255,0.05)]"
       : "text-[#ff0a8a] bg-[#ff0a8a]/10 border-[#ff0a8a]/25 shadow-[0_0_15px_rgba(255,10,138,0.15)]";
 
   return (
@@ -140,7 +140,7 @@ function Eyebrow({
         className="h-1.5 w-1.5 rounded-full animate-pulse"
         style={{
           background:
-            tone === "blue" ? "#3b82f6" : tone === "white" ? "#ffffff" : "#ff0a8a",
+            tone === "blue" ? "#3b82f6" : tone === "white" ? "#94a3b8" : "#ff0a8a",
         }}
       />
       {children}
@@ -170,11 +170,11 @@ function SectionHead({
       <div>
         <Eyebrow tone={tone}>{eyebrow}</Eyebrow>
       </div>
-      <h2 className="font-display mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.15]">
+      <h2 className="font-display mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-[1.15]">
         {title}
       </h2>
       {sub && (
-        <p className="mt-4 text-sm sm:text-base leading-relaxed text-white/60 font-normal max-w-2xl mx-auto">
+        <p className="mt-4 text-sm sm:text-base leading-relaxed text-slate-600 dark:text-white/60 font-normal max-w-2xl mx-auto">
           {sub}
         </p>
       )}
@@ -192,7 +192,7 @@ export function ProblemSolverSection() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={springTransition}
-        className="relative mx-auto max-w-6xl rounded-3xl border border-white/[0.08] bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden"
+        className="relative mx-auto max-w-6xl rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden"
       >
         {/* Animated accent border at top */}
         <motion.div
@@ -201,18 +201,18 @@ export function ProblemSolverSection() {
             opacity: [0.7, 1, 0.7],
           }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-[#ff0a8a] via-white/50 to-[#3b82f6] rounded-full blur-[0.5px]"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-[#ff0a8a] via-blue-500/50 to-[#3b82f6] rounded-full blur-[0.5px]"
         />
 
         <div className="max-w-3xl mx-auto text-center">
           <Eyebrow tone="white">The Old Way vs The KoraSpace Way</Eyebrow>
 
-          <h2 className="mt-5 font-display text-2xl sm:text-4xl lg:text-4xl font-bold text-white tracking-tight leading-snug">
+          <h2 className="mt-5 font-display text-2xl sm:text-4xl lg:text-4xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
             Stop wasting 15+ hours a week fighting writer&apos;s block, copying
             posts between apps, and losing high-intent leads in messy DMs.
           </h2>
 
-          <p className="mt-5 text-sm sm:text-base text-white/60 leading-relaxed font-normal">
+          <p className="mt-5 text-sm sm:text-base text-slate-600 dark:text-white/60 leading-relaxed font-normal">
             Traditional schedulers only push posts. KoraSpace is an autonomous
             growth workspace with dual engines: a <span className="text-[#ff0a8a] font-semibold">Creator Studio</span> for signature voice content and a <span className="text-[#3b82f6] font-semibold">Marketing Operator</span> for CRM lead conversion.
           </p>
@@ -229,13 +229,13 @@ export function ProblemSolverSection() {
               variants={itemFadeUp}
               whileHover={{ y: -6, scale: 1.02, borderColor: "rgba(255,10,138,0.3)" }}
               transition={cardHoverSpring}
-              className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5 transition-colors"
+              className="rounded-2xl border border-slate-200 bg-slate-50/80 dark:border-white/[0.07] dark:bg-[#1a1a1a] p-5 transition-colors"
             >
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#ff0a8a]/15 text-[#ff0a8a] mb-3">
                 <Sparkles className="h-4.5 w-4.5" />
               </div>
-              <h3 className="text-sm font-bold text-white">AI Brand Brain</h3>
-              <p className="mt-1.5 text-xs text-white/55 leading-relaxed">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">AI Brand Brain</h3>
+              <p className="mt-1.5 text-xs text-slate-600 dark:text-white/55 leading-relaxed">
                 Learns your authentic voice, past top-performing hooks, and strict guidelines so posts never sound generic.
               </p>
             </motion.div>
@@ -244,13 +244,13 @@ export function ProblemSolverSection() {
               variants={itemFadeUp}
               whileHover={{ y: -6, scale: 1.02, borderColor: "rgba(59,130,246,0.3)" }}
               transition={cardHoverSpring}
-              className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5 transition-colors"
+              className="rounded-2xl border border-slate-200 bg-slate-50/80 dark:border-white/[0.07] dark:bg-[#1a1a1a] p-5 transition-colors"
             >
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3b82f6]/15 text-[#3b82f6] mb-3">
                 <Calendar className="h-4.5 w-4.5" />
               </div>
-              <h3 className="text-sm font-bold text-white">Visual 6-Platform Sync</h3>
-              <p className="mt-1.5 text-xs text-white/55 leading-relaxed">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Visual 6-Platform Sync</h3>
+              <p className="mt-1.5 text-xs text-slate-600 dark:text-white/55 leading-relaxed">
                 Schedule and drag-and-drop across Instagram, TikTok, LinkedIn, YouTube, X, and Threads in one calendar.
               </p>
             </motion.div>
@@ -259,13 +259,13 @@ export function ProblemSolverSection() {
               variants={itemFadeUp}
               whileHover={{ y: -6, scale: 1.02, borderColor: "rgba(52,211,153,0.3)" }}
               transition={cardHoverSpring}
-              className="rounded-2xl border border-white/[0.07] bg-[#1a1a1a] p-5 transition-colors"
+              className="rounded-2xl border border-slate-200 bg-slate-50/80 dark:border-white/[0.07] dark:bg-[#1a1a1a] p-5 transition-colors"
             >
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#34d399]/15 text-[#34d399] mb-3">
                 <Target className="h-4.5 w-4.5" />
               </div>
-              <h3 className="text-sm font-bold text-white">Social CRM &amp; Revenue</h3>
-              <p className="mt-1.5 text-xs text-white/55 leading-relaxed">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Social CRM &amp; Revenue</h3>
+              <p className="mt-1.5 text-xs text-slate-600 dark:text-white/55 leading-relaxed">
                 Detects buying signals in comments and DMs (&quot;How much?&quot;), converts leads, and attributes real revenue.
               </p>
             </motion.div>
@@ -287,7 +287,7 @@ export function ProblemSolverSection() {
             </LandingButton>
             <LandingButton
               href="#dual-modes"
-              className="border border-white/[0.10] bg-white/[0.03] text-white/80 hover:bg-white/[0.06] hover:text-white"
+              className="border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 dark:border-white/[0.10] dark:bg-white/[0.03] dark:text-white/80 dark:hover:bg-white/[0.06] dark:hover:text-white"
             >
               <span>Compare Dual Modes</span>
             </LandingButton>
@@ -325,7 +325,7 @@ export function DualModeShowcaseSection() {
             viewport={{ once: true, margin: "-80px" }}
             whileHover={{ y: -8, scale: 1.01 }}
             transition={cardHoverSpring}
-            className="relative rounded-3xl border border-[#ff0a8a]/25 bg-[#171717] p-8 shadow-[0_15px_45px_rgba(255,10,138,0.08)] flex flex-col justify-between overflow-hidden"
+            className="relative rounded-3xl border border-[#ff0a8a]/25 bg-white dark:bg-[#171717] p-8 shadow-[0_15px_45px_rgba(255,10,138,0.08)] flex flex-col justify-between overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-60 h-60 bg-[#ff0a8a]/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -341,10 +341,10 @@ export function DualModeShowcaseSection() {
                 <Sparkles className="h-6 w-6" />
               </div>
 
-              <h3 className="font-display text-2xl font-bold text-white">
+              <h3 className="font-display text-2xl font-bold text-slate-900 dark:text-white">
                 Brand Voice &amp; Audience Studio
               </h3>
-              <p className="mt-2.5 text-sm text-white/60 leading-relaxed">
+              <p className="mt-2.5 text-sm text-slate-600 dark:text-white/60 leading-relaxed">
                 For solo creators, thought leaders, and influencers who need to publish consistent, high-impact content across 6+ platforms without burning out.
               </p>
 
@@ -373,19 +373,19 @@ export function DualModeShowcaseSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 * i, duration: 0.4 }}
-                    className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3 transition-colors hover:border-[#ff0a8a]/20"
+                    className="flex items-start gap-3 rounded-xl border border-slate-200/80 bg-slate-50/80 dark:border-white/[0.05] dark:bg-[#141414] p-3 transition-colors hover:border-[#ff0a8a]/20"
                   >
                     <CheckCircle2 className="h-4 w-4 text-[#ff0a8a] shrink-0 mt-0.5" />
                     <div>
-                      <span className="text-xs font-bold text-white">{item.title}</span>
-                      <p className="text-[11px] text-white/50">{item.desc}</p>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">{item.title}</span>
+                      <p className="text-[11px] text-slate-500 dark:text-white/50">{item.desc}</p>
                     </div>
                   </motion.div>
                 ))}
               </div>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-white/[0.07] flex items-center justify-between">
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/[0.07] flex items-center justify-between">
               <span className="text-xs font-mono text-[#ff0a8a] font-semibold">Theme: Kora Pink (#ff0a8a)</span>
               <LandingButton
                 href="/signup"
@@ -404,7 +404,7 @@ export function DualModeShowcaseSection() {
             viewport={{ once: true, margin: "-80px" }}
             whileHover={{ y: -8, scale: 1.01 }}
             transition={cardHoverSpring}
-            className="relative rounded-3xl border border-[#3b82f6]/25 bg-[#171717] p-8 shadow-[0_15px_45px_rgba(59,130,246,0.08)] flex flex-col justify-between overflow-hidden"
+            className="relative rounded-3xl border border-[#3b82f6]/25 bg-white dark:bg-[#171717] p-8 shadow-[0_15px_45px_rgba(59,130,246,0.08)] flex flex-col justify-between overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-60 h-60 bg-[#3b82f6]/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -420,10 +420,10 @@ export function DualModeShowcaseSection() {
                 <Target className="h-6 w-6" />
               </div>
 
-              <h3 className="font-display text-2xl font-bold text-white">
+              <h3 className="font-display text-2xl font-bold text-slate-900 dark:text-white">
                 Marketing Operator &amp; Social CRM
               </h3>
-              <p className="mt-2.5 text-sm text-white/60 leading-relaxed">
+              <p className="mt-2.5 text-sm text-slate-600 dark:text-white/60 leading-relaxed">
                 For marketing teams, agencies, and businesses looking to automate lead triage, campaign execution, and full-funnel revenue attribution.
               </p>
 
@@ -452,19 +452,19 @@ export function DualModeShowcaseSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 * i, duration: 0.4 }}
-                    className="flex items-start gap-3 rounded-xl border border-white/[0.05] bg-[#141414] p-3 transition-colors hover:border-[#3b82f6]/20"
+                    className="flex items-start gap-3 rounded-xl border border-slate-200/80 bg-slate-50/80 dark:border-white/[0.05] dark:bg-[#141414] p-3 transition-colors hover:border-[#3b82f6]/20"
                   >
                     <CheckCircle2 className="h-4 w-4 text-[#3b82f6] shrink-0 mt-0.5" />
                     <div>
-                      <span className="text-xs font-bold text-white">{item.title}</span>
-                      <p className="text-[11px] text-white/50">{item.desc}</p>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">{item.title}</span>
+                      <p className="text-[11px] text-slate-500 dark:text-white/50">{item.desc}</p>
                     </div>
                   </motion.div>
                 ))}
               </div>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-white/[0.07] flex items-center justify-between">
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/[0.07] flex items-center justify-between">
               <span className="text-xs font-mono text-[#3b82f6] font-semibold">Theme: Kora Blue (#3b82f6)</span>
               <LandingButton
                 href="/signup"
@@ -542,7 +542,7 @@ export function GrowthLoopSection() {
               variants={itemFadeUp}
               whileHover={{ y: -8, scale: 1.02 }}
               transition={cardHoverSpring}
-              className="relative flex flex-col justify-between rounded-3xl border border-white/[0.08] bg-[#171717] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.3)] transition-colors hover:border-white/20 hover:bg-[#1a1a1a]"
+              className="relative flex flex-col justify-between rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#171717] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)] transition-colors hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-[#1a1a1a]"
             >
               <div>
                 <div className="flex items-center justify-between mb-5">
@@ -564,14 +564,14 @@ export function GrowthLoopSection() {
                   </div>
                 </div>
 
-                <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/60 font-semibold">
+                <span className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 dark:bg-white/5 dark:border-white/10 dark:text-white/60 font-semibold">
                   {s.badge}
                 </span>
 
-                <h3 className="font-display mt-3 text-lg font-bold text-white">
+                <h3 className="font-display mt-3 text-lg font-bold text-slate-900 dark:text-white">
                   {s.title}
                 </h3>
-                <p className="mt-2 text-xs leading-relaxed text-white/55 font-normal">
+                <p className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-white/55 font-normal">
                   {s.desc}
                 </p>
               </div>
@@ -633,12 +633,12 @@ export function FeatureSection({
         <motion.div
           whileHover={{ y: -6, scale: 1.01 }}
           transition={cardHoverSpring}
-          className="relative rounded-3xl border border-white/[0.10] bg-[#161616] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden"
+          className="relative rounded-3xl border border-slate-200 bg-white dark:border-white/[0.10] dark:bg-[#161616] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden"
         >
           <img
             src={imageUrl}
             alt={imageAlt}
-            className="w-full h-[300px] sm:h-[360px] rounded-2xl object-cover object-top border border-white/10"
+            className="w-full h-[300px] sm:h-[360px] rounded-2xl object-cover object-top border border-slate-100 dark:border-white/10"
           />
         </motion.div>
       </motion.div>
@@ -653,11 +653,11 @@ export function FeatureSection({
       >
         {badge && <Eyebrow tone={tone}>{badge}</Eyebrow>}
 
-        <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight tracking-tight">
+        <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white leading-tight tracking-tight">
           {title}
         </h2>
 
-        <p className="text-sm sm:text-base text-white/60 font-normal leading-relaxed">
+        <p className="text-sm sm:text-base text-slate-600 dark:text-white/60 font-normal leading-relaxed">
           {description}
         </p>
 
@@ -765,7 +765,7 @@ export function FeatureShowcase() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={springTransition}
-        className="rounded-3xl border border-white/[0.08] bg-[#161616] p-6 sm:p-10 lg:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
+        className="rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#161616] p-6 sm:p-10 lg:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
       >
         {/* Header Text with Smooth AnimatePresence */}
         <div className="text-center max-w-3xl mx-auto mb-8 min-h-[140px] flex flex-col justify-center items-center">
@@ -782,11 +782,11 @@ export function FeatureShowcase() {
                 {activeFeature.tagline}
               </Eyebrow>
 
-              <h3 className="font-display mt-3 text-2xl sm:text-4xl font-bold text-white tracking-tight">
+              <h3 className="font-display mt-3 text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
                 {activeFeature.title}
               </h3>
 
-              <p className="mt-3 text-xs sm:text-sm text-white/60 leading-relaxed max-w-2xl mx-auto">
+              <p className="mt-3 text-xs sm:text-sm text-slate-600 dark:text-white/60 leading-relaxed max-w-2xl mx-auto">
                 {activeFeature.description}
               </p>
             </motion.div>
@@ -794,7 +794,7 @@ export function FeatureShowcase() {
         </div>
 
         {/* Display Mockup Frame with Smooth Crossfade */}
-        <div className="relative w-full max-w-4xl mx-auto aspect-16/10 rounded-2xl overflow-hidden border border-white/[0.10] bg-black shadow-2xl">
+        <div className="relative w-full max-w-4xl mx-auto aspect-16/10 rounded-2xl overflow-hidden border border-slate-200 dark:border-white/[0.10] bg-slate-900 shadow-2xl">
           <AnimatePresence mode="wait">
             <motion.img
               key={activeFeature.screenPath}
@@ -823,14 +823,14 @@ export function FeatureShowcase() {
                 onClick={() => setActiveIndex(idx)}
                 className={`relative flex flex-col items-center text-center p-3 rounded-xl border transition-all cursor-pointer ${
                   isSelected
-                    ? "border-white/20 text-white shadow-sm"
-                    : "border-white/[0.06] text-white/50 hover:text-white"
+                    ? "border-slate-300 bg-slate-100 text-slate-900 shadow-sm dark:border-white/20 dark:bg-white/[0.08] dark:text-white"
+                    : "border-slate-200 text-slate-500 hover:text-slate-900 dark:border-white/[0.06] dark:text-white/50 dark:hover:text-white"
                 }`}
               >
                 {isSelected && (
                   <motion.div
                     layoutId="feature-active-pill"
-                    className="absolute inset-0 rounded-xl bg-white/[0.08] border border-white/25 -z-0"
+                    className="absolute inset-0 rounded-xl bg-slate-200/80 border border-slate-300 dark:bg-white/[0.08] dark:border-white/25 -z-0"
                     transition={springTransition}
                   />
                 )}
@@ -838,7 +838,7 @@ export function FeatureShowcase() {
                 <div
                   className="relative z-10 flex h-8 w-8 items-center justify-center rounded-lg mb-2 transition-colors"
                   style={{
-                    background: isSelected ? `${featColor}20` : "rgba(255,255,255,0.05)",
+                    background: isSelected ? `${featColor}20` : "rgba(148,163,184,0.15)",
                     color: isSelected ? featColor : "inherit",
                   }}
                 >
@@ -893,7 +893,7 @@ export function BrainAndAgentsSection() {
             viewport={{ once: true, margin: "-60px" }}
             whileHover={{ y: -6 }}
             transition={cardHoverSpring}
-            className="relative lg:col-span-5 rounded-3xl border border-[#ff0a8a]/25 bg-[#171717] p-7 sm:p-8 flex flex-col justify-between overflow-hidden"
+            className="relative lg:col-span-5 rounded-3xl border border-[#ff0a8a]/25 bg-white dark:bg-[#171717] p-7 sm:p-8 flex flex-col justify-between overflow-hidden shadow-sm dark:shadow-none"
           >
             <motion.div
               animate={{
@@ -911,14 +911,14 @@ export function BrainAndAgentsSection() {
               <span className="font-mono text-xs uppercase tracking-wider text-[#ff0a8a] font-bold">
                 Persistent Knowledge Base
               </span>
-              <h3 className="font-display mt-2 text-2xl font-bold text-white">
+              <h3 className="font-display mt-2 text-2xl font-bold text-slate-900 dark:text-white">
                 KoraSpace Brand Brain
               </h3>
-              <p className="mt-3 text-xs sm:text-sm leading-relaxed text-white/60 font-normal">
+              <p className="mt-3 text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-white/60 font-normal">
                 Upload your website URL, product briefs, brand guidelines, and top-performing past posts. The Brand Brain builds a persistent memory profile so every post sounds authentically like your brand.
               </p>
 
-              <div className="mt-6 space-y-2 text-xs text-white/70">
+              <div className="mt-6 space-y-2 text-xs text-slate-700 dark:text-white/70">
                 <div className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-[#ff0a8a]" />
                   <span>Learns signature tone, vocabulary, and emoji rules</span>
@@ -934,8 +934,8 @@ export function BrainAndAgentsSection() {
               </div>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-white/[0.08]">
-              <div className="flex items-center justify-between text-xs text-white/50">
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/[0.08]">
+              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-white/50">
                 <span>Memory Status: Active</span>
                 <span className="text-[#34d399] font-medium flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
@@ -959,14 +959,14 @@ export function BrainAndAgentsSection() {
                 variants={itemFadeUp}
                 whileHover={{ x: 6, scale: 1.02, borderColor: "rgba(59,130,246,0.3)" }}
                 transition={cardHoverSpring}
-                className="flex items-center gap-3.5 rounded-2xl border border-white/[0.07] bg-[#171717] p-4 transition-colors hover:bg-[#1a1a1a]"
+                className="flex items-center gap-3.5 rounded-2xl border border-slate-200 bg-white dark:border-white/[0.07] dark:bg-[#171717] p-4 transition-colors hover:bg-slate-50 dark:hover:bg-[#1a1a1a] shadow-xs"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#3b82f6]/15 text-[#3b82f6]">
                   <ag.icon className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-xs font-bold text-white truncate">{ag.name}</h4>
-                  <p className="text-[11px] text-white/50 truncate">{ag.role}</p>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">{ag.name}</h4>
+                  <p className="text-[11px] text-slate-500 dark:text-white/50 truncate">{ag.role}</p>
                 </div>
               </motion.div>
             ))}
@@ -1052,7 +1052,7 @@ export function AgentTools() {
                 variants={itemFadeUp}
                 whileHover={{ y: -8, scale: 1.02, borderColor: `${iconColor}40` }}
                 transition={cardHoverSpring}
-                className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 flex flex-col justify-between transition-colors hover:bg-[#1a1a1a]"
+                className="rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#171717] p-6 flex flex-col justify-between transition-colors hover:bg-slate-50 dark:hover:bg-[#1a1a1a] shadow-sm"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -1066,14 +1066,14 @@ export function AgentTools() {
                     >
                       <tool.icon className="h-5 w-5" />
                     </div>
-                    <span className="font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/60">
+                    <span className="font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 dark:bg-white/5 dark:border-white/10 dark:text-white/60">
                       {tool.badge}
                     </span>
                   </div>
-                  <h3 className="font-display text-base font-bold text-white mb-2">
+                  <h3 className="font-display text-base font-bold text-slate-900 dark:text-white mb-2">
                     {tool.title}
                   </h3>
-                  <p className="text-xs text-white/55 leading-relaxed font-normal">
+                  <p className="text-xs text-slate-600 dark:text-white/55 leading-relaxed font-normal">
                     {tool.desc}
                   </p>
                 </div>
@@ -1116,10 +1116,10 @@ export function Integrations() {
         className="mx-auto mb-10 max-w-2xl text-center"
       >
         <Eyebrow tone="blue">Multi-Platform Ecosystem</Eyebrow>
-        <h2 className="font-display mt-3 text-2xl sm:text-4xl font-bold text-white tracking-tight">
+        <h2 className="font-display mt-3 text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
           Publish &amp; triage across <span className="text-[#3b82f6]">all your channels</span>
         </h2>
-        <p className="mt-2 text-xs sm:text-sm text-white/60">
+        <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-white/60">
           Official OAuth 2.0 API integrations for instant scheduling and two-way messaging.
         </p>
       </motion.div>
@@ -1137,7 +1137,7 @@ export function Integrations() {
             variants={scaleIn}
             whileHover={{ y: -4, scale: 1.06, borderColor: "rgba(59,130,246,0.4)" }}
             transition={cardHoverSpring}
-            className="flex items-center gap-2.5 rounded-xl border border-white/[0.08] bg-[#171717] px-4 py-2.5 text-xs font-semibold text-white/80 transition-colors hover:bg-[#1c1c1c] hover:text-white cursor-pointer"
+            className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#171717] px-4 py-2.5 text-xs font-semibold text-slate-700 hover:text-slate-900 dark:text-white/80 transition-colors hover:bg-slate-50 dark:hover:bg-[#1c1c1c] dark:hover:text-white cursor-pointer shadow-xs"
           >
             <img
               src={p.iconPath}
@@ -1176,13 +1176,13 @@ export function RevenueAttributionSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={springTransition}
-            className="lg:col-span-7 rounded-3xl border border-[#3b82f6]/25 bg-[#171717] p-6 sm:p-8 flex flex-col justify-between"
+            className="lg:col-span-7 rounded-3xl border border-[#3b82f6]/25 bg-white dark:bg-[#171717] p-6 sm:p-8 flex flex-col justify-between shadow-sm"
           >
             <div>
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="font-display text-lg font-bold text-white">Social-to-Revenue Funnel</h3>
-                  <p className="text-xs text-white/50">Real-time attribution powered by UTM tracking</p>
+                  <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">Social-to-Revenue Funnel</h3>
+                  <p className="text-xs text-slate-500 dark:text-white/50">Real-time attribution powered by UTM tracking</p>
                 </div>
                 <span className="font-mono text-xs text-[#3b82f6] bg-[#3b82f6]/15 border border-[#3b82f6]/30 px-3 py-1 rounded-full font-bold flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#3b82f6] animate-pulse" />
@@ -1192,7 +1192,7 @@ export function RevenueAttributionSection() {
 
               <div className="space-y-2.5 font-mono text-xs">
                 {[
-                  { label: "50,000 Social Impressions", val: "Top of Funnel", tone: "text-white/50", ml: "" },
+                  { label: "50,000 Social Impressions", val: "Top of Funnel", tone: "text-slate-500 dark:text-white/50", ml: "" },
                   { label: "1,420 Profile Visits", val: "2.84% Conv.", tone: "text-[#ff0a8a]", ml: "ml-2 sm:ml-4" },
                   { label: "310 Website Clicks", val: "UTM Verified", tone: "text-[#3b82f6]", ml: "ml-4 sm:ml-8" },
                   { label: "48 Qualified Leads", val: "Social CRM Pipeline", tone: "text-[#34d399]", ml: "ml-6 sm:ml-12" },
@@ -1203,9 +1203,9 @@ export function RevenueAttributionSection() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 * idx, duration: 0.4 }}
-                    className={`flex justify-between items-center bg-[#141414] p-3 rounded-xl border border-white/[0.06] ${row.ml}`}
+                    className={`flex justify-between items-center bg-slate-50 border border-slate-200 text-slate-900 dark:bg-[#141414] dark:border-white/[0.06] dark:text-white p-3 rounded-xl ${row.ml}`}
                   >
-                    <span className="text-white">{row.label}</span>
+                    <span>{row.label}</span>
                     <span className={row.tone}>{row.val}</span>
                   </motion.div>
                 ))}
@@ -1215,7 +1215,7 @@ export function RevenueAttributionSection() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.45, duration: 0.5 }}
-                  className="flex justify-between items-center bg-[#3b82f6]/15 border border-[#3b82f6]/30 p-3.5 rounded-xl font-bold ml-8 sm:ml-16 text-white shadow-[0_0_20px_rgba(59,130,246,0.15)]"
+                  className="flex justify-between items-center bg-[#3b82f6]/15 border border-[#3b82f6]/30 p-3.5 rounded-xl font-bold ml-8 sm:ml-16 text-slate-900 dark:text-white shadow-[0_0_20px_rgba(59,130,246,0.15)]"
                 >
                   <span>14 Customers Closed</span>
                   <span className="text-[#3b82f6] font-extrabold text-sm">₦1,450,000 Revenue</span>
@@ -1223,9 +1223,9 @@ export function RevenueAttributionSection() {
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-white/[0.07] flex items-center justify-between text-xs text-white/50">
+            <div className="mt-6 pt-4 border-t border-slate-200 dark:border-white/[0.07] flex items-center justify-between text-xs text-slate-500 dark:text-white/50">
               <span>Attribution Model: Multi-Touch</span>
-              <span className="text-white/80 font-medium">ROAS: 4.2x</span>
+              <span className="text-slate-800 dark:text-white/80 font-medium">ROAS: 4.2x</span>
             </div>
           </motion.div>
 
@@ -1237,17 +1237,17 @@ export function RevenueAttributionSection() {
               viewport={{ once: true, margin: "-60px" }}
               whileHover={{ y: -4 }}
               transition={cardHoverSpring}
-              className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6"
+              className="rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#171717] p-6 shadow-sm"
             >
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs uppercase tracking-wider text-white/50 font-bold">
+                <span className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-white/50 font-bold">
                   Account Health Score
                 </span>
                 <Award className="h-5 w-5 text-[#ff0a8a]" />
               </div>
               <div className="mt-3 flex items-baseline gap-2">
-                <span className="font-display text-3xl font-bold text-white">KoraScore: 88</span>
-                <span className="text-xs text-white/40">/ 100</span>
+                <span className="font-display text-3xl font-bold text-slate-900 dark:text-white">KoraScore: 88</span>
+                <span className="text-xs text-slate-400 dark:text-white/40">/ 100</span>
               </div>
               <p className="mt-2 text-xs text-[#34d399] font-medium leading-relaxed">
                 &quot;Top 5% posting consistency this week. Schedule 2 more short videos to hit peak reach.&quot;
@@ -1260,18 +1260,18 @@ export function RevenueAttributionSection() {
               viewport={{ once: true, margin: "-60px" }}
               whileHover={{ y: -4 }}
               transition={cardHoverSpring}
-              className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6"
+              className="rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#171717] p-6 shadow-sm"
             >
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs uppercase tracking-wider text-white/50 font-bold">
+                <span className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-white/50 font-bold">
                   Lead Opportunity Radar
                 </span>
                 <Flame className="h-5 w-5 text-[#3b82f6]" />
               </div>
-              <h4 className="font-display mt-2 text-base font-bold text-white">
+              <h4 className="font-display mt-2 text-base font-bold text-slate-900 dark:text-white">
                 4 Hot Niche Opportunities Detected
               </h4>
-              <p className="mt-1 text-xs text-white/55 leading-relaxed font-normal">
+              <p className="mt-1 text-xs text-slate-600 dark:text-white/55 leading-relaxed font-normal">
                 3 high-intent lead questions in Instagram DMs + 1 trending competitor breakout format in your industry.
               </p>
             </motion.div>
@@ -1331,16 +1331,16 @@ export function Collaboration() {
               variants={itemFadeUp}
               whileHover={{ y: -6, scale: 1.01, borderColor: "rgba(59,130,246,0.3)" }}
               transition={cardHoverSpring}
-              className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 sm:p-7 flex gap-4 items-start transition-colors hover:bg-[#1a1a1a]"
+              className="rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#171717] p-6 sm:p-7 flex gap-4 items-start transition-colors hover:bg-slate-50 dark:hover:bg-[#1a1a1a] shadow-sm"
             >
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#3b82f6]/15 text-[#3b82f6] border border-[#3b82f6]/30">
                 <collab.icon className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-display text-base font-bold text-white mb-1.5">
+                <h3 className="font-display text-base font-bold text-slate-900 dark:text-white mb-1.5">
                   {collab.title}
                 </h3>
-                <p className="text-xs text-white/60 leading-relaxed font-normal">
+                <p className="text-xs text-slate-600 dark:text-white/60 leading-relaxed font-normal">
                   {collab.desc}
                 </p>
               </div>
@@ -1433,13 +1433,13 @@ export function Stories() {
                 variants={itemFadeUp}
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={cardHoverSpring}
-                className="rounded-3xl border border-white/[0.08] bg-[#171717] p-6 text-white flex flex-col justify-between transition-colors hover:border-white/20 hover:bg-[#1a1a1a]"
+                className="rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#171717] p-6 text-slate-900 dark:text-white flex flex-col justify-between transition-colors hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-[#1a1a1a] shadow-sm"
               >
-                <p className="text-xs leading-relaxed text-white/70 font-normal">
+                <p className="text-xs leading-relaxed text-slate-600 dark:text-white/70 font-normal">
                   &ldquo;{t.text}&rdquo;
                 </p>
 
-                <div className="mt-6 pt-4 border-t border-white/[0.06]">
+                <div className="mt-6 pt-4 border-t border-slate-200 dark:border-white/[0.06]">
                   <span
                     className="font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full border inline-block mb-3"
                     style={{
@@ -1459,8 +1459,8 @@ export function Stories() {
                       {t.avatar}
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-white">{t.name}</p>
-                      <p className="text-[11px] text-white/45">{t.role}</p>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white">{t.name}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-white/45">{t.role}</p>
                     </div>
                   </div>
                 </div>
@@ -1580,18 +1580,18 @@ export function Pricing() {
 
         {/* Monthly / Yearly Toggle with layoutId sliding pill */}
         <div className="flex justify-center items-center gap-2 mb-12">
-          <div className="relative bg-[#171717] p-1.5 rounded-2xl border border-white/[0.08] inline-flex items-center">
+          <div className="relative bg-slate-100 dark:bg-[#171717] p-1.5 rounded-2xl border border-slate-200 dark:border-white/[0.08] inline-flex items-center">
             <button
               type="button"
               onClick={() => setBillingPeriod("monthly")}
               className={`relative px-5 py-2 text-xs font-bold rounded-xl transition-colors cursor-pointer z-10 ${
-                billingPeriod === "monthly" ? "text-white" : "text-white/50 hover:text-white"
+                billingPeriod === "monthly" ? "text-slate-900 dark:text-white" : "text-slate-500 hover:text-slate-900 dark:text-white/50 dark:hover:text-white"
               }`}
             >
               {billingPeriod === "monthly" && (
                 <motion.div
                   layoutId="billing-pill"
-                  className="absolute inset-0 rounded-xl bg-white/[0.12] border border-white/20 -z-10"
+                  className="absolute inset-0 rounded-xl bg-white shadow-sm border border-slate-200 dark:bg-white/[0.12] dark:border-white/20 -z-10"
                   transition={springTransition}
                 />
               )}
@@ -1601,7 +1601,7 @@ export function Pricing() {
               type="button"
               onClick={() => setBillingPeriod("yearly")}
               className={`relative px-5 py-2 text-xs font-bold rounded-xl transition-colors flex items-center gap-2 cursor-pointer z-10 ${
-                billingPeriod === "yearly" ? "text-white" : "text-white/50 hover:text-white"
+                billingPeriod === "yearly" ? "text-white" : "text-slate-500 hover:text-slate-900 dark:text-white/50 dark:hover:text-white"
               }`}
             >
               {billingPeriod === "yearly" && (
@@ -1634,13 +1634,13 @@ export function Pricing() {
               ? "border-[#ff0a8a]/40"
               : isBlue
               ? "border-[#3b82f6]/40"
-              : "border-white/[0.08]";
+              : "border-slate-200 dark:border-white/[0.08]";
 
             const buttonStyle = isPink
               ? "bg-[#ff0a8a] text-white shadow-[0_4px_18px_rgba(255,10,138,0.25)] hover:bg-[#ff299b]"
               : isBlue
               ? "bg-[#3b82f6] text-white shadow-[0_4px_18px_rgba(59,130,246,0.25)] hover:bg-[#2563eb]"
-              : "bg-white/[0.06] text-white border border-white/[0.10] hover:bg-white/[0.10]";
+              : "bg-slate-100 text-slate-900 border border-slate-300 hover:bg-slate-200 dark:bg-white/[0.06] dark:text-white dark:border-white/[0.10] dark:hover:bg-white/[0.10]";
 
             return (
               <motion.div
@@ -1648,7 +1648,7 @@ export function Pricing() {
                 variants={itemFadeUp}
                 whileHover={{ y: -10, scale: 1.02 }}
                 transition={cardHoverSpring}
-                className={`relative flex flex-col justify-between rounded-3xl border bg-[#171717] p-6 text-white transition-colors ${borderColor}`}
+                className={`relative flex flex-col justify-between rounded-3xl border bg-white dark:bg-[#171717] p-6 text-slate-900 dark:text-white transition-colors ${borderColor}`}
                 style={{
                   boxShadow: p.highlight ? "0 10px 40px rgba(255,10,138,0.15)" : undefined,
                 }}
@@ -1656,7 +1656,7 @@ export function Pricing() {
                 {p.badge && (
                   <span
                     className={`font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full absolute -top-3 left-6 text-white shadow-sm ${
-                      isPink ? "bg-[#ff0a8a]" : isBlue ? "bg-[#3b82f6]" : "bg-white/20"
+                      isPink ? "bg-[#ff0a8a]" : isBlue ? "bg-[#3b82f6]" : "bg-slate-700 dark:bg-white/20"
                     }`}
                   >
                     {p.badge}
@@ -1664,28 +1664,28 @@ export function Pricing() {
                 )}
 
                 <div>
-                  <h3 className="font-display text-lg font-bold text-white">{p.name}</h3>
+                  <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">{p.name}</h3>
                   <div className="mt-2 flex items-baseline gap-1">
-                    <span className="font-display text-3xl font-bold text-white">
+                    <span className="font-display text-3xl font-bold text-slate-900 dark:text-white">
                       {getFormattedPrice(p.monthlyPrice)}
                     </span>
-                    <span className="text-xs text-white/45">
+                    <span className="text-xs text-slate-500 dark:text-white/45">
                       {billingPeriod === "yearly" ? "/mo (billed annually)" : p.period}
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-white/50">{p.desc}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-white/50">{p.desc}</p>
 
-                  <div className="mt-4 font-mono text-xs font-semibold text-white/80 bg-white/[0.04] px-3 py-1.5 rounded-xl border border-white/[0.06]">
+                  <div className="mt-4 font-mono text-xs font-semibold text-slate-700 dark:text-white/80 bg-slate-100 dark:bg-white/[0.04] px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/[0.06]">
                     {p.posts}
                   </div>
 
-                  <ul className="mt-6 space-y-2.5 text-xs text-white/70">
+                  <ul className="mt-6 space-y-2.5 text-xs text-slate-600 dark:text-white/70">
                     {p.features.map((f) => (
                       <li key={f} className="flex items-center gap-2">
                         <Check
                           className="h-3.5 w-3.5 shrink-0"
                           style={{
-                            color: isPink ? "#ff0a8a" : isBlue ? "#3b82f6" : "#ffffff",
+                            color: isPink ? "#ff0a8a" : isBlue ? "#3b82f6" : "#64748b",
                           }}
                         />
                         <span>{f}</span>
@@ -1715,13 +1715,13 @@ export function Pricing() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={springTransition}
-          className="rounded-2xl border border-white/[0.08] bg-[#161616] p-6 text-white flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4 max-w-3xl mx-auto"
+          className="rounded-2xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#161616] p-6 text-slate-900 dark:text-white flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4 max-w-3xl mx-auto shadow-sm"
         >
           <div>
-            <h4 className="font-display font-bold text-base text-white">
+            <h4 className="font-display font-bold text-base text-slate-900 dark:text-white">
               Enterprise &amp; High-Volume Custom Workspaces
             </h4>
-            <p className="text-white/60 text-xs mt-1">
+            <p className="text-slate-600 dark:text-white/60 text-xs mt-1">
               Need custom fine-tuned models, dedicated IPs, SLA guarantees, or 20+ team seats?
             </p>
           </div>
@@ -1729,7 +1729,7 @@ export function Pricing() {
             <motion.button
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="border border-white/[0.10] bg-white/[0.04] text-white px-5 py-2 rounded-xl font-semibold text-xs hover:bg-white/[0.08] transition-all cursor-pointer"
+              className="border border-slate-300 bg-slate-100 text-slate-800 hover:bg-slate-200 dark:border-white/[0.10] dark:bg-white/[0.04] dark:text-white px-5 py-2 rounded-xl font-semibold text-xs dark:hover:bg-white/[0.08] transition-all cursor-pointer"
             >
               Contact Enterprise Sales
             </motion.button>
@@ -1792,21 +1792,21 @@ export function FAQ() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.05 * i, duration: 0.35 }}
-              className="rounded-2xl border border-white/[0.08] bg-[#161616] overflow-hidden transition-colors"
+              className="rounded-2xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#161616] overflow-hidden transition-colors shadow-xs"
             >
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : i)}
                 className="w-full flex justify-between items-center text-left p-5 focus:outline-none select-none cursor-pointer"
               >
-                <span className="text-sm sm:text-base font-bold text-white pr-4">
+                <span className="text-sm sm:text-base font-bold text-slate-900 dark:text-white pr-4">
                   {faq.q}
                 </span>
 
                 <motion.div
                   animate={{ rotate: isOpen ? 180 : 0 }}
                   transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                  className={`text-white/60 shrink-0 ${isOpen ? "text-[#ff0a8a]" : ""}`}
+                  className={`text-slate-400 dark:text-white/60 shrink-0 ${isOpen ? "text-[#ff0a8a]" : ""}`}
                 >
                   <ChevronDown size={18} />
                 </motion.div>
@@ -1823,7 +1823,7 @@ export function FAQ() {
                     className="overflow-hidden"
                   >
                     <div className="px-5 pb-5 pt-0">
-                      <p className="text-xs sm:text-sm text-white/60 leading-relaxed font-normal border-t border-white/[0.06] pt-3">
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-white/60 leading-relaxed font-normal border-t border-slate-200 dark:border-white/[0.06] pt-3">
                         {faq.a}
                       </p>
                     </div>
@@ -1848,7 +1848,7 @@ export function FinalCTA() {
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={springTransition}
-        className="relative mx-auto max-w-6xl rounded-3xl border border-white/[0.10] bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden"
+        className="relative mx-auto max-w-6xl rounded-3xl border border-slate-200 bg-white dark:border-white/[0.10] dark:bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden"
       >
         {/* Animated breathing aura */}
         <motion.div
@@ -1865,12 +1865,12 @@ export function FinalCTA() {
         <div className="relative z-10 max-w-3xl mx-auto text-center">
           <Eyebrow tone="pink">14-Day Free Trial — No Credit Card Required</Eyebrow>
 
-          <h2 className="mt-5 font-display text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+          <h2 className="mt-5 font-display text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
             Your autonomous AI marketing team{" "}
             <span className="text-[#ff0a8a]">starts today.</span>
           </h2>
 
-          <p className="mt-4 text-sm sm:text-base text-white/60 leading-relaxed font-normal max-w-xl mx-auto">
+          <p className="mt-4 text-sm sm:text-base text-slate-600 dark:text-white/60 leading-relaxed font-normal max-w-xl mx-auto">
             Join thousands of creators, founders, and marketing operators automating content creation, scheduling, CRM triage, and revenue growth.
           </p>
 
@@ -1884,13 +1884,13 @@ export function FinalCTA() {
             </LandingButton>
             <LandingButton
               href="/login"
-              className="border border-white/[0.10] bg-white/[0.03] text-white/80 hover:bg-white/[0.06] hover:text-white"
+              className="border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 dark:border-white/[0.10] dark:bg-white/[0.03] dark:text-white/80 dark:hover:bg-white/[0.06] dark:hover:text-white"
             >
               <span>Sign In to Workspace</span>
             </LandingButton>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-white/40">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500 dark:text-white/40">
             <div className="flex items-center gap-1.5">
               <Check className="h-3.5 w-3.5 text-[#34d399]" />
               <span>Instant 2-minute onboarding</span>
@@ -1939,7 +1939,7 @@ const FOOTER_LINKS = {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-white/[0.10] bg-[#070d24] py-14 px-4 sm:px-6 lg:px-8 text-white">
+    <footer className="border-t border-slate-200 bg-slate-900 dark:border-white/[0.10] dark:bg-[#070d24] py-14 px-4 sm:px-6 lg:px-8 text-white">
       <div className="max-w-7xl mx-auto">
         <motion.div
           variants={containerVariants}

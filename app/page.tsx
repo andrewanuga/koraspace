@@ -22,7 +22,7 @@ import {
 
 export default function LandingPage() {
   return (
-    <div className="relative min-h-screen bg-[#121212] selection:bg-[#ff0a8a]/20 selection:text-[#ff0a8a]">
+    <div className="relative min-h-screen transition-colors duration-200 bg-slate-50 text-slate-900 dark:bg-[#121212] dark:text-white selection:bg-[#ff0a8a]/20 selection:text-[#ff0a8a]">
       <Preloader />
       <FloatingNav />
       <main>

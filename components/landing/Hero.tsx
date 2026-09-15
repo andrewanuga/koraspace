@@ -94,7 +94,7 @@ export function Hero() {
 
   return (
     <section
-      className={`${display.variable} ${body.variable} min-h-screen bg-[#07050d] px-3 py-3 font-[family-name:var(--font-body)] sm:px-6 sm:py-6 lg:px-10 lg:py-8 overflow-hidden`}
+      className={`${display.variable} ${body.variable} min-h-screen transition-colors duration-200 bg-slate-100 dark:bg-[#07050d] px-3 py-3 font-[family-name:var(--font-body)] sm:px-6 sm:py-6 lg:px-10 lg:py-8 overflow-hidden`}
     >
       <motion.div
         initial="hidden"

@@ -13,16 +13,16 @@ import {
 } from "@/components/landing/nav-data";
 
 const panelShell =
-  "rounded-2xl border border-white/[0.10] bg-[#131118]/95 shadow-[0_28px_70px_rgba(0,0,0,0.65)] backdrop-blur-2xl";
+  "rounded-2xl border border-slate-200/90 bg-white/95 text-slate-900 shadow-[0_24px_70px_rgba(0,0,0,0.12)] backdrop-blur-2xl dark:border-white/[0.10] dark:bg-[#131118]/95 dark:text-white dark:shadow-[0_28px_70px_rgba(0,0,0,0.65)]";
 
-const eyebrow = "text-[11px] font-bold tracking-[0.2em] text-white/45";
-const groupTitle = "text-[11px] font-bold tracking-[0.16em] text-white/40";
-const panelLede = "mt-1 text-[15px] text-white/70";
+const eyebrow = "text-[11px] font-bold tracking-[0.2em] text-slate-400 dark:text-white/45";
+const groupTitle = "text-[11px] font-bold tracking-[0.16em] text-slate-400 dark:text-white/40";
+const panelLede = "mt-1 text-[15px] text-slate-600 dark:text-white/70";
 
 /** Items without an href aren't built yet, so they render inert rather than 404. */
 function Leaf({ item }: { item: MenuLeaf }) {
   const base =
-    "block rounded-lg px-2 py-2 text-[15px] text-white/70 transition-colors hover:bg-white/[0.06] hover:text-white";
+    "block rounded-lg px-2 py-2 text-[15px] text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-white/70 dark:hover:bg-white/[0.06] dark:hover:text-white";
 
   if (!item.href) {
     return (
@@ -42,10 +42,10 @@ function Leaf({ item }: { item: MenuLeaf }) {
 /** A real link — these read as calls to action, so they must behave like one. */
 function PanelFooter({ label, href }: { label: string; href: string }) {
   return (
-    <div className="mt-1 border-t border-white/[0.08] px-5 py-4">
+    <div className="mt-1 border-t border-slate-200/80 px-5 py-4 dark:border-white/[0.08]">
       <a
         href={href}
-        className="group inline-flex items-center gap-2 rounded-md text-[15px] font-semibold text-[#ff9fc9] underline-offset-4 outline-none transition-colors hover:text-white hover:underline focus-visible:ring-2 focus-visible:ring-[#ff9fc9]"
+        className="group inline-flex items-center gap-2 rounded-md text-[15px] font-semibold text-[#d90070] underline-offset-4 outline-none transition-colors hover:text-slate-900 hover:underline dark:text-[#ff9fc9] dark:hover:text-white focus-visible:ring-2 focus-visible:ring-[#ff9fc9]"
       >
         {label}
         <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -110,14 +110,14 @@ export function AudienceMenu() {
               key={a.label}
               {...stagger(i)}
               aria-disabled="true"
-              className="flex cursor-default gap-3 rounded-xl border border-transparent p-3 transition-colors hover:border-white/[0.08] hover:bg-white/[0.04]"
+              className="flex cursor-default gap-3 rounded-xl border border-transparent p-3 transition-colors hover:border-slate-200 hover:bg-slate-50 dark:hover:border-white/[0.08] dark:hover:bg-white/[0.04]"
             >
-              <Icon className="mt-0.5 h-5 w-5 shrink-0 text-[#ff9fc9]" />
+              <Icon className="mt-0.5 h-5 w-5 shrink-0 text-[#ff0a8a] dark:text-[#ff9fc9]" />
               <span className="block">
-                <span className="block text-[15px] font-semibold text-white/90">
+                <span className="block text-[15px] font-semibold text-slate-900 dark:text-white/90">
                   {a.label}
                 </span>
-                <span className="mt-1 block text-[13.5px] leading-relaxed text-white/60">
+                <span className="mt-1 block text-[13.5px] leading-relaxed text-slate-600 dark:text-white/60">
                   {a.description}
                 </span>
               </span>
@@ -149,12 +149,12 @@ export function IntegrationsMenu() {
           <motion.span
             key={p.label}
             {...stagger(i)}
-            className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-[15px] text-white/75"
+            className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-[15px] text-slate-700 dark:text-white/75"
           >
             {"icon" in p ? (
-              <BrandIcon icon={p.icon} className="h-6 w-6 shrink-0 text-white" />
+              <BrandIcon icon={p.icon} className="h-6 w-6 shrink-0 text-slate-900 dark:text-white" />
             ) : (
-              <LinkedInIcon className="h-6 w-6 shrink-0 text-white" />
+              <LinkedInIcon className="h-6 w-6 shrink-0 text-slate-900 dark:text-white" />
             )}
             {p.label}
           </motion.span>
@@ -162,7 +162,7 @@ export function IntegrationsMenu() {
       </div>
 
       <div className="px-5 pb-2">
-        <span className="inline-flex items-center gap-1.5 text-[13.5px] text-white/45">
+        <span className="inline-flex items-center gap-1.5 text-[13.5px] text-slate-400 dark:text-white/45">
           <Plus className="h-3.5 w-3.5" />
           More integrations
         </span>

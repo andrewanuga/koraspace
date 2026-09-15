@@ -1,9 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, ArrowRight, ChevronDown } from "lucide-react";
+import { Menu, X, ArrowRight, ChevronDown, Sun, Moon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import {
   AudienceMenu,
   IntegrationsMenu,
@@ -17,6 +18,15 @@ export function FloatingNav() {
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme, resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted ? (theme === "dark" || resolvedTheme === "dark") : true;
+  const toggleTheme = () => setTheme(isDark ? "light" : "dark");
 
   useEffect(() => {
     // Check if loader is already done
@@ -73,13 +83,13 @@ export function FloatingNav() {
         <motion.div
           layout
           transition={capsuleSpring}
-          className="flex w-full items-center justify-between rounded-2xl border border-white/[0.08] bg-[#141414]/80 px-5 py-3 sm:px-7 sm:py-3.5 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl"
+          className="flex w-full items-center justify-between rounded-2xl border border-slate-200/90 bg-white/85 text-slate-900 px-5 py-3 sm:px-7 sm:py-3.5 shadow-sm backdrop-blur-xl dark:border-white/[0.08] dark:bg-[#141414]/80 dark:text-white dark:shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition-colors duration-200"
         >
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <KoraNavLogo />
             <div>
-              <span className="font-display text-xl font-bold tracking-tight text-white group-hover:text-white/90">
+              <span className="font-display text-xl font-bold tracking-tight text-slate-900 group-hover:text-slate-700 dark:text-white dark:group-hover:text-white/90">
                 KoraSpace
               </span>
             </div>
@@ -90,9 +100,21 @@ export function FloatingNav() {
 
           {/* Right Action CTAs */}
           <div className="hidden lg:flex items-center gap-3">
+            {mounted && (
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:bg-white/[0.03] dark:text-white/70 dark:hover:bg-white/[0.08] dark:hover:text-white"
+                title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                aria-label="Toggle Theme"
+              >
+                {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-slate-700" />}
+              </button>
+            )}
+
             <Link
               href="/login"
-              className="whitespace-nowrap rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-[13px] font-medium text-white/80 transition-all hover:border-white/20 hover:bg-white/[0.06] hover:text-white xl:px-4"
+              className="whitespace-nowrap rounded-xl border border-slate-200 bg-slate-100/80 px-3 py-2 text-[13px] font-medium text-slate-700 transition-all hover:bg-slate-200 hover:text-slate-900 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-white/80 dark:hover:border-white/20 dark:hover:bg-white/[0.06] dark:hover:text-white xl:px-4"
             >
               Sign in
             </Link>
@@ -106,26 +128,38 @@ export function FloatingNav() {
           </div>
 
           {/* Mobile Toggle Button */}
-          <button
-            type="button"
-            onClick={() => setShowMobileMenu((prev) => !prev)}
-            aria-label="Toggle navigation menu"
-            className="flex lg:hidden items-center justify-center h-9 w-9 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white transition-colors hover:bg-white/[0.08]"
-          >
-            {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          <div className="flex items-center gap-2 lg:hidden">
+            {mounted && (
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm dark:border-white/10 dark:bg-white/[0.04] dark:text-white"
+                aria-label="Toggle Theme"
+              >
+                {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-slate-700" />}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowMobileMenu((prev) => !prev)}
+              aria-label="Toggle navigation menu"
+              className="flex items-center justify-center h-9 w-9 rounded-xl border border-slate-200 bg-white text-slate-900 transition-colors hover:bg-slate-100 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-white dark:hover:bg-white/[0.08]"
+            >
+              {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </motion.div>
       ) : (
         /* ── WHEN SCROLLED: Clean Glass Bar ── */
         <motion.div
           layout
           transition={capsuleSpring}
-          className="flex w-full items-center justify-between rounded-2xl border border-white/[0.10] bg-[#121212]/95 px-4 py-2.5 sm:px-6 sm:py-3 shadow-[0_16px_50px_rgba(0,0,0,0.6)] backdrop-blur-xl"
+          className="flex w-full items-center justify-between rounded-2xl border border-slate-200/90 bg-white/95 text-slate-900 px-4 py-2.5 sm:px-6 sm:py-3 shadow-md backdrop-blur-xl dark:border-white/[0.10] dark:bg-[#121212]/95 dark:text-white dark:shadow-[0_16px_50px_rgba(0,0,0,0.6)] transition-colors duration-200"
         >
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
             <KoraNavLogo />
-            <span className="font-display text-lg font-bold tracking-tight text-white group-hover:text-white/90">
+            <span className="font-display text-lg font-bold tracking-tight text-slate-900 group-hover:text-slate-700 dark:text-white dark:group-hover:text-white/90">
               KoraSpace
             </span>
           </Link>
@@ -135,9 +169,21 @@ export function FloatingNav() {
 
           {/* Right Action CTAs */}
           <div className="hidden lg:flex items-center gap-2.5">
+            {mounted && (
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:bg-white/[0.03] dark:text-white/70 dark:hover:bg-white/[0.08] dark:hover:text-white"
+                title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                aria-label="Toggle Theme"
+              >
+                {isDark ? <Sun className="h-3.5 w-3.5 text-amber-400" /> : <Moon className="h-3.5 w-3.5 text-slate-700" />}
+              </button>
+            )}
+
             <Link
               href="/login"
-              className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-3.5 py-1.5 text-[12.5px] font-medium text-white/80 transition-all hover:border-white/20 hover:text-white"
+              className="rounded-lg border border-slate-200 bg-slate-100/80 px-3.5 py-1.5 text-[12.5px] font-medium text-slate-700 transition-all hover:bg-slate-200 hover:text-slate-900 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-white/80 dark:hover:border-white/20 dark:hover:text-white"
             >
               Sign in
             </Link>
@@ -151,14 +197,26 @@ export function FloatingNav() {
           </div>
 
           {/* Mobile Toggle Button */}
-          <button
-            type="button"
-            onClick={() => setShowMobileMenu((prev) => !prev)}
-            aria-label="Toggle navigation menu"
-            className="flex lg:hidden items-center justify-center h-8 w-8 rounded-lg border border-white/[0.08] bg-white/[0.04] text-white"
-          >
-            {showMobileMenu ? <X size={18} /> : <Menu size={18} />}
-          </button>
+          <div className="flex items-center gap-1.5 lg:hidden">
+            {mounted && (
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm dark:border-white/10 dark:bg-white/[0.04] dark:text-white"
+                aria-label="Toggle Theme"
+              >
+                {isDark ? <Sun className="h-3.5 w-3.5 text-amber-400" /> : <Moon className="h-3.5 w-3.5 text-slate-700" />}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowMobileMenu((prev) => !prev)}
+              aria-label="Toggle navigation menu"
+              className="flex items-center justify-center h-8 w-8 rounded-lg border border-slate-200 bg-white text-slate-900 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-white"
+            >
+              {showMobileMenu ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
         </motion.div>
       )}
 
@@ -170,7 +228,7 @@ export function FloatingNav() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.98 }}
             transition={{ duration: 0.2 }}
-            className="absolute left-2 right-2 top-full mt-2 max-h-[calc(100vh-6rem)] overflow-y-auto rounded-2xl border border-white/[0.10] bg-[#161616] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl lg:hidden"
+            className="absolute left-2 right-2 top-full mt-2 max-h-[calc(100vh-6rem)] overflow-y-auto rounded-2xl border border-slate-200 bg-white/95 text-slate-900 p-5 shadow-2xl backdrop-blur-2xl dark:border-white/[0.10] dark:bg-[#161616] dark:text-white lg:hidden"
           >
             <div className="flex flex-col space-y-1.5">
               {navItems.map((item) => {
@@ -183,7 +241,7 @@ export function FloatingNav() {
                       key={item.label}
                       href={"href" in item ? item.href : undefined}
                       onClick={() => setShowMobileMenu(false)}
-                      className="block rounded-xl px-3 py-2.5 text-[15px] font-medium text-white/85 hover:bg-white/[0.06] hover:text-white transition-colors"
+                      className="block rounded-xl px-3 py-2.5 text-[15px] font-medium text-slate-800 hover:bg-slate-100 hover:text-slate-900 dark:text-white/85 dark:hover:bg-white/[0.06] dark:hover:text-white transition-colors"
                     >
                       {item.label}
                     </a>
@@ -200,7 +258,7 @@ export function FloatingNav() {
                       type="button"
                       aria-expanded={isOpen}
                       onClick={() => setOpenSection(isOpen ? null : item.label)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[15px] font-medium text-white/85 transition-colors hover:bg-white/[0.06] hover:text-white"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[15px] font-medium text-slate-800 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-white/85 dark:hover:bg-white/[0.06] dark:hover:text-white"
                     >
                       {item.label}
                       <ChevronDown
@@ -219,11 +277,11 @@ export function FloatingNav() {
                           transition={{ duration: 0.22, ease: "easeOut" }}
                           className="overflow-hidden"
                         >
-                          <div className="ml-3 mt-0.5 flex flex-col gap-2 border-l border-white/[0.08] pl-3 pb-1">
+                          <div className="ml-3 mt-0.5 flex flex-col gap-2 border-l border-slate-200 pl-3 pb-1 dark:border-white/[0.08]">
                             {section.groups.map((group, gi) => (
                               <div key={group.title ?? gi}>
                                 {group.title && (
-                                  <p className="px-2.5 pb-0.5 pt-1 text-[11px] font-bold tracking-[0.16em] text-white/40">
+                                  <p className="px-2.5 pb-0.5 pt-1 text-[11px] font-bold tracking-[0.16em] text-slate-400 dark:text-white/40">
                                     {group.title.toUpperCase()}
                                   </p>
                                 )}
@@ -233,7 +291,7 @@ export function FloatingNav() {
                                       key={child.label}
                                       href={child.href}
                                       onClick={() => setShowMobileMenu(false)}
-                                      className="block rounded-lg px-2.5 py-2 text-[14.5px] text-white/65 transition-colors hover:bg-white/[0.05] hover:text-white"
+                                      className="block rounded-lg px-2.5 py-2 text-[14.5px] text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-white/65 dark:hover:bg-white/[0.05] dark:hover:text-white"
                                     >
                                       {child.label}
                                     </a>
@@ -241,7 +299,7 @@ export function FloatingNav() {
                                     <span
                                       key={child.label}
                                       aria-disabled="true"
-                                      className="block cursor-default rounded-lg px-2.5 py-2 text-[14.5px] text-white/65"
+                                      className="block cursor-default rounded-lg px-2.5 py-2 text-[14.5px] text-slate-500 dark:text-white/65"
                                     >
                                       {child.label}
                                     </span>
@@ -257,11 +315,11 @@ export function FloatingNav() {
                 );
               })}
 
-              <div className="pt-3 border-t border-white/[0.08] grid grid-cols-2 gap-2.5">
+              <div className="pt-3 border-t border-slate-200 dark:border-white/[0.08] grid grid-cols-2 gap-2.5">
                 <Link
                   href="/login"
                   onClick={() => setShowMobileMenu(false)}
-                  className="flex items-center justify-center rounded-xl border border-white/[0.10] bg-white/[0.03] py-3 text-[13.5px] font-semibold text-white transition-colors"
+                  className="flex items-center justify-center rounded-xl border border-slate-200 bg-slate-100 py-3 text-[13.5px] font-semibold text-slate-800 transition-colors hover:bg-slate-200 dark:border-white/[0.10] dark:bg-white/[0.03] dark:text-white"
                 >
                   Sign in
                 </Link>
