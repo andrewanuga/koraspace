@@ -459,7 +459,7 @@ function DesktopNavItems({
           const pill = (hovered ?? openMenu) === item.label && (
             <motion.span
               layoutId={layoutId}
-              className={`absolute inset-0 ${itemRadius} bg-white/[0.06] border border-white/[0.08]`}
+              className={`absolute inset-0 ${itemRadius} bg-slate-200/80 border border-slate-300/80 dark:bg-white/[0.06] dark:border-white/[0.08]`}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
             />
           );
@@ -494,13 +494,13 @@ function DesktopNavItems({
                 <a
                   href={item.href}
                   className={`relative flex items-center gap-1 whitespace-nowrap ${itemRadius} ${itemPadding} ${itemText} font-medium transition-colors ${
-                    isOpen ? "text-white" : "text-white/70 hover:text-white"
+                    isOpen ? "text-slate-900 dark:text-white" : "text-slate-600 hover:text-slate-900 dark:text-white/70 dark:hover:text-white"
                   }`}
                 >
                   <span className="relative z-10">{item.label}</span>
                   <ChevronDown
                     className={`relative z-10 h-3.5 w-3.5 transition-transform duration-200 ${
-                      isOpen ? "rotate-180" : ""
+                      isOpen ? "rotate-180 text-slate-900 dark:text-white" : "text-slate-400 dark:text-white/50"
                     }`}
                   />
                   {pill}
@@ -517,7 +517,7 @@ function DesktopNavItems({
                 href={item.href}
                 onMouseEnter={() => setHovered(item.label)}
                 onMouseLeave={() => setHovered(null)}
-                className={`relative whitespace-nowrap ${itemRadius} ${itemPadding} ${itemText} font-medium text-white/70 transition-colors hover:text-white`}
+                className={`relative whitespace-nowrap ${itemRadius} ${itemPadding} ${itemText} font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-white/70 dark:hover:text-white`}
               >
                 <span className="relative z-10">{item.label}</span>
                 {pill}
@@ -543,14 +543,14 @@ function DesktopNavItems({
                 aria-expanded={isOpen}
                 onFocus={() => openNow(item.label)}
                 onClick={() => (isOpen ? setOpenMenu(null) : openNow(item.label))}
-                className={`relative flex items-center gap-1 whitespace-nowrap ${itemRadius} ${itemPadding} ${itemText} font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[#ff9fc9] ${
-                  isOpen ? "text-white" : "text-white/70 hover:text-white"
+                className={`relative flex items-center gap-1 whitespace-nowrap ${itemRadius} ${itemPadding} ${itemText} font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[#ff9fc9] cursor-pointer ${
+                  isOpen ? "text-slate-900 dark:text-white" : "text-slate-600 hover:text-slate-900 dark:text-white/70 dark:hover:text-white"
                 }`}
               >
                 <span className="relative z-10">{item.label}</span>
                 <ChevronDown
                   className={`relative z-10 h-3.5 w-3.5 transition-transform duration-200 ${
-                    isOpen ? "rotate-180" : ""
+                    isOpen ? "rotate-180 text-slate-900 dark:text-white" : "text-slate-400 dark:text-white/50"
                   }`}
                 />
                 {pill}
