@@ -1,7 +1,7 @@
 import { Preloader } from "@/components/landing/Preloader";
 import { Hero } from "@/components/landing/Hero";
 import { DashboardShowcase } from "@/components/landing/DashboardShowcase";
-import { WayContrast } from "@/components/landing/sections/WayContrast";
+import { FragmentedMarketing } from "@/components/landing/sections/FragmentedMarketing";
 import { OutcomesSection } from "@/components/landing/sections/OutcomesSection";
 import { DecisionFlow } from "@/components/landing/sections/DecisionFlow";
 import { FinalCTA } from "@/components/landing/sections/FinalCTA";
@@ -32,8 +32,8 @@ export default function LandingPage() {
       {/* SOCIAL PROOF STRIP — intentionally empty. Goes in when there are real
           customers to name. Nothing invented sits on this page. */}
 
-      {/* 2 — Old way vs the KoraSpace way */}
-      <WayContrast />
+      {/* 2 — The problem: fragmented marketing */}
+      <FragmentedMarketing />
 
       {/* 3 — What KoraSpace gives back */}
       <OutcomesSection />
@@ -42,6 +42,7 @@ export default function LandingPage() {
       <DecisionFlow />
 
       {/* 5 — Marketing that learns */}
+
 
       {/* 6 — Product preview: one real environment, then the handoff into
           /product/create, /product/understand and /product/grow. */}
