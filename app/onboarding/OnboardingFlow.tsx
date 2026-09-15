@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ComponentType, type CSSProperties } from "react";
+import { useMemo, useState, useRef, useEffect, type ComponentType, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -14,6 +14,7 @@ import {
   Camera,
   Check,
   CheckCircle2,
+  ChevronDown,
   Clapperboard,
   FileText,
   Play,
@@ -115,6 +116,28 @@ const PLATFORMS: {
   { id: "reddit", title: "Reddit", imageSrc: "/integrations/reddit.png" },
   { id: "telegram", title: "Telegram", imageSrc: "/integrations/telegram.png" },
   { id: "snapchat", title: "Snapchat", imageSrc: "/integrations/Snapchat.png" },
+];
+
+const SOCIAL_NICHES = [
+  "AI, Tech & Software",
+  "Business, Startups & Entrepreneurship",
+  "Finance, Crypto & Wealth Management",
+  "Marketing, Growth & Creator Economy",
+  "E-commerce, Retail & Dropshipping",
+  "Fitness, Health, Wellness & Nutrition",
+  "Fashion, Beauty, Skincare & Lifestyle",
+  "Real Estate, Architecture & Interior Design",
+  "Education, Online Courses & Coaching",
+  "Food, Culinary, Restaurants & Cocktails",
+  "Travel, Tourism & Digital Nomad",
+  "Entertainment, Gaming, Streaming & Anime",
+  "Photography, Filmmaking & Graphic Design",
+  "Music, Production & Performing Arts",
+  "Parenting, Family & Relationships",
+  "Legal, Consulting & Corporate Services",
+  "Sustainability, Green Tech & Social Impact",
+  "Personal Brand & Thought Leadership",
+  "Other / Custom Niche",
 ];
 
 function ChoiceCard({
@@ -547,6 +570,35 @@ export function OnboardingFlow({
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [contentFormats, setContentFormats] = useState<ContentFormat[]>([]);
   const [niche, setNiche] = useState("");
+  const [isNicheDropdownOpen, setIsNicheDropdownOpen] = useState(false);
+  const [nicheSearch, setNicheSearch] = useState("");
+  const [isOtherNiche, setIsOtherNiche] = useState(false);
+  const nicheDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        nicheDropdownRef.current &&
+        !nicheDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsNicheDropdownOpen(false);
+      }
+    }
+    if (isNicheDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isNicheDropdownOpen]);
+
+  const filteredNiches = useMemo(() => {
+    if (!nicheSearch.trim()) return SOCIAL_NICHES;
+    return SOCIAL_NICHES.filter((item) =>
+      item.toLowerCase().includes(nicheSearch.toLowerCase().trim())
+    );
+  }, [nicheSearch]);
+
   const [postingCadence, setPostingCadence] = useState<number | null>(null);
   const [audienceRange, setAudienceRange] = useState("");
   const [businessType, setBusinessType] = useState("");
@@ -1086,18 +1138,135 @@ export function OnboardingFlow({
                   {t.onboarding.step4.description}
                 </p>
 
-                <div className="mt-8">
+                <div className="mt-8" ref={nicheDropdownRef}>
                   <SectionLabel>{t.onboarding.step4.nicheLabel}</SectionLabel>
 
-                  <input
-                    value={niche}
-                    onChange={(event) =>
-                      setNiche(event.target.value)
-                    }
-                    placeholder={t.onboarding.step4.nichePlaceholder}
-                    autoFocus
-                    className={inputCls}
-                  />
+                  <div className="relative mt-2">
+                    {/* Dropdown Toggle Button */}
+                    <button
+                      type="button"
+                      onClick={() => setIsNicheDropdownOpen((prev) => !prev)}
+                      className={`flex h-12 w-full items-center justify-between rounded-xl border bg-white px-3.5 text-left text-sm transition-all duration-200 focus:outline-none dark:bg-white/[0.035] ${
+                        isNicheDropdownOpen
+                          ? isMarketer
+                            ? "border-[#3b82f6] ring-4 ring-[#3b82f6]/10"
+                            : "border-[#ff0a8a] ring-4 ring-[#ff0a8a]/10"
+                          : "border-slate-200 hover:border-slate-300 dark:border-white/[0.10] dark:hover:border-white/20"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 truncate">
+                        <Sparkles
+                          className={`h-4 w-4 shrink-0 ${
+                            niche ? (isMarketer ? "text-blue-500" : "text-[#ff0a8a]") : "text-slate-400 dark:text-white/30"
+                          }`}
+                        />
+                        <span
+                          className={`truncate ${
+                            niche
+                              ? "font-medium text-slate-900 dark:text-white"
+                              : "text-slate-400 dark:text-white/30"
+                          }`}
+                        >
+                          {niche || t.onboarding.step4.nichePlaceholder}
+                        </span>
+                      </div>
+                      <ChevronDown
+                        className={`h-4 w-4 shrink-0 text-slate-400 transition-transform duration-200 dark:text-white/40 ${
+                          isNicheDropdownOpen ? "rotate-180 text-slate-900 dark:text-white" : ""
+                        }`}
+                      />
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {isNicheDropdownOpen && (
+                      <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white/95 p-2 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-[#121218]/95 animate-in fade-in zoom-in-95 duration-150">
+                        {/* Search Input within Dropdown */}
+                        <div className="relative mb-2">
+                          <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400 dark:text-white/40" />
+                          <input
+                            type="text"
+                            value={nicheSearch}
+                            onChange={(e) => setNicheSearch(e.target.value)}
+                            placeholder="Search niche or industry..."
+                            autoFocus
+                            className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50 pl-8 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none dark:border-white/10 dark:bg-white/[0.04] dark:text-white dark:placeholder:text-white/30 dark:focus:border-white/20"
+                          />
+                        </div>
+
+                        {/* List of Niches */}
+                        <div className="max-h-56 overflow-y-auto space-y-1 pr-1">
+                          {filteredNiches.map((item) => {
+                            const isSelected = niche === item || (item === "Other / Custom Niche" && isOtherNiche);
+                            return (
+                              <button
+                                key={item}
+                                type="button"
+                                onClick={() => {
+                                  if (item === "Other / Custom Niche") {
+                                    setIsOtherNiche(true);
+                                    if (SOCIAL_NICHES.includes(niche)) {
+                                      setNiche("");
+                                    }
+                                  } else {
+                                    setIsOtherNiche(false);
+                                    setNiche(item);
+                                  }
+                                  setIsNicheDropdownOpen(false);
+                                  setNicheSearch("");
+                                }}
+                                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors ${
+                                  isSelected
+                                    ? isMarketer
+                                      ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"
+                                      : "bg-pink-50 text-[#ff0a8a] dark:bg-[#ff0a8a]/10 dark:text-[#ff63b4]"
+                                    : "text-slate-700 hover:bg-slate-100 dark:text-white/80 dark:hover:bg-white/[0.06]"
+                                }`}
+                              >
+                                <span>{item}</span>
+                                {isSelected && <Check className="h-3.5 w-3.5 shrink-0" />}
+                              </button>
+                            );
+                          })}
+
+                          {filteredNiches.length === 0 && (
+                            <div className="p-3 text-center text-xs text-slate-500 dark:text-white/40">
+                              <p>No matching niche found.</p>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setIsOtherNiche(true);
+                                  setNiche(nicheSearch.trim());
+                                  setIsNicheDropdownOpen(false);
+                                  setNicheSearch("");
+                                }}
+                                className={`mt-1.5 inline-flex items-center gap-1 font-semibold ${
+                                  isMarketer ? "text-blue-500 hover:underline" : "text-[#ff0a8a] hover:underline"
+                                }`}
+                              >
+                                Use &quot;{nicheSearch.trim()}&quot; as custom niche &rarr;
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Custom / Other Niche input field when 'Other / Custom Niche' or manual entry is selected */}
+                  {isOtherNiche && (
+                    <div className="mt-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <label className="block text-xs font-medium text-slate-500 dark:text-white/50 mb-1.5">
+                        Specify your custom niche:
+                      </label>
+                      <input
+                        value={niche}
+                        onChange={(event) => setNiche(event.target.value)}
+                        placeholder="e.g. Biohacking, PropTech, Clean Energy..."
+                        autoFocus
+                        className={inputCls}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-7">
