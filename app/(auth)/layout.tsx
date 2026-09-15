@@ -269,7 +269,7 @@ export default function AuthLayout({
           </div>
 
           {/* Top navigation row */}
-          <div className="relative z-10 flex items-center justify-between px-6 pt-6 sm:px-10">
+          <div className="relative z-50 flex items-center justify-between px-6 pt-6 sm:px-10">
             {/* Mobile Brand */}
             <Link href="/" className="flex items-center gap-2.5 lg:hidden">
               <KoraLogo />
@@ -279,7 +279,7 @@ export default function AuthLayout({
             </Link>
 
             {/* Back link & Language Switcher */}
-            <div className="ml-auto flex items-center gap-3">
+            <div className="relative z-50 ml-auto flex items-center gap-3">
               <LanguageSwitcher variant="compact" />
               <Link
                 href="/"

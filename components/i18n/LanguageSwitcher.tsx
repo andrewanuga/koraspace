@@ -43,7 +43,10 @@ export function LanguageSwitcher({
   };
 
   return (
-    <div className={`relative inline-block text-left ${className}`} ref={dropdownRef}>
+    <div
+      className={`relative inline-block text-left ${isOpen ? "z-[999]" : "z-20"} ${className}`}
+      ref={dropdownRef}
+    >
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -70,7 +73,7 @@ export function LanguageSwitcher({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl shadow-xl z-50 py-1.5 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute right-0 mt-2 w-56 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl shadow-2xl z-[9999] py-1.5 animate-in fade-in zoom-in-95 duration-150">
           <div className="px-3 py-1.5 border-b border-neutral-100 dark:border-neutral-800/60 mb-1">
             <div className="flex items-center gap-1.5 text-[11px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">
               <Globe size={12} />
