@@ -116,7 +116,7 @@ export default function TermsPage() {
       </Section>
 
       <Section id="security-responsibilities" title="10. User Security Responsibilities">
-        <p>You are responsible for maintaining the confidentiality of your login credentials and enabling available two-factor authentication. You must immediately notify KoraSpace at <a href="mailto:security@koraspace.com" className="text-blue-400 hover:underline">security@koraspace.com</a> of any suspected unauthorized account activity.</p>
+        <p>You are responsible for maintaining the confidentiality of your login credentials and enabling available two-factor authentication. You must immediately notify KoraSpace at <a href="mailto:security@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">security@koraspace.com</a> of any suspected unauthorized account activity.</p>
       </Section>
 
       <Section id="subscriptions" title="11. Subscriptions & Plan Tiers">
@@ -144,7 +144,7 @@ export default function TermsPage() {
       </Section>
 
       <Section id="privacy-link" title="17. Privacy & Data Protection">
-        <p>Our complete collection, storage, and processing practices are detailed in our <a href="/privacy" className="text-blue-400 hover:underline">Privacy Policy</a>, which is incorporated into and forms an integral part of these Terms.</p>
+        <p>Our complete collection, storage, and processing practices are detailed in our <a href="/privacy" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">Privacy Policy</a>, which is incorporated into and forms an integral part of these Terms.</p>
       </Section>
 
       <Section id="suspension" title="18. Account Suspension & Termination">
@@ -173,10 +173,10 @@ export default function TermsPage() {
 
       <Section id="contact" title="24. Contact & Legal Notices">
         <p>For questions regarding these Terms of Service or formal legal inquiries, please contact:</p>
-        <div className="mt-3 rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 text-[13.5px] text-white/80 space-y-1">
-          <p><strong className="text-white">Koraspace Technologies — Legal Operations</strong></p>
-          <p>Email: <a href="mailto:legal@koraspace.com" className="text-blue-400 hover:underline">legal@koraspace.com</a></p>
-          <p>General Support: <a href="mailto:support@koraspace.com" className="text-blue-400 hover:underline">support@koraspace.com</a></p>
+        <div className="mt-3 rounded-xl border border-slate-200 bg-white p-4 text-[13.5px] text-slate-700 shadow-sm space-y-1 dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white/80">
+          <p><strong className="text-slate-900 dark:text-white">Koraspace Technologies — Legal Operations</strong></p>
+          <p>Email: <a href="mailto:legal@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">legal@koraspace.com</a></p>
+          <p>General Support: <a href="mailto:support@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">support@koraspace.com</a></p>
         </div>
       </Section>
     </LegalShell>

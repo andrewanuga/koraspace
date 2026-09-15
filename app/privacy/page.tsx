@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { LegalShell, Section, Bullets, type LegalSectionItem } from "@/components/legal/LegalShell";
 
 export const metadata: Metadata = {
@@ -43,9 +43,9 @@ export default function PrivacyPage() {
         <p>Depending on how you use KoraSpace, we may collect and process the following categories of information:</p>
         
         <div className="mt-4 space-y-6">
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-            <h3 className="font-semibold text-white text-[15px]">1.1 Account & Identity Information</h3>
-            <p className="mt-1 text-white/70">When you register or maintain a KoraSpace account:</p>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/[0.06] dark:bg-white/[0.02]">
+            <h3 className="font-semibold text-slate-900 dark:text-white text-[15px]">1.1 Account & Identity Information</h3>
+            <p className="mt-1 text-slate-600 dark:text-white/70">When you register or maintain a KoraSpace account:</p>
             <Bullets items={[
               "Full name and display username;",
               "Email address and verified contact details;",
@@ -56,9 +56,9 @@ export default function PrivacyPage() {
             ]} />
           </div>
 
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-            <h3 className="font-semibold text-white text-[15px]">1.2 Connected Social Platform Information</h3>
-            <p className="mt-1 text-white/70">When you connect your social media accounts (e.g. X, Instagram, LinkedIn, TikTok, YouTube, Facebook, WhatsApp, Telegram):</p>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/[0.06] dark:bg-white/[0.02]">
+            <h3 className="font-semibold text-slate-900 dark:text-white text-[15px]">1.2 Connected Social Platform Information</h3>
+            <p className="mt-1 text-slate-600 dark:text-white/70">When you connect your social media accounts (e.g. X, Instagram, LinkedIn, TikTok, YouTube, Facebook, WhatsApp, Telegram):</p>
             <Bullets items={[
               "Platform user handles and unique account IDs;",
               "OAuth access tokens and refresh tokens (stored encrypted at rest);",
@@ -66,11 +66,11 @@ export default function PrivacyPage() {
               "Authorized publishing permissions for scheduling content; and",
               "Public comments and incoming direct inquiries where you explicitly enable automated triage.",
             ]} />
-            <p className="mt-2 text-xs text-blue-300">Note: We enforce a strict least-privilege scoping model and never request access to private inbox messaging or administrative account management unless explicitly configured for customer support automation.</p>
+            <p className="mt-2 text-xs font-medium text-blue-700 dark:text-blue-300">Note: We enforce a strict least-privilege scoping model and never request access to private inbox messaging or administrative account management unless explicitly configured for customer support automation.</p>
           </div>
 
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-            <h3 className="font-semibold text-white text-[15px]">1.3 User Content & Creative Material</h3>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/[0.06] dark:bg-white/[0.02]">
+            <h3 className="font-semibold text-slate-900 dark:text-white text-[15px]">1.3 User Content & Creative Material</h3>
             <Bullets items={[
               "Draft posts, scheduled posts, captions, hashtags, and threads;",
               "Uploaded images, video clips, documents, and media assets;",
@@ -79,8 +79,8 @@ export default function PrivacyPage() {
             ]} />
           </div>
 
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-            <h3 className="font-semibold text-white text-[15px]">1.4 Technical & Usage Data</h3>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/[0.06] dark:bg-white/[0.02]">
+            <h3 className="font-semibold text-slate-900 dark:text-white text-[15px]">1.4 Technical & Usage Data</h3>
             <Bullets items={[
               "IP address and approximate geolocation (used for account security, rate limiting, and fraud prevention);",
               "Browser user agent, operating system, and screen resolution;",
@@ -175,7 +175,7 @@ export default function PrivacyPage() {
       </Section>
 
       <Section id="deletion" title="13. Account Deletion & Purging" takeaway="You can request complete deletion of your account and data at any time directly from Settings.">
-        <p>You may permanently delete your KoraSpace account at any time via <strong>Settings &gt; Account &gt; Delete Account</strong> or by contacting <a href="mailto:privacy@koraspace.com" className="text-blue-400 hover:underline">privacy@koraspace.com</a>. Upon confirmation, all personal profiles, stored social tokens, media assets, and historical analytics are irrevocably erased.</p>
+        <p>You may permanently delete your KoraSpace account at any time via <strong>Settings &gt; Account &gt; Delete Account</strong> or by contacting <a href="mailto:privacy@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">privacy@koraspace.com</a>. Upon confirmation, all personal profiles, stored social tokens, media assets, and historical analytics are irrevocably erased.</p>
       </Section>
 
       <Section id="rights" title="14. Your Data Protection Rights" takeaway="Access, rectify, export, restrict, or erase your data at any time.">
@@ -212,10 +212,10 @@ export default function PrivacyPage() {
 
       <Section id="complaints" title="20. Regulatory Inquiries & Contact">
         <p>For any privacy inquiries, data subject access requests, or regulatory questions, please contact our Data Protection Officer:</p>
-        <div className="mt-3 rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 text-[13.5px] text-white/80 space-y-1">
-          <p><strong className="text-white">Koraspace Technologies — Privacy &amp; Data Protection Office</strong></p>
-          <p>Email: <a href="mailto:privacy@koraspace.com" className="text-blue-400 hover:underline">privacy@koraspace.com</a></p>
-          <p>Support Desk: <a href="mailto:support@koraspace.com" className="text-blue-400 hover:underline">support@koraspace.com</a></p>
+        <div className="mt-3 rounded-xl border border-slate-200 bg-white p-4 text-[13.5px] text-slate-700 shadow-sm space-y-1 dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white/80">
+          <p><strong className="text-slate-900 dark:text-white">Koraspace Technologies — Privacy &amp; Data Protection Office</strong></p>
+          <p>Email: <a href="mailto:privacy@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">privacy@koraspace.com</a></p>
+          <p>Support Desk: <a href="mailto:support@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">support@koraspace.com</a></p>
         </div>
       </Section>
     </LegalShell>
