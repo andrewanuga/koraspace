@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { isPlan } from "@/lib/billing/plans";
+import { isPlan, type PlanId } from "@/lib/billing/plans";
 
 /** Paystack webhook — verify signature, then reconcile subscription state. */
 export async function POST(req: NextRequest) {
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   switch (event.event) {
     case "charge.success": {
       const uid = await findUser();
-      const plan = isPlan(data.metadata?.plan) ? data.metadata.plan : undefined;
+      const plan = (isPlan(data.metadata?.plan) ? data.metadata.plan : undefined) as PlanId | undefined;
       if (uid) {
         if (plan) {
           const expectedKobo = data.amount || 0;

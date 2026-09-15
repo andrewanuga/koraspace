@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
       return done({ paid: "0", error: "identity_mismatch" });
     }
 
-    const plan = isPlan(data.metadata?.plan) ? data.metadata.plan : "pro";
+    const plan = (isPlan(data.metadata?.plan) ? data.metadata.plan : "pro") as keyof typeof PLANS;
     
     // Security: Verify amount matches the minimum expected for the plan
     // Paystack amounts are returned in kobo.
