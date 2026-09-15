@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { isPlan } from "@/lib/billing/plans";
+import { isPlan, PLANS } from "@/lib/billing/plans";
 
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
