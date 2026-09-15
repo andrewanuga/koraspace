@@ -1,6 +1,6 @@
 import { SupportedCurrency } from "./types";
 
-export type PlanKey = "starter" | "creator" | "marketer" | "agency";
+export type PlanKey = "free" | "pro" | "advanced" | "team";
 
 export interface PlanBasePrice {
   ngn: number;
@@ -9,10 +9,10 @@ export interface PlanBasePrice {
 
 // Base local pricing (African base)
 export const BASE_PLAN_PRICES: Record<PlanKey, PlanBasePrice> = {
-  starter: { ngn: 0, usdBase: 0 },
-  creator: { ngn: 15000, usdBase: 10 },
-  marketer: { ngn: 35000, usdBase: 23 },
-  agency: { ngn: 85000, usdBase: 57 },
+  free: { ngn: 0, usdBase: 0 },
+  pro: { ngn: 13500, usdBase: 9 }, // 13500 / 1500
+  advanced: { ngn: 30000, usdBase: 20 }, // 30000 / 1500
+  team: { ngn: 130000, usdBase: 86.67 }, // 130000 / 1500
 };
 
 // Multiplier for any non-African country

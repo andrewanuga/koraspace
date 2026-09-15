@@ -363,14 +363,6 @@ export interface TranslationDictionary {
     discountBadge: string;
     perMonth: string;
     billedAnnually: string;
-    starterName: string;
-    starterDesc: string;
-    creatorProName: string;
-    creatorProDesc: string;
-    marketerProName: string;
-    marketerProDesc: string;
-    agencyName: string;
-    agencyDesc: string;
     enterpriseTitle: string;
     enterpriseDesc: string;
     enterpriseButton: string;

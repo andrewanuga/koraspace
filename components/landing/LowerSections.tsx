@@ -1394,8 +1394,8 @@ export function Pricing() {
           className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 items-stretch mb-12"
         >
           {t.pricing.plans.map((p) => {
-            const isPink = p.planKey === "creator";
-            const isBlue = p.planKey === "marketer";
+            const isPink = p.planKey === "pro";
+            const isBlue = p.planKey === "advanced";
             const borderColor = isPink
               ? "border-[#ff0a8a]/40"
               : isBlue
@@ -1407,6 +1407,7 @@ export function Pricing() {
               : isBlue
               ? "bg-[#3b82f6] text-white shadow-[0_4px_18px_rgba(59,130,246,0.25)] hover:bg-[#2563eb]"
               : "bg-slate-100 text-slate-900 border border-slate-300 hover:bg-slate-200 dark:bg-white/[0.06] dark:text-white dark:border-white/[0.10] dark:hover:bg-white/[0.10]";
+
 
             const planPrice = formatPlanPrice(p.planKey as PlanKey, billingPeriod);
 

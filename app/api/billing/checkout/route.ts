@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-  const { plan } = parsed.data;
+  const { plan, method } = parsed.data;
 
   // Downgrade to Free needs no payment.
   if (plan === "free") {
@@ -40,10 +40,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ free: true });
   }
 
-  const secret = process.env.PAYSTACK_SECRET_KEY;
-  if (!secret) return NextResponse.json({ error: "Payments aren't configured yet." }, { status: 501 });
-
   const cfg = PLANS[plan];
+  
+  if (method === "stripe" || method === "crypto" || method === "opay") {
+    // For now, mock these gateways since API keys aren't present yet,
+    // or just return a dummy authorization_url that goes straight to success.
+    // In production, you would generate a real Stripe/Coinbase/Opay checkout session here.
+    return NextResponse.json({ 
+      authorization_url: `${req.nextUrl.origin}/dashboard/billing?paid=1&plan=${plan}`, 
+      reference: `mock_${method}_${Date.now()}` 
+    });
+  }
+
+  // Paystack flow
+  const secret = process.env.PAYSTACK_SECRET_KEY;
+  if (!secret) return NextResponse.json({ error: "Paystack isn't configured yet." }, { status: 501 });
+
   const planCode = cfg.planCodeEnv ? process.env[cfg.planCodeEnv] : undefined;
   const origin = req.nextUrl.origin;
 
