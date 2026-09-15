@@ -2,6 +2,7 @@ import { Preloader } from "@/components/landing/Preloader";
 import { Hero } from "@/components/landing/Hero";
 import { DashboardShowcase } from "@/components/landing/DashboardShowcase";
 import { WayContrast } from "@/components/landing/sections/WayContrast";
+import { OutcomesSection } from "@/components/landing/sections/OutcomesSection";
 import { FinalCTA } from "@/components/landing/sections/FinalCTA";
 
 /**
@@ -34,6 +35,8 @@ export default function LandingPage() {
       <WayContrast />
 
       {/* 3 — What KoraSpace gives back */}
+      <OutcomesSection />
+
       {/* 4 — The KoraSpace difference */}
       {/* 5 — Marketing that learns */}
 
