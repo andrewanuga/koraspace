@@ -1,6 +1,5 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { LegalShell, Section, Bullets, type LegalSectionItem } from "@/components/legal/LegalShell";
-import { Shield, Sparkles, FileText, Check } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Terms of Service — KoraSpace",
@@ -43,9 +42,9 @@ export default function TermsPage() {
       intro='These Terms of Service ("Terms", "Agreement") govern your access to and use of KoraSpace, including our web applications, mobile interfaces, APIs, AI creative suite, social management tools, analytics engines, workflow automations, and related services (collectively, the "Services"). KoraSpace is owned and operated by Koraspace Technologies ("KoraSpace", "we", "us", or "our"). By registering an account, connecting a social media profile, or accessing our platform, you agree to be bound by these Terms.'
       sections={SECTIONS}
       summaryPills={[
-        { icon: Check, text: "You Own Your Content" },
-        { icon: Shield, text: "Zero Hidden Fees" },
-        { icon: Sparkles, text: "Ethical AI Standards" },
+        { icon: "check", text: "You Own Your Content" },
+        { icon: "shield", text: "Zero Hidden Fees" },
+        { icon: "sparkles", text: "Ethical AI Standards" },
       ]}
       other={{ href: "/privacy", label: "Privacy Policy" }}
     >

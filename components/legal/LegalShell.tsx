@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import Link from "next/link";
@@ -23,6 +23,13 @@ export interface LegalSectionItem {
   title: string;
 }
 
+export type SummaryPillIcon = "shield" | "lock" | "sparkles" | "check" | "file";
+
+export interface SummaryPill {
+  icon?: SummaryPillIcon;
+  text: string;
+}
+
 interface LegalShellProps {
   title: string;
   updated: string;
@@ -30,7 +37,7 @@ interface LegalShellProps {
   sections?: LegalSectionItem[];
   other: { href: string; label: string };
   badge?: string;
-  summaryPills?: Array<{ icon?: React.ComponentType<{ className?: string }>; text: string }>;
+  summaryPills?: SummaryPill[];
   children: React.ReactNode;
 }
 
@@ -42,9 +49,9 @@ export function LegalShell({
   other,
   badge = "Legal & Compliance",
   summaryPills = [
-    { icon: Shield, text: "NDPA 2023 Compliant" },
-    { icon: Lock, text: "Zero-Password OAuth" },
-    { icon: Sparkles, text: "Transparent AI Processing" },
+    { icon: "shield", text: "NDPA 2023 Compliant" },
+    { icon: "lock", text: "Zero-Password OAuth" },
+    { icon: "sparkles", text: "Transparent AI Processing" },
   ],
   children,
 }: LegalShellProps) {
@@ -206,7 +213,17 @@ export function LegalShell({
           {summaryPills && summaryPills.length > 0 && (
             <div className="mt-8 flex flex-wrap gap-2.5">
               {summaryPills.map((pill, idx) => {
-                const IconComponent = pill.icon || Check;
+                const IconComponent =
+                  pill.icon === "lock"
+                    ? Lock
+                    : pill.icon === "sparkles"
+                    ? Sparkles
+                    : pill.icon === "file"
+                    ? FileText
+                    : pill.icon === "check"
+                    ? Check
+                    : Shield;
+
                 return (
                   <div
                     key={idx}
