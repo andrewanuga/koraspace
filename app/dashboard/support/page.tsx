@@ -32,7 +32,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { MarkdownRenderer } from "@/components/dashboard/MarkdownRenderer";
 
-const SUPPORT_EMAIL = "socially.ai.io@gmail.com";
+const SUPPORT_EMAIL = "support@koraspace.com";
 
 type Message = {
   id: string;

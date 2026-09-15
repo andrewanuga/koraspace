@@ -1,346 +1,223 @@
-import type { Metadata } from "next";
-import { LegalShell, Section, Bullets } from "@/components/legal/LegalShell";
+﻿import type { Metadata } from "next";
+import { LegalShell, Section, Bullets, type LegalSectionItem } from "@/components/legal/LegalShell";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — KoraSpace",
   description: "How KoraSpace collects, uses, protects, and handles your personal data.",
 };
 
+const SECTIONS: LegalSectionItem[] = [
+  { id: "info-collect", title: "1. Information We Collect" },
+  { id: "info-use", title: "2. How We Use Information" },
+  { id: "ai-processing", title: "3. AI Processing & Safeguards" },
+  { id: "legal-basis", title: "4. Legal Bases for Processing" },
+  { id: "social-integrations", title: "5. Social-Media Integrations" },
+  { id: "publishing", title: "6. Publishing on Your Behalf" },
+  { id: "sharing", title: "7. Information Sharing & Transfers" },
+  { id: "service-providers", title: "8. Subprocessors & Service Providers" },
+  { id: "international", title: "9. International Data Transfers" },
+  { id: "security", title: "10. Data Security & Storage" },
+  { id: "access-tokens", title: "11. OAuth Token Management" },
+  { id: "retention", title: "12. Data Retention Policy" },
+  { id: "deletion", title: "13. Account Deletion & Purging" },
+  { id: "rights", title: "14. Your Data Protection Rights" },
+  { id: "children", title: "15. Children's Privacy" },
+  { id: "marketing", title: "16. Marketing Communications" },
+  { id: "cookies", title: "17. Cookies & Tracking" },
+  { id: "third-party", title: "18. Third-Party Websites" },
+  { id: "changes", title: "19. Changes to Privacy Policy" },
+  { id: "complaints", title: "20. Regulatory Inquiries & Contact" },
+];
+
 export default function PrivacyPage() {
   return (
     <LegalShell
       title="Privacy Policy"
-      updated="September 7, 2026"
-      intro="KoraSpace is operated by Koraspace Team. This Privacy Policy explains how we collect, use, disclose, store, protect, and delete personal information when you use KoraSpace, including our website, applications, APIs, social-media integrations, AI services, and related products. We are committed to processing personal data fairly, lawfully, transparently, and securely. This Privacy Policy is intended to support compliance with applicable privacy laws, including the Nigeria Data Protection Act 2023, and other applicable data-protection requirements."
+      updated="September 14, 2026"
+      badge="Data Protection & Privacy"
+      intro="KoraSpace (operated by Koraspace Technologies) is committed to protecting your privacy and handling personal data with absolute transparency, strict least-privilege scoping, and enterprise-grade security. This policy outlines our collection, processing, AI analysis, retention, and deletion practices in full compliance with the Nigeria Data Protection Act 2023 (NDPA) and global data protection standards."
+      sections={SECTIONS}
       other={{ href: "/terms", label: "Terms of Service" }}
     >
-      <Section title="1. Information We Collect">
-        <p>Depending on how you use KoraSpace, we may collect the following categories of information.</p>
+      <Section id="info-collect" title="1. Information We Collect" takeaway="We collect only the minimum necessary information to provide AI social management, publishing, and analytics.">
+        <p>Depending on how you use KoraSpace, we may collect and process the following categories of information:</p>
         
-        <div className="mt-4 space-y-4">
-          <div>
-            <h3 className="font-semibold text-white text-[15px]">1.1 Account Information</h3>
-            <p className="mt-1">This may include:</p>
+        <div className="mt-4 space-y-6">
+          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <h3 className="font-semibold text-white text-[15px]">1.1 Account & Identity Information</h3>
+            <p className="mt-1 text-white/70">When you register or maintain a KoraSpace account:</p>
             <Bullets items={[
-              "name;",
-              "email address;",
-              "phone number;",
-              "password credentials in protected form;",
-              "profile information;",
-              "company or organization information;",
-              "billing information;",
-              "subscription information; and",
-              "account preferences.",
+              "Full name and display username;",
+              "Email address and verified contact details;",
+              "Encrypted password credentials (we never store plain-text passwords);",
+              "Profile preferences and avatar image;",
+              "Workspace, team, and organization metadata; and",
+              "Subscription tier and billing history.",
             ]} />
           </div>
 
-          <div>
-            <h3 className="font-semibold text-white text-[15px]">1.2 Social-Media Account Information</h3>
-            <p className="mt-1">When you connect a social-media platform, we may receive information authorized by that platform and by you.</p>
-            <p className="mt-1">Depending on the integration, this may include:</p>
+          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <h3 className="font-semibold text-white text-[15px]">1.2 Connected Social Platform Information</h3>
+            <p className="mt-1 text-white/70">When you connect your social media accounts (e.g. X, Instagram, LinkedIn, TikTok, YouTube, Facebook, WhatsApp, Telegram):</p>
             <Bullets items={[
-              "platform account identifier;",
-              "username or handle;",
-              "profile information;",
-              "pages or accounts you authorize;",
-              "posts;",
-              "media;",
-              "comments;",
-              "messages where permitted;",
-              "engagement information;",
-              "analytics;",
-              "audience information;",
-              "publishing permissions;",
-              "access tokens or authorization credentials;",
-              "account status; and",
-              "other information made available through the authorized API.",
+              "Platform user handles and unique account IDs;",
+              "OAuth access tokens and refresh tokens (stored encrypted at rest);",
+              "Authorized public metrics (impressions, reach, likes, comments, engagement rate);",
+              "Authorized publishing permissions for scheduling content; and",
+              "Public comments and incoming direct inquiries where you explicitly enable automated triage.",
             ]} />
-            <p className="mt-2">We only request permissions reasonably necessary for the functionality you choose to use.</p>
+            <p className="mt-2 text-xs text-blue-300">Note: We enforce a strict least-privilege scoping model and never request access to private inbox messaging or administrative account management unless explicitly configured for customer support automation.</p>
           </div>
 
-          <div>
-            <h3 className="font-semibold text-white text-[15px]">1.3 Content</h3>
-            <p className="mt-1">We may process:</p>
+          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <h3 className="font-semibold text-white text-[15px]">1.3 User Content & Creative Material</h3>
             <Bullets items={[
-              "text;",
-              "images;",
-              "videos;",
-              "audio;",
-              "documents;",
-              "captions;",
-              "drafts;",
-              "hashtags;",
-              "brand information;",
-              "campaign information;",
-              "content calendars;",
-              "comments;",
-              "messages;",
-              "advertising information; and",
-              "other material you provide.",
+              "Draft posts, scheduled posts, captions, hashtags, and threads;",
+              "Uploaded images, video clips, documents, and media assets;",
+              "Brand voice guidelines, persona parameters, and niche definitions; and",
+              "Marketing campaign goals, audience demographics, and outbound templates.",
             ]} />
           </div>
 
-          <div>
-            <h3 className="font-semibold text-white text-[15px]">1.4 Usage Information</h3>
-            <p className="mt-1">We may collect technical information such as:</p>
+          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <h3 className="font-semibold text-white text-[15px]">1.4 Technical & Usage Data</h3>
             <Bullets items={[
-              "IP address;",
-              "browser type;",
-              "operating system;",
-              "device information;",
-              "log data;",
-              "timestamps;",
-              "approximate location derived from technical information;",
-              "pages visited;",
-              "features used;",
-              "error information; and",
-              "interaction information.",
+              "IP address and approximate geolocation (used for account security, rate limiting, and fraud prevention);",
+              "Browser user agent, operating system, and screen resolution;",
+              "Feature utilization logs, performance metrics, and error traces; and",
+              "Session timestamps and security event audits.",
             ]} />
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-white text-[15px]">1.5 Cookies and Similar Technologies</h3>
-            <p className="mt-1">We may use cookies and similar technologies to:</p>
-            <Bullets items={[
-              "authenticate users;",
-              "maintain sessions;",
-              "remember preferences;",
-              "secure accounts;",
-              "understand product usage;",
-              "improve performance; and",
-              "measure website activity.",
-            ]} />
-            <p className="mt-2">Where required, we provide users with appropriate cookie choices.</p>
           </div>
         </div>
       </Section>
 
-      <Section title="2. How We Use Information">
-        <p>We may use information to:</p>
+      <Section id="info-use" title="2. How We Use Information" takeaway="Your data is used strictly to power social publishing, AI intelligence, and platform security. We never sell your personal data.">
+        <p>KoraSpace uses your data to:</p>
         <Bullets items={[
-          "create and maintain your account;",
-          "provide KoraSpace functionality;",
-          "connect your social-media accounts;",
-          "publish content at your direction;",
-          "schedule posts;",
-          "provide analytics;",
-          "generate AI-assisted content;",
-          "personalize recommendations;",
-          "detect trends;",
-          "provide customer support;",
-          "process payments;",
-          "prevent fraud and abuse;",
-          "secure our infrastructure;",
-          "investigate security incidents;",
-          "improve the Services;",
-          "communicate with users;",
-          "comply with legal obligations; and",
-          "enforce our Terms.",
+          "Authenticate your identity and maintain workspace security;",
+          "Publish and schedule social media content at your explicit direction;",
+          "Compute engagement analytics, ROAS, and audience growth charts;",
+          "Deliver AI-powered copy drafting, repurposing, and brand voice recommendations;",
+          "Execute automated workflows and customer lead triaging as configured by you;",
+          "Prevent fraud, prompt injection, unauthorized API access, and spam;",
+          "Process subscription renewals and invoices; and",
+          "Provide customer support and technical diagnostics.",
         ]} />
       </Section>
 
-      <Section title="3. AI Processing">
-        <p>KoraSpace may process information through artificial-intelligence systems to provide features such as:</p>
+      <Section id="ai-processing" title="3. AI Processing & Safeguards" takeaway="We never use your private data or copyrighted brand content to train public foundational AI models.">
+        <p>KoraSpace employs artificial intelligence to provide content generation, sentiment classification, and campaign optimization. When utilizing our AI features:</p>
         <Bullets items={[
-          "content generation;",
-          "content recommendations;",
-          "brand-voice assistance;",
-          "trend analysis;",
-          "post analysis;",
-          "campaign recommendations;",
-          "audience insights;",
-          "content scoring;",
-          "marketing recommendations; and",
-          "automation.",
-        ]} />
-        <p>We aim to limit AI processing to information necessary to provide the relevant feature.</p>
-        <p>We do not represent that AI-generated outputs are always accurate.</p>
-      </Section>
-
-      <Section title="4. Legal Bases for Processing">
-        <p>Depending on the circumstances and applicable law, we may process personal data based on:</p>
-        <Bullets items={[
-          "performance of a contract;",
-          "consent;",
-          "compliance with legal obligations;",
-          "legitimate interests;",
-          "protection of rights and security;",
-          "public interest where legally applicable; or",
-          "another lawful basis permitted by applicable law.",
-        ]} />
-        <p>We do not rely on consent where another lawful basis is more appropriate or where applicable law permits another basis.</p>
-      </Section>
-
-      <Section title="5. Social-Media Integrations">
-        <p>When you connect a social-media account, KoraSpace receives information from that platform based on:</p>
-        <Bullets items={[
-          "1. the permissions you authorize;",
-          "2. the APIs and data made available by the platform; and",
-          "3. the functionality you choose to use.",
-        ]} />
-        <p>We do not request social-media passwords where the relevant platform provides an authorized authentication mechanism.</p>
-        <p>KoraSpace does not claim ownership of your social-media accounts or content.</p>
-        <p>Your relationship with the third-party platform remains governed by that platform's own terms and policies.</p>
-      </Section>
-
-      <Section title="6. Publishing on Your Behalf">
-        <p>If you authorize KoraSpace to publish content, KoraSpace may transmit the relevant content and associated instructions to the connected platform.</p>
-        <p>You remain responsible for reviewing content and ensuring that your use complies with applicable platform rules.</p>
-        <p>Where technically required, KoraSpace will seek appropriate authorization before performing actions on your behalf.</p>
-      </Section>
-
-      <Section title="7. Information Sharing">
-        <p>We may share information with:</p>
-        <Bullets items={[
-          "infrastructure providers;",
-          "cloud hosting providers;",
-          "authentication providers;",
-          "payment processors;",
-          "AI service providers;",
-          "analytics providers;",
-          "customer-support providers;",
-          "email and communication providers;",
-          "security providers;",
-          "professional advisers;",
-          "regulators or law-enforcement authorities where legally required; and",
-          "third-party platforms you explicitly connect to KoraSpace.",
-        ]} />
-        <p>We do not sell your personal information as a standalone data product.</p>
-      </Section>
-
-      <Section title="8. Service Providers">
-        <p>Third-party providers may process information on our behalf. Examples may include:</p>
-        <Bullets items={[
-          "cloud hosting;",
-          "databases;",
-          "authentication;",
-          "AI processing;",
-          "payment processing;",
-          "analytics;",
-          "monitoring;",
-          "email delivery;",
-          "customer support;",
-          "security services; and",
-          "social-media APIs.",
-        ]} />
-        <p>We expect service providers handling personal information for KoraSpace to apply appropriate confidentiality and security protections.</p>
-      </Section>
-
-      <Section title="9. International Data Transfers">
-        <p>Some service providers may process information outside Nigeria or outside your country of residence.</p>
-        <p>Where applicable law requires safeguards for international transfers, we will implement appropriate measures.</p>
-      </Section>
-
-      <Section title="10. Data Security">
-        <p>We use reasonable technical and organizational measures designed to protect information.</p>
-        <p>Depending on the system and risk, these may include:</p>
-        <Bullets items={[
-          "encryption in transit;",
-          "access controls;",
-          "authentication;",
-          "rate limiting;",
-          "logging;",
-          "monitoring;",
-          "secure credential handling;",
-          "vulnerability management;",
-          "security testing;",
-          "backup controls;",
-          "incident response procedures; and",
-          "least-privilege access.",
-        ]} />
-        <p>No internet-based service can guarantee absolute security.</p>
-      </Section>
-
-      <Section title="11. Access Tokens">
-        <p>Where social platforms provide OAuth tokens or similar credentials, KoraSpace aims to store them using appropriate security controls and only use them for authorized functionality.</p>
-        <p>Users should revoke authorization when they no longer wish KoraSpace to access a connected account.</p>
-      </Section>
-
-      <Section title="12. Data Retention">
-        <p>We retain information only for as long as reasonably necessary for the purposes described in this Privacy Policy, unless a longer period is required or permitted by law.</p>
-        <p>Retention periods may depend on:</p>
-        <Bullets items={[
-          "the type of information;",
-          "the purpose of processing;",
-          "your account status;",
-          "contractual requirements;",
-          "legal requirements;",
-          "security requirements; and",
-          "third-party platform requirements.",
+          "Content prompts and brand context are processed transiently through enterprise API endpoints;",
+          "Your proprietary data is never used to train public third-party foundational models;",
+          "All outgoing prompts pass through automated Zero-Trust Prompt Injection and Safety filters; and",
+          "AI recommendations are assistive tools; you retain final editorial discretion over all published assets.",
         ]} />
       </Section>
 
-      <Section title="13. Deletion">
-        <p>You may request deletion of your KoraSpace account and personal information through the account controls or by contacting us.</p>
-        <p>When deletion is completed, we will delete or anonymize information that we are not required or permitted to retain.</p>
-        <p>Some information may remain where required for:</p>
+      <Section id="legal-basis" title="4. Legal Bases for Processing" takeaway="We process data in strict accordance with NDPA 2023 and global privacy frameworks.">
+        <p>We process personal data based on the following recognized legal grounds:</p>
         <Bullets items={[
-          "legal compliance;",
-          "fraud prevention;",
-          "security;",
-          "dispute resolution;",
-          "accounting;",
-          "tax requirements; or",
-          "establishment, exercise, or defense of legal claims.",
+          "Contractual Necessity: To deliver the services requested when you create an account;",
+          "Consent: Where you explicitly authorize a specific social media integration or feature;",
+          "Legitimate Interests: To detect security threats, improve platform reliability, and prevent abuse; and",
+          "Legal Obligations: To comply with applicable statutory, accounting, and tax reporting mandates.",
         ]} />
-        <p>Third-party platform data may also need to be deleted or disconnected through the relevant platform.</p>
       </Section>
 
-      <Section title="14. Your Data Protection Rights">
-        <p>Depending on applicable law, you may have rights relating to your personal data, including rights to:</p>
+      <Section id="social-integrations" title="5. Social-Media Integrations" takeaway="You retain 100% ownership of your social channels. We access APIs only within your authorized bounds.">
+        <p>KoraSpace interfaces with social platforms through their official developer APIs. When connecting channels:</p>
         <Bullets items={[
-          "access your personal data;",
-          "request correction;",
-          "request deletion;",
-          "object to certain processing;",
-          "withdraw consent where processing is based on consent;",
-          "request restriction of processing;",
-          "request portability where applicable;",
-          "lodge a complaint with the relevant supervisory authority; and",
-          "exercise other rights provided by applicable law.",
+          "Authentication is handled strictly via official OAuth protocols (we never see or store your social platform passwords);",
+          "You can revoke API permissions at any moment through KoraSpace or directly within the third-party platform settings; and",
+          "Your use of connected platforms remains subject to each provider's independent Terms and Policies.",
         ]} />
-        <p>Requests should be submitted using our privacy contact details.</p>
       </Section>
 
-      <Section title="15. Children's Privacy">
-        <p>KoraSpace is not intended for children who are below the minimum age required to use the Services under applicable law.</p>
-        <p>We do not knowingly collect children's personal information where prohibited by law.</p>
-        <p>If you believe a child has provided personal information improperly, contact us so we can investigate.</p>
+      <Section id="publishing" title="6. Publishing on Your Behalf">
+        <p>When you schedule or publish content through KoraSpace, we transmit the media and text payload directly to the chosen network on your behalf. You remain responsible for ensuring your posts comply with the destination platform's community standards and advertising guidelines.</p>
       </Section>
 
-      <Section title="16. Marketing Communications">
-        <p>We may send transactional communications necessary to operate your account.</p>
-        <p>Marketing communications will be handled in accordance with applicable law.</p>
-        <p>Where required, you may opt out of marketing communications while continuing to receive important service-related messages.</p>
+      <Section id="sharing" title="7. Information Sharing & Transfers" takeaway="We never sell personal data as a standalone product. Data is shared only with verified cloud infrastructure subprocessors.">
+        <p>We do not sell, rent, or trade your personal data. We disclose data solely to:</p>
+        <Bullets items={[
+          "Trusted cloud infrastructure and database hosts (e.g. Supabase, Vercel, AWS);",
+          "Payment gateways for secure PCI-compliant transaction processing;",
+          "Enterprise AI model endpoints for real-time generative capabilities; and",
+          "Regulatory or law enforcement agencies when strictly mandated by a valid court order or statutory requirement.",
+        ]} />
       </Section>
 
-      <Section title="17. Cookies">
-        <p>KoraSpace may use essential cookies required for authentication and security.</p>
-        <p>Where non-essential cookies are used, we will provide appropriate notice and choices where required.</p>
-        <p>A separate Cookie Policy may provide additional information.</p>
+      <Section id="service-providers" title="8. Subprocessors & Service Providers">
+        <p>All third-party vendors handling data on our behalf are bound by strict Data Processing Agreements (DPAs) requiring equal or greater technical confidentiality, access controls, and encryption standards.</p>
       </Section>
 
-      <Section title="18. Third-Party Websites">
-        <p>KoraSpace may contain links or integrations to third-party websites and platforms.</p>
-        <p>We are not responsible for the privacy practices of third parties.</p>
-        <p>You should review their privacy policies before providing information to them.</p>
+      <Section id="international" title="9. International Data Transfers">
+        <p>Where personal data is transferred across international borders, KoraSpace ensures appropriate transfer mechanisms (such as standard contractual clauses and robust encryption) to uphold data protection standards equivalent to those required under the Nigeria Data Protection Act 2023.</p>
       </Section>
 
-      <Section title="19. Changes to This Privacy Policy">
-        <p>We may update this Privacy Policy when our Services, technology, legal obligations, or processing practices change.</p>
-        <p>The updated version will be published with a new &quot;Last Updated&quot; date.</p>
-        <p>Where required, we will provide additional notice or obtain consent.</p>
+      <Section id="security" title="10. Data Security & Storage" takeaway="Zero-Trust architecture with AES-256 at rest, TLS 1.3 in transit, and continuous threat monitoring.">
+        <p>We maintain comprehensive technical and organizational safeguards:</p>
+        <Bullets items={[
+          "End-to-end encryption in transit (TLS 1.3) and AES-256 encryption at rest;",
+          "Strict Row-Level Security (RLS) enforcing multi-tenant isolation across all databases;",
+          "Automated rate limiting and SOC threat event auditing; and",
+          "Role-based least-privilege administrative access with mandatory two-factor authentication.",
+        ]} />
       </Section>
 
-      <Section title="20. Regulatory Complaints">
-        <p>If you believe your privacy rights have been violated, you should first contact KoraSpace so that we can investigate and attempt to resolve the matter.</p>
-        <p>You may also have the right to contact the relevant data-protection authority, including the Nigeria Data Protection Commission where applicable.</p>
+      <Section id="access-tokens" title="11. OAuth Token Management">
+        <p>Social media access tokens are stored in secure vault storage and utilized solely for scheduled actions requested by the user. Expired or revoked tokens are immediately purged upon disconnection.</p>
       </Section>
 
-      <div className="mt-8 border-t border-white/10 pt-6 text-[14.5px] font-medium text-white/80">
-        <p>By using KoraSpace, you acknowledge that you have reviewed this Privacy Policy.</p>
-      </div>
+      <Section id="retention" title="12. Data Retention Policy">
+        <p>We retain your personal data for as long as your account remains active. If you deactivate or delete your account, associated operational data is purged from active databases within 30 days, except where retention is legally required for financial audits or fraud investigation.</p>
+      </Section>
+
+      <Section id="deletion" title="13. Account Deletion & Purging" takeaway="You can request complete deletion of your account and data at any time directly from Settings.">
+        <p>You may permanently delete your KoraSpace account at any time via <strong>Settings &gt; Account &gt; Delete Account</strong> or by contacting <a href="mailto:privacy@koraspace.com" className="text-blue-400 hover:underline">privacy@koraspace.com</a>. Upon confirmation, all personal profiles, stored social tokens, media assets, and historical analytics are irrevocably erased.</p>
+      </Section>
+
+      <Section id="rights" title="14. Your Data Protection Rights" takeaway="Access, rectify, export, restrict, or erase your data at any time.">
+        <p>Under the NDPA 2023 and applicable privacy regulations, you have the right to:</p>
+        <Bullets items={[
+          "Access and receive a copy of your personal data;",
+          "Rectify inaccurate or outdated account information;",
+          "Request complete erasure of your personal data;",
+          "Object to or restrict specific automated processing;",
+          "Export your content and analytics in standard machine-readable formats; and",
+          "Withdraw previously granted consent at any time without penalty.",
+        ]} />
+      </Section>
+
+      <Section id="children" title="15. Children's Privacy">
+        <p>KoraSpace is strictly intended for professional creators, businesses, and individuals who have attained the legal age of majority in their jurisdiction. We do not knowingly collect personal information from individuals under 18 years of age.</p>
+      </Section>
+
+      <Section id="marketing" title="16. Marketing Communications">
+        <p>You may opt out of non-essential product announcement emails at any time using the &quot;Unsubscribe&quot; link in our emails. Critical transactional emails (e.g. password resets, security alerts, billing receipts) will still be delivered.</p>
+      </Section>
+
+      <Section id="cookies" title="17. Cookies & Tracking">
+        <p>We use essential cookies strictly required for authentication, security validation, and session integrity. We do not use third-party cross-site behavioral tracking cookies.</p>
+      </Section>
+
+      <Section id="third-party" title="18. Third-Party Websites">
+        <p>KoraSpace may provide links to external partner tools. We are not responsible for the privacy practices of external platforms, and we encourage you to review their independent privacy statements.</p>
+      </Section>
+
+      <Section id="changes" title="19. Changes to Privacy Policy">
+        <p>We may update this Privacy Policy periodically to reflect technological advances or legal updates. Material updates will be communicated via in-app broadcast or email prior to taking effect.</p>
+      </Section>
+
+      <Section id="complaints" title="20. Regulatory Inquiries & Contact">
+        <p>For any privacy inquiries, data subject access requests, or regulatory questions, please contact our Data Protection Officer:</p>
+        <div className="mt-3 rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 text-[13.5px] text-white/80 space-y-1">
+          <p><strong className="text-white">Koraspace Technologies — Privacy &amp; Data Protection Office</strong></p>
+          <p>Email: <a href="mailto:privacy@koraspace.com" className="text-blue-400 hover:underline">privacy@koraspace.com</a></p>
+          <p>Support Desk: <a href="mailto:support@koraspace.com" className="text-blue-400 hover:underline">support@koraspace.com</a></p>
+        </div>
+      </Section>
     </LegalShell>
   );
 }
-
