@@ -305,19 +305,21 @@ export function ProblemSolverSection() {
 /* ── 2. Dual-Mode Showcase Section (#dual-modes) ─────────────────── */
 
 export function DualModeShowcaseSection() {
+  const { t } = useLanguage();
+
   return (
     <section id="dual-modes" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28 scroll-mt-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="Two Distinct Operating Modes"
+          eyebrow={t.dualModes.eyebrow}
           tone="pink"
           title={
             <>
-              Built for <span className="text-[#ff0a8a]">Creators</span> &amp;{" "}
-              <span className="text-[#3b82f6]">Marketing Teams</span>
+              {t.dualModes.titleLead} <span className="text-[#ff0a8a]">{t.dualModes.titleCreators}</span> {t.dualModes.titleAnd}{" "}
+              <span className="text-[#3b82f6]">{t.dualModes.titleMarketers}</span>
             </>
           }
-          sub="Switch seamlessly between Creator Mode and Marketer Mode depending on whether you are crafting signature content or running an autonomous revenue campaign."
+          sub={t.dualModes.subtitle}
         />
 
         {/* Dual Cards Comparison Grid */}
@@ -336,7 +338,7 @@ export function DualModeShowcaseSection() {
             <div className="absolute top-4 right-5">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ff0a8a]/15 px-3 py-1 text-[11px] font-bold text-[#ff0a8a] border border-[#ff0a8a]/30">
                 <Sparkles className="h-3.5 w-3.5" />
-                <span>Creator Mode</span>
+                <span>{t.dashboardShowcase.creatorMode}</span>
               </span>
             </div>
 
@@ -346,29 +348,29 @@ export function DualModeShowcaseSection() {
               </div>
 
               <h3 className="font-display text-2xl font-bold text-slate-900 dark:text-white">
-                Brand Voice &amp; Audience Studio
+                {t.dualModes.creatorStudioTitle}
               </h3>
               <p className="mt-2.5 text-sm text-slate-600 dark:text-white/60 leading-relaxed">
-                For solo creators, thought leaders, and influencers who need to publish consistent, high-impact content across 6+ platforms without burning out.
+                {t.dualModes.creatorStudioDesc}
               </p>
 
               <div className="mt-6 space-y-3">
                 {[
                   {
-                    title: "AI Composing Pipeline",
-                    desc: "8-step AI workflow: voice match, web research, draft scoring, and reflection.",
+                    title: t.features.composerTitle,
+                    desc: t.features.composerDesc,
                   },
                   {
-                    title: "Visual Drag-and-Drop Calendar",
-                    desc: "Plan and rearrange weekly schedules across Instagram, TikTok, LinkedIn, and X.",
+                    title: t.features.calendarTitle,
+                    desc: t.features.calendarDesc,
                   },
                   {
-                    title: "Content Repurposer",
-                    desc: "Turn 1 YouTube video or article into 6 platform-native drafts instantly.",
+                    title: t.features.repurposerTitle,
+                    desc: t.features.repurposerDesc,
                   },
                   {
-                    title: "Viral Trend Radar & Idea Lab",
-                    desc: "Real-time niche trend monitoring with instant \"Turn into Draft\" actions.",
+                    title: t.dashboardShowcase.composerTitle,
+                    desc: t.dashboardShowcase.composerDesc,
                   },
                 ].map((item, i) => (
                   <motion.div
@@ -395,7 +397,7 @@ export function DualModeShowcaseSection() {
                 href="/signup"
                 className="bg-[#ff0a8a] text-white shadow-[0_4px_16px_rgba(255,10,138,0.25)] hover:bg-[#ff299b]"
               >
-                <span>Launch Creator Studio</span>
+                <span>{t.dualModes.launchCreator}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </LandingButton>
             </div>
@@ -415,7 +417,7 @@ export function DualModeShowcaseSection() {
             <div className="absolute top-4 right-5">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#3b82f6]/15 px-3 py-1 text-[11px] font-bold text-[#3b82f6] border border-[#3b82f6]/30">
                 <Target className="h-3.5 w-3.5" />
-                <span>Marketer Mode</span>
+                <span>{t.dashboardShowcase.marketerMode}</span>
               </span>
             </div>
 
@@ -425,29 +427,29 @@ export function DualModeShowcaseSection() {
               </div>
 
               <h3 className="font-display text-2xl font-bold text-slate-900 dark:text-white">
-                Marketing Operator &amp; Social CRM
+                {t.dualModes.marketerStudioTitle}
               </h3>
               <p className="mt-2.5 text-sm text-slate-600 dark:text-white/60 leading-relaxed">
-                For marketing teams, agencies, and businesses looking to automate lead triage, campaign execution, and full-funnel revenue attribution.
+                {t.dualModes.marketerStudioDesc}
               </p>
 
               <div className="mt-6 space-y-3">
                 {[
                   {
-                    title: "AI Marketing Operator",
-                    desc: "Action queue prioritizing high-intent leads, budget reallocations, and approval tasks.",
+                    title: t.features.inboxTitle,
+                    desc: t.features.inboxDesc,
                   },
                   {
-                    title: "Lead Intelligence & CRM Pipeline",
-                    desc: "Drag-and-drop Kanban board classifying leads from social comments and DMs.",
+                    title: t.features.agencyTitle,
+                    desc: t.features.agencyDesc,
                   },
                   {
-                    title: "Multi-Channel Campaigns Engine",
-                    desc: "Server-side stats tracking real-time ROAS, spend, clicks, and qualified conversions.",
+                    title: t.features.attributionTitle,
+                    desc: t.features.attributionDesc,
                   },
                   {
-                    title: "Agency Workspaces & Approvals",
-                    desc: "Manage multiple client brands with strict RLS permissions and shareable approval links.",
+                    title: t.dashboardShowcase.crmTitle,
+                    desc: t.dashboardShowcase.crmDesc,
                   },
                 ].map((item, i) => (
                   <motion.div
@@ -474,7 +476,7 @@ export function DualModeShowcaseSection() {
                 href="/signup"
                 className="bg-[#3b82f6] text-white shadow-[0_4px_16px_rgba(59,130,246,0.25)] hover:bg-[#2563eb]"
               >
-                <span>Launch Marketer Operator</span>
+                <span>{t.dualModes.launchMarketer}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </LandingButton>
             </div>
@@ -487,50 +489,52 @@ export function DualModeShowcaseSection() {
 
 /* ── 3. Growth Loop Section (#how) ────────────────────────────────── */
 
-const LOOP_STAGES = [
-  {
-    num: "01",
-    title: "Understand & Research",
-    desc: "Scans your brand guidelines, past viral winners, and real-time social trends across your niche.",
-    icon: Search,
-    color: "#ff0a8a",
-    badge: "Brand Brain",
-  },
-  {
-    num: "02",
-    title: "Strategize & Compose",
-    desc: "Executes an 8-step AI pipeline with tone-matching, draft scoring, and reflection before final output.",
-    icon: Sparkles,
-    color: "#ec4899",
-    badge: "AI Composer",
-  },
-  {
-    num: "03",
-    title: "Publish & Triage",
-    desc: "Auto-schedules across 6+ networks and triages incoming comments & DMs with high-intent lead detection.",
-    icon: Calendar,
-    color: "#3b82f6",
-    badge: "Multi-Platform CRM",
-  },
-  {
-    num: "04",
-    title: "Measure & Optimize",
-    desc: "Attributes social clicks to real pipeline revenue and automatically feeds insights into future strategy.",
-    icon: RefreshCw,
-    color: "#2563eb",
-    badge: "Closed-Loop Growth",
-  },
-];
-
 export function GrowthLoopSection() {
+  const { t } = useLanguage();
+
+  const loopStages = [
+    {
+      num: "01",
+      title: t.growthLoop.stage1Title,
+      desc: t.growthLoop.stage1Desc,
+      icon: Search,
+      color: "#ff0a8a",
+      badge: "Brand Brain",
+    },
+    {
+      num: "02",
+      title: t.growthLoop.stage2Title,
+      desc: t.growthLoop.stage2Desc,
+      icon: Sparkles,
+      color: "#ec4899",
+      badge: "AI Composer",
+    },
+    {
+      num: "03",
+      title: t.growthLoop.stage3Title,
+      desc: t.growthLoop.stage3Desc,
+      icon: Calendar,
+      color: "#3b82f6",
+      badge: "Multi-Platform CRM",
+    },
+    {
+      num: "04",
+      title: t.growthLoop.stage4Title,
+      desc: t.growthLoop.stage4Desc,
+      icon: RefreshCw,
+      color: "#2563eb",
+      badge: "Closed-Loop Growth",
+    },
+  ];
+
   return (
     <section id="how" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
       <div className="relative mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="The Autonomous Growth Loop"
+          eyebrow={t.growthLoop.eyebrow}
           tone="white"
-          title="Social media marketing that continuously optimizes itself."
-          sub="Buffer and Hootsuite make you do everything manually. KoraSpace connects understanding, creation, distribution, and revenue attribution in a single automated loop."
+          title={t.growthLoop.title}
+          sub={t.growthLoop.subtitle}
         />
 
         <motion.div
@@ -540,7 +544,7 @@ export function GrowthLoopSection() {
           viewport={{ once: true, margin: "-60px" }}
           className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4"
         >
-          {LOOP_STAGES.map((s) => (
+          {loopStages.map((s) => (
             <motion.div
               key={s.num}
               variants={itemFadeUp}
@@ -584,7 +588,7 @@ export function GrowthLoopSection() {
                 className="mt-6 flex items-center gap-1.5 text-xs font-bold"
                 style={{ color: s.color }}
               >
-                <span>Feeds next stage</span>
+                <span>{t.growthLoop.feedsNext}</span>
                 <ArrowRight className="h-3 w-3" />
               </div>
             </motion.div>
@@ -874,19 +878,20 @@ const AGENT_SWARM = [
 ];
 
 export function BrainAndAgentsSection() {
+  const { t } = useLanguage();
+
   return (
     <section id="brain" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="AI Multi-Agent Architecture"
+          eyebrow={t.brandBrain.eyebrow}
           tone="pink"
           title={
             <>
-              Powered by the <span className="text-[#ff0a8a]">Kora Brand Brain</span> &amp;{" "}
-              <span className="text-[#3b82f6]">8-Agent Swarm</span>
+              {t.brandBrain.title}
             </>
           }
-          sub="Instead of generic one-shot prompts, KoraSpace deploys a coordinated swarm of specialized agents connected to your persistent knowledge base."
+          sub={t.brandBrain.subtitle}
         />
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
@@ -913,27 +918,27 @@ export function BrainAndAgentsSection() {
                 <Brain className="h-6 w-6" />
               </div>
               <span className="font-mono text-xs uppercase tracking-wider text-[#ff0a8a] font-bold">
-                Persistent Knowledge Base
+                {t.brandBrain.brainTitle}
               </span>
               <h3 className="font-display mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-                KoraSpace Brand Brain
+                {t.brandBrain.brainTitle}
               </h3>
               <p className="mt-3 text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-white/60 font-normal">
-                Upload your website URL, product briefs, brand guidelines, and top-performing past posts. The Brand Brain builds a persistent memory profile so every post sounds authentically like your brand.
+                {t.brandBrain.brainDesc}
               </p>
 
               <div className="mt-6 space-y-2 text-xs text-slate-700 dark:text-white/70">
                 <div className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-[#ff0a8a]" />
-                  <span>Learns signature tone, vocabulary, and emoji rules</span>
+                  <span>{t.brandBrain.brainCheck1}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-[#ff0a8a]" />
-                  <span>Enforces custom guardrails (&quot;Never mention competitors&quot;)</span>
+                  <span>{t.brandBrain.brainCheck2}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-[#ff0a8a]" />
-                  <span>Uses winning historical content as benchmark truth</span>
+                  <span>{t.brandBrain.brainCheck3}</span>
                 </div>
               </div>
             </div>

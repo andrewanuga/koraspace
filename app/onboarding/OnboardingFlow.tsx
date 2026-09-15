@@ -42,6 +42,7 @@ import {
 
 import { useToast } from "@/components/ui/toast";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import {
   ANALYTICS_STYLES,
   FONT_FAMILIES,
@@ -750,14 +751,17 @@ export function OnboardingFlow({
           </div>
         </div>
 
-        <div className="hidden items-center gap-2 sm:flex">
-          <span
-            className="h-1.5 w-1.5 rounded-full animate-pulse"
-            style={{ background: accentColor }}
-          />
-          <span className="text-[10px] font-medium uppercase tracking-[0.13em] text-slate-400 dark:text-white/25">
-            Personalizing Koraspace
-          </span>
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher variant="compact" />
+          <div className="hidden items-center gap-2 sm:flex">
+            <span
+              className="h-1.5 w-1.5 rounded-full animate-pulse"
+              style={{ background: accentColor }}
+            />
+            <span className="text-[10px] font-medium uppercase tracking-[0.13em] text-slate-400 dark:text-white/25">
+              Personalizing Koraspace
+            </span>
+          </div>
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
@@ -20,6 +20,7 @@ import {
   Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 
 export interface LegalSectionItem {
   id: string;
@@ -164,6 +165,8 @@ export function LegalShell({
           </Link>
 
           <div className="flex items-center gap-3 sm:gap-4">
+            <LanguageSwitcher />
+
             {/* Theme Toggle Button */}
             {mounted && (
               <button

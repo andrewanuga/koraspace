@@ -18,8 +18,10 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 export function DashboardShowcase() {
+  const { t } = useLanguage();
   const [persona, setPersona] = useState<"creator" | "marketer">("creator");
 
   const isCreator = persona === "creator";
@@ -58,19 +60,19 @@ export function DashboardShowcase() {
                 className="h-1.5 w-1.5 rounded-full animate-pulse"
                 style={{ background: brandColor }}
               />
-              Live Interactive Workspace Preview
+              {t.dashboardShowcase.eyebrow}
             </span>
           </div>
 
           <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white max-w-2xl">
-            See KoraSpace in action:{" "}
+            {t.dashboardShowcase.title}{" "}
             <span style={{ color: brandColor }} className="transition-colors duration-300">
-              {isCreator ? "Creator Studio" : "Marketing Operator"}
+              {isCreator ? t.dashboardShowcase.creatorMode : t.dashboardShowcase.marketerMode}
             </span>
           </h2>
 
           <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-white/60 max-w-xl">
-            Switch between Creator Mode and Marketer Mode to preview how KoraSpace adapts to your workflow.
+            {t.dashboardShowcase.subtitle}
           </p>
 
           <div className="mt-6 inline-flex items-center gap-1 rounded-2xl border border-slate-200/90 bg-white/90 p-1.5 shadow-sm dark:border-white/[0.10] dark:bg-[#161616]/90 backdrop-blur-xl">
@@ -90,7 +92,7 @@ export function DashboardShowcase() {
               )}
               <span className="relative z-10 flex items-center gap-2">
                 <Sparkles className="h-3.5 w-3.5" />
-                <span>Creator Mode</span>
+                <span>{t.dashboardShowcase.creatorMode}</span>
               </span>
             </button>
 
@@ -110,7 +112,7 @@ export function DashboardShowcase() {
               )}
               <span className="relative z-10 flex items-center gap-2">
                 <Target className="h-3.5 w-3.5" />
-                <span>Marketer Mode</span>
+                <span>{t.dashboardShowcase.marketerMode}</span>
               </span>
             </button>
           </div>

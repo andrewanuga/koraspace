@@ -6,6 +6,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 
 export default function AuthLayout({
   children,
@@ -119,14 +120,17 @@ export default function AuthLayout({
               </span>
             </Link>
 
-            {/* Back link */}
-            <Link
-              href="/"
-              className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 text-[12px] font-medium text-white/50 transition-colors hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Back to site</span>
-            </Link>
+            {/* Back link & Language Switcher */}
+            <div className="ml-auto flex items-center gap-3">
+              <LanguageSwitcher variant="compact" />
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 text-[12px] font-medium text-white/50 transition-colors hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                <span>Back to site</span>
+              </Link>
+            </div>
           </div>
 
           {/* Form wrapper */}
