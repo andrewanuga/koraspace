@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   Check,
@@ -25,10 +26,110 @@ export default function AuthLayout({
         {/* =========================================================
             LEFT — PRODUCT / BRAND EXPERIENCE (Desktop)
         ========================================================= */}
-        <aside className="relative hidden min-h-screen overflow-hidden border-r border-white/[0.07] bg-[#121212] lg:flex">
-          {/* Subtle geometric lines */}
-          <div className="pointer-events-none absolute left-[-120px] top-[15%] h-[260px] w-[260px] rounded-full border border-[#ff0a8a]/10" />
-          <div className="pointer-events-none absolute bottom-[10%] right-[4%] h-[180px] w-[180px] rounded-full border border-[#3b82f6]/10" />
+        <aside className="relative hidden min-h-screen overflow-hidden border-r border-white/[0.07] bg-[#0e0e10] lg:flex">
+          {/* Animated Ambient Brand Blobs */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            {/* Primary Brand Pink Blob */}
+            <motion.div
+              animate={{
+                x: [0, 40, -30, 0],
+                y: [0, -50, 20, 0],
+                scale: [1, 1.15, 0.95, 1],
+              }}
+              transition={{
+                duration: 18,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute -left-20 -top-20 h-[520px] w-[520px] rounded-full opacity-35 blur-[120px]"
+              style={{
+                background:
+                  "radial-gradient(circle, #ff0a8a 0%, #b80062 50%, transparent 75%)",
+              }}
+            />
+
+            {/* Electric Brand Blue Blob */}
+            <motion.div
+              animate={{
+                x: [0, -50, 30, 0],
+                y: [0, 40, -30, 0],
+                scale: [1, 1.2, 0.9, 1],
+              }}
+              transition={{
+                duration: 22,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 2,
+              }}
+              className="absolute -bottom-24 right-[-10%] h-[480px] w-[480px] rounded-full opacity-30 blur-[130px]"
+              style={{
+                background:
+                  "radial-gradient(circle, #3b82f6 0%, #1d4ed8 50%, transparent 75%)",
+              }}
+            />
+
+            {/* Center Violet Synergy Glow */}
+            <motion.div
+              animate={{
+                x: [0, 25, -25, 0],
+                y: [0, -30, 35, 0],
+                scale: [0.9, 1.1, 1, 0.9],
+              }}
+              transition={{
+                duration: 26,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 4,
+              }}
+              className="absolute left-1/3 top-1/2 -translate-y-1/2 h-[420px] w-[420px] rounded-full opacity-20 blur-[140px]"
+              style={{
+                background:
+                  "radial-gradient(circle, #a855f7 0%, #7c3aed 50%, transparent 75%)",
+              }}
+            />
+
+            {/* Subtle Geometric Orbit Ring 1 (Brand Pink) */}
+            <motion.div
+              animate={{
+                rotate: 360,
+                scale: [1, 1.05, 1],
+              }}
+              transition={{
+                rotate: { duration: 40, repeat: Infinity, ease: "linear" },
+                scale: { duration: 10, repeat: Infinity, ease: "easeInOut" },
+              }}
+              className="absolute -left-[140px] top-[12%] h-[320px] w-[320px] rounded-full border border-[#ff0a8a]/20"
+            >
+              <div className="absolute top-1/2 -right-1.5 h-3 w-3 -translate-y-1/2 rounded-full bg-[#ff0a8a] shadow-[0_0_12px_#ff0a8a]" />
+            </motion.div>
+
+            {/* Subtle Geometric Orbit Ring 2 (Brand Blue) */}
+            <motion.div
+              animate={{
+                rotate: -360,
+                scale: [1, 1.08, 1],
+              }}
+              transition={{
+                rotate: { duration: 48, repeat: Infinity, ease: "linear" },
+                scale: { duration: 12, repeat: Infinity, ease: "easeInOut" },
+              }}
+              className="absolute bottom-[8%] -right-16 h-[260px] w-[260px] rounded-full border border-[#3b82f6]/20"
+            >
+              <div className="absolute top-0 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-[#3b82f6] shadow-[0_0_12px_#3b82f6]" />
+            </motion.div>
+
+            {/* Subtle Grid texture */}
+            <div
+              className="absolute inset-0 opacity-[0.035]"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)
+                `,
+                backgroundSize: "48px 48px",
+              }}
+            />
+          </div>
 
           <div className="relative z-10 flex w-full flex-col justify-between px-10 py-10 xl:px-14">
             {/* Top brand header */}
@@ -112,9 +213,63 @@ export default function AuthLayout({
         {/* =========================================================
             RIGHT — AUTH FORM CONTAINER
         ========================================================= */}
-        <main className="relative flex min-h-screen flex-1 flex-col justify-between">
+        <main className="relative flex min-h-screen flex-1 flex-col justify-between overflow-hidden bg-[#121212]">
+          {/* Animated Background Blobs on Auth form side */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            {/* Top Right Pink Glow */}
+            <motion.div
+              animate={{
+                x: [0, -30, 20, 0],
+                y: [0, 30, -20, 0],
+                scale: [1, 1.12, 0.95, 1],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute -right-24 -top-24 h-[460px] w-[460px] rounded-full opacity-20 blur-[130px]"
+              style={{
+                background:
+                  "radial-gradient(circle, #ff0a8a 0%, #b80062 50%, transparent 75%)",
+              }}
+            />
+
+            {/* Bottom Left Blue Glow */}
+            <motion.div
+              animate={{
+                x: [0, 30, -20, 0],
+                y: [0, -40, 20, 0],
+                scale: [1, 1.15, 0.9, 1],
+              }}
+              transition={{
+                duration: 24,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 3,
+              }}
+              className="absolute -bottom-28 -left-20 h-[440px] w-[440px] rounded-full opacity-18 blur-[120px]"
+              style={{
+                background:
+                  "radial-gradient(circle, #3b82f6 0%, #1d4ed8 50%, transparent 75%)",
+              }}
+            />
+
+            {/* Subtle Grid texture */}
+            <div
+              className="absolute inset-0 opacity-[0.025]"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)
+                `,
+                backgroundSize: "48px 48px",
+              }}
+            />
+          </div>
+
           {/* Top navigation row */}
-          <div className="flex items-center justify-between px-6 pt-6 sm:px-10">
+          <div className="relative z-10 flex items-center justify-between px-6 pt-6 sm:px-10">
             {/* Mobile Brand */}
             <Link href="/" className="flex items-center gap-2.5 lg:hidden">
               <KoraLogo />
@@ -137,12 +292,12 @@ export default function AuthLayout({
           </div>
 
           {/* Form wrapper */}
-          <div className="flex flex-1 items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
+          <div className="relative z-10 flex flex-1 items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
             {children}
           </div>
 
           {/* Mobile footer */}
-          <div className="px-6 pb-6 text-center text-[11px] text-white/25 lg:hidden">
+          <div className="relative z-10 px-6 pb-6 text-center text-[11px] text-white/25 lg:hidden">
             <span>© {new Date().getFullYear()} KoraSpace. All rights reserved.</span>
           </div>
         </main>
