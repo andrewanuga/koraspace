@@ -1,6 +1,325 @@
 import { TranslationDictionary } from "../types";
 
 export const zh: TranslationDictionary = {
+  onboarding: {
+  "topBarTitle": "工作区设置",
+  "secureBadge": "安全入驻流程",
+  "exit": "退出",
+  "stepIndicator": "步骤",
+  "personalizingBadge": "正在个性化 KoraSpace",
+  "stepTitles": [
+    "您的角色",
+    "您的目标",
+    "您的渠道",
+    "您的内容",
+    "您的受众",
+    "您的工作流",
+    "分析图表风格",
+    "排版与字体",
+    "界面外观"
+  ],
+  "step1": {
+    "eyebrow": "01",
+    "titleStart": "让我们为您量身",
+    "titleHighlight": "定制专属的 KoraSpace。",
+    "description": "告诉我们您如何使用社交媒体，以便我们正确配置您的工作区。",
+    "roles": {
+      "businessTitle": "企业 / 品牌",
+      "businessBlurb": "我经营一家企业，希望社交媒体能带来高意向客户线索。",
+      "businessDetail": "业务增长、线索转化、产品销售和品牌影响力。",
+      "creatorTitle": "创作者工作室",
+      "creatorBlurb": "我致力于建立受众群体、发布内容并扩大个人影响力。",
+      "creatorDetail": "受众增长、标志性品牌声音、高互动率与内容重用。",
+      "marketerTitle": "营销操作员",
+      "marketerBlurb": "我负责统筹市场营销、客户线索管道和多渠道运营。",
+      "marketerDetail": "营销活动、CRM线索分类、深度归因与自动化。"
+    }
+  },
+  "step2": {
+    "eyebrow": "02",
+    "titleStart": "KoraSpace 应该",
+    "titleHighlight": "帮助您实现什么目标？",
+    "description": "选择所有相关的目标。我们将据此优化您的仪表盘、内容建议和智能代理。",
+    "goals": {
+      "growth": {
+        "title": "扩大受众规模",
+        "description": "触达更多人群，显著提高品牌曝光度。"
+      },
+      "leads": {
+        "title": "获取销售线索",
+        "description": "将社交关注度转化为高意向潜在客户。"
+      },
+      "sales": {
+        "title": "提高销售业绩",
+        "description": "将内容和营销活动直接关联到实际收入。"
+      },
+      "content": {
+        "title": "创作优质内容",
+        "description": "生成更具吸引力且符合品牌语调的高质量文案。"
+      },
+      "brand": {
+        "title": "建立品牌权威",
+        "description": "树立专业、清晰且一致的行业影响力。"
+      },
+      "management": {
+        "title": "节省规划时间",
+        "description": "大幅精简发布排期与媒体素材管理流程。"
+      },
+      "repurpose": {
+        "title": "跨平台内容重用",
+        "description": "将单篇核心内容快速转化为多平台格式。"
+      },
+      "analytics": {
+        "title": "全链路数据归因",
+        "description": "全面洞察互动率、广告回报率与最终转化。"
+      }
+    },
+    "selectedCount": "个目标已选",
+    "selectAtLeastOne": "请至少选择一个目标"
+  },
+  "step3": {
+    "eyebrow": "03",
+    "titleStart": "您的受众主要",
+    "titleHighlight": "在哪些渠道关注您？",
+    "description": "选择您正在运营或计划拓展的社交平台。您可以稍后绑定账号。",
+    "platformsLabel": "您的平台与连接网络",
+    "usernameLabel": "您的工作区用户名",
+    "usernameHint": "这是您在 KoraSpace 的唯一用户名。仅限字母、数字和下划线。",
+    "usernamePlaceholder": "您的用户名",
+    "selectedCount": "个平台已选"
+  },
+  "step4": {
+    "eyebrow": "04",
+    "titleStart": "告诉我们您平时",
+    "titleHighlight": "创作哪些内容。",
+    "description": "这将在 AI 引擎开始提供智能建议前为其提供充分的内容背景。",
+    "nicheLabel": "您的垂直领域或行业主题",
+    "nichePlaceholder": "例如：人工智能、SaaS、时尚、健身、房地产、金融科技...",
+    "formatsLabel": "您主要使用哪些内容格式？",
+    "formats": {
+      "short_video": {
+        "title": "短视频",
+        "description": "Reels、TikTok、Shorts 等"
+      },
+      "text": {
+        "title": "图文与深度观点",
+        "description": "X 动态、LinkedIn 专业洞察"
+      },
+      "carousel": {
+        "title": "轮播图与幻灯片",
+        "description": "多页深度视觉拆解"
+      },
+      "image": {
+        "title": "单张图片与海报",
+        "description": "产品实拍、金句名言、宣传海报"
+      },
+      "long_form": {
+        "title": "长篇深度内容",
+        "description": "长文分析、电子周刊、YouTube 视频"
+      },
+      "mixed": {
+        "title": "全矩阵混合形式",
+        "description": "多元化跨平台全格式覆盖"
+      }
+    },
+    "cadenceLabel": "您期望的发布频率是？",
+    "cadences": {
+      "1": {
+        "title": "每周 1-2 篇",
+        "description": "低频发布，注重高品质与深度"
+      },
+      "3": {
+        "title": "每周 3-5 篇",
+        "description": "积极增长，保持受众互动势能"
+      },
+      "7": {
+        "title": "每日发布 (每周 7 篇)",
+        "description": "强劲的多渠道全天候曝光"
+      },
+      "14": {
+        "title": "每日多次高频发布",
+        "description": "全渠道海量内容密集覆盖"
+      }
+    }
+  },
+  "step5": {
+    "eyebrow": "05",
+    "titleStart": "补充一些",
+    "titleHighlight": "背景信息。",
+    "creatorDesc": "帮助我们深入了解您的目标受众，避免生成千篇一律的泛化内容。",
+    "clientDesc": "向我们介绍您正在发展的业务或品牌。",
+    "marketerDesc": "提供必要的市场背景，以获得更精准的商业智能分析。",
+    "audienceSizeLabel": "当前受众规模",
+    "targetAudienceLabel": "您希望触达的目标人群是谁？",
+    "targetAudiencePlaceholderCreator": "例如：正在构建 AI 初创企业的创始人",
+    "businessTypeLabel": "企业业务类型？",
+    "targetAudiencePlaceholderClient": "例如：一线城市的本地精品零售商家",
+    "industryLabel": "您所在的行业领域是？",
+    "industryPlaceholder": "例如：SaaS、金融科技、跨境电商...",
+    "primarilyMarketLabel": "您的主要推广对象是什么？"
+  },
+  "step6": {
+    "eyebrow": "06",
+    "titleStart": "您希望 KoraSpace",
+    "titleHighlight": "为您承担多少工作？",
+    "description": "掌控权始终在您手中。这仅用于设置工作区的自主能动性级别。",
+    "levels": {
+      "suggestions": {
+        "title": "智能建议与灵感",
+        "description": "为我提供灵感与策略建议，文案由我亲自撰写。"
+      },
+      "drafts": {
+        "title": "8步 AI 流水线草稿",
+        "description": "将策略建议一键转化为已符合品牌调性的初稿。"
+      },
+      "create_schedule": {
+        "title": "全自动生成并排期",
+        "description": "自动生成草稿并将其合理排入可视化日历。"
+      },
+      "automate": {
+        "title": "全自主营销操作员",
+        "description": "让 KoraSpace 全天候自动分类潜在客户并持续优化活动。"
+      }
+    },
+    "summaryConfigured": "您的工作区将完全根据上述回答进行量身配置。"
+  },
+  "step7": {
+    "eyebrow": "07",
+    "titleStart": "选择您的数据",
+    "titleHighlight": "分析图表风格。",
+    "description": "选择您偏好的默认图表呈现形式，这将决定仪表盘上增长与转化数据的展示方式。",
+    "bestForPrefix": "最适合：",
+    "styles": {
+      "auto": {
+        "title": "智能自适应",
+        "subtitle": "根据数据类型智能匹配",
+        "bestFor": "全自动根据指标类型选择最佳视图"
+      },
+      "area": {
+        "title": "面积堆叠图",
+        "subtitle": "体量与互动趋势",
+        "bestFor": "流量、曝光体量与累计受众规模"
+      },
+      "bar": {
+        "title": "柱状对比图",
+        "subtitle": "多维度对比拆解",
+        "bestFor": "多营销活动与不同渠道的效果横向对比"
+      },
+      "line": {
+        "title": "折线趋势图",
+        "subtitle": "增长轨迹与速率",
+        "bestFor": "长期增长趋势、速度与连续动态指标"
+      },
+      "donut": {
+        "title": "环形占比图",
+        "subtitle": "渠道分布构成",
+        "bestFor": "受众来源构成与各平台线索占比"
+      },
+      "funnel": {
+        "title": "漏斗转化图",
+        "subtitle": "全流程转化漏斗",
+        "bestFor": "从线索获取到资格审查及最终付费的流失分析"
+      },
+      "radar": {
+        "title": "雷达健康图",
+        "subtitle": "多维度综合评估",
+        "bestFor": "全方位多指标综合健康度雷达扫描"
+      }
+    }
+  },
+  "step8": {
+    "eyebrow": "08",
+    "titleStart": "选择您的系统",
+    "titleHighlight": "排版与字体风格。",
+    "description": "选择主字体，为您的整个操作界面、遥测数据及草稿文案奠定视觉基调。",
+    "fonts": {
+      "inter": {
+        "label": "Inter",
+        "category": "现代中性",
+        "preview": "天地玄黄 宇宙洪荒 日月盈昃 辰宿列张 · 1,234,567"
+      },
+      "geist": {
+        "label": "Geist",
+        "category": "极客精密",
+        "preview": "自主智能体全天候分析转化遥测数据 · 98.4%"
+      },
+      "dm-sans": {
+        "label": "DM Sans",
+        "category": "现代几何",
+        "preview": "已验证官方账号跨渠道受众增长速率 · +24.8%"
+      },
+      "manrope": {
+        "label": "Manrope",
+        "category": "典雅精炼",
+        "preview": "高绩效营销操作与全自主内容调度中枢"
+      },
+      "plus-jakarta": {
+        "label": "Plus Jakarta Sans",
+        "category": "高端行政",
+        "preview": "高管级商业营收信号与预测性智能决策 · ¥45,280"
+      },
+      "space-grotesk": {
+        "label": "Space Grotesk",
+        "category": "前沿科技",
+        "preview": "实时 AI 任务流执行与多渠道智能路由中枢"
+      },
+      "ibm-plex": {
+        "label": "IBM Plex Sans",
+        "category": "严谨工整",
+        "preview": "具备零信任凭证保护的全球分发网络"
+      }
+    }
+  },
+  "step9": {
+    "eyebrow": "09",
+    "titleStart": "界面外观与",
+    "titleHighlight": "仪表盘信息密度。",
+    "description": "在进入正式工作区前，定制您的主题配色方案与界面信息密度。",
+    "themeModeLabel": "主题外观模式",
+    "themes": {
+      "dark": {
+        "label": "暗黑模式",
+        "description": "深邃黑曜石"
+      },
+      "light": {
+        "label": "明亮模式",
+        "description": "清爽日间光感"
+      },
+      "system": {
+        "label": "跟随系统",
+        "description": "自动同步操作系统偏好"
+      }
+    },
+    "densityLabel": "仪表盘信息密度",
+    "densities": {
+      "minimal": {
+        "label": "极简舒适",
+        "badge": "清爽",
+        "description": "开阔留白与高层次核心指标概览"
+      },
+      "balanced": {
+        "label": "适中平衡",
+        "badge": "默认推荐",
+        "description": "卡片结构与丰富数据信息的完美平衡"
+      },
+      "detailed": {
+        "label": "专业密集",
+        "badge": "高级用户",
+        "description": "高密度遥测数据表与全景多指标网格"
+      }
+    },
+    "readyTitle": "您的专属工作区已准备就绪",
+    "readyDesc": "所有首选项将安全保存至您的 Supabase 个人档案中。"
+  },
+  "navigation": {
+    "back": "返回上一步",
+    "continue": "继续",
+    "enterWorkspace": "进入我的工作区",
+    "settingUp": "正在为您配置工作区...",
+    "getStartedBadge": "开始您的配置之旅",
+    "changeAnytimeReassurance": "您可以随时在工作区设置中修改这些个性化选项"
+  }
+},
   dashboardShowcase: {
   eyebrow: "实时交互式工作区预览",
   title: "看看 KoraSpace 是如何工作的：",

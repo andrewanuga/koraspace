@@ -1,6 +1,325 @@
 import { TranslationDictionary } from "../types";
 
 export const nl: TranslationDictionary = {
+  onboarding: {
+  "topBarTitle": "Werkruimte Instellen",
+  "secureBadge": "Veilige Onboarding",
+  "exit": "Afsluiten",
+  "stepIndicator": "Stap",
+  "personalizingBadge": "KoraSpace Personaliseren",
+  "stepTitles": [
+    "Je rol",
+    "Je doelen",
+    "Je kanalen",
+    "Je content",
+    "Je doelgroep",
+    "Je workflow",
+    "Analysestijl",
+    "Typografie",
+    "Weergave"
+  ],
+  "step1": {
+    "eyebrow": "01",
+    "titleStart": "Laten we jouw",
+    "titleHighlight": "KoraSpace rondom jou bouwen.",
+    "description": "Vertel ons hoe je sociale media gebruikt, zodat we je werkruimte perfect kunnen configureren.",
+    "roles": {
+      "businessTitle": "Bedrijf / Merk",
+      "businessBlurb": "Ik run een bedrijf en wil dat sociale media gekwalificeerde leads oplevert.",
+      "businessDetail": "Bedrijfsgroei, leads, omzet en merkbekendheid.",
+      "creatorTitle": "Creator Studio",
+      "creatorBlurb": "Ik bouw een publiek op, publiceer content en vergroot mijn invloed.",
+      "creatorDetail": "Doelgroepgroei, unieke content en hergebruik van formats.",
+      "marketerTitle": "Marketing Operator",
+      "marketerBlurb": "Ik beheer marketing, lead pipelines en multi-channel campagnes.",
+      "marketerDetail": "Campagnes, CRM lead triage, analyses en automatisering."
+    }
+  },
+  "step2": {
+    "eyebrow": "02",
+    "titleStart": "Wat moet KoraSpace",
+    "titleHighlight": "voor jou bereiken?",
+    "description": "Kies alles wat belangrijk is. We gebruiken deze doelen om je dashboard en AI-agent af te stemmen.",
+    "goals": {
+      "growth": {
+        "title": "Publiek laten groeien",
+        "description": "Bereik meer mensen en vergroot je zichtbaarheid."
+      },
+      "leads": {
+        "title": "Leads genereren",
+        "description": "Zet sociale aandacht om in potentiële klanten."
+      },
+      "sales": {
+        "title": "Verkoop verhogen",
+        "description": "Verbind content en campagnes rechtstreeks met omzet."
+      },
+      "content": {
+        "title": "Betere content maken",
+        "description": "Publiceer hoogwaardige posts in jouw merkstem."
+      },
+      "brand": {
+        "title": "Merkautoriteit opbouwen",
+        "description": "Zorg voor een consistente en professionele uitstraling."
+      },
+      "management": {
+        "title": "Tijd besparen op planning",
+        "description": "Stroomlijn planning en mediabeheer."
+      },
+      "repurpose": {
+        "title": "Hergebruiken op platforms",
+        "description": "Zet één stuk content om in meerdere formaten."
+      },
+      "analytics": {
+        "title": "Volledige funnel volgen",
+        "description": "Krijg inzicht in interactie, ROAS en conversie."
+      }
+    },
+    "selectedCount": "doelen geselecteerd",
+    "selectAtLeastOne": "Selecteer minstens één doel"
+  },
+  "step3": {
+    "eyebrow": "03",
+    "titleStart": "Waar vindt jouw",
+    "titleHighlight": "doelgroep jou?",
+    "description": "Selecteer de kanalen die je actief gebruikt. Je kunt later accounts koppelen.",
+    "platformsLabel": "Jouw platforms & gekoppelde netwerken",
+    "usernameLabel": "Jouw werkruimte gebruikersnaam",
+    "usernameHint": "Dit is jouw unieke gebruikersnaam. Alleen alfanumerieke tekens en underscores.",
+    "usernamePlaceholder": "jouwgebruikersnaam",
+    "selectedCount": "platforms geselecteerd"
+  },
+  "step4": {
+    "eyebrow": "04",
+    "titleStart": "Vertel ons wat",
+    "titleHighlight": "je creëert.",
+    "description": "Dit geeft de AI-contentengine context voordat deze aanbevelingen doet.",
+    "nicheLabel": "Jouw niche of sector",
+    "nichePlaceholder": "bijv. AI, SaaS, mode, fitness, vastgoed, fintech...",
+    "formatsLabel": "Welke formaten gebruik je?",
+    "formats": {
+      "short_video": {
+        "title": "Korte video",
+        "description": "Reels, TikToks, Shorts"
+      },
+      "text": {
+        "title": "Tekst & threads",
+        "description": "X posts, LinkedIn inzichten"
+      },
+      "carousel": {
+        "title": "Carrousels & slides",
+        "description": "Visuele gidsen met meerdere pagina's"
+      },
+      "image": {
+        "title": "Enkele afbeeldingen",
+        "description": "Productfoto's, quotes, flyers"
+      },
+      "long_form": {
+        "title": "Lange content",
+        "description": "Artikelen, nieuwsbrieven, YouTube"
+      },
+      "mixed": {
+        "title": "Een mix van alles",
+        "description": "Gevarieerd cross-platform formaat"
+      }
+    },
+    "cadenceLabel": "Hoe vaak wil je publiceren?",
+    "cadences": {
+      "1": {
+        "title": "1-2 posts / week",
+        "description": "Lage frequentie, hoge focus en consistentie"
+      },
+      "3": {
+        "title": "3-5 posts / week",
+        "description": "Actieve groei en doelgroepdynamiek"
+      },
+      "7": {
+        "title": "Dagelijks (7 posts / week)",
+        "description": "Krachtige multi-channel aanwezigheid"
+      },
+      "14": {
+        "title": "Meerdere keren per dag",
+        "description": "Hoog publicatievolume over alle kanalen"
+      }
+    }
+  },
+  "step5": {
+    "eyebrow": "05",
+    "titleStart": "Nog een klein beetje",
+    "titleHighlight": "extra context.",
+    "creatorDesc": "Help ons je doelgroep te begrijpen zodat aanbevelingen niet generiek zijn.",
+    "clientDesc": "Vertel ons over het bedrijf dat je wilt laten groeien.",
+    "marketerDesc": "Geef ons de benodigde context voor slimmere marketingintelligentie.",
+    "audienceSizeLabel": "Huidige omvang van je publiek",
+    "targetAudienceLabel": "Wie probeer je te bereiken?",
+    "targetAudiencePlaceholderCreator": "bijv. oprichters van AI startups",
+    "businessTypeLabel": "Wat voor type bedrijf?",
+    "targetAudiencePlaceholderClient": "bijv. lokale ondernemers in Amsterdam",
+    "industryLabel": "In welke sector werk je?",
+    "industryPlaceholder": "bijv. SaaS, fintech, e-commerce...",
+    "primarilyMarketLabel": "Wat promoot je voornamelijk?"
+  },
+  "step6": {
+    "eyebrow": "06",
+    "titleStart": "Hoeveel moet KoraSpace",
+    "titleHighlight": "voor jou doen?",
+    "description": "Jij behoudt de controle. Dit bepaalt hoe proactief je werkruimte functioneert.",
+    "levels": {
+      "suggestions": {
+        "title": "Suggesties & Ideeën",
+        "description": "Geef me ideeën. Ik schrijf de rest zelf."
+      },
+      "drafts": {
+        "title": "AI Concepten in 8 stappen",
+        "description": "Zet aanbevelingen direct om in bewerkbare concepten."
+      },
+      "create_schedule": {
+        "title": "Creëren & Auto-Plannen",
+        "description": "Genereer concepten en plaats ze direct op de kalender."
+      },
+      "automate": {
+        "title": "Autonome Operator",
+        "description": "Laat KoraSpace leads kwalificeren en campagnes optimaliseren."
+      }
+    },
+    "summaryConfigured": "Je werkruimte wordt geconfigureerd op basis van je antwoorden."
+  },
+  "step7": {
+    "eyebrow": "07",
+    "titleStart": "Kies jouw grafische",
+    "titleHighlight": "analysestijl.",
+    "description": "Selecteer de standaard visualisatie voor data, groei en prestaties op je dashboard.",
+    "bestForPrefix": "Ideaal voor:",
+    "styles": {
+      "auto": {
+        "title": "Slim / Auto",
+        "subtitle": "Context-adaptief",
+        "bestFor": "Automatische optimale weergave per metriek"
+      },
+      "area": {
+        "title": "Vlakdiagram",
+        "subtitle": "Volume & interactie",
+        "bestFor": "Verkeer, bereik en cumulatieve volumes"
+      },
+      "bar": {
+        "title": "Staafdiagram",
+        "subtitle": "Vergelijkend overzicht",
+        "bestFor": "Vergelijking van campagnes en platforms"
+      },
+      "line": {
+        "title": "Lijndiagram",
+        "subtitle": "Groei & trends",
+        "bestFor": "Groeitrajecten, snelheid en continue trends"
+      },
+      "donut": {
+        "title": "Cirkeldiagram",
+        "subtitle": "Kanaalverdeling",
+        "bestFor": "Publiek- en leadaandeel per platform"
+      },
+      "funnel": {
+        "title": "Trechterdiagram",
+        "subtitle": "Conversietrechter",
+        "bestFor": "Pipeline van Lead → Gekwalificeerd → Omzet"
+      },
+      "radar": {
+        "title": "Radardiagram",
+        "subtitle": "Gezondheid over meerdere assen",
+        "bestFor": "Multidimensionaal prestatieoverzicht"
+      }
+    }
+  },
+  "step8": {
+    "eyebrow": "08",
+    "titleStart": "Kies jouw",
+    "titleHighlight": "typografie & lettertype.",
+    "description": "Kies het hoofdlettertype dat de toon zet voor je interface, metrics en concepten.",
+    "fonts": {
+      "inter": {
+        "label": "Inter",
+        "category": "Modern & Neutraal",
+        "preview": "Pa's wijze lynx bezag vroom het fijne zand · 1.234.567"
+      },
+      "geist": {
+        "label": "Geist",
+        "category": "Technische Precisie",
+        "preview": "Autonome agents analyseren conversietelemetrie · 98.4%"
+      },
+      "dm-sans": {
+        "label": "DM Sans",
+        "category": "Hedendaags Geometrisch",
+        "preview": "Groeisnelheid van het publiek op geverifieerde accounts · +24.8%"
+      },
+      "manrope": {
+        "label": "Manrope",
+        "category": "Verfijnd Geometrisch",
+        "preview": "Hoogwaardige marketingoperaties & autonome planning"
+      },
+      "plus-jakarta": {
+        "label": "Plus Jakarta Sans",
+        "category": "Premium Zakelijk",
+        "preview": "Executive omzetsignalen en voorspellende intelligentie · €45.280"
+      },
+      "space-grotesk": {
+        "label": "Space Grotesk",
+        "category": "Toekomstgericht",
+        "preview": "Realtime AI pipeline uitvoering en multi-channel routering"
+      },
+      "ibm-plex": {
+        "label": "IBM Plex Sans",
+        "category": "Gestructureerd Redactioneel",
+        "preview": "Wereldwijd distributienetwerk met Zero-Trust authenticatie"
+      }
+    }
+  },
+  "step9": {
+    "eyebrow": "09",
+    "titleStart": "Weergave &",
+    "titleHighlight": "dashboarddichtheid.",
+    "description": "Stel je kleurenschema en interfacedichtheid in voordat je je live werkruimte betreedt.",
+    "themeModeLabel": "Themamodus",
+    "themes": {
+      "dark": {
+        "label": "Donkere Modus",
+        "description": "Diep obsidiaan"
+      },
+      "light": {
+        "label": "Lichte Modus",
+        "description": "Helder daglicht"
+      },
+      "system": {
+        "label": "Systeemvolgend",
+        "description": "Volgt voorkeur van het besturingssysteem"
+      }
+    },
+    "densityLabel": "Dashboarddichtheid",
+    "densities": {
+      "minimal": {
+        "label": "Minimaal",
+        "badge": "Rustig",
+        "description": "Ruime opzet met overzichtelijke samenvattingen"
+      },
+      "balanced": {
+        "label": "Gebalanceerd",
+        "badge": "Standaard",
+        "description": "Ideale balans tussen kaarten en gedetailleerde data"
+      },
+      "detailed": {
+        "label": "Gedetailleerd",
+        "badge": "Geavanceerd",
+        "description": "Compacte tabellen en uitgebreide grafieken"
+      }
+    },
+    "readyTitle": "Je Werkruimte Is Klaar",
+    "readyDesc": "Alles wordt direct opgeslagen in jouw Supabase-profiel."
+  },
+  "navigation": {
+    "back": "Terug",
+    "continue": "Verder",
+    "enterWorkspace": "Ga naar je werkruimte",
+    "settingUp": "Bezig met instellen...",
+    "getStartedBadge": "Laten we beginnen",
+    "changeAnytimeReassurance": "Je kunt deze instellingen altijd aanpassen in je werkruimte-instellingen"
+  }
+},
   dashboardShowcase: {
   eyebrow: "Live Interactieve Preview",
   title: "Bekijk KoraSpace in actie:",

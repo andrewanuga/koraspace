@@ -1,6 +1,325 @@
 import { TranslationDictionary } from "../types";
 
 export const fr: TranslationDictionary = {
+  onboarding: {
+  "topBarTitle": "Configuration de l'Espace",
+  "secureBadge": "Intégration Sécurisée",
+  "exit": "Quitter",
+  "stepIndicator": "Étape",
+  "personalizingBadge": "Personnalisation de KoraSpace",
+  "stepTitles": [
+    "Votre rôle",
+    "Vos objectifs",
+    "Vos canaux",
+    "Votre contenu",
+    "Votre audience",
+    "Votre flux de travail",
+    "Style d'analyse",
+    "Typographie",
+    "Apparence"
+  ],
+  "step1": {
+    "eyebrow": "01",
+    "titleStart": "Construisons votre",
+    "titleHighlight": "KoraSpace sur mesure.",
+    "description": "Dites-nous comment vous utilisez les réseaux sociaux afin que nous configurions votre espace de travail.",
+    "roles": {
+      "businessTitle": "Entreprise / Marque",
+      "businessBlurb": "Je gère une entreprise et souhaite que les réseaux génèrent des prospects qualifiés.",
+      "businessDetail": "Croissance de l'entreprise, leads, ventes et notoriété.",
+      "creatorTitle": "Studio Créateur",
+      "creatorBlurb": "Je développe une audience, publie du contenu et accrois mon influence.",
+      "creatorDetail": "Croissance d'audience, contenu signature et recyclage de formats.",
+      "marketerTitle": "Opérateur Marketing",
+      "marketerBlurb": "Je gère le marketing, les pipelines de leads et les campagnes multicanales.",
+      "marketerDetail": "Campagnes, tri des leads CRM, analytique et automatisation."
+    }
+  },
+  "step2": {
+    "eyebrow": "02",
+    "titleStart": "Que doit vous aider",
+    "titleHighlight": "à accomplir KoraSpace ?",
+    "description": "Sélectionnez tout ce qui compte. Nous utiliserons ces objectifs pour adapter votre tableau de bord et agent.",
+    "goals": {
+      "growth": {
+        "title": "Développer mon audience",
+        "description": "Toucher plus de monde et augmenter la visibilité."
+      },
+      "leads": {
+        "title": "Générer des leads",
+        "description": "Transformer l'attention sociale en prospects qualifiés."
+      },
+      "sales": {
+        "title": "Augmenter les ventes",
+        "description": "Lier le contenu et les campagnes aux revenus."
+      },
+      "content": {
+        "title": "Créer du meilleur contenu",
+        "description": "Produire des publications de qualité adaptées à votre voix."
+      },
+      "brand": {
+        "title": "Bâtir l'autorité de marque",
+        "description": "Établir une présence claire et cohérente."
+      },
+      "management": {
+        "title": "Gagner du temps sur le planning",
+        "description": "Simplifier la programmation et la gestion des médias."
+      },
+      "repurpose": {
+        "title": "Recycler sur plusieurs plateformes",
+        "description": "Transformer un contenu en plusieurs formats."
+      },
+      "analytics": {
+        "title": "Suivre l'ensemble de l'entonnoir",
+        "description": "Comprendre l'engagement, le ROAS et les conversions."
+      }
+    },
+    "selectedCount": "objectifs sélectionnés",
+    "selectAtLeastOne": "Sélectionnez au moins un objectif"
+  },
+  "step3": {
+    "eyebrow": "03",
+    "titleStart": "Où votre audience",
+    "titleHighlight": "vous trouve-t-elle ?",
+    "description": "Sélectionnez les réseaux que vous utilisez activement. Vous pourrez connecter vos comptes plus tard.",
+    "platformsLabel": "Vos plateformes et réseaux connectés",
+    "usernameLabel": "Votre nom d'utilisateur d'espace",
+    "usernameHint": "Votre identifiant unique KoraSpace. Caractères alphanumériques et tirets bas uniquement.",
+    "usernamePlaceholder": "votreidentifiant",
+    "selectedCount": "plateformes sélectionnées"
+  },
+  "step4": {
+    "eyebrow": "04",
+    "titleStart": "Dites-nous ce que",
+    "titleHighlight": "vous créez.",
+    "description": "Cela donne du contexte au moteur d'IA avant qu'il ne formule des recommandations.",
+    "nicheLabel": "Votre niche ou secteur d'activité",
+    "nichePlaceholder": "ex. IA, SaaS, mode, fitness, immobilier, fintech...",
+    "formatsLabel": "Quels formats utilisez-vous ?",
+    "formats": {
+      "short_video": {
+        "title": "Vidéo courte",
+        "description": "Reels, TikToks, Shorts"
+      },
+      "text": {
+        "title": "Texte & réflexions",
+        "description": "Posts X, réflexions LinkedIn"
+      },
+      "carousel": {
+        "title": "Carrousels & diapos",
+        "description": "Guides visuels multi-pages"
+      },
+      "image": {
+        "title": "Images uniques & visuels",
+        "description": "Photos de produits, citations, visuels"
+      },
+      "long_form": {
+        "title": "Contenu long format",
+        "description": "Articles, newsletters, YouTube"
+      },
+      "mixed": {
+        "title": "Un mélange de tout",
+        "description": "Format multiplateforme diversifié"
+      }
+    },
+    "cadenceLabel": "À quelle fréquence souhaitez-vous publier ?",
+    "cadences": {
+      "1": {
+        "title": "1-2 posts / semaine",
+        "description": "Faible fréquence, haute concentration et régularité"
+      },
+      "3": {
+        "title": "3-5 posts / semaine",
+        "description": "Croissance active et dynamique d'audience"
+      },
+      "7": {
+        "title": "Quotidien (7 posts / semaine)",
+        "description": "Présence multicanale soutenue"
+      },
+      "14": {
+        "title": "Plusieurs fois par jour",
+        "description": "Gros volume de publication sur tous les canaux"
+      }
+    }
+  },
+  "step5": {
+    "eyebrow": "05",
+    "titleStart": "Un peu plus",
+    "titleHighlight": "de contexte.",
+    "creatorDesc": "Aidez-nous à comprendre votre audience pour des suggestions pertinentes.",
+    "clientDesc": "Parlez-nous de l'entreprise que vous souhaitez développer.",
+    "marketerDesc": "Donnez-nous le contexte requis pour une intelligence marketing optimale.",
+    "audienceSizeLabel": "Taille actuelle de votre audience",
+    "targetAudienceLabel": "Qui cherchez-vous à toucher ?",
+    "targetAudiencePlaceholderCreator": "ex. fondateurs de startups IA",
+    "businessTypeLabel": "Quel type d'activité ?",
+    "targetAudiencePlaceholderClient": "ex. propriétaires de commerces à Paris",
+    "industryLabel": "Dans quel secteur travaillez-vous ?",
+    "industryPlaceholder": "ex. SaaS, fintech, e-commerce...",
+    "primarilyMarketLabel": "Que commercialisez-vous principalement ?"
+  },
+  "step6": {
+    "eyebrow": "06",
+    "titleStart": "Quel niveau d'aide",
+    "titleHighlight": "attendez-vous de KoraSpace ?",
+    "description": "Vous gardez le contrôle. Cela indique le degré de proactivité de votre espace.",
+    "levels": {
+      "suggestions": {
+        "title": "Suggestions & Idées",
+        "description": "Donnez-moi des idées. Je rédigerai le reste."
+      },
+      "drafts": {
+        "title": "Brouillons IA en 8 étapes",
+        "description": "Transformez les idées en brouillons prêts à publier."
+      },
+      "create_schedule": {
+        "title": "Création & Auto-planification",
+        "description": "Générez des brouillons et placez-les sur le calendrier."
+      },
+      "automate": {
+        "title": "Opérateur Autonome",
+        "description": "Laissez KoraSpace qualifier les leads et optimiser les campagnes."
+      }
+    },
+    "summaryConfigured": "Votre espace sera configuré selon vos réponses."
+  },
+  "step7": {
+    "eyebrow": "07",
+    "titleStart": "Choisissez votre style",
+    "titleHighlight": "d'analyse graphique.",
+    "description": "Sélectionnez le type de visualisation par défaut pour vos métriques et performances.",
+    "bestForPrefix": "Idéal pour :",
+    "styles": {
+      "auto": {
+        "title": "Intelligent / Auto",
+        "subtitle": "Adaptatif au contexte",
+        "bestFor": "Sélection automatique selon les métriques"
+      },
+      "area": {
+        "title": "Graphique d'Aire",
+        "subtitle": "Volume & engagement",
+        "bestFor": "Trafic, portée et volume cumulé"
+      },
+      "bar": {
+        "title": "Graphique en Barres",
+        "subtitle": "Comparatif par canaux",
+        "bestFor": "Comparaison des campagnes et plateformes"
+      },
+      "line": {
+        "title": "Courbe Linéaire",
+        "subtitle": "Croissance & tendances",
+        "bestFor": "Trajectoire, vitesse et progression continue"
+      },
+      "donut": {
+        "title": "Graphique Circulaire",
+        "subtitle": "Répartition des canaux",
+        "bestFor": "Part d'audience et de leads par canal"
+      },
+      "funnel": {
+        "title": "Graphique Entonnoir",
+        "subtitle": "Tunnel de conversion",
+        "bestFor": "Pipeline Lead → Qualifié → Revenus"
+      },
+      "radar": {
+        "title": "Graphique Radar",
+        "subtitle": "Santé multiaxiale",
+        "bestFor": "Aperçu global multidimensionnel"
+      }
+    }
+  },
+  "step8": {
+    "eyebrow": "08",
+    "titleStart": "Choisissez votre",
+    "titleHighlight": "typographie & police.",
+    "description": "Sélectionnez la police principale qui donnera le ton à votre interface et vos publications.",
+    "fonts": {
+      "inter": {
+        "label": "Inter",
+        "category": "Moderne et Neutre",
+        "preview": "Portez ce vieux whisky au juge blond qui fume · 1 234 567"
+      },
+      "geist": {
+        "label": "Geist",
+        "category": "Précision Technique",
+        "preview": "Agents autonomes analysant la télémétrie de conversion · 98.4%"
+      },
+      "dm-sans": {
+        "label": "DM Sans",
+        "category": "Géométrique Contemporain",
+        "preview": "Vitesse de croissance de l'audience sur les comptes vérifiés · +24.8%"
+      },
+      "manrope": {
+        "label": "Manrope",
+        "category": "Géométrique Raffiné",
+        "preview": "Opérations marketing haute performance et programmation autonome"
+      },
+      "plus-jakarta": {
+        "label": "Plus Jakarta Sans",
+        "category": "Exécutif Premium",
+        "preview": "Signaux de revenus et intelligence prédictive · 45 280 €"
+      },
+      "space-grotesk": {
+        "label": "Space Grotesk",
+        "category": "Avant-gardiste",
+        "preview": "Exécution de pipelines IA en temps réel et routage multicanal"
+      },
+      "ibm-plex": {
+        "label": "IBM Plex Sans",
+        "category": "Éditorial Structuré",
+        "preview": "Réseau de distribution mondial avec authentification Zero-Trust"
+      }
+    }
+  },
+  "step9": {
+    "eyebrow": "09",
+    "titleStart": "Apparence &",
+    "titleHighlight": "densité du tableau de bord.",
+    "description": "Ajustez le thème et la densité de l'interface avant d'entrer dans votre espace de travail.",
+    "themeModeLabel": "Mode d'Affichage",
+    "themes": {
+      "dark": {
+        "label": "Mode Sombre",
+        "description": "Obsidienne profonde"
+      },
+      "light": {
+        "label": "Mode Clair",
+        "description": "Lumière éclatante"
+      },
+      "system": {
+        "label": "Synchronisé au Système",
+        "description": "Suit les réglages de l'OS"
+      }
+    },
+    "densityLabel": "Densité du Tableau de Bord",
+    "densities": {
+      "minimal": {
+        "label": "Minimal",
+        "badge": "Épuré",
+        "description": "Espacement généreux avec synthèses claires"
+      },
+      "balanced": {
+        "label": "Équilibré",
+        "badge": "Défaut",
+        "description": "Équilibre idéal entre cartes et données riches"
+      },
+      "detailed": {
+        "label": "Détaillé",
+        "badge": "Expert",
+        "description": "Tableaux de télémétrie denses et grilles multi-métriques"
+      }
+    },
+    "readyTitle": "Votre Espace de Travail Est Prêt",
+    "readyDesc": "Tous vos paramètres seront enregistrés sur votre profil Supabase."
+  },
+  "navigation": {
+    "back": "Retour",
+    "continue": "Continuer",
+    "enterWorkspace": "Accéder à mon espace",
+    "settingUp": "Configuration en cours...",
+    "getStartedBadge": "Commençons votre configuration",
+    "changeAnytimeReassurance": "Vous pouvez modifier ces paramètres à tout moment dans les préférences"
+  }
+},
   dashboardShowcase: {
   eyebrow: "Aperçu Interactif du Tableau de Bord",
   title: "Voir KoraSpace en action :",

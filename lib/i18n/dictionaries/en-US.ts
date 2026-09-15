@@ -1,6 +1,325 @@
 import { TranslationDictionary } from "../types";
 
 export const enUS: TranslationDictionary = {
+  onboarding: {
+  "topBarTitle": "Workspace Setup",
+  "secureBadge": "Secure Onboarding",
+  "exit": "Exit",
+  "stepIndicator": "Step",
+  "personalizingBadge": "Personalizing Koraspace",
+  "stepTitles": [
+    "Your role",
+    "Your goals",
+    "Your channels",
+    "Your content",
+    "Your audience",
+    "Your workflow",
+    "Analytics style",
+    "Typography",
+    "Appearance"
+  ],
+  "step1": {
+    "eyebrow": "01",
+    "titleStart": "Let's build your",
+    "titleHighlight": "Koraspace around you.",
+    "description": "Tell us how you work with social media so we can configure your workspace properly.",
+    "roles": {
+      "businessTitle": "Business / Brand",
+      "businessBlurb": "I run a business and want social media to drive qualified leads.",
+      "businessDetail": "Business growth, leads, sales, and brand presence.",
+      "creatorTitle": "Creator Studio",
+      "creatorBlurb": "I build an audience, publish content, and grow my influence.",
+      "creatorDetail": "Audience growth, signature content, engagement, and repurposing.",
+      "marketerTitle": "Marketing Operator",
+      "marketerBlurb": "I manage marketing, lead pipelines, and multi-channel campaigns.",
+      "marketerDetail": "Campaigns, CRM lead triage, analytics, and autonomous automation."
+    }
+  },
+  "step2": {
+    "eyebrow": "02",
+    "titleStart": "What should",
+    "titleHighlight": "Koraspace help you achieve?",
+    "description": "Pick everything that matters. We'll use these goals to prioritize your dashboard, recommendations and agent.",
+    "goals": {
+      "growth": {
+        "title": "Grow my audience",
+        "description": "Reach more people and increase visibility."
+      },
+      "leads": {
+        "title": "Generate leads",
+        "description": "Turn social attention into qualified prospects."
+      },
+      "sales": {
+        "title": "Increase sales",
+        "description": "Connect content and campaigns to revenue."
+      },
+      "content": {
+        "title": "Create better content",
+        "description": "Produce higher quality, voice-matched posts."
+      },
+      "brand": {
+        "title": "Build brand authority",
+        "description": "Establish a clear, consistent presence."
+      },
+      "management": {
+        "title": "Save time on planning",
+        "description": "Streamline scheduling and asset management."
+      },
+      "repurpose": {
+        "title": "Repurpose across platforms",
+        "description": "Turn one piece of content into multiple formats."
+      },
+      "analytics": {
+        "title": "Track full-funnel metrics",
+        "description": "Understand engagement, ROAS, and conversion."
+      }
+    },
+    "selectedCount": "goals selected",
+    "selectAtLeastOne": "Select at least one goal"
+  },
+  "step3": {
+    "eyebrow": "03",
+    "titleStart": "Where does your",
+    "titleHighlight": "audience find you?",
+    "description": "Select the channels you actively use or plan to grow. You can connect accounts later.",
+    "platformsLabel": "Your platforms & connected networks",
+    "usernameLabel": "Your workspace username",
+    "usernameHint": "This is your unique Koraspace username. Alphanumeric characters and underscores only.",
+    "usernamePlaceholder": "yourhandle",
+    "selectedCount": "platforms selected"
+  },
+  "step4": {
+    "eyebrow": "04",
+    "titleStart": "Tell us what",
+    "titleHighlight": "you create.",
+    "description": "This gives the content engine context before it starts making recommendations.",
+    "nicheLabel": "Your niche or industry topic",
+    "nichePlaceholder": "e.g. AI, SaaS, fashion, fitness, real estate, fintech...",
+    "formatsLabel": "What formats do you use?",
+    "formats": {
+      "short_video": {
+        "title": "Short-form video",
+        "description": "Reels, TikToks, Shorts"
+      },
+      "text": {
+        "title": "Text & threads",
+        "description": "X posts, LinkedIn insights"
+      },
+      "carousel": {
+        "title": "Carousels & slides",
+        "description": "Multi-slide visual breakdowns"
+      },
+      "image": {
+        "title": "Single images & graphics",
+        "description": "Product shots, quotes, flyers"
+      },
+      "long_form": {
+        "title": "Long-form content",
+        "description": "Articles, newsletters, YouTube"
+      },
+      "mixed": {
+        "title": "A mix of everything",
+        "description": "Diverse cross-platform format"
+      }
+    },
+    "cadenceLabel": "How often do you want to publish?",
+    "cadences": {
+      "1": {
+        "title": "1-2 posts / week",
+        "description": "Low-frequency, high-focus consistency"
+      },
+      "3": {
+        "title": "3-5 posts / week",
+        "description": "Active growth and audience momentum"
+      },
+      "7": {
+        "title": "Daily (7 posts / week)",
+        "description": "Aggressive multi-channel presence"
+      },
+      "14": {
+        "title": "Multiple times / day",
+        "description": "Heavy publishing volume across channels"
+      }
+    }
+  },
+  "step5": {
+    "eyebrow": "05",
+    "titleStart": "A little more",
+    "titleHighlight": "context.",
+    "creatorDesc": "Help us understand your audience so recommendations aren't generic.",
+    "clientDesc": "Tell us about the business you're trying to grow.",
+    "marketerDesc": "Give us the context you need for better marketing intelligence.",
+    "audienceSizeLabel": "Current audience size",
+    "targetAudienceLabel": "Who are you trying to reach?",
+    "targetAudiencePlaceholderCreator": "e.g. founders building AI startups",
+    "businessTypeLabel": "What type of business?",
+    "targetAudiencePlaceholderClient": "e.g. small business owners in Lagos",
+    "industryLabel": "What industry do you work in?",
+    "industryPlaceholder": "e.g. SaaS, fintech, e-commerce...",
+    "primarilyMarketLabel": "What do you primarily market?"
+  },
+  "step6": {
+    "eyebrow": "06",
+    "titleStart": "How much should",
+    "titleHighlight": "Koraspace do for you?",
+    "description": "You stay in control. This simply tells Koraspace how proactive your workspace should be.",
+    "levels": {
+      "suggestions": {
+        "title": "Suggestions & Ideas",
+        "description": "Give me ideas and recommendations. I'll craft the rest."
+      },
+      "drafts": {
+        "title": "AI Pipeline Drafts",
+        "description": "Turn recommendations into ready-to-edit 8-step drafts."
+      },
+      "create_schedule": {
+        "title": "Create & Auto-Schedule",
+        "description": "Generate drafts and place them onto the visual calendar."
+      },
+      "automate": {
+        "title": "Autonomous Operator",
+        "description": "Let Koraspace triage leads and optimize campaigns continuously."
+      }
+    },
+    "summaryConfigured": "Your workspace will be configured around your answers."
+  },
+  "step7": {
+    "eyebrow": "07",
+    "titleStart": "Choose your",
+    "titleHighlight": "analytics style.",
+    "description": "Select your default chart visualization. This shapes how performance, growth, and conversion data are plotted across your dashboard.",
+    "bestForPrefix": "Best for:",
+    "styles": {
+      "auto": {
+        "title": "Smart / Auto",
+        "subtitle": "Context-aware adaptive",
+        "bestFor": "Automated best fit for metric type"
+      },
+      "area": {
+        "title": "Area Chart",
+        "subtitle": "Volume & engagement",
+        "bestFor": "Traffic, reach, engagement volume over time"
+      },
+      "bar": {
+        "title": "Bar Chart",
+        "subtitle": "Comparative breakdown",
+        "bestFor": "Comparing campaigns & platform splits"
+      },
+      "line": {
+        "title": "Line Chart",
+        "subtitle": "Growth & trajectories",
+        "bestFor": "Growth, velocity, and multi-trend progress"
+      },
+      "donut": {
+        "title": "Donut Chart",
+        "subtitle": "Channel distribution",
+        "bestFor": "Platform audience and lead share breakdown"
+      },
+      "funnel": {
+        "title": "Funnel Chart",
+        "subtitle": "Conversion pipeline",
+        "bestFor": "Lead → qualified → revenue pipeline dropoffs"
+      },
+      "radar": {
+        "title": "Radar Chart",
+        "subtitle": "Multi-axis health",
+        "bestFor": "Multi-dimensional performance overview"
+      }
+    }
+  },
+  "step8": {
+    "eyebrow": "08",
+    "titleStart": "Choose your",
+    "titleHighlight": "typography & font.",
+    "description": "Select the primary typeface that sets the tone for your interface, metrics telemetry, and post drafts.",
+    "fonts": {
+      "inter": {
+        "label": "Inter",
+        "category": "Modern Neutral",
+        "preview": "The quick brown fox jumps over the lazy dog · 1,234,567"
+      },
+      "geist": {
+        "label": "Geist",
+        "category": "Technical Precision",
+        "preview": "Autonomous agents analyzing conversion telemetry · 98.4%"
+      },
+      "dm-sans": {
+        "label": "DM Sans",
+        "category": "Contemporary Geometric",
+        "preview": "Audience growth velocity across verified accounts · +24.8%"
+      },
+      "manrope": {
+        "label": "Manrope",
+        "category": "Refined Geometric",
+        "preview": "High-performance marketing operations & autonomous scheduling"
+      },
+      "plus-jakarta": {
+        "label": "Plus Jakarta Sans",
+        "category": "Premium Executive",
+        "preview": "Executive revenue signals and predictive intelligence · $45,280"
+      },
+      "space-grotesk": {
+        "label": "Space Grotesk",
+        "category": "Tech-Forward",
+        "preview": "Real-time AI pipeline execution and multi-channel routing"
+      },
+      "ibm-plex": {
+        "label": "IBM Plex Sans",
+        "category": "Structured Editorial",
+        "preview": "Global distribution network with zero-trust credentials"
+      }
+    }
+  },
+  "step9": {
+    "eyebrow": "09",
+    "titleStart": "Appearance &",
+    "titleHighlight": "dashboard density.",
+    "description": "Tune your color scheme and interface density before entering your live workspace.",
+    "themeModeLabel": "Theme Mode",
+    "themes": {
+      "dark": {
+        "label": "Dark Mode",
+        "description": "Deep obsidian"
+      },
+      "light": {
+        "label": "Light Mode",
+        "description": "Crisp daylight"
+      },
+      "system": {
+        "label": "System Sync",
+        "description": "Follows OS preference"
+      }
+    },
+    "densityLabel": "Dashboard Density",
+    "densities": {
+      "minimal": {
+        "label": "Minimal",
+        "badge": "Clean",
+        "description": "Generous whitespace with high-level summaries"
+      },
+      "balanced": {
+        "label": "Balanced",
+        "badge": "Default",
+        "description": "Optimal equilibrium of cards and rich data"
+      },
+      "detailed": {
+        "label": "Detailed",
+        "badge": "Power User",
+        "description": "Dense telemetry tables and multi-metric grids"
+      }
+    },
+    "readyTitle": "Your Workspace Is Ready",
+    "readyDesc": "Everything will be configured and saved to your Supabase profile."
+  },
+  "navigation": {
+    "back": "Back",
+    "continue": "Continue",
+    "enterWorkspace": "Enter your workspace",
+    "settingUp": "Setting up...",
+    "getStartedBadge": "Let's get you set up",
+    "changeAnytimeReassurance": "You can change these settings anytime in workspace settings"
+  }
+},
   nav: {
     product: "Product",
     audience: "Made for",

@@ -498,4 +498,120 @@ export interface TranslationDictionary {
     loading: string;
     secureBadge: string;
   };
+  onboarding: {
+    topBarTitle: string;
+    secureBadge: string;
+    exit: string;
+    stepIndicator: string;
+    personalizingBadge: string;
+    stepTitles: [string, string, string, string, string, string, string, string, string];
+    step1: {
+      eyebrow: string;
+      titleStart: string;
+      titleHighlight: string;
+      description: string;
+      roles: {
+        businessTitle: string;
+        businessBlurb: string;
+        businessDetail: string;
+        creatorTitle: string;
+        creatorBlurb: string;
+        creatorDetail: string;
+        marketerTitle: string;
+        marketerBlurb: string;
+        marketerDetail: string;
+      };
+    };
+    step2: {
+      eyebrow: string;
+      titleStart: string;
+      titleHighlight: string;
+      description: string;
+      goals: Record<string, { title: string; description: string }>;
+      selectedCount: string;
+      selectAtLeastOne: string;
+    };
+    step3: {
+      eyebrow: string;
+      titleStart: string;
+      titleHighlight: string;
+      description: string;
+      platformsLabel: string;
+      usernameLabel: string;
+      usernameHint: string;
+      usernamePlaceholder: string;
+      selectedCount: string;
+    };
+    step4: {
+      eyebrow: string;
+      titleStart: string;
+      titleHighlight: string;
+      description: string;
+      nicheLabel: string;
+      nichePlaceholder: string;
+      formatsLabel: string;
+      formats: Record<string, { title: string; description: string }>;
+      cadenceLabel: string;
+      cadences: Record<string, { title: string; description: string }>;
+    };
+    step5: {
+      eyebrow: string;
+      titleStart: string;
+      titleHighlight: string;
+      creatorDesc: string;
+      clientDesc: string;
+      marketerDesc: string;
+      audienceSizeLabel: string;
+      targetAudienceLabel: string;
+      targetAudiencePlaceholderCreator: string;
+      businessTypeLabel: string;
+      targetAudiencePlaceholderClient: string;
+      industryLabel: string;
+      industryPlaceholder: string;
+      primarilyMarketLabel: string;
+    };
+    step6: {
+      eyebrow: string;
+      titleStart: string;
+      titleHighlight: string;
+      description: string;
+      levels: Record<string, { title: string; description: string }>;
+      summaryConfigured: string;
+    };
+    step7: {
+      eyebrow: string;
+      titleStart: string;
+      titleHighlight: string;
+      description: string;
+      bestForPrefix: string;
+      styles: Record<string, { title: string; subtitle: string; bestFor: string }>;
+    };
+    step8: {
+      eyebrow: string;
+      titleStart: string;
+      titleHighlight: string;
+      description: string;
+      fonts: Record<string, { label: string; category: string; preview: string }>;
+    };
+    step9: {
+      eyebrow: string;
+      titleStart: string;
+      titleHighlight: string;
+      description: string;
+      themeModeLabel: string;
+      themes: Record<string, { label: string; description: string }>;
+      densityLabel: string;
+      densities: Record<string, { label: string; badge: string; description: string }>;
+      readyTitle: string;
+      readyDesc: string;
+    };
+    navigation: {
+      back: string;
+      continue: string;
+      enterWorkspace: string;
+      settingUp: string;
+      getStartedBadge: string;
+      changeAnytimeReassurance: string;
+    };
+  };
 }
