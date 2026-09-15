@@ -1,6 +1,7 @@
 import { Preloader } from "@/components/landing/Preloader";
 import { Hero } from "@/components/landing/Hero";
 import { DashboardShowcase } from "@/components/landing/DashboardShowcase";
+import { WayContrast } from "@/components/landing/sections/WayContrast";
 import { FinalCTA } from "@/components/landing/sections/FinalCTA";
 
 /**
@@ -30,6 +31,8 @@ export default function LandingPage() {
           customers to name. Nothing invented sits on this page. */}
 
       {/* 2 — Old way vs the KoraSpace way */}
+      <WayContrast />
+
       {/* 3 — What KoraSpace gives back */}
       {/* 4 — The KoraSpace difference */}
       {/* 5 — Marketing that learns */}
