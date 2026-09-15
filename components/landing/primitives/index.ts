@@ -4,6 +4,14 @@
  * drift apart visually.
  */
 
+// The layered-scene system. A section built from these reads as a composition
+// with depth rather than a rectangle in a column.
+export { Scene } from "./Scene";
+export { SceneNumeral } from "./SceneNumeral";
+export { FloatingCard } from "./FloatingCard";
+export { ConnectorLine } from "./ConnectorLine";
+export { useParallax, type ParallaxDepth } from "./useParallax";
+
 export { LandingButton } from "./LandingButton";
 export { Eyebrow, type SectionTone } from "./Eyebrow";
 export { SectionHead } from "./SectionHead";
