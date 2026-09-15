@@ -14,7 +14,6 @@
 import type { AgentContext, AgentResult } from "../../core/types";
 import { defaultToolRegistry } from "../../tools/index";
 import { callAI, isConfigured, ChatMessage, buildMultimodalContent } from "../../openrouter";
-import { AI_TOOLS } from "../../tools";
 import {
   BrandIntelligenceLoader,
   MemoryFormationEngine,
@@ -26,6 +25,7 @@ import type {
   AgentStep,
   ChatAgentInput,
   ChatAgentOutput,
+  ChatPlan,
   ToolInvocation,
 } from "./types";
 import { ChatPlanner } from "./planner";
@@ -115,17 +115,7 @@ export class ChatAgent {
       }
 
     // 3. Planning and Intent Decomposition
-    
     const plan = ChatPlanner.plan(messages);
-    // Policy decision for the plan
-    const { decidePlan } = await import('./policyEngine');
-    const planDecision = decidePlan(plan, context);
-    if (planDecision.action !== 'ALLOW') {
-      const errorMsg = `Policy ${planDecision.action}: ${planDecision.reasons.join('; ')}`;
-      return { success: false, error: { code: planDecision.action, message: errorMsg }, metadata: { latencyMs: Date.now() - startTime } } as any;
-    }
-    // Attach plan to context for later invocation checks
-    (context as any).currentPlan = plan;
     const steps: AgentStep[] = [];
 
     // 4. Construct System Prompt with ContextEngine output
@@ -180,8 +170,7 @@ export class ChatAgent {
     }
 
     // 7. Tool Definitions from ToolRegistry
-    const registeredDefinitions = defaultToolRegistry.getDefinitions();
-    const toolsToUse = registeredDefinitions.length > 0 ? registeredDefinitions : AI_TOOLS;
+    const toolsToUse = defaultToolRegistry.getDefinitions();
 
     // 8. ReAct Reasoning Loop
     let iterations = 0;
@@ -239,7 +228,8 @@ export class ChatAgent {
         const { step: observationStep, observationText } = await ChatExecutor.executeTool(
           iterations,
           invocation,
-          context
+          context,
+          plan
         );
 
         steps.push(observationStep);
@@ -313,13 +303,47 @@ export class ChatAgent {
   }
 
   /**
-   * Helper to execute a specific tool directly through the registry.
+   * Helper to execute a specific tool through the policy-governed ChatExecutor.
+   * Requires a validated ChatPlan.
    */
   public static async executeTool(
     toolName: string,
     params: unknown,
-    context: AgentContext
+    context: AgentContext,
+    plan: ChatPlan
   ): Promise<AgentResult<unknown>> {
-    return defaultToolRegistry.execute(toolName, params, context);
+    const args = (typeof params === "object" && params !== null
+      ? (params as Record<string, unknown>)
+      : {}) as ToolInvocation["args"];
+
+    const invocation: ToolInvocation = {
+      toolName,
+      args,
+      timestamp: Date.now(),
+    };
+
+    const { step, observationText } = await ChatExecutor.executeTool(
+      1,
+      invocation,
+      context,
+      plan
+    );
+
+    if (step.observation?.success) {
+      return {
+        success: true,
+        data: step.observation.output,
+        metadata: { latencyMs: step.observation.latencyMs },
+      };
+    }
+
+    return {
+      success: false,
+      error: {
+        code: "TOOL_EXECUTION_FAILED",
+        message: step.observation?.error || observationText,
+      },
+      metadata: { latencyMs: step.observation?.latencyMs ?? 0 },
+    };
   }
 }

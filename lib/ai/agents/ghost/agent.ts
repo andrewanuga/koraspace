@@ -13,7 +13,6 @@
 import { z } from "zod";
 import type { AgentContext, AgentResult } from "../../core/types";
 import { callAI, isConfigured } from "../../openrouter";
-import { defaultToolRegistry } from "../../tools/index";
 import { dispatchReply } from "../../../social/dispatch";
 import {
   BrandIntelligenceLoader,
@@ -267,17 +266,6 @@ JSON SCHEMA:
         latencyMs: Date.now() - startTime,
       },
     };
-  }
-
-  /**
-   * Run ReAct tool enrichment using the ToolRegistry.
-   */
-  public static async executeTool(
-    toolName: string,
-    params: unknown,
-    context: AgentContext
-  ): Promise<AgentResult<unknown>> {
-    return defaultToolRegistry.execute(toolName, params, context);
   }
 
   /**

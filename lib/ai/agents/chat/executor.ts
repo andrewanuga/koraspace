@@ -10,7 +10,7 @@
 
 import type { AgentContext } from "../../core/types";
 import { defaultToolRegistry } from "../../tools/index";
-import type { AgentStep, ToolInvocation, ToolObservation } from "./types";
+import type { AgentStep, ToolInvocation, ToolObservation, ChatPlan } from "./types";
 
 export class ChatExecutor {
   /**
@@ -19,17 +19,18 @@ export class ChatExecutor {
   public static async executeTool(
     stepIndex: number,
     invocation: ToolInvocation,
-    context: AgentContext
+    context: AgentContext,
+    plan: ChatPlan
   ): Promise<{ step: AgentStep; observationText: string }> {
     const startTime = Date.now();
     const { toolName } = invocation;
 
     // Policy check for this invocation
     const { decideInvocation } = await import('./policyEngine');
-    const plan = (context as any).currentPlan as any;
+    // plan is passed as argument to executeTool
     const decision = decideInvocation({ toolInvocation: invocation, plan, context });
     if (decision.action !== 'ALLOW') {
-      const errorMsg = `Policy ${decision.action}: ${decision.reasons.join('; ')}`;
+      const errorMsg = `Policy ${decision.action} (${decision.reasonCodes.join(', ')}): ${decision.reasons.join('; ')}`;
       const observation: ToolObservation = {
         toolName,
         success: false,

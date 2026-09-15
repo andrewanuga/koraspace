@@ -133,14 +133,6 @@ async function runTests() {
   assert(leadEvalRes.data?.isLead === true, "GhostAgent marks isLead as true");
   assert(leadEvalRes.data?.policy.requiresHumanApproval === true, "GhostAgent enforces policy in result");
 
-  // ── 7. Tool Execution via ToolRegistry ───────────────────────────
-  const toolRes = await GhostAgent.executeTool(
-    "get_current_time",
-    { timeZone: "UTC" },
-    assistCtx
-  );
-  assert(toolRes.success === true, "GhostAgent.executeTool() successfully calls registered tool");
-
   console.log("\n==================================================");
   console.log(`📊 Test Summary: ${passed} passed, ${failed} failed`);
   console.log("==================================================");
