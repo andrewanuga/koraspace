@@ -65,6 +65,7 @@ export const verifyClaimTool: AITool<
 > = {
   name: "verify_claim",
   description: "Verify a factual statement, statistic, or bold marketing claim. Provides a nuanced credibility verdict, caveats, and safe counter-framing recommendations.",
+  requiredCapabilities: ["web:search"],
   parameters: {
     type: "object",
     properties: {

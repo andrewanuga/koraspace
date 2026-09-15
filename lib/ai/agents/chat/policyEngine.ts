@@ -1,5 +1,5 @@
 import type { ChatPlan, PolicyDecision, PolicyAction, PolicyReasonCode } from './types';
-import type { AgentContext } from '../../core/types';
+import type { AgentContext, Capability } from '../../core/types';
 import type { ToolInvocation } from './types';
 import { defaultToolRegistry } from '../../tools/index';
 
@@ -19,26 +19,37 @@ const MUTATING_TOOLS = new Set<string>([
 ]);
 
 /**
+ * Check if the agent context holds a given capability.
+ */
+function hasCapability(context: AgentContext, cap: Capability): boolean {
+  return (context.capabilities ?? []).includes(cap);
+}
+
+/**
  * Decide whether a plan is permissible before the ReAct loop.
  */
 export function decidePlan(plan: ChatPlan, context: AgentContext): PolicyDecision {
   const reasonCodes: PolicyReasonCode[] = [];
   const reasons: string[] = [];
 
-  // Verify required tools exist in registry
-  for (const tool of plan.requiredTools) {
-    if (!defaultToolRegistry.has(tool)) {
+  // Verify required tools exist in registry and check capability requirements
+  for (const toolName of plan.requiredTools) {
+    const tool = defaultToolRegistry.get(toolName);
+    if (!tool) {
       reasonCodes.push('UNKNOWN_TOOL');
-      reasons.push(`Tool "${tool}" is not registered.`);
+      reasons.push(`Tool "${toolName}" is not registered.`);
+      continue;
     }
-  }
 
-  // Simple RBAC – assume permissions is an array of tool names
-  const perms = (context.permissions as unknown as string[]) ?? [];
-  for (const tool of plan.requiredTools) {
-    if (!perms.includes(tool)) {
-      reasonCodes.push('MISSING_PERMISSION');
-      reasons.push(`Missing permission for tool "${tool}".`);
+    if (tool.requiredCapabilities && tool.requiredCapabilities.length > 0) {
+      for (const cap of tool.requiredCapabilities) {
+        if (!hasCapability(context, cap)) {
+          if (!reasonCodes.includes('MISSING_CAPABILITY')) {
+            reasonCodes.push('MISSING_CAPABILITY');
+          }
+          reasons.push(`Missing required capability "${cap}" for tool "${toolName}".`);
+        }
+      }
     }
   }
 
@@ -74,11 +85,20 @@ export function decideInvocation(ctx: InvocationContext): PolicyDecision {
   const reasonCodes: PolicyReasonCode[] = [];
   const reasons: string[] = [];
 
-  // RBAC for the invoked tool
-  const perms = (context.permissions as unknown as string[]) ?? [];
-  if (!perms.includes(toolInvocation.toolName)) {
-    reasonCodes.push('MISSING_PERMISSION');
-    reasons.push(`Missing permission for tool "${toolInvocation.toolName}".`);
+  // Capability check for the invoked tool
+  const tool = defaultToolRegistry.get(toolInvocation.toolName);
+  if (!tool) {
+    reasonCodes.push('UNKNOWN_TOOL');
+    reasons.push(`Tool "${toolInvocation.toolName}" is not registered.`);
+  } else if (tool.requiredCapabilities && tool.requiredCapabilities.length > 0) {
+    for (const cap of tool.requiredCapabilities) {
+      if (!hasCapability(context, cap)) {
+        if (!reasonCodes.includes('MISSING_CAPABILITY')) {
+          reasonCodes.push('MISSING_CAPABILITY');
+        }
+        reasons.push(`Missing required capability "${cap}" for tool "${toolInvocation.toolName}".`);
+      }
+    }
   }
 
   // Must be declared in plan
@@ -105,6 +125,9 @@ export function decideInvocation(ctx: InvocationContext): PolicyDecision {
   }
 
   // Decision precedence
+  if (reasonCodes.includes('UNKNOWN_TOOL')) {
+    return { action: 'DENY', reasonCodes, reasons };
+  }
   if (reasonCodes.includes('PLAN_DEVIATION')) {
     return { action: 'DENY', reasonCodes, reasons };
   }
@@ -114,7 +137,7 @@ export function decideInvocation(ctx: InvocationContext): PolicyDecision {
   if (reasonCodes.includes('CONFIRMATION_REQUIRED')) {
     return { action: 'REQUIRE_CONFIRMATION', reasonCodes, reasons, requiredConfirmation: 'User must approve this mutating action.' };
   }
-  if (reasonCodes.includes('MISSING_PERMISSION')) {
+  if (reasonCodes.includes('MISSING_CAPABILITY')) {
     return { action: 'DENY', reasonCodes, reasons };
   }
 

@@ -97,7 +97,7 @@ export class ChatAgent {
         attachments,
         model: model,
         supabase: context.supabase,
-        permissions: context.permissions,
+        capabilities: context.capabilities,
         // other optional fields can be added as needed
       } as any; // ContextRequest type
       const engine = new ContextEngine();

@@ -8,7 +8,44 @@
  * - Workspace configuration & billing
  */
 
+import type { Capability } from "./capabilities";
+
 export type WorkspaceRole = "owner" | "admin" | "member" | "viewer";
+
+export const ROLE_CAPABILITIES: Record<WorkspaceRole, readonly Capability[]> = {
+  owner: [
+    "content:generate",
+    "content:score",
+    "social:read",
+    "social:schedule",
+    "social:publish",
+    "inbox:read",
+    "inbox:reply",
+    "web:search",
+  ],
+  admin: [
+    "content:generate",
+    "content:score",
+    "social:read",
+    "social:schedule",
+    "social:publish",
+    "inbox:read",
+    "inbox:reply",
+    "web:search",
+  ],
+  member: ["content:generate", "social:read", "web:search"],
+  viewer: ["social:read", "inbox:read"],
+};
+
+export function capabilitiesForRole(role: WorkspaceRole): Capability[] {
+  return [...(ROLE_CAPABILITIES[role] ?? [])];
+}
+
+export function enforceCapability(role: WorkspaceRole, cap: Capability): void {
+  if (!capabilitiesForRole(role).includes(cap)) {
+    throw new Error(`Forbidden: Role "${role}" lacks capability "${cap}".`);
+  }
+}
 
 export type AIPermission =
   | "chat:execute"

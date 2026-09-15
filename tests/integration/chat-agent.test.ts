@@ -30,15 +30,15 @@ describe("ChatAgent (ReAct Reasoning & Memory Integration)", () => {
       { role: "user", content: "What time is it in London right now?" },
     ]);
 
-    const contextWithPerms: AgentContext = {
+    const contextWithCaps: AgentContext = {
       ...context,
-      permissions: ["get_current_time"] as unknown as AgentContext["permissions"],
+      capabilities: ["content:generate"],
     };
 
     const res = await ChatAgent.executeTool(
       "get_current_time",
       { timeZone: "UTC" },
-      contextWithPerms,
+      contextWithCaps,
       plan
     );
 
@@ -56,16 +56,16 @@ describe("ChatAgent (ReAct Reasoning & Memory Integration)", () => {
     expect(plan.requiredTools).toContain("get_current_time");
     expect(plan.requiredTools).not.toContain("generate_hashtags");
 
-    const contextWithPerms: AgentContext = {
+    const contextWithCaps: AgentContext = {
       ...context,
-      permissions: ["get_current_time", "generate_hashtags"] as unknown as AgentContext["permissions"],
+      capabilities: ["content:generate"],
     };
 
     // "generate_hashtags" is a registered tool, but absent from plan.requiredTools
     const res = await ChatAgent.executeTool(
       "generate_hashtags",
       { topic: "Next.js AI", platform: "x", count: 5 },
-      contextWithPerms,
+      contextWithCaps,
       plan
     );
 

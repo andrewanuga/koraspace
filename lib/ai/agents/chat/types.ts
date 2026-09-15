@@ -114,8 +114,7 @@ export function computePlanFingerprint(plan: ChatPlan): string {
 
 export type PolicyReasonCode =
   | "UNKNOWN_TOOL"
-  | "MISSING_CAPABILITY_MAPPING"
-  | "MISSING_PERMISSION"
+  | "MISSING_CAPABILITY"
   | "PLAN_DEVIATION"
   | "STALE_APPROVAL"
   | "CONFIRMATION_REQUIRED"

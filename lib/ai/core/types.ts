@@ -11,21 +11,12 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Capability, AgentPermission } from "./capabilities";
+export type { Capability, AgentPermission } from "./capabilities";
 
 /* ── 1. Execution Context ─────────────────────────────────────── */
 
 export type AutonomyMode = "assist" | "auto";
-
-export type AgentPermission =
-  | "ai:chat"
-  | "content:generate"
-  | "content:score"
-  | "social:read"
-  | "social:schedule"
-  | "social:publish"
-  | "inbox:read"
-  | "inbox:reply"
-  | "web:search";
 
 export interface AgentContext {
   /** Authenticated user initiating or owning the session */
@@ -36,8 +27,8 @@ export interface AgentContext {
   chatId?: string;
   /** Autonomy mode for decision execution */
   autonomyMode?: AutonomyMode;
-  /** Granular permissions granted to this execution */
-  permissions?: AgentPermission[];
+  /** Canonical authorization set */
+  capabilities?: Capability[];
   /** Supabase client instance bound to user session or admin */
   supabase?: SupabaseClient;
   /** User-selected or fallback model identifier */
@@ -108,7 +99,9 @@ export interface AITool<TInput = Record<string, unknown>, TOutput = unknown> {
   readonly description: string;
   /** OpenRouter/OpenAI compatible schema definition */
   readonly parameters: ToolParametersSchema;
-  /** Required permissions to execute this tool */
+  /** Capabilities the tool requires to be executed. Empty or undefined means non-protected utility. */
+  readonly requiredCapabilities?: Capability[];
+  /** @deprecated Use `requiredCapabilities` instead. */
   readonly requiredPermissions?: AgentPermission[];
   /** Whether this tool requires human approval in 'assist' mode */
   readonly requiresApproval?: boolean;

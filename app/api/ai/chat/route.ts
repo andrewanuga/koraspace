@@ -6,6 +6,7 @@ import { buildChatSystemPrompt } from "@/lib/ai/prompts";
 import { RECOMMENDED_MODELS } from "@/lib/ai/models";
 import { ChatAgent, Attachment, InputMessage } from "@/lib/ai/agents/chat";
 import type { AgentContext } from "@/lib/ai/core/types";
+import { capabilitiesForRole } from "@/lib/ai/core/rbac";
 
 /* ── POST /api/ai/chat ────────────────────────────────────────── */
 
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient();
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const workspaceId = workspace.workspaceId;
+    const { workspaceId, role, userId } = workspace;
 
     const {
       messages,
@@ -122,9 +123,12 @@ export async function POST(req: NextRequest) {
         attachSummary
       ) + pastChatsContext;
 
+    const capabilities = capabilitiesForRole(role);
+
     const agentContext: AgentContext = {
-      userId: workspaceId,
+      userId,
       workspaceId,
+      capabilities,
       autonomyMode: "assist",
       supabase,
     };

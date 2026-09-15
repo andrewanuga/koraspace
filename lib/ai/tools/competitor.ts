@@ -76,6 +76,7 @@ export const analyzeCompetitorTool: AITool<
 > = {
   name: "analyze_competitor",
   description: "Perform strategic competitive analysis on a competitor's social handle or website URL to identify content pillars, audience gaps, and counter-positioning opportunities.",
+  requiredCapabilities: ["social:read"],
   parameters: {
     type: "object",
     properties: {

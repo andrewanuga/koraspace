@@ -29,7 +29,7 @@ async function runTests() {
     userId: "test-user-chat",
     workspaceId: "test-workspace-chat",
     autonomyMode: "assist",
-    permissions: ["get_current_time", "generate_hashtags"] as unknown as AgentContext["permissions"],
+    capabilities: ["content:generate", "web:search", "social:read"],
   };
 
   // ── 1. Planner: Competitor Analysis Decomposition ────────────────

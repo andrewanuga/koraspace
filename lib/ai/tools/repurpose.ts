@@ -78,6 +78,7 @@ export const repurposeLongformTool: AITool<
 > = {
   name: "repurpose_longform",
   description: "Repurpose long-form text (blog posts, video scripts, meeting notes, transcripts) into multiple platform-native assets: X threads, LinkedIn posts, Instagram carousels, and short-form video scripts.",
+  requiredCapabilities: ["content:generate"],
   parameters: {
     type: "object",
     properties: {
