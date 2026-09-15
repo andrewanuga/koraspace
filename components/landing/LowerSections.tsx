@@ -3,7 +3,17 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  LandingButton,
+  Eyebrow,
+  SectionHead,
+  springTransition,
+  cardHoverSpring,
+  containerVariants,
+  itemFadeUp,
+  scaleIn,
+} from "@/components/landing/primitives";
 import {
   Brain,
   Ghost,
@@ -37,150 +47,6 @@ import {
   MapPin,
   CheckCircle2,
 } from "lucide-react";
-
-/* ── Animation Physics & Variants ─────────────────────────────────── */
-
-const springTransition = {
-  type: "spring" as const,
-  stiffness: 110,
-  damping: 18,
-  mass: 0.8,
-};
-
-const cardHoverSpring = {
-  type: "spring" as const,
-  stiffness: 300,
-  damping: 20,
-};
-
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.05,
-    },
-  },
-};
-
-const itemFadeUp: Variants = {
-  hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: springTransition,
-  },
-};
-
-const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.94, filter: "blur(4px)" },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    filter: "blur(0px)",
-    transition: springTransition,
-  },
-};
-
-/* ── Shared Action Button ─────────────────────────────────────────── */
-
-function LandingButton({
-  href,
-  className = "",
-  style,
-  children,
-}: {
-  href: string;
-  className?: string;
-  style?: React.CSSProperties;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link href={href}>
-      <motion.button
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-        transition={cardHoverSpring}
-        style={style}
-        className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs tracking-wide transition-colors duration-200 cursor-pointer ${className}`}
-      >
-        {children}
-      </motion.button>
-    </Link>
-  );
-}
-
-/* ── Section Eyebrow & Header ─────────────────────────────────────── */
-
-function Eyebrow({
-  children,
-  tone = "pink",
-}: {
-  children: React.ReactNode;
-  tone?: "pink" | "blue" | "white";
-}) {
-  const toneClass =
-    tone === "blue"
-      ? "text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/25 shadow-[0_0_15px_rgba(59,130,246,0.15)]"
-      : tone === "white"
-      ? "text-white/80 bg-white/5 border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-      : "text-[#ff0a8a] bg-[#ff0a8a]/10 border-[#ff0a8a]/25 shadow-[0_0_15px_rgba(255,10,138,0.15)]";
-
-  return (
-    <motion.span
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4 }}
-      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider font-semibold border ${toneClass}`}
-    >
-      <span
-        className="h-1.5 w-1.5 rounded-full animate-pulse"
-        style={{
-          background:
-            tone === "blue" ? "#3b82f6" : tone === "white" ? "#ffffff" : "#ff0a8a",
-        }}
-      />
-      {children}
-    </motion.span>
-  );
-}
-
-function SectionHead({
-  eyebrow,
-  tone = "pink",
-  title,
-  sub,
-}: {
-  eyebrow: string;
-  tone?: "pink" | "blue" | "white";
-  title: React.ReactNode;
-  sub?: string;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={springTransition}
-      className="mx-auto mb-14 max-w-3xl text-center"
-    >
-      <div>
-        <Eyebrow tone={tone}>{eyebrow}</Eyebrow>
-      </div>
-      <h2 className="font-display mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.15]">
-        {title}
-      </h2>
-      {sub && (
-        <p className="mt-4 text-sm sm:text-base leading-relaxed text-white/60 font-normal max-w-2xl mx-auto">
-          {sub}
-        </p>
-      )}
-    </motion.div>
-  );
-}
 
 /* ── 1. Problem Solver Section ────────────────────────────────────── */
 
