@@ -90,6 +90,10 @@ export function Preloader() {
     <div
       ref={rootRef}
       aria-hidden={done}
+      // Lets FloatingNav tell whether this page has a preloader to wait for.
+      // The DOM is committed before any effect runs, so a sibling querying for
+      // this attribute on mount sees it reliably.
+      data-preloader=""
       className="fixed inset-0 z-[99999] flex flex-col items-center justify-center transition-opacity duration-700"
       style={{
         background: "#121212",

@@ -19,10 +19,20 @@ export function FloatingNav() {
   const [openSection, setOpenSection] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if loader is already done
+    // Reveal immediately unless this page actually has a preloader running.
+    //
+    // Only the homepage renders <Preloader/>; every other marketing page would
+    // otherwise sit here with no navbar until the 2400ms fallback below fired.
+    // That failure mode hides on client-side navigation — the layout does not
+    // remount, so `sai-loaded` is still set — and only shows on a cold load.
+    const hasPreloader =
+      typeof document !== "undefined" &&
+      document.querySelector("[data-preloader]") !== null;
+
     if (
       typeof document !== "undefined" &&
-      document.documentElement.classList.contains("sai-loaded")
+      (!hasPreloader ||
+        document.documentElement.classList.contains("sai-loaded"))
     ) {
       setIsLoaded(true);
     }
