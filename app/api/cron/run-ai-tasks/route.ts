@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { callAI } from "@/lib/ai/openrouter";
+import { callAI } from "@/lib/ai/gemini";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 // Make sure to use the service role key to bypass RLS in the cron job

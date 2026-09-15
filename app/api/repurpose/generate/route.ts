@@ -1,6 +1,6 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { callAI } from "@/lib/ai/openrouter";
+import { callAI } from "@/lib/ai/gemini";
 import { buildRepurposePrompt } from "@/lib/repurpose/prompts";
 import type { RepurposePlatform, RepurposeOutput, RepurposeProject } from "@/lib/repurpose/types";
 import { randomUUID } from "crypto";

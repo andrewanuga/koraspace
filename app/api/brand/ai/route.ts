@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { callAI } from "@/lib/ai/openrouter";
+import { callAI } from "@/lib/ai/gemini";
 import { buildBrandContext } from "@/lib/brand/context";
 
 export async function POST(request: NextRequest) {

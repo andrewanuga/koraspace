@@ -39,11 +39,18 @@ export async function POST(req: NextRequest) {
       const plan = isPlan(data.metadata?.plan) ? data.metadata.plan : undefined;
       if (uid) {
         if (plan) {
-          await admin.from("profiles").update({
-            plan, subscription_status: "active",
-            plan_renews_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          }).eq("id", uid);
+          const expectedKobo = data.amount || 0;
+          const minRequired = require("@/lib/billing/plans").PLANS[plan].price * 100;
+          if (expectedKobo >= minRequired) {
+            await admin.from("profiles").update({
+              plan, subscription_status: "active",
+              plan_renews_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            }).eq("id", uid);
+          } else {
+            console.warn(`[Webhook Security] Ignored underpaid upgrade for ${uid}: paid ${expectedKobo} vs req ${minRequired}`);
+          }
         }
+
         await admin.from("payments").upsert({
           user_id: uid, reference: data.reference, plan: plan ?? null,
           amount: (data.amount ?? 0) / 100, currency: data.currency ?? "NGN",

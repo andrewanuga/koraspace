@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { callAIStream } from "@/lib/ai/openrouter";
+import { callAIStream } from "@/lib/ai/gemini";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { scanForPromptInjection } from "@/lib/security/enforcement";

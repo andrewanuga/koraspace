@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { callAI } from "@/lib/ai/openrouter";
+import { callAI } from "@/lib/ai/gemini";
 import { buildAnalysisPrompt } from "@/lib/repurpose/prompts";
 import type { ContentAnalysis } from "@/lib/repurpose/types";
 

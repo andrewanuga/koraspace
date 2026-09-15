@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { learnPersona, getPersonaTone } from "@/lib/social/persona";
-import { callAI, callAIStream, isConfigured, buildMultimodalContent } from "@/lib/ai/openrouter";
+import { callAI, callAIStream, isConfigured, buildMultimodalContent } from "@/lib/ai/gemini";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { buildChatSystemPrompt } from "@/lib/ai/prompts";
 import { RECOMMENDED_MODELS } from "@/lib/ai/models";
-import type { ChatMessage } from "@/lib/ai/openrouter";
+import type { ChatMessage } from "@/lib/ai/gemini";
 import { AI_TOOLS, executeTool } from "@/lib/ai/tools";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { scanForPromptInjection } from "@/lib/security/enforcement";

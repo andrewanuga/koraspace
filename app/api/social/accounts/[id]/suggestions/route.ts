@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { callAI } from "@/lib/ai/openrouter";
+import { callAI } from "@/lib/ai/gemini";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: accountId } = await params;

@@ -1,4 +1,4 @@
-import { callAI, ChatMessage } from "./openrouter";
+import { callAI, type ChatMessage } from "./gemini";
 import { buildGhostSystemPrompt } from "./prompts";
 
 export type AgentActionType = "auto_reply" | "flag_lead" | "escalate_complaint" | "ignore";

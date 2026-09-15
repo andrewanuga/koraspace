@@ -6,7 +6,7 @@
  * Falls back to mock responses when the key is absent (dev mode).
  */
 
-import { AGENT_DEFAULTS, type AgentId } from "./models";
+import { AGENT_DEFAULTS, RECOMMENDED_MODELS, type AgentId } from "./models";
 
 /* ── Types ────────────────────────────────────────────────────── */
 
@@ -46,14 +46,18 @@ export interface AIResponse {
 
 /* ── Constants ────────────────────────────────────────────────── */
 
-const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
+const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/openai";
+
+export function isConfigured(): boolean {
+  return !!getApiKey();
+}
 
 function getApiKey(): string | undefined {
-  return process.env.OPENROUTER_API_KEY;
+  return process.env.GEMINI_API_KEY;
 }
 
 function getDefaultModel(): string {
-  return process.env.OPENROUTER_DEFAULT_MODEL || "google/gemma-4-26b-a4b-it:free";
+  return process.env.GEMINI_DEFAULT_MODEL || "gemini-1.5-flash";
 }
 
 /* ── Main call function ───────────────────────────────────────── */
@@ -104,7 +108,7 @@ export async function callAI(
     "X-Title": "Koraspace",
   };
 
-  const res = await fetch(`${OPENROUTER_BASE}/chat/completions`, {
+  const res = await fetch(`${GEMINI_BASE}/chat/completions`, {
     method: "POST",
     headers,
     body: JSON.stringify(body),
@@ -162,7 +166,7 @@ export async function callAIStream(
     "X-Title": "Koraspace",
   };
 
-  const res = await fetch(`${OPENROUTER_BASE}/chat/completions`, {
+  const res = await fetch(`${GEMINI_BASE}/chat/completions`, {
     method: "POST",
     headers,
     body: JSON.stringify({
@@ -264,17 +268,17 @@ export async function fetchAvailableModels(): Promise<OpenRouterModel[]> {
   if (!apiKey) return [];
 
   try {
-    const res = await fetch(`${OPENROUTER_BASE}/models`, {
+    const res = await fetch(`${GEMINI_BASE}/models`, {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
 
     if (!res.ok) {
-      console.error("[OpenRouter] Failed to fetch models:", res.status);
-      return cachedModels || [];
+      console.error("[Gemini] Failed to fetch models:", res.status);
+      return cachedModels || (RECOMMENDED_MODELS as any as OpenRouterModel[]);
     }
 
     const data = await res.json();
-    cachedModels = (data.data || []) as OpenRouterModel[];
+    cachedModels = (data.data || RECOMMENDED_MODELS) as any as OpenRouterModel[];
     cacheTimestamp = Date.now();
     return cachedModels;
   } catch (err) {
@@ -320,6 +324,3 @@ export function buildMultimodalContent(
 /**
  * Check if the API key is configured.
  */
-export function isConfigured(): boolean {
-  return !!getApiKey();
-}

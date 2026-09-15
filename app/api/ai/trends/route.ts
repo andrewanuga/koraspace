@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { callAI, isConfigured } from "@/lib/ai/openrouter";
+import { callAI, isConfigured } from "@/lib/ai/gemini";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { buildTrendsPrompt } from "@/lib/ai/prompts";
 

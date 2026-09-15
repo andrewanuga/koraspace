@@ -46,6 +46,16 @@ export async function GET(req: NextRequest) {
     }
 
     const plan = isPlan(data.metadata?.plan) ? data.metadata.plan : "pro";
+    
+    // Security: Verify amount matches the minimum expected for the plan
+    // Paystack amounts are returned in kobo.
+    const expectedAmountKobo = Math.round(data.amount); 
+    const minRequiredKobo = (PLANS[plan].price * 100);
+    if (expectedAmountKobo < minRequiredKobo) {
+      console.warn(`[Security] Payment amount mismatch: user ${user.id} paid ${expectedAmountKobo} but ${minRequiredKobo} was required.`);
+      return done({ paid: "0", error: "invalid_amount" });
+    }
+
     const admin = createAdminClient();
 
     // Update the subscription on the profile.
