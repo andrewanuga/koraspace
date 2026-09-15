@@ -1,6 +1,6 @@
 import { TranslationDictionary } from "../types";
 
-export const dict: TranslationDictionary = {
+export const ar: TranslationDictionary = {
   dashboardShowcase: {
   eyebrow: "معاينة مساحة العمل التفاعلية الحية",
   title: "شاهد KoraSpace أثناء العمل:",

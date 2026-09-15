@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   Check,
@@ -156,10 +157,15 @@ export default function AuthLayout({
 
 function KoraLogo() {
   return (
-    <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-[#ff0a8a] shadow-[0_6px_20px_rgba(255,10,138,0.22)]">
-      <div className="absolute h-3.5 w-3.5 rounded-[4px] border-[1.5px] border-white" />
-      <div className="absolute h-1.5 w-1.5 rounded-full bg-white" />
-      <div className="absolute right-[6px] top-[6px] h-1.5 w-1.5 rounded-full bg-[#3b82f6]" />
+    <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white p-1.5 shadow-sm transition-transform duration-200 group-hover:scale-105">
+      <Image
+        src="/logo.png"
+        alt="KoraSpace Logo"
+        width={36}
+        height={36}
+        className="h-full w-full object-contain"
+        priority
+      />
     </div>
   );
 }
@@ -193,7 +199,15 @@ function ProductPreview({ t }: { t: any }) {
         {/* Mini sidebar */}
         <div className="border-r border-white/[0.06] p-2.5">
           <div className="mb-4 flex items-center gap-2">
-            <div className="h-4 w-4 rounded-md bg-[#ff0a8a]" />
+            <div className="flex h-4 w-4 items-center justify-center rounded-sm bg-white p-0.5 shadow-xs">
+              <Image
+                src="/logo.png"
+                alt="KoraSpace"
+                width={16}
+                height={16}
+                className="h-full w-full object-contain"
+              />
+            </div>
             <div className="h-2 w-10 rounded-full bg-white/20" />
           </div>
 
