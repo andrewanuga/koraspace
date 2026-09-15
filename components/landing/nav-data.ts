@@ -15,8 +15,8 @@ import {
   siTiktok,
   siX,
   siYoutube,
-} from "simple-icons";
-import type { BrandMark } from "@/components/landing/brand-icons";
+  type BrandMark,
+} from "@/components/landing/brand-icons";
 
 /**
  * Interim CTA targets: /product, /for/* and /integrations don't exist yet, so
