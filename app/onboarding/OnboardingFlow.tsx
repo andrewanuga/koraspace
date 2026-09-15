@@ -331,26 +331,79 @@ function RichChartIllustration({
 
     case "bar":
       return (
-        <div className="relative h-28 w-full overflow-hidden rounded-xl border border-slate-200/80 bg-gradient-to-b from-slate-900 to-[#14141e] p-3 text-white shadow-inner dark:border-white/[0.1]">
-          <div className="flex items-center justify-between text-[10px] text-white/60">
-            <span className="font-medium text-white/90">Multi-Channel Split</span>
-            <span className="font-mono text-emerald-400">ROAS 3.82×</span>
+        <div className="relative h-28 w-full overflow-hidden rounded-xl border border-slate-200/80 bg-gradient-to-b from-slate-900 to-[#121218] p-3 text-white shadow-inner dark:border-white/[0.1]">
+          {/* Ambient Glow */}
+          <div className="pointer-events-none absolute -right-4 -top-4 h-16 w-16 rounded-full bg-[#ff0a8a]/20 blur-lg" />
+          <div className="pointer-events-none absolute -bottom-4 -left-4 h-16 w-16 rounded-full bg-[#3b82f6]/20 blur-lg" />
+
+          <div className="flex items-center justify-between text-[10px] text-white/70">
+            <span className="font-semibold text-white">Channel ROI & Conversion</span>
+            <span className="rounded-md bg-emerald-500/15 px-1.5 py-0.5 font-mono text-[9.5px] font-semibold text-emerald-400">
+              3.82× ROAS
+            </span>
           </div>
-          <div className="mt-2 flex h-14 items-end justify-between gap-2.5 px-2">
-            {[
-              { height: "45%", color: "from-blue-500 to-indigo-600" },
-              { height: "70%", color: "from-purple-500 to-fuchsia-600" },
-              { height: "100%", color: "from-pink-500 to-rose-500" },
-              { height: "85%", color: "from-emerald-400 to-teal-600" },
-              { height: "60%", color: "from-amber-400 to-orange-500" },
-            ].map((bar, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                <div
-                  className={`w-full rounded-t-md bg-gradient-to-t ${bar.color} shadow-sm transition-all duration-300`}
-                  style={{ height: bar.height }}
-                />
-              </div>
-            ))}
+
+          <div className="mt-1 h-16 w-full">
+            <svg viewBox="0 0 200 65" className="h-full w-full overflow-visible">
+              <defs>
+                <linearGradient id="barGradPink" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ff0a8a" />
+                  <stop offset="100%" stopColor="#b80062" />
+                </linearGradient>
+                <linearGradient id="barGradBlue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#38bdf8" />
+                  <stop offset="100%" stopColor="#1d4ed8" />
+                </linearGradient>
+                <linearGradient id="barGradPurple" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#c084fc" />
+                  <stop offset="100%" stopColor="#7c3aed" />
+                </linearGradient>
+                <linearGradient id="barGradEmerald" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#34d399" />
+                  <stop offset="100%" stopColor="#059669" />
+                </linearGradient>
+                <linearGradient id="barGradAmber" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#fbbf24" />
+                  <stop offset="100%" stopColor="#d97706" />
+                </linearGradient>
+              </defs>
+
+              {/* Horizontal Grid lines */}
+              <line x1="0" y1="12" x2="200" y2="12" stroke="rgba(255,255,255,0.06)" strokeDasharray="3 3" />
+              <line x1="0" y1="30" x2="200" y2="30" stroke="rgba(255,255,255,0.06)" strokeDasharray="3 3" />
+              <line x1="0" y1="48" x2="200" y2="48" stroke="rgba(255,255,255,0.12)" />
+
+              {/* Group 1: Instagram */}
+              <rect x="14" y="20" width="10" height="28" rx="3" fill="url(#barGradPink)" filter="drop-shadow(0 2px 5px rgba(255,10,138,0.35))" />
+              <rect x="27" y="30" width="10" height="18" rx="3" fill="url(#barGradBlue)" opacity="0.85" />
+              <text x="25.5" y="58" fill="rgba(255,255,255,0.5)" fontSize="7" textAnchor="middle" fontFamily="sans-serif">IG</text>
+
+              {/* Group 2: TikTok */}
+              <rect x="54" y="14" width="10" height="34" rx="3" fill="url(#barGradPink)" filter="drop-shadow(0 2px 5px rgba(255,10,138,0.35))" />
+              <rect x="67" y="24" width="10" height="24" rx="3" fill="url(#barGradBlue)" opacity="0.85" />
+              <text x="65.5" y="58" fill="rgba(255,255,255,0.5)" fontSize="7" textAnchor="middle" fontFamily="sans-serif">TT</text>
+
+              {/* Group 3: X / Twitter */}
+              <rect x="94" y="26" width="10" height="22" rx="3" fill="url(#barGradPink)" opacity="0.85" />
+              <rect x="107" y="18" width="10" height="30" rx="3" fill="url(#barGradBlue)" filter="drop-shadow(0 2px 5px rgba(56,189,248,0.35))" />
+              <text x="105.5" y="58" fill="rgba(255,255,255,0.5)" fontSize="7" textAnchor="middle" fontFamily="sans-serif">X</text>
+
+              {/* Group 4: LinkedIn */}
+              <rect x="134" y="10" width="10" height="38" rx="3" fill="url(#barGradEmerald)" filter="drop-shadow(0 2px 5px rgba(52,211,153,0.35))" />
+              <rect x="147" y="16" width="10" height="32" rx="3" fill="url(#barGradBlue)" filter="drop-shadow(0 2px 5px rgba(56,189,248,0.35))" />
+              <text x="145.5" y="58" fill="rgba(255,255,255,0.5)" fontSize="7" textAnchor="middle" fontFamily="sans-serif">LI</text>
+
+              {/* Group 5: YouTube */}
+              <rect x="174" y="16" width="10" height="32" rx="3" fill="url(#barGradPurple)" />
+              <rect x="187" y="28" width="10" height="20" rx="3" fill="url(#barGradAmber)" opacity="0.85" />
+              <text x="185.5" y="58" fill="rgba(255,255,255,0.5)" fontSize="7" textAnchor="middle" fontFamily="sans-serif">YT</text>
+
+              {/* Floating Peak Label */}
+              <g transform="translate(134, 4)">
+                <rect x="-3" y="-6" width="26" height="10" rx="3" fill="#10b981" />
+                <text x="10" y="1" fill="#fff" fontSize="6.5" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">+94%</text>
+              </g>
+            </svg>
           </div>
         </div>
       );
