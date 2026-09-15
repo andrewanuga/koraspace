@@ -8,7 +8,7 @@ import { SectionHead, springTransition, cardHoverSpring } from "@/components/lan
 
 export function RevenueAttributionSection() {
   return (
-    <section id="revenue" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+    <section id="revenue" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28 scroll-mt-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead
           eyebrow="Revenue & Conversion Tracking"

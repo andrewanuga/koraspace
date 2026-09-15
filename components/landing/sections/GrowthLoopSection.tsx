@@ -54,7 +54,7 @@ const LOOP_STAGES = [
 
 export function GrowthLoopSection() {
   return (
-    <section id="how" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+    <section id="how" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28 scroll-mt-24">
       <div className="relative mx-auto max-w-6xl">
         <SectionHead
           eyebrow="The Autonomous Growth Loop"
