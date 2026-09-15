@@ -39,14 +39,20 @@ export function PreferencesProvider({
   children: React.ReactNode;
   initialPreferences?: Partial<UserPreferences>;
 }) {
-  const { setTheme } = useTheme();
+  const { theme: nextTheme, setTheme, resolvedTheme: nextResolvedTheme } = useTheme();
+  
   const [preferences, setPreferences] = useState<UserPreferences>(() => {
     if (typeof window !== "undefined") {
       try {
         const cached = localStorage.getItem(STORAGE_KEY);
-        if (cached) {
-          return { ...DEFAULT_PREFERENCES, ...JSON.parse(cached), ...initialPreferences };
-        }
+        const storedNextTheme = localStorage.getItem("theme") as ThemeMode | null;
+        const base = cached ? JSON.parse(cached) : {};
+        return {
+          ...DEFAULT_PREFERENCES,
+          ...base,
+          ...(storedNextTheme ? { theme_mode: storedNextTheme } : {}),
+          ...initialPreferences,
+        };
       } catch {
         // ignore storage parse errors
       }
@@ -57,7 +63,7 @@ export function PreferencesProvider({
   const [loading, setLoading] = useState(true);
   const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">("dark");
 
-  // Apply font and density dataset attributes to document root
+  // Apply font, density, and analytics dataset attributes to document root
   const applyDOMAttributes = useCallback((prefs: UserPreferences) => {
     if (typeof document === "undefined") return;
 
@@ -66,7 +72,7 @@ export function PreferencesProvider({
     root.dataset.density = prefs.dashboard_density;
     root.dataset.analyticsStyle = prefs.analytics_style;
 
-    // Resolve system theme if needed
+    // Resolve active theme
     let isDark = true;
     if (prefs.theme_mode === "light") {
       isDark = false;
@@ -75,23 +81,22 @@ export function PreferencesProvider({
     }
 
     setResolvedTheme(isDark ? "dark" : "light");
+    root.dataset.theme = isDark ? "dark" : "light";
+  }, []);
 
-    if (isDark) {
-      root.classList.add("dark");
-      root.classList.remove("light");
-      root.dataset.theme = "dark";
-    } else {
-      root.classList.add("light");
-      root.classList.remove("dark");
-      root.dataset.theme = "light";
+  // Synchronize state when next-themes changes (e.g. from FloatingNav or ThemeSwitcher)
+  useEffect(() => {
+    if (nextTheme && (nextTheme === "dark" || nextTheme === "light" || nextTheme === "system")) {
+      setPreferences((prev) => {
+        if (prev.theme_mode === nextTheme) return prev;
+        const updated: UserPreferences = { ...prev, theme_mode: nextTheme as ThemeMode };
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        } catch {}
+        return updated;
+      });
     }
-
-    try {
-      setTheme(prefs.theme_mode);
-    } catch {
-      // next-themes may not always be mounted
-    }
-  }, [setTheme]);
+  }, [nextTheme]);
 
   // Initial load from server API
   useEffect(() => {
@@ -109,6 +114,11 @@ export function PreferencesProvider({
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
               } catch {}
               applyDOMAttributes(updated);
+              if (json.preferences.theme_mode) {
+                try {
+                  setTheme(json.preferences.theme_mode);
+                } catch {}
+              }
               return updated;
             });
           }
@@ -126,7 +136,7 @@ export function PreferencesProvider({
     return () => {
       active = false;
     };
-  }, [applyDOMAttributes]);
+  }, [applyDOMAttributes, setTheme]);
 
   // Listen for system appearance change if theme is set to 'system'
   useEffect(() => {
@@ -151,6 +161,13 @@ export function PreferencesProvider({
       // Optimistic update
       setPreferences(nextPrefs);
       applyDOMAttributes(nextPrefs);
+      
+      if (partial.theme_mode) {
+        try {
+          setTheme(partial.theme_mode);
+        } catch {}
+      }
+
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(nextPrefs));
       } catch {}
@@ -180,7 +197,7 @@ export function PreferencesProvider({
         return false;
       }
     },
-    [preferences, applyDOMAttributes]
+    [preferences, applyDOMAttributes, setTheme]
   );
 
   const setAnalyticsStyle = useCallback(
@@ -209,7 +226,7 @@ export function PreferencesProvider({
         preferences,
         updatePreferences,
         loading,
-        resolvedTheme,
+        resolvedTheme: (nextResolvedTheme as "dark" | "light") || resolvedTheme,
         setAnalyticsStyle,
         setFontFamily,
         setThemeMode,

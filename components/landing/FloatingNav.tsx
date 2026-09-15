@@ -5,6 +5,7 @@ import { Menu, X, ArrowRight, ChevronDown, Sun, Moon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import {
   AudienceMenu,
   IntegrationsMenu,
@@ -20,13 +21,23 @@ export function FloatingNav() {
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setThemeMode, preferences } = usePreferences();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const isDark = mounted ? (theme === "dark" || resolvedTheme === "dark") : true;
-  const toggleTheme = () => setTheme(isDark ? "light" : "dark");
+  const activeTheme = mounted ? (theme || preferences.theme_mode || "dark") : "dark";
+  const activeResolved = mounted ? (resolvedTheme || (activeTheme === "light" ? "light" : "dark")) : "dark";
+  const isDark = activeTheme === "dark" || activeResolved === "dark";
+
+  const toggleTheme = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    const target = isDark ? "light" : "dark";
+    setTheme(target);
+    setThemeMode(target);
+  };
 
   useEffect(() => {
     // Check if loader is already done
