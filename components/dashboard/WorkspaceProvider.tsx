@@ -214,7 +214,8 @@ export function WorkspaceProvider({
 
           setWorkspaces([]);
           setActiveWorkspaceId(null);
-
+          setIsLoading(false);
+          router.replace("/login");
           return;
         }
 
