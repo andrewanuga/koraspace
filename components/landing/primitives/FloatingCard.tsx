@@ -28,23 +28,38 @@ const depthStyles = {
 export function FloatingCard({
   depth = "front",
   drift = "lift",
+  float = "sm",
   className = "",
   children,
 }: {
   depth?: keyof typeof depthStyles;
   /** How far it drifts on scroll. Zero under prefers-reduced-motion. */
   drift?: ParallaxDepth;
+  /**
+   * `sm` (default) keeps the card in normal flow on phones and only lifts it
+   * out from the sm breakpoint up. Overlapping a product panel on a 375px
+   * screen buries the interface underneath it, so small screens get the same
+   * information stacked instead of layered — recomposed, not shrunk.
+   *
+   * Callers must therefore put placement and width utilities behind `sm:`.
+   */
+  float?: "sm" | "always";
   className?: string;
   children: React.ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const y = useParallax(ref, drift);
 
+  // `static` rather than `relative` on mobile: inset utilities are inert on a
+  // static box, so a stray `bottom-6` cannot shift the stacked card.
+  const flow =
+    float === "always" ? "absolute" : "static mt-3 w-full sm:absolute sm:mt-0";
+
   return (
     <motion.div
       ref={ref}
       style={{ y }}
-      className={`absolute ${depthStyles[depth]} ${className}`}
+      className={`${flow} ${depthStyles[depth]} ${className}`}
     >
       <motion.div
         initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
