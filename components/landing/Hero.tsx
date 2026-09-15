@@ -7,6 +7,7 @@ import { motion, type Variants } from "framer-motion";
 import { GrowthRail } from "@/components/landing/GrowthRail";
 import { IntelligenceCanvas } from "@/components/landing/IntelligenceCanvas";
 import type { CanvasStateKey } from "@/components/landing/canvas-states";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -87,6 +88,7 @@ const imageVariants: Variants = {
 };
 
 export function Hero() {
+  const { t } = useLanguage();
   // The rail at the bottom of the hero and the canvas above it are the same
   // loop shown twice, so hovering a stage down there drives the intelligence up
   // here. Held at this level because it is the only common ancestor.
@@ -166,66 +168,6 @@ export function Hero() {
         />
 
         <div className="relative flex flex-col z-10">
-          {/* nav */}
-          {/* <motion.nav
-            variants={itemVariants}
-            className="flex items-center justify-between px-5 py-5 sm:px-10 sm:py-7"
-          >
-            <Link
-              href="/"
-              className="flex items-center gap-3 font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight text-white transition-opacity hover:opacity-90"
-            >
-              <Image
-                src="/logo.png"
-                alt="KoraSpace Logo"
-                width={32}
-                height={32}
-                className="h-8 w-auto object-contain transition-transform duration-300 hover:scale-105"
-                priority
-              />
-              <span>KoraSpace</span>
-            </Link>
-
-            <div className="hidden items-center gap-8 text-sm text-white/70 md:flex">
-              <a
-                href="#features"
-                className="rounded-sm transition-all duration-200 hover:text-white hover:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-              >
-                Platform
-              </a>
-              <a
-                href="#how"
-                className="rounded-sm transition-all duration-200 hover:text-white hover:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-              >
-                Growth loop
-              </a>
-              <a
-                href="#pricing"
-                className="rounded-sm transition-all duration-200 hover:text-white hover:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-              >
-                Pricing
-              </a>
-            </div>
-
-            <motion.div
-              whileHover={{ scale: 1.03, y: -1 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              <Link
-                href="/signup"
-                className="inline-flex items-center gap-2 rounded-full bg-white py-1.5 pl-4 pr-1.5 text-sm font-medium text-[#0b0714] shadow-[0_4px_20px_rgba(255,255,255,0.2)] transition-all hover:shadow-[0_6px_25px_rgba(255,255,255,0.35)] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              >
-                <span>Get started</span>
-                <span
-                  className="flex h-6 w-6 items-center justify-center rounded-full text-white shadow-sm"
-                  style={{ background: "linear-gradient(135deg, #FF2E7A, #2A4BFF)" }}
-                >
-                  <ArrowIcon />
-                </span>
-              </Link>
-            </motion.div>
-          </motion.nav> */}
-
           {/* content */}
           <div className="grid gap-8 mt-24 px-5 pb-8 pt-2 sm:px-10 lg:mt-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-4 lg:pb-0 lg:pt-0">
             <motion.div
@@ -233,17 +175,17 @@ export function Hero() {
               className="flex flex-col justify-center gap-5 py-4 lg:py-16"
             >
               <p className="text-xs font-bold tracking-[0.2em] text-[#ff9fc9]">
-                AI MARKETING OPERATING SYSTEM
+                {t.hero.badge.toUpperCase()}
               </p>
 
               <h1 className="font-[family-name:var(--font-display)] text-[2rem] font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Your marketing should get smarter every time you post.
+                {t.hero.title1}{" "}
+                <span className="text-[#ff9fc9]">{t.hero.titleHighlight}</span>{" "}
+                {t.hero.title2}
               </h1>
 
               <p className="max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
-                KoraSpace learns your brand, understands your audience,
-                creates and distributes content, and turns your results
-                into your next best move.
+                {t.hero.subtitle}
               </p>
 
               <div className="flex flex-col gap-3 pt-4">
@@ -264,7 +206,7 @@ export function Hero() {
                       className="inline-flex items-center gap-2.5 rounded-full bg-[#ff0a8a] py-4 pl-7 pr-3 text-base font-bold text-white shadow-[0_8px_32px_rgba(255,10,138,0.5)] transition-all hover:bg-[#ff299b] hover:shadow-[0_10px_40px_rgba(255,10,138,0.65)] active:scale-[0.98] sm:text-lg"
                     >
                       <SparkleIcon />
-                      <span>Start Growing</span>
+                      <span>{t.hero.startTrial}</span>
                       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white">
                         <ArrowIcon />
                       </span>
@@ -273,14 +215,14 @@ export function Hero() {
                 </div>
 
                 <p className="text-xs text-white/50">
-                  No credit card required · 14-day free trial
+                  {t.hero.noCardRequired} · {t.hero.instantSetup}
                 </p>
 
                 <a
-                  href="#how-it-works"
+                  href="#dual-modes"
                   className="w-fit text-sm text-white/60 underline-offset-4 transition-colors hover:text-white hover:underline"
                 >
-                  See how it works
+                  {t.hero.compareModes}
                 </a>
               </div>
             </motion.div>

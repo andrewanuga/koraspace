@@ -37,6 +37,10 @@ import {
   MapPin,
   CheckCircle2,
 } from "lucide-react";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { PlanKey } from "@/lib/i18n/pricing";
+import type { TranslationDictionary } from "@/lib/i18n/types";
 
 /* ── Animation Physics & Variants ─────────────────────────────────── */
 
@@ -185,6 +189,8 @@ function SectionHead({
 /* ── 1. Problem Solver Section ────────────────────────────────────── */
 
 export function ProblemSolverSection() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative px-4 sm:px-6 lg:px-8 py-16">
       <motion.div
@@ -205,16 +211,14 @@ export function ProblemSolverSection() {
         />
 
         <div className="max-w-3xl mx-auto text-center">
-          <Eyebrow tone="white">The Old Way vs The KoraSpace Way</Eyebrow>
+          <Eyebrow tone="white">{t.problemSolver.eyebrow}</Eyebrow>
 
           <h2 className="mt-5 font-display text-2xl sm:text-4xl lg:text-4xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
-            Stop wasting 15+ hours a week fighting writer&apos;s block, copying
-            posts between apps, and losing high-intent leads in messy DMs.
+            {t.problemSolver.heading}
           </h2>
 
           <p className="mt-5 text-sm sm:text-base text-slate-600 dark:text-white/60 leading-relaxed font-normal">
-            Traditional schedulers only push posts. KoraSpace is an autonomous
-            growth workspace with dual engines: a <span className="text-[#ff0a8a] font-semibold">Creator Studio</span> for signature voice content and a <span className="text-[#3b82f6] font-semibold">Marketing Operator</span> for CRM lead conversion.
+            {t.problemSolver.paragraph}
           </p>
 
           {/* 3 Pillars Grid with Staggered Entrance and 3D Spring Hover */}
@@ -234,9 +238,9 @@ export function ProblemSolverSection() {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#ff0a8a]/15 text-[#ff0a8a] mb-3">
                 <Sparkles className="h-4.5 w-4.5" />
               </div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">AI Brand Brain</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t.problemSolver.pillar1Title}</h3>
               <p className="mt-1.5 text-xs text-slate-600 dark:text-white/55 leading-relaxed">
-                Learns your authentic voice, past top-performing hooks, and strict guidelines so posts never sound generic.
+                {t.problemSolver.pillar1Desc}
               </p>
             </motion.div>
 
@@ -249,9 +253,9 @@ export function ProblemSolverSection() {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3b82f6]/15 text-[#3b82f6] mb-3">
                 <Calendar className="h-4.5 w-4.5" />
               </div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Visual 6-Platform Sync</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t.problemSolver.pillar2Title}</h3>
               <p className="mt-1.5 text-xs text-slate-600 dark:text-white/55 leading-relaxed">
-                Schedule and drag-and-drop across Instagram, TikTok, LinkedIn, YouTube, X, and Threads in one calendar.
+                {t.problemSolver.pillar2Desc}
               </p>
             </motion.div>
 
@@ -264,9 +268,9 @@ export function ProblemSolverSection() {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#34d399]/15 text-[#34d399] mb-3">
                 <Target className="h-4.5 w-4.5" />
               </div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Social CRM &amp; Revenue</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">{t.problemSolver.pillar3Title}</h3>
               <p className="mt-1.5 text-xs text-slate-600 dark:text-white/55 leading-relaxed">
-                Detects buying signals in comments and DMs (&quot;How much?&quot;), converts leads, and attributes real revenue.
+                {t.problemSolver.pillar3Desc}
               </p>
             </motion.div>
           </motion.div>
@@ -282,14 +286,14 @@ export function ProblemSolverSection() {
               href="/signup"
               className="bg-[#ff0a8a] text-white shadow-[0_4px_20px_rgba(255,10,138,0.3)] hover:bg-[#ff299b]"
             >
-              <span>Get Started Free</span>
+              <span>{t.problemSolver.ctaButton}</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </LandingButton>
             <LandingButton
               href="#dual-modes"
               className="border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 dark:border-white/[0.10] dark:bg-white/[0.03] dark:text-white/80 dark:hover:bg-white/[0.06] dark:hover:text-white"
             >
-              <span>Compare Dual Modes</span>
+              <span>{t.problemSolver.secondaryButton}</span>
             </LandingButton>
           </motion.div>
         </div>
@@ -1475,12 +1479,23 @@ export function Stories() {
 
 /* ── 12. Transparent Pricing Section (#pricing) ───────────────────── */
 
-const BASE_PLANS = [
+interface BasePlanConfig {
+  planKey: PlanKey;
+  nameKey: keyof TranslationDictionary["pricing"];
+  descKey: keyof TranslationDictionary["pricing"];
+  posts: string;
+  features: string[];
+  cta: string;
+  highlight: boolean;
+  badge?: string;
+  tone: "white" | "pink" | "blue";
+}
+
+const BASE_PLANS: BasePlanConfig[] = [
   {
-    name: "Starter / Free",
-    monthlyPrice: 0,
-    period: "/mo",
-    desc: "For solo creators getting started",
+    planKey: "starter",
+    nameKey: "starterName",
+    descKey: "starterDesc",
     posts: "15 scheduled posts / mo",
     features: [
       "50,000 AI tokens / mo",
@@ -1491,13 +1506,12 @@ const BASE_PLANS = [
     ],
     cta: "Start Free",
     highlight: false,
-    tone: "white" as const,
+    tone: "white",
   },
   {
-    name: "Creator Pro",
-    monthlyPrice: 15000,
-    period: "/mo",
-    desc: "For active creators & influencers",
+    planKey: "creator",
+    nameKey: "creatorProName",
+    descKey: "creatorProDesc",
     posts: "150 scheduled posts / mo",
     features: [
       "400,000 AI tokens / mo",
@@ -1510,13 +1524,12 @@ const BASE_PLANS = [
     cta: "Start Creator Trial",
     highlight: true,
     badge: "Creator Favorite",
-    tone: "pink" as const,
+    tone: "pink",
   },
   {
-    name: "Marketer Pro",
-    monthlyPrice: 35000,
-    period: "/mo",
-    desc: "For growth operators & businesses",
+    planKey: "marketer",
+    nameKey: "marketerProName",
+    descKey: "marketerProDesc",
     posts: "500 scheduled posts / mo",
     features: [
       "1,000,000 AI tokens / mo",
@@ -1530,13 +1543,12 @@ const BASE_PLANS = [
     cta: "Start Marketer Trial",
     highlight: false,
     badge: "Marketer Tier",
-    tone: "blue" as const,
+    tone: "blue",
   },
   {
-    name: "Agency / Teams",
-    monthlyPrice: 85000,
-    period: "/mo",
-    desc: "For agencies managing multiple brands",
+    planKey: "agency",
+    nameKey: "agencyName",
+    descKey: "agencyDesc",
     posts: "Unlimited scheduled posts",
     features: [
       "3,000,000 AI tokens / mo",
@@ -1550,32 +1562,27 @@ const BASE_PLANS = [
     cta: "Get Agency Plan",
     highlight: false,
     badge: "Agency Tier",
-    tone: "white" as const,
+    tone: "white",
   },
 ];
 
 export function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
-
-  const getFormattedPrice = (monthlyPrice: number) => {
-    if (monthlyPrice === 0) return "₦0";
-    const finalPrice = billingPeriod === "yearly" ? Math.round(monthlyPrice * 0.8) : monthlyPrice;
-    return `₦${finalPrice.toLocaleString("en-NG")}`;
-  };
+  const { t, formatPlanPrice } = useLanguage();
 
   return (
     <section id="pricing" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28 scroll-mt-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="Transparent NGN Pricing"
+          eyebrow={t.pricing.eyebrow}
           tone="pink"
           title={
             <>
-              Simple plans.{" "}
-              <span className="text-[#ff0a8a]">No USD conversion surprises.</span>
+              {t.pricing.titleLead}{" "}
+              <span className="text-[#ff0a8a]">{t.pricing.titleHighlight}</span>
             </>
           }
-          sub="Pay locally via Paystack, Flutterwave, or any Nigerian debit card. Every paid plan includes a 14-day free trial."
+          sub={t.pricing.subtitle}
         />
 
         {/* Monthly / Yearly Toggle with layoutId sliding pill */}
@@ -1595,7 +1602,7 @@ export function Pricing() {
                   transition={springTransition}
                 />
               )}
-              Monthly Billing
+              {t.pricing.monthlyBilling}
             </button>
             <button
               type="button"
@@ -1611,9 +1618,9 @@ export function Pricing() {
                   transition={springTransition}
                 />
               )}
-              <span>Annual Billing</span>
+              <span>{t.pricing.annualBilling}</span>
               <span className="bg-black/30 text-white text-[10px] px-2 py-0.5 rounded-full font-black uppercase">
-                20% OFF
+                {t.pricing.discountBadge}
               </span>
             </button>
           </div>
@@ -1642,9 +1649,13 @@ export function Pricing() {
               ? "bg-[#3b82f6] text-white shadow-[0_4px_18px_rgba(59,130,246,0.25)] hover:bg-[#2563eb]"
               : "bg-slate-100 text-slate-900 border border-slate-300 hover:bg-slate-200 dark:bg-white/[0.06] dark:text-white dark:border-white/[0.10] dark:hover:bg-white/[0.10]";
 
+            const planName = String(t.pricing[p.nameKey] || p.planKey);
+            const planDesc = String(t.pricing[p.descKey] || "");
+            const planPrice = formatPlanPrice(p.planKey, billingPeriod);
+
             return (
               <motion.div
-                key={p.name}
+                key={p.planKey}
                 variants={itemFadeUp}
                 whileHover={{ y: -10, scale: 1.02 }}
                 transition={cardHoverSpring}
@@ -1664,16 +1675,16 @@ export function Pricing() {
                 )}
 
                 <div>
-                  <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">{p.name}</h3>
+                  <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">{planName}</h3>
                   <div className="mt-2 flex items-baseline gap-1">
                     <span className="font-display text-3xl font-bold text-slate-900 dark:text-white">
-                      {getFormattedPrice(p.monthlyPrice)}
+                      {planPrice}
                     </span>
                     <span className="text-xs text-slate-500 dark:text-white/45">
-                      {billingPeriod === "yearly" ? "/mo (billed annually)" : p.period}
+                      {billingPeriod === "yearly" ? t.pricing.billedAnnually : t.pricing.perMonth}
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-slate-500 dark:text-white/50">{p.desc}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-white/50">{planDesc}</p>
 
                   <div className="mt-4 font-mono text-xs font-semibold text-slate-700 dark:text-white/80 bg-slate-100 dark:bg-white/[0.04] px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/[0.06]">
                     {p.posts}
@@ -1719,10 +1730,10 @@ export function Pricing() {
         >
           <div>
             <h4 className="font-display font-bold text-base text-slate-900 dark:text-white">
-              Enterprise &amp; High-Volume Custom Workspaces
+              {t.pricing.enterpriseTitle}
             </h4>
             <p className="text-slate-600 dark:text-white/60 text-xs mt-1">
-              Need custom fine-tuned models, dedicated IPs, SLA guarantees, or 20+ team seats?
+              {t.pricing.enterpriseDesc}
             </p>
           </div>
           <Link href="mailto:support@koraspace.ai" className="shrink-0">
@@ -1731,7 +1742,7 @@ export function Pricing() {
               whileTap={{ scale: 0.96 }}
               className="border border-slate-300 bg-slate-100 text-slate-800 hover:bg-slate-200 dark:border-white/[0.10] dark:bg-white/[0.04] dark:text-white px-5 py-2 rounded-xl font-semibold text-xs dark:hover:bg-white/[0.08] transition-all cursor-pointer"
             >
-              Contact Enterprise Sales
+              {t.pricing.enterpriseButton}
             </motion.button>
           </Link>
         </motion.div>
@@ -1770,19 +1781,29 @@ const FAQS_DATA = [
 ];
 
 export function FAQ() {
+  const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const faqs = [
+    { q: t.faq.q1, a: t.faq.a1 },
+    { q: t.faq.q2, a: t.faq.a2 },
+    { q: t.faq.q3, a: t.faq.a3 },
+    { q: t.faq.q4, a: t.faq.a4 },
+    { q: t.faq.q5, a: t.faq.a5 },
+    { q: t.faq.q6, a: t.faq.a6 },
+  ];
 
   return (
     <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto scroll-mt-24">
       <SectionHead
-        eyebrow="Frequently Asked Questions"
+        eyebrow={t.faq.eyebrow}
         tone="pink"
-        title="Got questions? We've got answers."
-        sub="Everything you need to know about KoraSpace, dual operating modes, AI safety, and pricing."
+        title={t.faq.title}
+        sub={t.faq.subtitle}
       />
 
       <div className="space-y-3">
-        {FAQS_DATA.map((faq, i) => {
+        {faqs.map((faq, i) => {
           const isOpen = openIndex === i;
 
           return (
@@ -1841,6 +1862,8 @@ export function FAQ() {
 /* ── 14. Final Call To Action ─────────────────────────────────────── */
 
 export function FinalCTA() {
+  const { t } = useLanguage();
+
   return (
     <section className="px-4 sm:px-6 lg:px-8 py-16">
       <motion.div
@@ -1863,15 +1886,15 @@ export function FinalCTA() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-[2px] bg-gradient-to-r from-[#ff0a8a] to-[#3b82f6] rounded-full" />
 
         <div className="relative z-10 max-w-3xl mx-auto text-center">
-          <Eyebrow tone="pink">14-Day Free Trial — No Credit Card Required</Eyebrow>
+          <Eyebrow tone="pink">{t.cta.eyebrow}</Eyebrow>
 
           <h2 className="mt-5 font-display text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
-            Your autonomous AI marketing team{" "}
-            <span className="text-[#ff0a8a]">starts today.</span>
+            {t.cta.titleLead}{" "}
+            <span className="text-[#ff0a8a]">{t.cta.titleHighlight}</span>
           </h2>
 
           <p className="mt-4 text-sm sm:text-base text-slate-600 dark:text-white/60 leading-relaxed font-normal max-w-xl mx-auto">
-            Join thousands of creators, founders, and marketing operators automating content creation, scheduling, CRM triage, and revenue growth.
+            {t.cta.subtitle}
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
@@ -1879,25 +1902,25 @@ export function FinalCTA() {
               href="/signup"
               className="bg-[#ff0a8a] text-white shadow-[0_4px_20px_rgba(255,10,138,0.3)] hover:bg-[#ff299b]"
             >
-              <span>Get Started Free</span>
+              <span>{t.cta.startTrial}</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </LandingButton>
             <LandingButton
               href="/login"
               className="border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 dark:border-white/[0.10] dark:bg-white/[0.03] dark:text-white/80 dark:hover:bg-white/[0.06] dark:hover:text-white"
             >
-              <span>Sign In to Workspace</span>
+              <span>{t.cta.signIn}</span>
             </LandingButton>
           </div>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500 dark:text-white/40">
             <div className="flex items-center gap-1.5">
               <Check className="h-3.5 w-3.5 text-[#34d399]" />
-              <span>Instant 2-minute onboarding</span>
+              <span>{t.cta.feature1}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Check className="h-3.5 w-3.5 text-[#34d399]" />
-              <span>Supports 6+ social networks</span>
+              <span>{t.cta.feature2}</span>
             </div>
           </div>
         </div>
@@ -1938,6 +1961,8 @@ const FOOTER_LINKS = {
 };
 
 export function SiteFooter() {
+  const { t } = useLanguage();
+
   return (
     <footer className="border-t border-slate-200 bg-slate-900 dark:border-white/[0.10] dark:bg-[#070d24] py-14 px-4 sm:px-6 lg:px-8 text-white">
       <div className="max-w-7xl mx-auto">
@@ -1962,7 +1987,7 @@ export function SiteFooter() {
             </Link>
 
             <p className="text-xs text-white/60 leading-relaxed font-normal">
-              Autonomous AI marketing operating system built for modern creators, startups, and marketing agencies.
+              {t.footer.brandDesc}
             </p>
 
             <div className="flex gap-2 pt-2">
@@ -2004,7 +2029,7 @@ export function SiteFooter() {
           {/* Contact Support Column */}
           <motion.div variants={itemFadeUp} className="space-y-3">
             <h4 className="text-xs font-bold uppercase font-mono tracking-wider text-white/80 mb-3.5">
-              Direct Contact
+              {t.footer.directContact}
             </h4>
             <ul className="space-y-2.5 text-xs text-white/60">
               <li className="flex items-start gap-2.5">
@@ -2030,10 +2055,13 @@ export function SiteFooter() {
 
         {/* Bottom Credits Bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/45">
-          <p>© {new Date().getFullYear()} KoraSpace by Techla. All rights reserved.</p>
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
-            <span className="text-white/60">🇳🇬 Built in Nigeria</span>
+          <p>© {new Date().getFullYear()} {t.footer.rightsReserved}</p>
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher variant="compact" />
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
+              <span className="text-white/60">{t.footer.builtLocation}</span>
+            </div>
           </div>
         </div>
       </div>

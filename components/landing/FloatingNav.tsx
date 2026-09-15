@@ -13,6 +13,8 @@ import {
   ResourcesMenu,
 } from "@/components/landing/NavMenus";
 import { mobileSections, navItems, type NavItem } from "@/components/landing/nav-data";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 
 export function FloatingNav() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -22,6 +24,7 @@ export function FloatingNav() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme, resolvedTheme } = useTheme();
   const { setThemeMode, preferences } = usePreferences();
+  const { t } = useLanguage();
 
   useEffect(() => {
     setMounted(true);
@@ -111,6 +114,8 @@ export function FloatingNav() {
 
           {/* Right Action CTAs */}
           <div className="hidden lg:flex items-center gap-3">
+            <LanguageSwitcher />
+
             {mounted && (
               <button
                 type="button"
@@ -127,19 +132,20 @@ export function FloatingNav() {
               href="/login"
               className="whitespace-nowrap rounded-xl border border-slate-200 bg-slate-100/80 px-3 py-2 text-[13px] font-medium text-slate-700 transition-all hover:bg-slate-200 hover:text-slate-900 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-white/80 dark:hover:border-white/20 dark:hover:bg-white/[0.06] dark:hover:text-white xl:px-4"
             >
-              Sign in
+              {t.nav.signIn}
             </Link>
             <Link
               href="/signup"
               className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-[#ff0a8a] px-3.5 py-2 text-[13px] font-semibold text-white shadow-[0_4px_20px_rgba(255,10,138,0.25)] transition-all hover:bg-[#ff299b] active:scale-[0.98] xl:px-4.5"
             >
-              <span>Get started</span>
+              <span>{t.nav.getStarted}</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
           {/* Mobile Toggle Button */}
           <div className="flex items-center gap-2 lg:hidden">
+            <LanguageSwitcher variant="minimal" />
             {mounted && (
               <button
                 type="button"
@@ -180,6 +186,8 @@ export function FloatingNav() {
 
           {/* Right Action CTAs */}
           <div className="hidden lg:flex items-center gap-2.5">
+            <LanguageSwitcher variant="compact" />
+
             {mounted && (
               <button
                 type="button"
@@ -196,19 +204,20 @@ export function FloatingNav() {
               href="/login"
               className="rounded-lg border border-slate-200 bg-slate-100/80 px-3.5 py-1.5 text-[12.5px] font-medium text-slate-700 transition-all hover:bg-slate-200 hover:text-slate-900 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-white/80 dark:hover:border-white/20 dark:hover:text-white"
             >
-              Sign in
+              {t.nav.signIn}
             </Link>
             <Link
               href="/signup"
               className="inline-flex items-center gap-1.5 rounded-lg bg-[#ff0a8a] px-4 py-1.5 text-[12.5px] font-semibold text-white shadow-[0_4px_18px_rgba(255,10,138,0.25)] transition-all hover:bg-[#ff299b]"
             >
-              <span>Get started</span>
+              <span>{t.nav.getStarted}</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
           {/* Mobile Toggle Button */}
           <div className="flex items-center gap-1.5 lg:hidden">
+            <LanguageSwitcher variant="minimal" />
             {mounted && (
               <button
                 type="button"
@@ -241,7 +250,13 @@ export function FloatingNav() {
             transition={{ duration: 0.2 }}
             className="absolute left-2 right-2 top-full mt-2 max-h-[calc(100vh-6rem)] overflow-y-auto rounded-2xl border border-slate-200 bg-white/95 text-slate-900 p-5 shadow-2xl backdrop-blur-2xl dark:border-white/[0.10] dark:bg-[#161616] dark:text-white lg:hidden"
           >
-            <div className="flex flex-col space-y-1.5">
+            <div className="flex flex-col space-y-2.5">
+              <div className="pb-3 border-b border-slate-200 dark:border-white/[0.08] flex items-center justify-between">
+                <span className="text-xs font-medium text-slate-600 dark:text-neutral-400">
+                  Language & Currency
+                </span>
+                <LanguageSwitcher />
+              </div>
               {navItems.map((item) => {
                 const section = mobileSections().find((s) => s.label === item.label);
 
