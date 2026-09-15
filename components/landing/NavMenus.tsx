@@ -4,13 +4,14 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Plus } from "lucide-react";
 import { BrandIcon, LinkedInIcon } from "@/components/landing/brand-icons";
 import {
-  audiences,
   ctaTargets,
+  getAudiences,
+  getProductCategories,
+  getResourceGroups,
   integrationPreview,
-  productCategories,
-  resourceGroups,
   type MenuLeaf,
 } from "@/components/landing/nav-data";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 const panelShell =
   "rounded-2xl border border-slate-200/90 bg-white/95 text-slate-900 shadow-[0_24px_70px_rgba(0,0,0,0.12)] backdrop-blur-2xl dark:border-white/[0.10] dark:bg-[#131118]/95 dark:text-white dark:shadow-[0_28px_70px_rgba(0,0,0,0.65)]";
@@ -19,7 +20,6 @@ const eyebrow = "text-[11px] font-bold tracking-[0.2em] text-slate-400 dark:text
 const groupTitle = "text-[11px] font-bold tracking-[0.16em] text-slate-400 dark:text-white/40";
 const panelLede = "mt-1 text-[15px] text-slate-600 dark:text-white/70";
 
-/** Items without an href aren't built yet, so they render inert rather than 404. */
 function Leaf({ item }: { item: MenuLeaf }) {
   const base =
     "block rounded-lg px-2 py-2 text-[15px] text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-white/70 dark:hover:bg-white/[0.06] dark:hover:text-white";
@@ -39,7 +39,6 @@ function Leaf({ item }: { item: MenuLeaf }) {
   );
 }
 
-/** A real link — these read as calls to action, so they must behave like one. */
 function PanelFooter({ label, href }: { label: string; href: string }) {
   return (
     <div className="mt-1 border-t border-slate-200/80 px-5 py-4 dark:border-white/[0.08]">
@@ -67,13 +66,15 @@ function useStagger() {
 }
 
 export function ProductMenu() {
+  const { t } = useLanguage();
   const stagger = useStagger();
+  const productCategories = getProductCategories(t);
 
   return (
     <div className={`${panelShell} w-[760px] overflow-hidden`}>
       <div className="px-5 pt-5">
-        <span className={eyebrow}>PRODUCT</span>
-        <p className={panelLede}>Everything working together to grow your business.</p>
+        <span className={eyebrow}>{t.megaMenus.productEyebrow}</span>
+        <p className={panelLede}>{t.megaMenus.productLede}</p>
       </div>
 
       <div className="grid grid-cols-3 gap-x-6 gap-y-5 p-5">
@@ -87,19 +88,21 @@ export function ProductMenu() {
         ))}
       </div>
 
-      <PanelFooter label="Explore the KoraSpace platform" href={ctaTargets.product} />
+      <PanelFooter label={t.megaMenus.productCta} href={ctaTargets.product} />
     </div>
   );
 }
 
 export function AudienceMenu() {
+  const { t } = useLanguage();
   const stagger = useStagger();
+  const audiences = getAudiences(t);
 
   return (
     <div className={`${panelShell} w-[660px] overflow-hidden`}>
       <div className="px-5 pt-5">
-        <span className={eyebrow}>MADE FOR</span>
-        <p className={panelLede}>Built around the way you actually work.</p>
+        <span className={eyebrow}>{t.megaMenus.audienceEyebrow}</span>
+        <p className={panelLede}>{t.megaMenus.audienceLede}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-2 p-5">
@@ -127,7 +130,7 @@ export function AudienceMenu() {
       </div>
 
       <PanelFooter
-        label="See how KoraSpace fits your business"
+        label={t.megaMenus.audienceCta}
         href={ctaTargets.audience}
       />
     </div>
@@ -135,13 +138,14 @@ export function AudienceMenu() {
 }
 
 export function IntegrationsMenu() {
+  const { t } = useLanguage();
   const stagger = useStagger();
 
   return (
     <div className={`${panelShell} w-[400px] overflow-hidden`}>
       <div className="px-5 pt-5">
-        <span className={eyebrow}>INTEGRATIONS</span>
-        <p className={panelLede}>Connect the tools your business already uses.</p>
+        <span className={eyebrow}>{t.megaMenus.integrationsEyebrow}</span>
+        <p className={panelLede}>{t.megaMenus.integrationsLede}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-x-3 gap-y-1 p-5">
@@ -164,17 +168,19 @@ export function IntegrationsMenu() {
       <div className="px-5 pb-2">
         <span className="inline-flex items-center gap-1.5 text-[13.5px] text-slate-400 dark:text-white/45">
           <Plus className="h-3.5 w-3.5" />
-          More integrations
+          {t.megaMenus.integrationsMore}
         </span>
       </div>
 
-      <PanelFooter label="Explore integrations" href={ctaTargets.integrations} />
+      <PanelFooter label={t.megaMenus.integrationsCta} href={ctaTargets.integrations} />
     </div>
   );
 }
 
 export function ResourcesMenu() {
+  const { t } = useLanguage();
   const stagger = useStagger();
+  const resourceGroups = getResourceGroups(t);
 
   return (
     <div className={`${panelShell} w-[560px] overflow-hidden`}>

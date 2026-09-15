@@ -100,6 +100,35 @@ export interface TranslationDictionary {
     getStarted: string;
     platform: string;
     company: string;
+    languageAndCurrency: string;
+  };
+  megaMenus: {
+    productEyebrow: string;
+    productLede: string;
+    productCta: string;
+    audienceEyebrow: string;
+    audienceLede: string;
+    audienceCta: string;
+    integrationsEyebrow: string;
+    integrationsLede: string;
+    integrationsMore: string;
+    integrationsCta: string;
+    categories: {
+      createTitle: string;
+      createItems: [string, string, string];
+      manageTitle: string;
+      manageItems: [string, string, string];
+      understandTitle: string;
+      understandItems: [string, string, string];
+      growTitle: string;
+      growItems: [string, string, string];
+      convertTitle: string;
+      convertItems: [string, string, string];
+      automateTitle: string;
+      automateItems: [string, string, string];
+    };
+    audiences: Array<{ label: string; desc: string }>;
+    resourceGroups: Array<{ title: string; items: Array<{ label: string; href?: string }> }>;
   };
   hero: {
     badge: string;
@@ -114,6 +143,35 @@ export interface TranslationDictionary {
     statCreators: string;
     statPosts: string;
     statRoas: string;
+    supportedPlatforms: string;
+  };
+  heroLoop: {
+    badge: string;
+    stages: Array<{
+      label: string;
+      kicker: string;
+      body: string;
+      action: string;
+    }>;
+    canvas: {
+      understandKicker: string;
+      understandBody: string;
+      createKicker: string;
+      createPrompt: string;
+      createItems: [string, string, string];
+      createAction: string;
+      createPerformance: string;
+      publishKicker: string;
+      publishBody: string;
+      learnKicker: string;
+      learnBody: string;
+      learnSignalKicker: string;
+      learnSignalBody: string;
+      nextMoveKicker: string;
+      nextMoveBody: string;
+      nextMoveAction: string;
+      stageLabels: [string, string, string, string, string];
+    };
   };
   dashboardShowcase: {
     eyebrow: string;
@@ -172,6 +230,28 @@ export interface TranslationDictionary {
     stage4Desc: string;
     feedsNext: string;
   };
+  featureRows: {
+    composer: {
+      badge: string;
+      title: string;
+      description: string;
+    };
+    calendar: {
+      badge: string;
+      title: string;
+      description: string;
+    };
+    crm: {
+      badge: string;
+      title: string;
+      description: string;
+    };
+    agency: {
+      badge: string;
+      title: string;
+      description: string;
+    };
+  };
   features: {
     composerTitle: string;
     composerTagline: string;
@@ -192,6 +272,13 @@ export interface TranslationDictionary {
     attributionTagline: string;
     attributionDesc: string;
   };
+  featureShowcase: Array<{
+    id: string;
+    title: string;
+    tagline: string;
+    description: string;
+    tone: "pink" | "blue";
+  }>;
   brandBrain: {
     eyebrow: string;
     title: string;
@@ -202,6 +289,69 @@ export interface TranslationDictionary {
     brainCheck2: string;
     brainCheck3: string;
     swarmTitle: string;
+    swarmAgents: Array<{ name: string; role: string }>;
+  };
+  agentTools: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    list: Array<{
+      title: string;
+      desc: string;
+      badge: string;
+      tone: "pink" | "blue";
+    }>;
+  };
+  integrationsSection: {
+    eyebrow: string;
+    titleLead: string;
+    titleHighlight: string;
+    subtitle: string;
+  };
+  revenueAttribution: {
+    eyebrow: string;
+    titleLead: string;
+    titleHighlight: string;
+    subtitle: string;
+    funnelTitle: string;
+    funnelSubtitle: string;
+    liveSync: string;
+    impressionsLabel: string;
+    impressionsVal: string;
+    visitsLabel: string;
+    visitsVal: string;
+    clicksLabel: string;
+    clicksVal: string;
+    leadsLabel: string;
+    leadsVal: string;
+    closedCustomers: string;
+    revenueVal: string;
+    attributionModel: string;
+    roas: string;
+    koraScoreLabel: string;
+    koraScoreTip: string;
+    radarTitle: string;
+    radarHeading: string;
+    radarDesc: string;
+  };
+  collaboration: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    list: Array<{ title: string; desc: string }>;
+  };
+  stories: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    list: Array<{
+      name: string;
+      role: string;
+      avatar: string;
+      text: string;
+      highlight: string;
+      tone: "pink" | "blue";
+    }>;
   };
   pricing: {
     eyebrow: string;
@@ -224,6 +374,16 @@ export interface TranslationDictionary {
     enterpriseTitle: string;
     enterpriseDesc: string;
     enterpriseButton: string;
+    plans: Array<{
+      planKey: string;
+      name: string;
+      desc: string;
+      posts: string;
+      features: string[];
+      cta: string;
+      badge?: string;
+      highlight?: boolean;
+    }>;
   };
   faq: {
     eyebrow: string;
@@ -261,6 +421,12 @@ export interface TranslationDictionary {
     directContact: string;
     rightsReserved: string;
     builtLocation: string;
+    links: {
+      product: Array<{ label: string; href: string }>;
+      platform: Array<{ label: string; href: string }>;
+      legal: Array<{ label: string; href: string }>;
+      support: Array<{ label: string; href: string }>;
+    };
   };
   common: {
     exploreFeature: string;

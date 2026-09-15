@@ -248,7 +248,7 @@ export function Hero() {
         className="mx-auto mt-6 max-w-[1400px] px-5 text-sm text-white/50 sm:px-10 flex items-center gap-2"
       >
         <span className="h-1.5 w-1.5 rounded-full bg-[#34d399]" />
-        <span>Built to grow across Instagram, TikTok, X, LinkedIn, and Threads.</span>
+        <span>{t.hero.supportedPlatforms}</span>
       </motion.p>
     </section>
   );

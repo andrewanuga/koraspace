@@ -17,30 +17,20 @@ import {
   siYoutube,
   type BrandMark,
 } from "@/components/landing/brand-icons";
+import type { TranslationDictionary } from "@/lib/i18n/types";
 
-/**
- * Interim CTA targets: /product, /for/* and /integrations don't exist yet, so
- * each panel's call-to-action points at the closest live homepage section.
- * Swap these for the real routes as those pages land.
- */
 export const ctaTargets = {
   product: "#features",
   audience: "#dual-modes",
   integrations: "#integrations",
 } as const;
 
-/**
- * Most menu destinations (/product, /for/*, blog, docs, API…) don't exist yet —
- * the only public marketing route is "/". Items without an `href` render
- * complete but inert, and get a real href as each page lands.
- */
 export type MenuLeaf = { label: string; href?: string };
 
 export type ProductCategory = {
   key: string;
   title: string;
   items: MenuLeaf[];
-  /** Shown in the mega-menu's preview panel while this category is hovered. */
   preview: { status: string; finding: string; action: string };
 };
 
@@ -49,11 +39,6 @@ export type Audience = MenuLeaf & {
   description: string;
 };
 
-/**
- * `align: "right"` anchors the panel to the trigger's right edge instead of its
- * left. Needed for triggers far enough along the bar that a wide left-aligned
- * panel would run off-screen (Resources overflowed by ~74px at 1024px).
- */
 export type NavItem =
   | { label: string; kind: "link"; href?: string }
   | { label: string; kind: "product"; align?: "right" }
@@ -61,11 +46,143 @@ export type NavItem =
   | { label: string; kind: "integrations"; href?: string; align?: "right" }
   | { label: string; kind: "resources"; align?: "right" };
 
+export function getNavItems(t: TranslationDictionary): NavItem[] {
+  return [
+    { label: t.nav.product, kind: "product" },
+    { label: t.nav.audience, kind: "audience" },
+    { label: t.nav.integrations, kind: "integrations", href: "#integrations" },
+    { label: t.nav.resources, kind: "resources", align: "right" },
+    { label: t.nav.pricing, kind: "link", href: "#pricing" },
+  ];
+}
+
+export function getProductCategories(t: TranslationDictionary): ProductCategory[] {
+  const cats = t.megaMenus.categories;
+  return [
+    {
+      key: "create",
+      title: cats.createTitle,
+      items: cats.createItems.map((label) => ({ label })),
+      preview: {
+        status: t.heroLoop.canvas.createKicker,
+        finding: t.heroLoop.canvas.createPrompt,
+        action: t.heroLoop.canvas.createAction,
+      },
+    },
+    {
+      key: "manage",
+      title: cats.manageTitle,
+      items: cats.manageItems.map((label) => ({ label })),
+      preview: {
+        status: t.heroLoop.canvas.publishKicker,
+        finding: t.heroLoop.canvas.publishBody,
+        action: t.heroLoop.stages[3]?.action || "View schedule",
+      },
+    },
+    {
+      key: "understand",
+      title: cats.understandTitle,
+      items: cats.understandItems.map((label) => ({ label })),
+      preview: {
+        status: t.heroLoop.canvas.understandKicker,
+        finding: t.heroLoop.canvas.understandBody,
+        action: t.heroLoop.stages[0]?.action || "View brand profile",
+      },
+    },
+    {
+      key: "grow",
+      title: cats.growTitle,
+      items: cats.growItems.map((label) => ({ label })),
+      preview: {
+        status: t.heroLoop.stages[5]?.kicker || "Kora Intelligence",
+        finding: t.heroLoop.stages[5]?.body || "",
+        action: t.heroLoop.stages[5]?.action || "Generate campaign",
+      },
+    },
+    {
+      key: "convert",
+      title: cats.convertTitle,
+      items: cats.convertItems.map((label) => ({ label })),
+      preview: {
+        status: t.revenueAttribution.radarHeading,
+        finding: t.revenueAttribution.radarDesc,
+        action: t.common.exploreFeature,
+      },
+    },
+    {
+      key: "automate",
+      title: cats.automateTitle,
+      items: cats.automateItems.map((label) => ({ label })),
+      preview: {
+        status: t.agentTools.list[2]?.title || "Social CRM",
+        finding: t.agentTools.list[2]?.desc || "",
+        action: t.common.exploreFeature,
+      },
+    },
+  ];
+}
+
+const AUDIENCE_ICONS: LucideIcon[] = [
+  Rocket,
+  Palette,
+  Building2,
+  Briefcase,
+  Users,
+  ShoppingBag,
+];
+
+export function getAudiences(t: TranslationDictionary): Audience[] {
+  return t.megaMenus.audiences.map((aud, i) => ({
+    label: aud.label,
+    Icon: AUDIENCE_ICONS[i] || Users,
+    description: aud.desc,
+  }));
+}
+
+export type IntegrationEntry =
+  | { label: string; icon: BrandMark }
+  | { label: string; custom: "linkedin" };
+
+export const integrationPreview: IntegrationEntry[] = [
+  { label: "Instagram", icon: siInstagram },
+  { label: "Facebook", icon: siFacebook },
+  { label: "TikTok", icon: siTiktok },
+  { label: "YouTube", icon: siYoutube },
+  { label: "LinkedIn", custom: "linkedin" },
+  { label: "X", icon: siX },
+  { label: "Shopify", icon: siShopify },
+  { label: "Google Analytics", icon: siGoogleanalytics },
+];
+
+export function getResourceGroups(t: TranslationDictionary): { title: string; items: MenuLeaf[] }[] {
+  return t.megaMenus.resourceGroups;
+}
+
+export function getMobileSections(t: TranslationDictionary): { label: string; groups: { title?: string; items: MenuLeaf[] }[] }[] {
+  const cats = getProductCategories(t);
+  const auds = getAudiences(t);
+  const res = getResourceGroups(t);
+
+  return [
+    {
+      label: t.nav.product,
+      groups: cats.map((c) => ({ title: c.title, items: c.items })),
+    },
+    {
+      label: t.nav.audience,
+      groups: [{ items: auds.map(({ label, href }) => ({ label, href })) }],
+    },
+    {
+      label: t.nav.resources,
+      groups: res,
+    },
+  ];
+}
+
+// Default fallback exports for backwards compatibility
 export const navItems: NavItem[] = [
   { label: "Product", kind: "product" },
   { label: "Made for", kind: "audience" },
-  // Keeps the live homepage section until /integrations exists — making this
-  // inert would regress a link that works today.
   { label: "Integrations", kind: "integrations", href: "#integrations" },
   { label: "Resources", kind: "resources", align: "right" },
   { label: "Pricing", kind: "link", href: "#pricing" },
@@ -167,26 +284,6 @@ export const audiences: Audience[] = [
   },
 ];
 
-/**
- * The eight platforms originally specced. Seven come from simple-icons as
- * crisp SVG; LinkedIn was removed from simple-icons following a legal request,
- * so it keeps the existing raster (whitened to match — see brand-icons.tsx).
- */
-export type IntegrationEntry =
-  | { label: string; icon: BrandMark }
-  | { label: string; custom: "linkedin" };
-
-export const integrationPreview: IntegrationEntry[] = [
-  { label: "Instagram", icon: siInstagram },
-  { label: "Facebook", icon: siFacebook },
-  { label: "TikTok", icon: siTiktok },
-  { label: "YouTube", icon: siYoutube },
-  { label: "LinkedIn", custom: "linkedin" },
-  { label: "X", icon: siX },
-  { label: "Shopify", icon: siShopify },
-  { label: "Google Analytics", icon: siGoogleanalytics },
-];
-
 export const resourceGroups: { title: string; items: MenuLeaf[] }[] = [
   {
     title: "Learn",
@@ -197,7 +294,6 @@ export const resourceGroups: { title: string; items: MenuLeaf[] }[] = [
     items: [
       { label: "Help Center" },
       { label: "Documentation" },
-      // Live section on the homepage today.
       { label: "FAQs", href: "#faq" },
     ],
   },
@@ -207,7 +303,6 @@ export const resourceGroups: { title: string; items: MenuLeaf[] }[] = [
   },
 ];
 
-/** Flattened for the mobile accordion. */
 export function mobileSections(): { label: string; groups: { title?: string; items: MenuLeaf[] }[] }[] {
   return [
     {

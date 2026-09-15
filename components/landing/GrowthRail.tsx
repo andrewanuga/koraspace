@@ -12,15 +12,11 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
+import type { TranslationDictionary } from "@/lib/i18n/types";
 
 type Stage = {
   label: string;
-  /**
-   * The hero canvas state this stage drives on hover. The rail and the canvas
-   * are the same loop told twice, so they map in order: the rail's six stages
-   * fold onto the canvas's five, with Your Brand and AI both resolving to
-   * Understand (learning the brand *is* the understanding step).
-   */
   canvasKey: CanvasStateKey;
   Icon: LucideIcon;
   kicker: string;
@@ -28,73 +24,35 @@ type Stage = {
   action: string;
 };
 
-const stages: Stage[] = [
-  {
-    label: "Your Brand",
-    canvasKey: "understand",
-    Icon: Palette,
-    kicker: "Brand Brain",
-    body: "KoraSpace learns your voice, products, positioning, and brand guidelines.",
-    action: "View brand profile",
-  },
-  {
-    label: "AI",
-    canvasKey: "understand",
-    Icon: Brain,
-    kicker: "Intelligence",
-    body: "Multiple AI engines turn your brand data into marketing decisions.",
-    action: "See the engines",
-  },
-  {
-    label: "Content",
-    canvasKey: "create",
-    Icon: PenLine,
-    kicker: "Create",
-    body: "Generate content tailored to your brand, audience, and platform.",
-    action: "Open composer",
-  },
-  {
-    label: "Audience",
-    canvasKey: "publish",
-    Icon: Users,
-    // Reads as distribution, not analysis: this stage sits between Content and
-    // Results, so it is the moment the work reaches people — Results is where
-    // the reading of it happens. The old copy described analysis, which made
-    // this and Results say the same thing twice in a row.
-    kicker: "Reach",
-    body: "Your content goes out where and when your audience is actually paying attention.",
-    action: "View schedule",
-  },
-  {
-    label: "Results",
-    canvasKey: "learn",
-    Icon: TrendingUp,
-    kicker: "Learn",
-    body: "Your audience engages 34% more with founder-led content.",
-    action: "Opportunity detected",
-  },
-  {
-    label: "Next Move",
-    canvasKey: "next-move",
-    Icon: Sparkles,
-    kicker: "Kora Intelligence",
-    body: "Turn your best-performing founder post into a 3-part campaign.",
-    action: "Generate campaign",
-  },
+const STAGE_META: { canvasKey: CanvasStateKey; Icon: LucideIcon }[] = [
+  { canvasKey: "understand", Icon: Palette },
+  { canvasKey: "understand", Icon: Brain },
+  { canvasKey: "create", Icon: PenLine },
+  { canvasKey: "publish", Icon: Users },
+  { canvasKey: "learn", Icon: TrendingUp },
+  { canvasKey: "next-move", Icon: Sparkles },
 ];
+
+function getGrowthRailStages(t: TranslationDictionary): Stage[] {
+  return t.heroLoop.stages.map((stg, i) => ({
+    label: stg.label,
+    canvasKey: STAGE_META[i]?.canvasKey || "understand",
+    Icon: STAGE_META[i]?.Icon || Sparkles,
+    kicker: stg.kicker,
+    body: stg.body,
+    action: stg.action,
+  }));
+}
 
 const CARD_WIDTH = 300;
 
 type GrowthRailProps = {
-  /**
-   * Fires with the hovered stage's canvas state, or null when the pointer
-   * leaves the rail. The Hero passes this straight to the IntelligenceCanvas
-   * so exploring the loop down here drives the intelligence up there.
-   */
   onFocusStage?: (key: CanvasStateKey | null) => void;
 };
 
 export function GrowthRail({ onFocusStage }: GrowthRailProps) {
+  const { t } = useLanguage();
+  const stages = getGrowthRailStages(t);
   const [active, setActive] = useState<number | null>(null);
   const reduceMotion = useReducedMotion();
 
@@ -103,10 +61,6 @@ export function GrowthRail({ onFocusStage }: GrowthRailProps) {
   const [cardOffset, setCardOffset] = useState(0);
   const [nodeOffset, setNodeOffset] = useState(0);
 
-  // Anchor the card above the hovered node, clamped inside the rail so the
-  // first and last nodes can't push it past the edges. The connector tracks
-  // the node's own center rather than the card's, so on the clamped edge
-  // nodes it still points at the node it describes.
   const focusStage = (i: number) => {
     const rail = railRef.current;
     const node = nodeRefs.current[i];
@@ -139,14 +93,11 @@ export function GrowthRail({ onFocusStage }: GrowthRailProps) {
       className="relative border-t border-white/10 px-5 pb-10 pt-8 sm:px-10 sm:pb-12 sm:pt-10"
     >
       <p className="text-center text-[10px] font-bold tracking-[0.2em] text-white/40 sm:text-xs">
-        THE KORASPACE GROWTH LOOP
+        {t.heroLoop.badge}
       </p>
 
       <div ref={railRef} className="relative mt-6">
-        {/* nodes */}
         <div className="relative flex flex-wrap items-center justify-center gap-2.5 lg:flex-nowrap lg:justify-between lg:gap-3">
-          {/* continuous connecting line threading behind the nodes — one
-              system, not six separate features. Hidden once they wrap. */}
           <div className="pointer-events-none absolute left-0 top-1/2 hidden w-full -translate-y-1/2 lg:block">
             <div className="relative h-px w-full bg-gradient-to-r from-transparent via-white/25 to-transparent">
               {!reduceMotion && (
@@ -210,70 +161,59 @@ export function GrowthRail({ onFocusStage }: GrowthRailProps) {
         </div>
       </div>
 
-        {/* Zero-height anchor beneath the nodes: the card hangs down into
-            the space already below the rail instead of reserving an empty
-            block above it (which padded the rail out) or floating up over the
-            hero. Absolutely positioned, so still no layout shift on hover. */}
-        <div className="pointer-events-none relative hidden h-0 lg:block">
-          <AnimatePresence>
-            {activeStage && (
-              <motion.div
-                key="intelligence-card"
-                initial={{ opacity: 0, y: reduceMotion ? 0 : 10, filter: "blur(6px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: reduceMotion ? 0 : 6, filter: "blur(6px)" }}
-                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                style={{ width: CARD_WIDTH, left: cardOffset }}
-                className="absolute top-[22px] -translate-x-1/2"
-              >
-                <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-[#0e0a1c]/90 p-4 shadow-[0_24px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl">
-                  {/* faint internal gradient */}
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0"
-                    style={{
-                      background:
-                        "radial-gradient(120% 100% at 0% 0%, rgba(255,10,138,0.14) 0%, transparent 55%)",
-                    }}
-                  />
+      <div className="pointer-events-none relative hidden h-0 lg:block">
+        <AnimatePresence>
+          {activeStage && (
+            <motion.div
+              key="intelligence-card"
+              initial={{ opacity: 0, y: reduceMotion ? 0 : 10, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: reduceMotion ? 0 : 6, filter: "blur(6px)" }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              style={{ width: CARD_WIDTH, left: cardOffset }}
+              className="absolute top-[22px] -translate-x-1/2"
+            >
+              <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-[#0e0a1c]/90 p-4 shadow-[0_24px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background:
+                      "radial-gradient(120% 100% at 0% 0%, rgba(255,10,138,0.14) 0%, transparent 55%)",
+                  }}
+                />
 
-                  <div className="relative">
-                    <span className="text-[10px] font-bold tracking-[0.18em] text-white/45">
-                      {activeStage.kicker.toUpperCase()}
-                    </span>
-                    <p className="mt-2 text-sm leading-relaxed text-white/85">
-                      {activeStage.body}
-                    </p>
-                    <p className="mt-3 text-xs font-semibold text-[#ff9fc9]">
-                      {activeStage.action} →
-                    </p>
-                  </div>
+                <div className="relative">
+                  <span className="text-[10px] font-bold tracking-[0.18em] text-white/45">
+                    {activeStage.kicker.toUpperCase()}
+                  </span>
+                  <p className="mt-2 text-sm leading-relaxed text-white/85">
+                    {activeStage.body}
+                  </p>
+                  <p className="mt-3 text-xs font-semibold text-[#ff9fc9]">
+                    {activeStage.action} →
+                  </p>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-          {/* connector up to the node — positioned on the node's own centre,
-              independent of the clamped card, so it always points at its node */}
-          <AnimatePresence>
-            {activeStage && (
-              <motion.div
-                key="connector"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                style={{ left: nodeOffset }}
-                className="absolute top-0 h-[22px] w-px bg-gradient-to-t from-white/30 to-transparent"
-              />
-            )}
-          </AnimatePresence>
-        </div>
+        <AnimatePresence>
+          {activeStage && (
+            <motion.div
+              key="connector"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ left: nodeOffset }}
+              className="absolute top-0 h-[22px] w-px bg-gradient-to-t from-white/30 to-transparent"
+            />
+          )}
+        </AnimatePresence>
+      </div>
 
-      {/* On wrapped layouts the anchored card can't track a node, so the active
-          stage's copy reads inline instead. No reserved height — it simply
-          isn't there until a stage is tapped, rather than padding the rail
-          out with an empty block. */}
       <div className="lg:hidden">
         <AnimatePresence mode="wait">
           {activeStage && (

@@ -40,7 +40,6 @@ import {
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { PlanKey } from "@/lib/i18n/pricing";
-import type { TranslationDictionary } from "@/lib/i18n/types";
 
 /* ── Animation Physics & Variants ─────────────────────────────────── */
 
@@ -200,7 +199,6 @@ export function ProblemSolverSection() {
         transition={springTransition}
         className="relative mx-auto max-w-6xl rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden"
       >
-        {/* Animated accent border at top */}
         <motion.div
           animate={{
             scaleX: [0.85, 1.15, 0.85],
@@ -221,7 +219,6 @@ export function ProblemSolverSection() {
             {t.problemSolver.paragraph}
           </p>
 
-          {/* 3 Pillars Grid with Staggered Entrance and 3D Spring Hover */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -322,7 +319,6 @@ export function DualModeShowcaseSection() {
           sub={t.dualModes.subtitle}
         />
 
-        {/* Dual Cards Comparison Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Creator Mode Card */}
           <motion.div
@@ -622,6 +618,7 @@ export function FeatureSection({
   imageAlt,
   imageLeft = true,
 }: FeatureProps) {
+  const { t } = useLanguage();
   const isBlue = tone === "blue";
   const brandColor = isBlue ? "#3b82f6" : "#ff0a8a";
 
@@ -630,7 +627,6 @@ export function FeatureSection({
       id={id}
       className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-14 scroll-mt-24"
     >
-      {/* Visual Image Preview with Spring Float & Hover */}
       <motion.div
         initial={{ opacity: 0, x: imageLeft ? -30 : 30, filter: "blur(4px)" }}
         whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
@@ -651,7 +647,6 @@ export function FeatureSection({
         </motion.div>
       </motion.div>
 
-      {/* Content Text with Staggered Entrance */}
       <motion.div
         initial={{ opacity: 0, x: imageLeft ? 30 : -30, filter: "blur(4px)" }}
         whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
@@ -678,7 +673,7 @@ export function FeatureSection({
               boxShadow: `0 4px 18px ${brandColor}35`,
             }}
           >
-            <span>Explore Feature</span>
+            <span>{t.common.exploreFeature}</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </LandingButton>
         </div>
@@ -689,82 +684,26 @@ export function FeatureSection({
 
 /* ── 5. Interactive FeatureShowcase (#engines) ────────────────────── */
 
-interface FeatureNode {
-  id: string;
-  title: string;
-  tagline: string;
-  description: string;
-  tone: "pink" | "blue";
-  icon: React.ComponentType<{ className?: string }>;
-  screenPath: string;
-}
-
-const FEATURE_SET_DATA: FeatureNode[] = [
-  {
-    id: "ai-composer",
-    title: "AI Composing Pipeline",
-    tagline: "Multi-Step Reflection Engine",
-    description:
-      "Executes an 8-step AI workflow: checks brand voice guidelines -> analyzes past viral posts -> scans real-time niche trends -> drafts post & caption -> assigns hashtag clusters -> double web reflections.",
-    tone: "pink",
-    icon: Sparkles,
-    screenPath: "/features/Kora-AI-Composer.jpg",
-  },
-  {
-    id: "visual-calendar",
-    title: "Visual Drag-and-Drop Calendar",
-    tagline: "Multi-Platform Scheduling",
-    description:
-      "A fast, unified planning board to schedule, rearrange, and manage scheduled posts across Instagram, TikTok, LinkedIn, YouTube, X, and Threads effortlessly.",
-    tone: "pink",
-    icon: Calendar,
-    screenPath: "/features/Visual-Drag-and-Drop Calendar.jpg",
-  },
-  {
-    id: "repurposer",
-    title: "Content Repurposer",
-    tagline: "1 Asset to 6 Formats",
-    description:
-      "Transform a single YouTube video, podcast transcript, or article into LinkedIn carousels, X threads, Instagram captions, TikTok scripts, and newsletters with one click.",
-    tone: "pink",
-    icon: RefreshCw,
-    screenPath: "/features/social-media-concept-with-device.jpg",
-  },
-  {
-    id: "inbox-crm",
-    title: "Social CRM & Lead Triage",
-    tagline: "High-Intent Signal Detection",
-    description:
-      "Unified social inbox that classifies comments and DMs into Leads, Support, or Inquiries. Automatically flags buying questions ('How much is this?') and creates CRM opportunities.",
-    tone: "blue",
-    icon: DollarSign,
-    screenPath: "/features/social-ecommerce.jpg",
-  },
-  {
-    id: "agency-workspaces",
-    title: "Agency Workspaces & Client Portals",
-    tagline: "Multi-Seat Collaboration",
-    description:
-      "Built for marketing agencies and growth teams. Manage multiple client workspaces with strict RLS permissions, shareable approval links, and white-label reporting.",
-    tone: "blue",
-    icon: Users,
-    screenPath: "/features/manage-multiple-brands.jpg",
-  },
-  {
-    id: "growth-marketing",
-    title: "Revenue & ROAS Attribution",
-    tagline: "Full-Funnel Analytics",
-    description:
-      "Track the journey from social impressions to website visits, qualified CRM leads, and closed revenue. Identify high-ROI campaigns with verifiable Naira / dollar conversion data.",
-    tone: "blue",
-    icon: TrendingUp,
-    screenPath: "/features/social-media-marketing.jpg",
-  },
-];
+const FEATURE_SCREEN_MAP: Record<string, { icon: React.ComponentType<{ className?: string }>; screenPath: string }> = {
+  "ai-composer": { icon: Sparkles, screenPath: "/features/Kora-AI-Composer.jpg" },
+  "visual-calendar": { icon: Calendar, screenPath: "/features/Visual-Drag-and-Drop Calendar.jpg" },
+  "repurposer": { icon: RefreshCw, screenPath: "/features/social-media-concept-with-device.jpg" },
+  "inbox-crm": { icon: DollarSign, screenPath: "/features/social-ecommerce.jpg" },
+  "agency-workspaces": { icon: Users, screenPath: "/features/manage-multiple-brands.jpg" },
+  "growth-marketing": { icon: TrendingUp, screenPath: "/features/social-media-marketing.jpg" },
+};
 
 export function FeatureShowcase() {
+  const { t } = useLanguage();
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeFeature = FEATURE_SET_DATA[activeIndex];
+
+  const featureItems = t.featureShowcase.map((f) => ({
+    ...f,
+    icon: FEATURE_SCREEN_MAP[f.id]?.icon || Sparkles,
+    screenPath: FEATURE_SCREEN_MAP[f.id]?.screenPath || "/features/Kora-AI-Composer.jpg",
+  }));
+
+  const activeFeature = featureItems[activeIndex] || featureItems[0];
 
   return (
     <section id="engines" className="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
@@ -775,7 +714,6 @@ export function FeatureShowcase() {
         transition={springTransition}
         className="rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#161616] p-6 sm:p-10 lg:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
       >
-        {/* Header Text with Smooth AnimatePresence */}
         <div className="text-center max-w-3xl mx-auto mb-8 min-h-[140px] flex flex-col justify-center items-center">
           <AnimatePresence mode="wait">
             <motion.div
@@ -801,7 +739,6 @@ export function FeatureShowcase() {
           </AnimatePresence>
         </div>
 
-        {/* Display Mockup Frame with Smooth Crossfade */}
         <div className="relative w-full max-w-4xl mx-auto aspect-16/10 rounded-2xl overflow-hidden border border-slate-200 dark:border-white/[0.10] bg-slate-900 shadow-2xl">
           <AnimatePresence mode="wait">
             <motion.img
@@ -817,9 +754,8 @@ export function FeatureShowcase() {
           </AnimatePresence>
         </div>
 
-        {/* Tab Navigation Matrix with Sliding layoutId Pill */}
         <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-          {FEATURE_SET_DATA.map((feat, idx) => {
+          {featureItems.map((feat, idx) => {
             const Icon = feat.icon;
             const isSelected = idx === activeIndex;
             const featColor = feat.tone === "blue" ? "#3b82f6" : "#ff0a8a";
@@ -866,15 +802,15 @@ export function FeatureShowcase() {
 
 /* ── 6. Brand Brain & 8-Agent Swarm (#brain) ──────────────────────── */
 
-const AGENT_SWARM = [
-  { name: "Research Agent", role: "Scans viral niche trends & web data", icon: Search },
-  { name: "Brand Voice Guard", role: "Guarantees authentic tone & formatting", icon: ShieldCheck },
-  { name: "Content Studio Agent", role: "Drafts captions, carousels & scripts", icon: FileText },
-  { name: "Strategy Agent", role: "Builds 30/60/90 day growth roadmaps", icon: Target },
-  { name: "Analytics Agent", role: "Tracks funnel metrics & revenue ROAS", icon: BarChart3 },
-  { name: "Competitor Spy Agent", role: "Monitors rival formats & engagement hooks", icon: Eye },
-  { name: "Engagement Triage Agent", role: "Manages DMs & flags hot CRM leads", icon: MessageSquare },
-  { name: "Optimization Agent", role: "Calculates post scores & A/B performance", icon: Activity },
+const SWARM_ICONS = [
+  Search,
+  ShieldCheck,
+  FileText,
+  Target,
+  BarChart3,
+  Eye,
+  MessageSquare,
+  Activity,
 ];
 
 export function BrainAndAgentsSection() {
@@ -886,16 +822,11 @@ export function BrainAndAgentsSection() {
         <SectionHead
           eyebrow={t.brandBrain.eyebrow}
           tone="pink"
-          title={
-            <>
-              {t.brandBrain.title}
-            </>
-          }
+          title={t.brandBrain.title}
           sub={t.brandBrain.subtitle}
         />
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
-          {/* Brand Brain Card with Glowing Memory Core */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -954,7 +885,6 @@ export function BrainAndAgentsSection() {
             </div>
           </motion.div>
 
-          {/* 8-Agent Swarm Grid with Staggered Entrance */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -962,23 +892,26 @@ export function BrainAndAgentsSection() {
             viewport={{ once: true, margin: "-60px" }}
             className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3.5"
           >
-            {AGENT_SWARM.map((ag) => (
-              <motion.div
-                key={ag.name}
-                variants={itemFadeUp}
-                whileHover={{ x: 6, scale: 1.02, borderColor: "rgba(59,130,246,0.3)" }}
-                transition={cardHoverSpring}
-                className="flex items-center gap-3.5 rounded-2xl border border-slate-200 bg-white dark:border-white/[0.07] dark:bg-[#171717] p-4 transition-colors hover:bg-slate-50 dark:hover:bg-[#1a1a1a] shadow-xs"
-              >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#3b82f6]/15 text-[#3b82f6]">
-                  <ag.icon className="h-5 w-5" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">{ag.name}</h4>
-                  <p className="text-[11px] text-slate-500 dark:text-white/50 truncate">{ag.role}</p>
-                </div>
-              </motion.div>
-            ))}
+            {t.brandBrain.swarmAgents.map((ag, idx) => {
+              const Icon = SWARM_ICONS[idx] || Search;
+              return (
+                <motion.div
+                  key={ag.name}
+                  variants={itemFadeUp}
+                  whileHover={{ x: 6, scale: 1.02, borderColor: "rgba(59,130,246,0.3)" }}
+                  transition={cardHoverSpring}
+                  className="flex items-center gap-3.5 rounded-2xl border border-slate-200 bg-white dark:border-white/[0.07] dark:bg-[#171717] p-4 transition-colors hover:bg-slate-50 dark:hover:bg-[#1a1a1a] shadow-xs"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#3b82f6]/15 text-[#3b82f6]">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">{ag.name}</h4>
+                    <p className="text-[11px] text-slate-500 dark:text-white/50 truncate">{ag.role}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </div>
@@ -988,60 +921,26 @@ export function BrainAndAgentsSection() {
 
 /* ── 7. Agent Tools Grid (#tools / #features) ─────────────────────── */
 
-const AGENT_TOOLS_LIST = [
-  {
-    title: "8-Step AI Composing Pipeline",
-    desc: "Checks niche context, past posts, active trends, drafts content, assigns hashtag sets, and reflects before publishing.",
-    icon: Sparkles,
-    badge: "Creator Engine",
-    tone: "pink" as const,
-  },
-  {
-    title: "Post Score Predictor",
-    desc: "AI scores hook strength and estimated engagement probability (1-100) before you hit publish.",
-    icon: Activity,
-    badge: "Optimization",
-    tone: "pink" as const,
-  },
-  {
-    title: "Social CRM & Ghost Mode™",
-    desc: "Automated DM & comment monitor with humanized delays that detects buying signals and logs leads to CRM.",
-    icon: Ghost,
-    badge: "Automation",
-    tone: "blue" as const,
-  },
-  {
-    title: "Competitor Video Spy",
-    desc: "Tracks viral short-form videos in your niche and deconstructs their hooks, audio pacing, and CTAs.",
-    icon: Eye,
-    badge: "Intelligence",
-    tone: "blue" as const,
-  },
-  {
-    title: "Auto-Hashtag & Keyword Cluster",
-    desc: "Generates platform-optimized hashtag clusters and keyword tags for maximum algorithmic distribution.",
-    icon: Search,
-    badge: "Reach",
-    tone: "pink" as const,
-  },
-  {
-    title: "Multi-Platform Repurposer",
-    desc: "Converts 1 video, audio file, or article into LinkedIn carousels, X threads, and reels in seconds.",
-    icon: RefreshCw,
-    badge: "Repurposing",
-    tone: "pink" as const,
-  },
+const AGENT_TOOL_ICONS = [
+  Sparkles,
+  Activity,
+  Ghost,
+  Eye,
+  Search,
+  RefreshCw,
 ];
 
 export function AgentTools() {
+  const { t } = useLanguage();
+
   return (
     <section id="features" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28 scroll-mt-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="Autonomous Toolkit"
+          eyebrow={t.agentTools.eyebrow}
           tone="pink"
-          title="Supercharge your social presence with dedicated AI tools"
-          sub="Everything you need to automate high-impact marketing workflows from ideation to revenue attribution."
+          title={t.agentTools.title}
+          sub={t.agentTools.subtitle}
         />
 
         <motion.div
@@ -1051,9 +950,10 @@ export function AgentTools() {
           viewport={{ once: true, margin: "-60px" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
         >
-          {AGENT_TOOLS_LIST.map((tool) => {
+          {t.agentTools.list.map((tool, idx) => {
             const isBlue = tool.tone === "blue";
             const iconColor = isBlue ? "#3b82f6" : "#ff0a8a";
+            const Icon = AGENT_TOOL_ICONS[idx] || Sparkles;
 
             return (
               <motion.div
@@ -1073,7 +973,7 @@ export function AgentTools() {
                         color: iconColor,
                       }}
                     >
-                      <tool.icon className="h-5 w-5" />
+                      <Icon className="h-5 w-5" />
                     </div>
                     <span className="font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 dark:bg-white/5 dark:border-white/10 dark:text-white/60">
                       {tool.badge}
@@ -1115,6 +1015,8 @@ const PLATFORMS = [
 ];
 
 export function Integrations() {
+  const { t } = useLanguage();
+
   return (
     <section id="integrations" className="relative px-4 sm:px-6 lg:px-8 py-20 scroll-mt-24">
       <motion.div
@@ -1124,12 +1026,13 @@ export function Integrations() {
         transition={springTransition}
         className="mx-auto mb-10 max-w-2xl text-center"
       >
-        <Eyebrow tone="blue">Multi-Platform Ecosystem</Eyebrow>
+        <Eyebrow tone="blue">{t.integrationsSection.eyebrow}</Eyebrow>
         <h2 className="font-display mt-3 text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
-          Publish &amp; triage across <span className="text-[#3b82f6]">all your channels</span>
+          {t.integrationsSection.titleLead}{" "}
+          <span className="text-[#3b82f6]">{t.integrationsSection.titleHighlight}</span>
         </h2>
         <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-white/60">
-          Official OAuth 2.0 API integrations for instant scheduling and two-way messaging.
+          {t.integrationsSection.subtitle}
         </p>
       </motion.div>
 
@@ -1164,22 +1067,24 @@ export function Integrations() {
 /* ── 9. Revenue Attribution & Intelligence (#revenue) ─────────────── */
 
 export function RevenueAttributionSection() {
+  const { t } = useLanguage();
+
   return (
     <section id="revenue" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="Revenue & Conversion Tracking"
+          eyebrow={t.revenueAttribution.eyebrow}
           tone="blue"
           title={
             <>
-              From social impressions to <span className="text-[#3b82f6]">verifiable pipeline revenue</span>
+              {t.revenueAttribution.titleLead}{" "}
+              <span className="text-[#3b82f6]">{t.revenueAttribution.titleHighlight}</span>
             </>
           }
-          sub="Stop guessing the ROI of your social posts. Track the full journey from views to profile visits, CRM leads, and closed revenue."
+          sub={t.revenueAttribution.subtitle}
         />
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
-          {/* Revenue Attribution Funnel Visual */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -1190,21 +1095,25 @@ export function RevenueAttributionSection() {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">Social-to-Revenue Funnel</h3>
-                  <p className="text-xs text-slate-500 dark:text-white/50">Real-time attribution powered by UTM tracking</p>
+                  <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">
+                    {t.revenueAttribution.funnelTitle}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-white/50">
+                    {t.revenueAttribution.funnelSubtitle}
+                  </p>
                 </div>
                 <span className="font-mono text-xs text-[#3b82f6] bg-[#3b82f6]/15 border border-[#3b82f6]/30 px-3 py-1 rounded-full font-bold flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#3b82f6] animate-pulse" />
-                  Live Sync
+                  {t.revenueAttribution.liveSync}
                 </span>
               </div>
 
               <div className="space-y-2.5 font-mono text-xs">
                 {[
-                  { label: "50,000 Social Impressions", val: "Top of Funnel", tone: "text-slate-500 dark:text-white/50", ml: "" },
-                  { label: "1,420 Profile Visits", val: "2.84% Conv.", tone: "text-[#ff0a8a]", ml: "ml-2 sm:ml-4" },
-                  { label: "310 Website Clicks", val: "UTM Verified", tone: "text-[#3b82f6]", ml: "ml-4 sm:ml-8" },
-                  { label: "48 Qualified Leads", val: "Social CRM Pipeline", tone: "text-[#34d399]", ml: "ml-6 sm:ml-12" },
+                  { label: t.revenueAttribution.impressionsLabel, val: t.revenueAttribution.impressionsVal, tone: "text-slate-500 dark:text-white/50", ml: "" },
+                  { label: t.revenueAttribution.visitsLabel, val: t.revenueAttribution.visitsVal, tone: "text-[#ff0a8a]", ml: "ml-2 sm:ml-4" },
+                  { label: t.revenueAttribution.clicksLabel, val: t.revenueAttribution.clicksVal, tone: "text-[#3b82f6]", ml: "ml-4 sm:ml-8" },
+                  { label: t.revenueAttribution.leadsLabel, val: t.revenueAttribution.leadsVal, tone: "text-[#34d399]", ml: "ml-6 sm:ml-12" },
                 ].map((row, idx) => (
                   <motion.div
                     key={row.label}
@@ -1226,19 +1135,18 @@ export function RevenueAttributionSection() {
                   transition={{ delay: 0.45, duration: 0.5 }}
                   className="flex justify-between items-center bg-[#3b82f6]/15 border border-[#3b82f6]/30 p-3.5 rounded-xl font-bold ml-8 sm:ml-16 text-slate-900 dark:text-white shadow-[0_0_20px_rgba(59,130,246,0.15)]"
                 >
-                  <span>14 Customers Closed</span>
-                  <span className="text-[#3b82f6] font-extrabold text-sm">₦1,450,000 Revenue</span>
+                  <span>{t.revenueAttribution.closedCustomers}</span>
+                  <span className="text-[#3b82f6] font-extrabold text-sm">{t.revenueAttribution.revenueVal}</span>
                 </motion.div>
               </div>
             </div>
 
             <div className="mt-6 pt-4 border-t border-slate-200 dark:border-white/[0.07] flex items-center justify-between text-xs text-slate-500 dark:text-white/50">
-              <span>Attribution Model: Multi-Touch</span>
-              <span className="text-slate-800 dark:text-white/80 font-medium">ROAS: 4.2x</span>
+              <span>{t.revenueAttribution.attributionModel}</span>
+              <span className="text-slate-800 dark:text-white/80 font-medium">{t.revenueAttribution.roas}</span>
             </div>
           </motion.div>
 
-          {/* KoraScore & Opportunity Radar */}
           <div className="lg:col-span-5 space-y-4 flex flex-col justify-between">
             <motion.div
               initial={{ opacity: 0, x: 30 }}
@@ -1250,7 +1158,7 @@ export function RevenueAttributionSection() {
             >
               <div className="flex items-center justify-between">
                 <span className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-white/50 font-bold">
-                  Account Health Score
+                  {t.revenueAttribution.koraScoreLabel}
                 </span>
                 <Award className="h-5 w-5 text-[#ff0a8a]" />
               </div>
@@ -1259,7 +1167,7 @@ export function RevenueAttributionSection() {
                 <span className="text-xs text-slate-400 dark:text-white/40">/ 100</span>
               </div>
               <p className="mt-2 text-xs text-[#34d399] font-medium leading-relaxed">
-                &quot;Top 5% posting consistency this week. Schedule 2 more short videos to hit peak reach.&quot;
+                {t.revenueAttribution.koraScoreTip}
               </p>
             </motion.div>
 
@@ -1273,15 +1181,15 @@ export function RevenueAttributionSection() {
             >
               <div className="flex items-center justify-between">
                 <span className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-white/50 font-bold">
-                  Lead Opportunity Radar
+                  {t.revenueAttribution.radarTitle}
                 </span>
                 <Flame className="h-5 w-5 text-[#3b82f6]" />
               </div>
               <h4 className="font-display mt-2 text-base font-bold text-slate-900 dark:text-white">
-                4 Hot Niche Opportunities Detected
+                {t.revenueAttribution.radarHeading}
               </h4>
               <p className="mt-1 text-xs text-slate-600 dark:text-white/55 leading-relaxed font-normal">
-                3 high-intent lead questions in Instagram DMs + 1 trending competitor breakout format in your industry.
+                {t.revenueAttribution.radarDesc}
               </p>
             </motion.div>
           </div>
@@ -1293,38 +1201,19 @@ export function RevenueAttributionSection() {
 
 /* ── 10. Collaboration & Agency Workspaces (#collaboration) ───────── */
 
-const COLLAB_FEATURES = [
-  {
-    title: "Client Workspace Portals",
-    desc: "Isolated brand environments with strict row-level security. Give clients a clean view of their scheduled calendar and reports.",
-    icon: Briefcase,
-  },
-  {
-    title: "1-Click Shareable Draft Approvals",
-    desc: "Send review links to clients or stakeholders without forcing them to create an account or login.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Role-Based Team Permissions",
-    desc: "Assign roles (Admin, Editor, Reviewer, Client) with granular permissions over publishing, billing, and credentials.",
-    icon: Users,
-  },
-  {
-    title: "Audit Trail & Activity Log",
-    desc: "Track every edit, approval, prompt update, and published post with complete timestamps and user attribution.",
-    icon: Clock,
-  },
-];
+const COLLAB_ICONS = [Briefcase, ShieldCheck, Users, Clock];
 
 export function Collaboration() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative px-4 sm:px-6 lg:px-8 py-20">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="Team & Agency Workspaces"
+          eyebrow={t.collaboration.eyebrow}
           tone="blue"
-          title="Collaborate seamlessly with multi-seat controls"
-          sub="Built for marketing agencies, brand teams, and growth operators managing multiple client brands under one roof."
+          title={t.collaboration.title}
+          sub={t.collaboration.subtitle}
         />
 
         <motion.div
@@ -1334,27 +1223,30 @@ export function Collaboration() {
           viewport={{ once: true, margin: "-60px" }}
           className="grid grid-cols-1 md:grid-cols-2 gap-5"
         >
-          {COLLAB_FEATURES.map((collab) => (
-            <motion.div
-              key={collab.title}
-              variants={itemFadeUp}
-              whileHover={{ y: -6, scale: 1.01, borderColor: "rgba(59,130,246,0.3)" }}
-              transition={cardHoverSpring}
-              className="rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#171717] p-6 sm:p-7 flex gap-4 items-start transition-colors hover:bg-slate-50 dark:hover:bg-[#1a1a1a] shadow-sm"
-            >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#3b82f6]/15 text-[#3b82f6] border border-[#3b82f6]/30">
-                <collab.icon className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-display text-base font-bold text-slate-900 dark:text-white mb-1.5">
-                  {collab.title}
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-white/60 leading-relaxed font-normal">
-                  {collab.desc}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+          {t.collaboration.list.map((collab, idx) => {
+            const Icon = COLLAB_ICONS[idx] || Briefcase;
+            return (
+              <motion.div
+                key={collab.title}
+                variants={itemFadeUp}
+                whileHover={{ y: -6, scale: 1.01, borderColor: "rgba(59,130,246,0.3)" }}
+                transition={cardHoverSpring}
+                className="rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#171717] p-6 sm:p-7 flex gap-4 items-start transition-colors hover:bg-slate-50 dark:hover:bg-[#1a1a1a] shadow-sm"
+              >
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#3b82f6]/15 text-[#3b82f6] border border-[#3b82f6]/30">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display text-base font-bold text-slate-900 dark:text-white mb-1.5">
+                    {collab.title}
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-white/60 leading-relaxed font-normal">
+                    {collab.desc}
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>
@@ -1363,66 +1255,17 @@ export function Collaboration() {
 
 /* ── 11. Customer Stories (Testimonials) (#stories) ────────────────── */
 
-const STORIES = [
-  {
-    name: "Adaeze Okonkwo",
-    role: "Fintech Founder, Lagos",
-    avatar: "AO",
-    text: "I replaced Buffer and a freelance manager with KoraSpace. The AI operator handles our comment triage and schedules weekly content while I close enterprise deals.",
-    highlight: "Saved 15 hrs / week",
-    tone: "pink" as const,
-  },
-  {
-    name: "Chukwuemeka Dike",
-    role: "Digital Agency Lead, Abuja",
-    avatar: "CD",
-    text: "Managing 8 client accounts used to require three junior managers. Now it is just me and KoraSpace. The client approval links make signoffs effortless.",
-    highlight: "Manages 8 brands solo",
-    tone: "blue" as const,
-  },
-  {
-    name: "Fatima Al-Hassan",
-    role: "E-Commerce Founder, Kano",
-    avatar: "FA",
-    text: "The Social CRM detected high-intent buyer questions in our Instagram comments and generated ₦480,000 in sales within 2 weeks of switching.",
-    highlight: "₦480,000 direct revenue",
-    tone: "blue" as const,
-  },
-  {
-    name: "Tunde Fashola",
-    role: "Executive Brand Coach, Lagos",
-    avatar: "TF",
-    text: "Trend-to-Draft is like having a ghostwriter that never sleeps. It catches breaking news cycles and prepares three multi-format drafts before I wake up.",
-    highlight: "Always on trend",
-    tone: "pink" as const,
-  },
-  {
-    name: "Ngozi Eze",
-    role: "Fashion Brand Director, PH",
-    avatar: "NE",
-    text: "I was skeptical about AI capturing my brand voice. The Brand Brain learned our tone from past top posts so well that my followers could not tell the difference.",
-    highlight: "Authentic voice matching",
-    tone: "pink" as const,
-  },
-  {
-    name: "Biodun Afolabi",
-    role: "B2B SaaS Growth Marketer",
-    avatar: "BA",
-    text: "Transparent NGN pricing and seamless Paystack billing made adoption a no-brainer for our team. The multi-channel attribution is top notch.",
-    highlight: "Predictable NGN billing",
-    tone: "blue" as const,
-  },
-];
-
 export function Stories() {
+  const { t } = useLanguage();
+
   return (
     <section id="stories" className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28 scroll-mt-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead
-          eyebrow="Success Stories"
+          eyebrow={t.stories.eyebrow}
           tone="pink"
-          title="Loved by creators, founders, &amp; growth teams"
-          sub="See how businesses across Nigeria and beyond scale their social presence and revenue with KoraSpace."
+          title={t.stories.title}
+          sub={t.stories.subtitle}
         />
 
         <motion.div
@@ -1432,20 +1275,20 @@ export function Stories() {
           viewport={{ once: true, margin: "-60px" }}
           className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"
         >
-          {STORIES.map((t) => {
-            const isBlue = t.tone === "blue";
+          {t.stories.list.map((item) => {
+            const isBlue = item.tone === "blue";
             const badgeColor = isBlue ? "#3b82f6" : "#ff0a8a";
 
             return (
               <motion.div
-                key={t.name}
+                key={item.name}
                 variants={itemFadeUp}
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={cardHoverSpring}
                 className="rounded-3xl border border-slate-200 bg-white dark:border-white/[0.08] dark:bg-[#171717] p-6 text-slate-900 dark:text-white flex flex-col justify-between transition-colors hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-[#1a1a1a] shadow-sm"
               >
                 <p className="text-xs leading-relaxed text-slate-600 dark:text-white/70 font-normal">
-                  &ldquo;{t.text}&rdquo;
+                  &ldquo;{item.text}&rdquo;
                 </p>
 
                 <div className="mt-6 pt-4 border-t border-slate-200 dark:border-white/[0.06]">
@@ -1457,7 +1300,7 @@ export function Stories() {
                       color: badgeColor,
                     }}
                   >
-                    {t.highlight}
+                    {item.highlight}
                   </span>
 
                   <div className="flex items-center gap-3">
@@ -1465,11 +1308,11 @@ export function Stories() {
                       className="flex h-9 w-9 items-center justify-center rounded-xl text-xs font-bold text-white shadow-sm"
                       style={{ background: badgeColor }}
                     >
-                      {t.avatar}
+                      {item.avatar}
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-slate-900 dark:text-white">{t.name}</p>
-                      <p className="text-[11px] text-slate-500 dark:text-white/45">{t.role}</p>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white">{item.name}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-white/45">{item.role}</p>
                     </div>
                   </div>
                 </div>
@@ -1483,93 +1326,6 @@ export function Stories() {
 }
 
 /* ── 12. Transparent Pricing Section (#pricing) ───────────────────── */
-
-interface BasePlanConfig {
-  planKey: PlanKey;
-  nameKey: keyof TranslationDictionary["pricing"];
-  descKey: keyof TranslationDictionary["pricing"];
-  posts: string;
-  features: string[];
-  cta: string;
-  highlight: boolean;
-  badge?: string;
-  tone: "white" | "pink" | "blue";
-}
-
-const BASE_PLANS: BasePlanConfig[] = [
-  {
-    planKey: "starter",
-    nameKey: "starterName",
-    descKey: "starterDesc",
-    posts: "15 scheduled posts / mo",
-    features: [
-      "50,000 AI tokens / mo",
-      "3 social account integrations",
-      "Visual content calendar",
-      "Basic AI post composer",
-      "Community support",
-    ],
-    cta: "Start Free",
-    highlight: false,
-    tone: "white",
-  },
-  {
-    planKey: "creator",
-    nameKey: "creatorProName",
-    descKey: "creatorProDesc",
-    posts: "150 scheduled posts / mo",
-    features: [
-      "400,000 AI tokens / mo",
-      "6 social account integrations",
-      "Full AI Composing Pipeline",
-      "Content Repurposer (1->6)",
-      "Viral Trend Radar & Brand Brain",
-      "Post scoring & engagement prediction",
-    ],
-    cta: "Start Creator Trial",
-    highlight: true,
-    badge: "Creator Favorite",
-    tone: "pink",
-  },
-  {
-    planKey: "marketer",
-    nameKey: "marketerProName",
-    descKey: "marketerProDesc",
-    posts: "500 scheduled posts / mo",
-    features: [
-      "1,000,000 AI tokens / mo",
-      "10 social account integrations",
-      "Marketing Operator Agent",
-      "Social CRM & High-Intent Triage",
-      "Multi-channel Campaigns & Automations",
-      "Full-Funnel Revenue Attribution",
-      "Priority WhatsApp & email support",
-    ],
-    cta: "Start Marketer Trial",
-    highlight: false,
-    badge: "Marketer Tier",
-    tone: "blue",
-  },
-  {
-    planKey: "agency",
-    nameKey: "agencyName",
-    descKey: "agencyDesc",
-    posts: "Unlimited scheduled posts",
-    features: [
-      "3,000,000 AI tokens / mo",
-      "Unlimited social integrations",
-      "Unlimited client workspace portals",
-      "1-Click shareable approval links",
-      "Multi-seat role permissions (RLS)",
-      "White-label client performance reports",
-      "Dedicated account manager",
-    ],
-    cta: "Get Agency Plan",
-    highlight: false,
-    badge: "Agency Tier",
-    tone: "white",
-  },
-];
 
 export function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
@@ -1590,7 +1346,6 @@ export function Pricing() {
           sub={t.pricing.subtitle}
         />
 
-        {/* Monthly / Yearly Toggle with layoutId sliding pill */}
         <div className="flex justify-center items-center gap-2 mb-12">
           <div className="relative bg-slate-100 dark:bg-[#171717] p-1.5 rounded-2xl border border-slate-200 dark:border-white/[0.08] inline-flex items-center">
             <button
@@ -1631,7 +1386,6 @@ export function Pricing() {
           </div>
         </div>
 
-        {/* Pricing Cards Grid with Max Springs */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -1639,9 +1393,9 @@ export function Pricing() {
           viewport={{ once: true, margin: "-60px" }}
           className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 items-stretch mb-12"
         >
-          {BASE_PLANS.map((p) => {
-            const isPink = p.tone === "pink";
-            const isBlue = p.tone === "blue";
+          {t.pricing.plans.map((p) => {
+            const isPink = p.planKey === "creator";
+            const isBlue = p.planKey === "marketer";
             const borderColor = isPink
               ? "border-[#ff0a8a]/40"
               : isBlue
@@ -1654,9 +1408,7 @@ export function Pricing() {
               ? "bg-[#3b82f6] text-white shadow-[0_4px_18px_rgba(59,130,246,0.25)] hover:bg-[#2563eb]"
               : "bg-slate-100 text-slate-900 border border-slate-300 hover:bg-slate-200 dark:bg-white/[0.06] dark:text-white dark:border-white/[0.10] dark:hover:bg-white/[0.10]";
 
-            const planName = String(t.pricing[p.nameKey] || p.planKey);
-            const planDesc = String(t.pricing[p.descKey] || "");
-            const planPrice = formatPlanPrice(p.planKey, billingPeriod);
+            const planPrice = formatPlanPrice(p.planKey as PlanKey, billingPeriod);
 
             return (
               <motion.div
@@ -1680,7 +1432,7 @@ export function Pricing() {
                 )}
 
                 <div>
-                  <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">{planName}</h3>
+                  <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">{p.name}</h3>
                   <div className="mt-2 flex items-baseline gap-1">
                     <span className="font-display text-3xl font-bold text-slate-900 dark:text-white">
                       {planPrice}
@@ -1689,7 +1441,7 @@ export function Pricing() {
                       {billingPeriod === "yearly" ? t.pricing.billedAnnually : t.pricing.perMonth}
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-slate-500 dark:text-white/50">{planDesc}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-white/50">{p.desc}</p>
 
                   <div className="mt-4 font-mono text-xs font-semibold text-slate-700 dark:text-white/80 bg-slate-100 dark:bg-white/[0.04] px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/[0.06]">
                     {p.posts}
@@ -1725,7 +1477,6 @@ export function Pricing() {
           })}
         </motion.div>
 
-        {/* Custom Enterprise Callout */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -1756,34 +1507,7 @@ export function Pricing() {
   );
 }
 
-/* ── 13. FAQ Accordion (#faq) with Max Spring Animation ───────────── */
-
-const FAQS_DATA = [
-  {
-    q: "What is the difference between Creator Mode and Marketer Mode?",
-    a: "Creator Mode is built for creators, solo founders, and influencers focusing on brand voice learning, AI post composing, multi-format repurposing, and visual drag-and-drop scheduling across 6+ social networks. Marketer Mode is designed for growth operators and marketing agencies who need campaign execution, social CRM lead triage (converting comments & DMs to deals), autonomous agent operators, and closed-loop revenue attribution.",
-  },
-  {
-    q: "How does the Brand Brain ensure posts sound like me?",
-    a: "Simply input your website URL, brand guidelines, product briefs, or top past posts. The KoraSpace Brand Brain builds a persistent memory profile with vocabulary rules, tone settings, and custom guardrails so every generated post, carousel, or script sounds authentic.",
-  },
-  {
-    q: "Which social media platforms are supported?",
-    a: "KoraSpace connects directly to Instagram, TikTok, LinkedIn, YouTube, X (Twitter), Facebook, Threads, WhatsApp, Telegram, and more via official authorized OAuth 2.0 APIs.",
-  },
-  {
-    q: "How does Ghost Mode™ lead triage work?",
-    a: "Ghost Mode™ monitors your comments and direct messages in real time. Using NLP and randomized human-like delays (30s–75s), it detects buying questions (e.g. 'How much does this cost?', 'Can I buy today?') and logs qualified leads directly into your CRM Kanban board.",
-  },
-  {
-    q: "Can I use KoraSpace for multi-client agencies or teams?",
-    a: "Yes! The Agency & Teams tier includes dedicated client workspace portals, multi-seat role permissions with row-level security, shareable draft approval links (no login required for clients), and white-label analytics reports.",
-  },
-  {
-    q: "What payment methods are supported in Nigeria and internationally?",
-    a: "All plans are billed in Nigerian Naira (NGN) without foreign exchange surprises. We accept all Nigerian debit cards (Mastercard, Visa, Verve), bank transfers, and international cards via Paystack and Flutterwave.",
-  },
-];
+/* ── 13. FAQ Accordion (#faq) ─────────────────────────────────────── */
 
 export function FAQ() {
   const { t } = useLanguage();
@@ -1878,7 +1602,6 @@ export function FinalCTA() {
         transition={springTransition}
         className="relative mx-auto max-w-6xl rounded-3xl border border-slate-200 bg-white dark:border-white/[0.10] dark:bg-[#161616] p-8 sm:p-12 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden"
       >
-        {/* Animated breathing aura */}
         <motion.div
           animate={{
             scale: [1, 1.25, 1],
@@ -1936,37 +1659,15 @@ export function FinalCTA() {
 
 /* ── 15. Upgraded Footer ──────────────────────────────────────────── */
 
-const FOOTER_LINKS = {
-  Product: [
-    { label: "AI Composing Pipeline", href: "#engines" },
-    { label: "Visual Calendar 2.0", href: "#engines" },
-    { label: "Brand Brain", href: "#brain" },
-    { label: "Autonomous Growth Loop", href: "#how" },
-    { label: "Pricing & Plans", href: "#pricing" },
-  ],
-  Platform: [
-    { label: "Instagram Integration", href: "#integrations" },
-    { label: "TikTok Auto-Scheduler", href: "#integrations" },
-    { label: "LinkedIn & X Publisher", href: "#integrations" },
-    { label: "YouTube Repurposer", href: "#integrations" },
-    { label: "WhatsApp & Telegram CRM", href: "#integrations" },
-  ],
-  Legal: [
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-    { label: "Nigeria Data Protection (NDPA)", href: "/privacy" },
-    { label: "Cookie Policy", href: "/privacy" },
-  ],
-  Support: [
-    { label: "Documentation", href: "#" },
-    { label: "Help Center", href: "#" },
-    { label: "Community", href: "#" },
-    { label: "System Status", href: "#" },
-  ],
-};
-
 export function SiteFooter() {
   const { t } = useLanguage();
+
+  const footerGroups = [
+    { title: t.footer.productHeading, links: t.footer.links.product },
+    { title: t.footer.platformHeading, links: t.footer.links.platform },
+    { title: t.footer.legalHeading, links: t.footer.links.legal },
+    { title: t.footer.supportHeading, links: t.footer.links.support },
+  ];
 
   return (
     <footer className="border-t border-slate-200 bg-slate-900 dark:border-white/[0.10] dark:bg-[#070d24] py-14 px-4 sm:px-6 lg:px-8 text-white">
@@ -2011,13 +1712,13 @@ export function SiteFooter() {
           </motion.div>
 
           {/* Links Columns */}
-          {Object.entries(FOOTER_LINKS).map(([category, links]) => (
-            <motion.div key={category} variants={itemFadeUp}>
+          {footerGroups.map((group) => (
+            <motion.div key={group.title} variants={itemFadeUp}>
               <h4 className="text-xs font-bold uppercase font-mono tracking-wider text-white/70 mb-3.5">
-                {category}
+                {group.title}
               </h4>
               <ul className="space-y-2 text-xs">
-                {links.map((link) => (
+                {group.links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
