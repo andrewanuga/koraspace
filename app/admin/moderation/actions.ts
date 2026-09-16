@@ -1,20 +1,22 @@
 "use server";
-
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 async function verifyAdmin() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+    const session = await auth();
+    const user = session?.user;
   if (!user) throw new Error("Unauthorized");
-  const { data: profile } = await supabase.from("profiles").select("is_admin").eq("id", user.id).single();
+  const { data: profile } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
   if (!profile?.is_admin) throw new Error("Forbidden: Not an admin");
   return user;
 }
 
 export async function suspendUser(userId: string, reason?: string) {
   await verifyAdmin();
-  const admin = createAdminClient();
   if (!admin) throw new Error("Admin client not configured");
 
   const { error } = await admin
@@ -35,7 +37,6 @@ export async function suspendUser(userId: string, reason?: string) {
 
 export async function unsuspendUser(userId: string) {
   await verifyAdmin();
-  const admin = createAdminClient();
   if (!admin) throw new Error("Admin client not configured");
 
   const { error } = await admin
@@ -55,7 +56,6 @@ export async function unsuspendUser(userId: string) {
 
 export async function flagUserForReview(userId: string, note?: string) {
   await verifyAdmin();
-  const admin = createAdminClient();
   if (!admin) throw new Error("Admin client not configured");
 
   await admin.from("security_events").insert({

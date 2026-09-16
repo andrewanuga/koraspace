@@ -1,11 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { NextRequest, NextResponse } from "next/server";
 import { callAI } from "@/lib/ai/gemini";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: accountId } = await params;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
 
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

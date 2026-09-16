@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { CrmClient } from "./CrmClient";
 
 export const metadata = {
@@ -8,10 +10,9 @@ export const metadata = {
 };
 
 export default async function CrmPage() {
-  const supabase = (await createClient()) as any;
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
+  const supabase = await createClient();
 
   if (!user) redirect("/login");
 

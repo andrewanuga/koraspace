@@ -205,7 +205,7 @@ export async function getMarketerOverview({
   });
 
   // Annotate changePct on each campaign using real snapshot
-  const annotatedCampaigns = campaigns.map((c) => {
+  const annotatedCampaigns = campaigns.map((c: any) => {
     const prev = prevByCampaign.get(c.id);
     const prevRevenue = prev?.revenue ?? 0;
     const changePct = prevRevenue > 0 ? calcPctChange(c.revenue, prevRevenue) : 0;
@@ -213,12 +213,12 @@ export async function getMarketerOverview({
   });
 
   // ── Aggregate Totals ────────────────────────────────────────
-  const totalSpend = annotatedCampaigns.reduce((s, c) => s + c.spend, 0);
-  const totalRevenue = annotatedCampaigns.reduce((s, c) => s + c.revenue, 0);
-  const totalConversions = annotatedCampaigns.reduce((s, c) => s + c.conversions, 0);
-  const totalImpressions = annotatedCampaigns.reduce((s, c) => s + c.impressions, 0);
-  const totalClicks = annotatedCampaigns.reduce((s, c) => s + c.clicks, 0);
-  const activeCampaigns = annotatedCampaigns.filter((c) => c.status === "active").length;
+  const totalSpend = annotatedCampaigns.reduce((s: number, c: any) => s + c.spend, 0);
+  const totalRevenue = annotatedCampaigns.reduce((s: number, c: any) => s + c.revenue, 0);
+  const totalConversions = annotatedCampaigns.reduce((s: number, c: any) => s + c.conversions, 0);
+  const totalImpressions = annotatedCampaigns.reduce((s: number, c: any) => s + c.impressions, 0);
+  const totalClicks = annotatedCampaigns.reduce((s: number, c: any) => s + c.clicks, 0);
+  const activeCampaigns = annotatedCampaigns.filter((c: any) => c.status === "active").length;
   const prevActiveCampaigns = prevSnapshotList.length; // rough proxy
 
   const weightedRoas = totalSpend > 0 ? totalRevenue / totalSpend : 0;
@@ -240,13 +240,13 @@ export async function getMarketerOverview({
   // ── Client Health ───────────────────────────────────────────
   const clientHealth: ClientHealth[] = workspaceIds.map((wId) => {
     const info = workspaceMap[wId];
-    const clientCampaigns = annotatedCampaigns.filter((c) => c.workspaceId === wId);
+    const clientCampaigns = annotatedCampaigns.filter((c: any) => c.workspaceId === wId);
     const clientPrevSnapshots = prevSnapshotList.filter((s: any) => s.workspace_id === wId);
 
-    const clientSpend = clientCampaigns.reduce((s, c) => s + c.spend, 0);
-    const clientRevenue = clientCampaigns.reduce((s, c) => s + c.revenue, 0);
-    const clientConversions = clientCampaigns.reduce((s, c) => s + c.conversions, 0);
-    const clientActive = clientCampaigns.filter((c) => c.status === "active").length;
+    const clientSpend = clientCampaigns.reduce((s: number, c: any) => s + c.spend, 0);
+    const clientRevenue = clientCampaigns.reduce((s: number, c: any) => s + c.revenue, 0);
+    const clientConversions = clientCampaigns.reduce((s: number, c: any) => s + c.conversions, 0);
+    const clientActive = clientCampaigns.filter((c: any) => c.status === "active").length;
     const clientRoas = clientSpend > 0 ? clientRevenue / clientSpend : 0;
 
     const prevClientSpend = clientPrevSnapshots.reduce((s: number, p: any) => s + (Number(p.spend) || 0), 0);

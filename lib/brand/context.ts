@@ -54,8 +54,8 @@ export async function buildBrandContext(userId: string): Promise<BrandContext> {
 
   return {
     profile: (profile as BrandProfile | null) ?? null,
-    preferences: (preferences?.map((p) => p.label) ?? []) as string[],
-    styles: (styles?.map((s) => s.label) ?? []) as string[],
+    preferences: (preferences?.map((p: any) => p.label) ?? []) as string[],
+    styles: (styles?.map((s: any) => s.label) ?? []) as string[],
     memories: (memories ?? []) as Array<{ title: string; content: string | null }>,
     knowledge: (knowledge ?? []) as Array<{
       title: string;

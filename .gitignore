@@ -48,6 +48,7 @@ certificates
 !package.json
 !package-lock.json
 !tsconfig.json
+!vercel.json
 !eslint.config.*
 !next.config.*
 !postcss.config.*

@@ -1,5 +1,7 @@
-import { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { NextRequest } from "next/server";
 import { callAIStream } from "@/lib/ai/gemini";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
@@ -7,11 +9,12 @@ import { scanForPromptInjection } from "@/lib/security/enforcement";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
     const workspace = await getActiveWorkspace(supabase);
     
     // Authenticate caller
-    const { data: { user } } = await supabase.auth.getUser();
+    const supabase = await createClient();
+  const session = await auth();
+      const user = session?.user;
     if (!user) {
       return new Response("Unauthorized", { status: 401 });
     }

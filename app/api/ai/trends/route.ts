@@ -1,5 +1,6 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { callAI, isConfigured } from "@/lib/ai/gemini";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { buildTrendsPrompt } from "@/lib/ai/prompts";
@@ -47,7 +48,6 @@ async function webSearch(query: string): Promise<string> {
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createClient();
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) return new Response("Unauthorized", { status: 401 });
     const workspaceId = workspace.workspaceId;

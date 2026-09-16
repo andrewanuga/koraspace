@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import {
   getDiscoveryData,
   type SocialPost,
@@ -9,11 +11,9 @@ import {
 import { DiscoveryClient } from "./DiscoveryClient";
 
 export default async function DiscoverPage() {
+  const session = await auth();
+    const user = session?.user;
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   if (!user) {
     redirect("/login");

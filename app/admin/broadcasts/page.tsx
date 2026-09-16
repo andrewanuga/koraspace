@@ -1,4 +1,8 @@
-﻿"use client";
+"use client";
+﻿import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useState } from "react";
 import {
@@ -13,7 +17,6 @@ import {
   Link2,
 } from "lucide-react";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { createBroadcast, toggleBroadcast, deleteBroadcast } from "./actions";
 import { timeAgo } from "@/lib/dashboard/helpers";
@@ -45,7 +48,6 @@ export default function AdminBroadcasts() {
 
   const load = async () => {
     try {
-      const supabase = createClient();
       const { data, error } = await supabase
         .from("system_broadcasts")
         .select("*")

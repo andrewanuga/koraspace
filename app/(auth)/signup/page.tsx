@@ -15,7 +15,7 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
-import { createClient } from "@/lib/supabase/client";
+import { registerUser } from "./actions";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 const PASSWORD_REQUIREMENTS = [
@@ -59,23 +59,15 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
-      const { error: authError } = await supabase.auth.signUp({
-        email: email.trim(),
-        password,
-        options: {
-          data: { full_name: name.trim() },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
+      const res = await registerUser(email, password, name);
 
-      if (authError) {
-        toastError("Couldn't create account", authError.message);
+      if (res.error) {
+        toastError("Couldn't create account", res.error);
         setLoading(false);
         return;
       }
 
-      toastSuccess("Account created", "Check your email to confirm your account.");
+      toastSuccess("Account created", "You can now sign in.");
       setSuccess(true);
       setLoading(false);
     } catch (err) {

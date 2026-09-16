@@ -1,6 +1,7 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { isPlan, type PlanId } from "@/lib/billing/plans";
 
 /** Paystack webhook — verify signature, then reconcile subscription state. */
@@ -15,8 +16,6 @@ export async function POST(req: NextRequest) {
   if (a.length !== b.length || !timingSafeEqual(a, b)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
-
-  const admin = createAdminClient();
   if (!admin) return NextResponse.json({ ok: true });
 
   const event = JSON.parse(raw);

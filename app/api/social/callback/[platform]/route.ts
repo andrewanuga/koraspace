@@ -1,6 +1,8 @@
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { createClient } from "@/lib/supabase/server";
 import { PLATFORMS, type PlatformId } from "@/lib/social/platforms";
 import { validateOAuthScopes } from "@/lib/security/enforcement";
 import { encryptToken } from "@/lib/security/tokenCrypto";
@@ -38,9 +40,9 @@ export async function GET(
   }
   jar.delete(`sai_oauth_${platform}`);
   if (!code || !state || state !== expectedState) return back(origin, { error: "bad_state", platform });
-
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) return NextResponse.redirect(new URL("/login", origin));
 
   const clientId = process.env[p.oauth.clientIdEnv]!;

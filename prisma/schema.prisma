@@ -1,0 +1,482 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Profile {
+  id                    String    @id @default(uuid())
+  email                 String?   @unique
+  password_hash         String?   // Imported from Supabase auth.users
+  emailVerified         DateTime?
+  image                 String?
+
+  full_name             String?
+  avatar_url            String?
+  brand_website         String?
+  brand_voice           String?
+  niche                 String?
+  plan                  String    @default("free")
+  generations_used      Int       @default(0)
+  generations_reset_at  DateTime  @default(now())
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+  is_admin              Boolean   @default(false)
+  suspended             Boolean   @default(false)
+  suspended_at          DateTime?
+  subscription_status   String?
+  username              String?
+  persona               String?
+  onboarded             Boolean   @default(false)
+  onboarded_at          DateTime?
+  
+  onboarding_goals      String[]  @default([])
+  social_platforms      String[]  @default([])
+  content_formats       String[]  @default([])
+  posts_per_week        Int?
+  audience_range        String?
+  target_audience       String?
+  business_type         String?
+  industry              String?
+  automation_level      String?
+  ai_model              String?
+  ai_temperature        Float?
+
+  accounts              Account[]
+  sessions              Session[]
+
+  @@map("profiles")
+}
+
+model Account {
+  id                 String  @id @default(uuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model ConnectedAccount {
+  id                String   @id @default(uuid())
+  user_id           String
+  platform          String
+  platform_user_id  String
+  handle            String?
+  display_name      String?
+  avatar_url        String?
+  followers         Int      @default(0)
+  access_token      String?
+  refresh_token     String?
+  token_expires_at  DateTime?
+  status            String   @default("connected")
+  created_at        DateTime @default(now())
+  last_synced_at    DateTime?
+
+  @@map("social_accounts")
+}
+
+model ScheduledPost {
+  id              String   @id @default(uuid())
+  user_id         String
+  content         String
+  platform        String
+  scheduled_at    DateTime
+  status          String
+  socially_score  Float?
+  framework       String?
+  tone            String?
+  post_url        String?
+  error_message   String?
+  created_at      DateTime @default(now())
+
+  @@map("scheduled_posts")
+}
+
+model PostHistory {
+  id                 String   @id @default(uuid())
+  user_id            String
+  platform           String
+  platform_post_id   String?
+  content            String?
+  impressions        Int      @default(0)
+  engagements        Int      @default(0)
+  likes              Int      @default(0)
+  shares             Int      @default(0)
+  comments           Int      @default(0)
+  followers_gained   Int      @default(0)
+  link_clicks        Int      @default(0)
+  revenue            Float    @default(0.0)
+  video_views        Int      @default(0)
+  account_id         String?
+  tracked_link       String?
+  socially_score     Float?
+  posted_at          DateTime @default(now())
+
+  @@map("social_posts")
+}
+
+model AgentActionRow {
+  id           String    @id @default(uuid())
+  user_id      String
+  comment      String
+  action       String
+  reply        String?
+  platform     String?
+  reason       String?
+  approved     Boolean?
+  approved_at  DateTime?
+  created_at   DateTime  @default(now())
+
+  @@map("agent_actions")
+}
+
+model InboxMessage {
+  id                  String   @id @default(uuid())
+  user_id             String
+  platform            String
+  author_name         String?
+  author_handle       String?
+  author_avatar       String?
+  message             String
+  category            String
+  is_read             Boolean  @default(false)
+  replied             Boolean  @default(false)
+  reply_content       String?
+  platform_message_id String?
+  received_at         DateTime @default(now())
+
+  @@map("social_inbox")
+}
+
+model Task {
+  id           String    @id @default(uuid())
+  user_id      String
+  bot_id       String?
+  title        String
+  notes        String?
+  priority     String
+  status       String    @default("pending")
+  created_at   DateTime  @default(now())
+  completed_at DateTime?
+
+  @@map("tasks")
+}
+
+model Bot {
+  id             String   @id @default(uuid())
+  user_id        String
+  name           String
+  kind           String
+  status         String   @default("active")
+  autonomy       String   @default("assist")
+  actions_count  Int      @default(0)
+  config         Json?
+  created_at     DateTime @default(now())
+
+  @@map("social_bots")
+}
+
+model Trend {
+  id         String   @id @default(uuid())
+  user_id    String?
+  niche      String
+  topic      String
+  summary    String?
+  category   String?
+  score      Float?
+  growth     String?
+  momentum   String?
+  why        String?
+  draft      String?
+  fetched_at DateTime @default(now())
+  expires_at DateTime
+
+  @@map("social_trends")
+}
+
+model SocialAccountMetric {
+  id               String    @id @default(uuid())
+  account_id       String
+  date             DateTime
+  followers        Int       @default(0)
+  impressions      Int       @default(0)
+  engagements      Int       @default(0)
+  ai_suggestions   Json?
+  ai_generated_at  DateTime?
+  created_at       DateTime  @default(now())
+
+  @@map("social_account_metrics")
+}
+
+model SecurityEvent {
+  id         String   @id @default(uuid())
+  user_id    String?
+  type       String
+  ip         String?
+  email      String?
+  severity   String
+  detail     String?
+  created_at DateTime @default(now())
+
+  @@map("security_events")
+}
+
+model SupportTicket {
+  id           String    @id @default(uuid())
+  user_id      String
+  category     String
+  status       String    @default("open")
+  admin_reply  String?
+  admin_id     String?
+  updated_at   DateTime  @default(now())
+  created_at   DateTime  @default(now())
+
+  @@map("support_tickets")
+}
+
+model UserNotification {
+  id         String   @id @default(uuid())
+  user_id    String
+  title      String
+  body       String
+  type       String
+  is_read    Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  @@map("user_notifications")
+}
+
+model SystemBroadcast {
+  id          String   @id @default(uuid())
+  message     String
+  type        String
+  is_active   Boolean  @default(true)
+  created_by  String
+  target_plan String?
+  style       String   @default("banner")
+  link_url    String?
+  created_at  DateTime @default(now())
+
+  @@map("system_broadcasts")
+}
+
+model FeatureFlag {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  is_enabled  Boolean  @default(false)
+  updated_by  String?
+  updated_at  DateTime @default(now())
+
+  @@map("feature_flags")
+}
+
+model BlockedIp {
+  id         String    @id @default(uuid())
+  ip         String    @unique
+  reason     String?
+  auto       Boolean   @default(false)
+  blocked_by String?
+  expires_at DateTime?
+  created_at DateTime  @default(now())
+
+  @@map("blocked_ips")
+}
+model Payment {
+  id         String   @id @default(uuid())
+  user_id    String
+  amount     Float
+  status     String
+  created_at DateTime @default(now())
+
+  @@map("payments")
+}model BrandProfile {
+  id              String   @id @default(uuid())
+  user_id         String   @unique
+  display_name    String?
+  username        String?
+  avatar_url      String?
+  role            String?
+  niche           String?
+  target_audience String?
+  location        String?
+  bio             String?
+  mission         String?
+  voice_summary   String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("brand_profiles")
+}
+model BrandMemory {
+  id         String   @id @default(uuid())
+  user_id    String
+  title      String
+  content    String?
+  category   String   @default("general")
+  enabled    Boolean  @default(true)
+  importance Int      @default(5)
+  source     String   @default("manual")
+  created_at DateTime @default(now())
+
+  @@map("brand_memories")
+}
+
+
+model Workspace {
+  id         String   @id @default(uuid())
+  name       String
+  owner_id   String
+  plan       String   @default("free")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  members    WorkspaceMember[]
+  invites    WorkspaceInvite[]
+
+  @@map("workspaces")
+}
+
+model WorkspaceMember {
+  id           String    @id @default(uuid())
+  workspace_id String
+  user_id      String
+  role         String    @default("member")
+  created_at   DateTime  @default(now())
+
+  workspace    Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+
+  @@unique([workspace_id, user_id])
+  @@map("workspace_members")
+}
+
+model WorkspaceInvite {
+  id           String    @id @default(uuid())
+  workspace_id String
+  email        String
+  role         String    @default("member")
+  token        String    @unique
+  expires_at   DateTime
+  created_at   DateTime  @default(now())
+
+  workspace    Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+
+  @@map("workspace_invites")
+}
+
+model ScheduledAiTask {
+  id           String    @id @default(uuid())
+  user_id      String
+  platform     String
+  prompt       String
+  media_urls   String[]  @default([])
+  status       String    @default("pending")
+  trigger_at   DateTime
+  result_text  String?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  @@map("scheduled_ai_tasks")
+}
+
+model RepurposeProject {
+  id           String    @id @default(uuid())
+  user_id      String
+  title        String
+  source_type  String    // youtube, audio, text, pdf
+  source_url   String?
+  transcript   String?   @db.Text
+  status       String    @default("processing") // processing, ready, failed
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  outputs      RepurposeOutput[]
+
+  @@map("repurpose_projects")
+}
+
+model RepurposeOutput {
+  id           String    @id @default(uuid())
+  project_id   String
+  user_id      String
+  platform     String    // twitter_thread, linkedin_post, reel_script, newsletter
+  content      String    @db.Text
+  status       String    @default("draft") // draft, scheduled, published
+  scheduled_at DateTime?
+  created_at   DateTime  @default(now())
+
+  project      RepurposeProject @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@map("repurpose_outputs")
+}
+
+model CrmLead {
+  id           String    @id @default(uuid())
+  user_id      String
+  name         String
+  email        String?
+  handle       String?
+  platform     String?
+  status       String    @default("new") // new, contacted, qualified, converted, lost
+  value        Float?    @default(0.0)
+  notes        String?   @db.Text
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  @@map("crm_leads")
+}
+
+model ClientCampaign {
+  id           String    @id @default(uuid())
+  user_id      String
+  workspace_id String?
+  title        String
+  status       String    @default("active") // active, paused, completed
+  budget       Float?    @default(0.0)
+  spend        Float?    @default(0.0)
+  revenue      Float?    @default(0.0)
+  conversions  Int?      @default(0)
+  impressions  Int?      @default(0)
+  clicks       Int?      @default(0)
+  roas         Float?    @default(0.0)
+  start_date   DateTime?
+  end_date     DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  @@map("client_campaigns")
+}

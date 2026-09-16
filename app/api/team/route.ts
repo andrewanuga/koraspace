@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { NextResponse } from "next/server";
 type TeamRole = "owner" | "admin" | "manager" | "member";
 
 function getStatus(lastActiveAt: string | null) {
@@ -24,10 +24,8 @@ function getStatus(lastActiveAt: string | null) {
 
 async function getWorkspaceContext() {
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const session = await auth();
+    const user = session?.user;
 
   if (!user) {
     return {
@@ -114,7 +112,6 @@ export async function GET() {
   // Get auth emails safely via admin client if available
   let emailMap = new Map<string, string>();
   try {
-    const admin = createAdminClient();
     const { data: authData } = await admin.auth.admin.listUsers({
       page: 1,
       perPage: 1000,

@@ -1,15 +1,13 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { daysAgoISO } from "@/lib/dashboard/helpers";
 import { AnalyticsClient } from "./AnalyticsClient";
 import type { SocialPost, Campaign } from "@/lib/social/types";
 
 export default async function AnalyticsPage() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
 
   if (!user) {
     redirect("/login");

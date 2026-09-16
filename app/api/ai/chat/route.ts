@@ -1,9 +1,11 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { learnPersona, getPersonaTone } from "@/lib/social/persona";
 import { callAI, callAIStream, isConfigured, buildMultimodalContent } from "@/lib/ai/gemini";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { buildChatSystemPrompt } from "@/lib/ai/prompts";
+import { buildBrandContext } from "@/lib/brand/context";
 import { RECOMMENDED_MODELS } from "@/lib/ai/models";
 import type { ChatMessage } from "@/lib/ai/gemini";
 import { AI_TOOLS, executeTool } from "@/lib/ai/tools";
@@ -25,7 +27,6 @@ type Attachment = {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) return new Response("Unauthorized", { status: 401 });
     const workspaceId = workspace.workspaceId;
@@ -142,6 +143,8 @@ export async function POST(req: NextRequest) {
       ? attachmentLines.join("\n")
       : null;
 
+    const brandContext = await buildBrandContext(workspaceId).catch(() => null);
+
     const systemPrompt = buildChatSystemPrompt(
       {
         full_name: profile?.full_name,
@@ -152,6 +155,7 @@ export async function POST(req: NextRequest) {
       },
       tone,
       attachSummary,
+      brandContext,
     ) + pastChatsContext;
 
     // ── Build messages array for OpenRouter ─────────────────────

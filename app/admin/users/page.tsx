@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -18,10 +18,10 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
+// import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { PLAN_ORDER, PLANS, type PlanId } from "@/lib/billing/plans";
-import { updateUserPlan, toggleUserSuspension, grantUserCredits, setUserAdminRole } from "./actions";
+import { updateUserPlan, toggleUserSuspension, grantUserCredits, setUserAdminRole, getUsers } from "./actions";
 import Link from "next/link";
 
 type Row = {
@@ -54,13 +54,8 @@ export default function AdminUsers() {
 
   const load = async () => {
     try {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("profiles")
-        .select("id, full_name, username, persona, plan, subscription_status, suspended, is_admin, created_at, generations_used")
-        .order("created_at", { ascending: false })
-        .limit(500);
-      if (data) setRows(data as Row[]);
+      const data = await getUsers();
+      if (data) setRows(data as any);
     } catch {
       // offline
     }

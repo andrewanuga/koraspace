@@ -1,5 +1,6 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { executeWorkflow } from "@/lib/automation/engine";
 import { registerIntegrationExecutors } from "@/lib/automation/providers";
 import type { AutomationWorkflow, AutomationContext } from "@/lib/automation/types";
@@ -12,12 +13,8 @@ interface RouteContext {
 
 export async function POST(request: NextRequest, context: RouteContext) {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const session = await auth();
+      const user = session?.user;
 
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

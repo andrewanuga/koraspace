@@ -1,19 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { onboardingSchema } from "@/lib/security/schemas";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
+    const session = await auth();
+    const user = session?.user;
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: "Unauthorized. Please sign in to continue." },
         { status: 401 }
@@ -61,22 +57,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let db = supabase;
-    try {
-      if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-        db = createAdminClient();
-      }
-    } catch {
-      db = supabase;
-    }
-
     // Check if username is already taken by another user
-    const { data: existingUser } = await db
-      .from("profiles")
-      .select("id")
-      .eq("username", cleanUsername)
-      .neq("id", user.id)
-      .maybeSingle();
+    const existingUser = await prisma.profile.findFirst({
+      where: {
+        username: cleanUsername,
+        id: { not: user.id }
+      },
+      select: { id: true }
+    });
 
     if (existingUser) {
       return NextResponse.json(
@@ -86,7 +74,6 @@ export async function POST(req: NextRequest) {
     }
 
     const fullPayload = {
-      id: user.id,
       persona: persona || "creator",
       username: cleanUsername,
       onboarding_goals: Array.isArray(goals) ? goals : [],
@@ -100,21 +87,20 @@ export async function POST(req: NextRequest) {
       industry: persona === "marketer" && industry ? industry.trim() : null,
       automation_level: automationLevel || "suggestions",
       onboarded: true,
-      onboarded_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      onboarded_at: new Date(),
     };
 
-    // Attempt upsert with all personalization columns
-    const { error: upsertError } = await db
-      .from("profiles")
-      .upsert(fullPayload, { onConflict: "id" });
+    // Attempt update with all personalization columns
+    try {
+      await prisma.profile.update({
+        where: { id: user.id },
+        data: fullPayload
+      });
+    } catch (upsertError: any) {
+      console.warn("Full onboarding update failed, attempting safe core fallback:", upsertError.message);
 
-    if (upsertError) {
-      console.warn("Full onboarding upsert failed, attempting safe core fallback:", upsertError.message);
-
-      // Graceful fallback to core columns if database schema hasn't been migrated with extra columns
+      // Graceful fallback to core columns
       const corePayload = {
-        id: user.id,
         persona: persona || "creator",
         username: cleanUsername,
         niche: niche ? niche.trim() : null,
@@ -122,15 +108,15 @@ export async function POST(req: NextRequest) {
         audience_range: persona === "creator" ? audienceRange || null : null,
         business_type: (persona as string) === "client" || persona === "marketer" ? businessType || null : null,
         onboarded: true,
-        onboarded_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        onboarded_at: new Date(),
       };
 
-      const { error: fallbackError } = await db
-        .from("profiles")
-        .upsert(corePayload, { onConflict: "id" });
-
-      if (fallbackError) {
+      try {
+        await prisma.profile.update({
+          where: { id: user.id },
+          data: corePayload
+        });
+      } catch (fallbackError: any) {
         console.error("Onboarding core fallback error:", fallbackError);
         return NextResponse.json(
           { error: fallbackError.message || "Failed to save workspace profile." },

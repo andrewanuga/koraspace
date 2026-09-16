@@ -1,7 +1,11 @@
 "use client";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 
 import { CreateTypeTabs }    from "@/components/dashboard/create/CreateTypeTabs";
@@ -12,11 +16,12 @@ import { BrandIntelligence } from "@/components/dashboard/create/BrandIntelligen
 import { ContentFormats }    from "@/components/dashboard/create/ContentFormats";
 
 import type { CreateMode, Attachment, ModelOption } from "@/components/dashboard/create/types";
+import type { ScoreResponse } from "@/app/api/ai/score/route";
 
 const MAX_MB = 25;
 
 export default function CreatePage() {
-  const { error: toastError } = useToast();
+  const { error: toastError, success: toastSuccess } = useToast();
 
   /* ── Mode ── */
   const [mode, setMode] = useState<CreateMode>("post");
@@ -26,6 +31,7 @@ export default function CreatePage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [draft, setDraft] = useState<string | null>(null);
   const [draftHashtags, setDraftHashtags] = useState<string[]>([]);
+  const [scoreData, setScoreData] = useState<ScoreResponse | null>(null);
 
   /* ── Models ── */
   const [models, setModels] = useState<ModelOption[]>([]);
@@ -46,8 +52,9 @@ export default function CreatePage() {
   useEffect(() => {
     (async () => {
       try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
+        const supabase = await createClient();
+  const session = await auth();
+          const user = session?.user;
         if (user) {
           const { data: profile } = await supabase.from("profiles").select("ai_model").eq("id", user.id).single();
           if (profile?.ai_model) setSelectedModel(profile.ai_model);
@@ -108,6 +115,24 @@ export default function CreatePage() {
   const currentModelInfo = models.find((m) => m.id === selectedModel);
   const hasVision = currentModelInfo?.supportsVision ?? true;
 
+  /* ── Score content helper ── */
+  const evaluateDraftScore = async (text: string) => {
+    if (!text || text.length < 20) return;
+    try {
+      const res = await fetch("/api/ai/score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: text, platform: "x" }),
+      });
+      if (res.ok) {
+        const scored = await res.json();
+        setScoreData(scored);
+      }
+    } catch {
+      /* silent */
+    }
+  };
+
   /* ── Generate / send ── */
   const handleGenerate = useCallback(async () => {
     if (!prompt.trim() || isGenerating) return;
@@ -115,9 +140,21 @@ export default function CreatePage() {
     setIsGenerating(true);
     setDraft(null);
     setDraftHashtags([]);
+    setScoreData(null);
 
     const ctrl = new AbortController();
     abortRef.current = ctrl;
+
+    let promptModifier = prompt;
+    if (mode === "hashtags") {
+      promptModifier = `Generate an optimized hashtag strategy for: ${prompt}`;
+    } else if (mode === "caption") {
+      promptModifier = `Write an engaging, scroll-stopping social caption for: ${prompt}`;
+    } else if (mode === "repurpose") {
+      promptModifier = `Repurpose this content into a multi-platform bundle (X thread, LinkedIn, Reel script): ${prompt}`;
+    } else if (mode === "brand") {
+      promptModifier = `Draft a personalized brand voice profile and style guide for: ${prompt}`;
+    }
 
     try {
       const res = await fetch("/api/ai/chat", {
@@ -125,7 +162,7 @@ export default function CreatePage() {
         signal: ctrl.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [{ role: "user", content: prompt }],
+          messages: [{ role: "user", content: promptModifier }],
           attachments: attachments.map((a) => ({
             type: a.type, name: a.name, mime: a.mime,
             content: a.content, dataUrl: a.dataUrl,
@@ -141,33 +178,33 @@ export default function CreatePage() {
       }
 
       const contentType = res.headers.get("content-type") || "";
+      let fullGeneratedText = "";
 
       if (contentType.includes("text/plain")) {
         const reader = res.body?.getReader();
         const decoder = new TextDecoder();
-        let full = "";
         if (reader) {
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-            full += decoder.decode(value, { stream: true });
-            /* stream into draft live */
-            setDraft(full);
+            fullGeneratedText += decoder.decode(value, { stream: true });
+            setDraft(fullGeneratedText);
           }
         }
-        setDraft(full || "No response received.");
       } else {
         const data = await res.json();
-        setDraft(data.reply || data.error || "Something went wrong.");
+        fullGeneratedText = data.reply || data.error || "Something went wrong.";
+        setDraft(fullGeneratedText);
       }
 
       /* Extract hashtags from the final draft */
-      setDraft((prev) => {
-        if (!prev) return prev;
-        const tags = [...prev.matchAll(/#(\w+)/g)].map((m) => m[1]);
-        if (tags.length) setDraftHashtags(tags);
-        return prev;
-      });
+      const tags = [...fullGeneratedText.matchAll(/#(\w+)/g)].map((m) => m[1]);
+      if (tags.length) setDraftHashtags(tags);
+
+      // Score the completed draft
+      if (fullGeneratedText) {
+        evaluateDraftScore(fullGeneratedText);
+      }
     } catch (e: unknown) {
       if (e instanceof Error && e.name === "AbortError") return;
       toastError("Generation failed", e instanceof Error ? e.message : "Try again.");
@@ -175,7 +212,33 @@ export default function CreatePage() {
       setIsGenerating(false);
       abortRef.current = null;
     }
-  }, [prompt, attachments, selectedModel, isGenerating, toastError]);
+  }, [prompt, attachments, selectedModel, isGenerating, mode, toastError]);
+
+  /* ── Generate A/B Variations ── */
+  const handleGenerateVariations = async () => {
+    if (!draft && !prompt.trim()) return;
+    setIsGenerating(true);
+    try {
+      const res = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: prompt || draft,
+          type: "variations",
+          platform: "x",
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to generate variations");
+      setDraft(data.content);
+      evaluateDraftScore(data.content);
+      toastSuccess("A/B Variations Generated", "Explore 3 distinct angles for your audience.");
+    } catch (err: unknown) {
+      toastError("Variations failed", err instanceof Error ? err.message : "Try again");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   /* ── Quick prompts ── */
   const handleQuickPrompt = (selected: string) => setPrompt(selected);
@@ -183,15 +246,12 @@ export default function CreatePage() {
   /* ── Draft actions ── */
   const handleImprove = () => {
     if (!draft) return;
-    setPrompt(`Improve this content and make it more engaging:\n\n${draft}`);
-  };
-  const handleUse = () => {
-    /* Placeholder — connect to scheduler/calendar */
+    setPrompt(`Improve this content and make it more engaging with higher hook retention:\n\n${draft}`);
   };
 
   /* ── Format select ── */
   const handleFormatSelect = (format: string) => {
-    setPrompt(`Create a ${format} based on my content niche.`);
+    setPrompt(`Create a high-converting ${format} tailored to my brand voice.`);
   };
 
   /* ── Tool select ── */
@@ -220,13 +280,13 @@ export default function CreatePage() {
             Create content
           </h1>
           <p className="mt-2 text-[13px] text-[var(--fg-3)]">
-            Turn your ideas into high-converting content with autonomous AI assistance.
+            Turn your ideas into high-converting content with autonomous Brand Brain intelligence.
           </p>
         </div>
 
         <div className="flex items-center gap-2 text-[11px] text-[var(--fg-4)]">
           <span className="h-2 w-2 rounded-full bg-[var(--success)]" />
-          Kora AI ready
+          Kora Autonomous Engine ready
         </div>
       </header>
 
@@ -260,18 +320,25 @@ export default function CreatePage() {
       <QuickPrompts onSelect={handleQuickPrompt} />
 
       {/* ── Main content area ── */}
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_330px]">
         <AiDraftCard
           content={draft ?? undefined}
           hashtags={draftHashtags}
           isGenerating={isGenerating}
+          scoreData={scoreData}
           onImprove={handleImprove}
           onEdit={() => setPrompt(draft ?? "")}
-          onUse={handleUse}
+          onGenerateVariations={handleGenerateVariations}
+          onScheduleSuccess={() => {
+            toastSuccess("Scheduled", "Post scheduled directly into your content calendar.");
+          }}
         />
 
         <aside>
-          <BrandIntelligence />
+          <BrandIntelligence
+            currentScore={scoreData?.score}
+            scoreBreakdown={scoreData}
+          />
         </aside>
       </div>
 
@@ -280,3 +347,4 @@ export default function CreatePage() {
     </div>
   );
 }
+

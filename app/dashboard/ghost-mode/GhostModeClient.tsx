@@ -1,4 +1,9 @@
 "use client";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useRef, useState } from "react";
 import {
@@ -6,9 +11,7 @@ import {
   Send, MessageCircle, X, Loader2, CheckCircle2,
 } from "lucide-react";
 import { GlassCard, PageHeader } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
-import type { AgentActionRow } from "@/lib/supabase/types";
 import { timeAgo } from "@/lib/dashboard/helpers";
 
 const ACTION_META = {
@@ -203,8 +206,9 @@ export function GhostModeClient({ initialActions, statsToday, initiallyActive, b
 
   const persist = async (patch: { status?: "active" | "paused"; rules?: typeof rules }) => {
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const supabase = await createClient();
+  const session = await auth();
+        const user = session?.user;
       if (!user) return;
       const nextStatus = patch.status ?? (agentActive ? "active" : "paused");
       const nextRules = patch.rules ?? rules;

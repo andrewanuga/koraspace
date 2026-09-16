@@ -1,4 +1,9 @@
 "use client";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useState } from "react";
 import {
@@ -38,8 +43,6 @@ import {
   Sun,
   Type,
 } from "lucide-react";
-
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import {
@@ -241,6 +244,7 @@ function NavItem({
 }
 
 export default function SettingsPage() {
+  const supabase = createClient();
   const { success, error: toastError } = useToast();
 
   const [section, setSection] = useState<Section>("account");
@@ -299,28 +303,26 @@ export default function SettingsPage() {
 
   useEffect(() => {
     async function load() {
-      const supabase = createClient();
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const supabase = await createClient();
+  const session = await auth();
+        const user = session?.user;
 
       if (!user) return;
 
-      setUserId(user.id);
+      setUserId(user.id || null);
       setEmail(user.email ?? "");
 
       // Pull whatever is available from auth metadata.
       setName(
-        user.user_metadata?.full_name ??
-          user.user_metadata?.name ??
+        (user as any).user_metadata?.full_name ??
+          (user as any).user_metadata?.name ??
           "Alex Carter"
       );
 
-      setUsername(user.user_metadata?.username ?? "alexcarter");
+      setUsername((user as any).user_metadata?.username ?? "alexcarter");
 
-      if (user.user_metadata?.bio) {
-        setBio(user.user_metadata.bio);
+      if ((user as any).user_metadata?.bio) {
+        setBio((user as any).user_metadata.bio);
       }
     }
 
@@ -331,8 +333,6 @@ export default function SettingsPage() {
     setSaving(true);
 
     try {
-      const supabase = createClient();
-
       const { error } = await supabase.auth.updateUser({
         data: {
           full_name: name,

@@ -1,4 +1,10 @@
 "use client";
+import { createClient } from "@/lib/supabase/client";
+
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useState, useEffect, useRef } from "react";
 import {
@@ -27,8 +33,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { MarkdownRenderer } from "@/components/dashboard/MarkdownRenderer";
 
@@ -95,9 +99,8 @@ export default function SupportPage() {
   useEffect(() => {
     async function loadChat() {
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const session = await auth();
+          const user = session?.user;
 
         if (!user) return;
 

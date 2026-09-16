@@ -1,13 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { RepurposeClient } from "@/components/dashboard/repurpose/RepurposeClient";
 import type { ContentLibraryItem, RepurposeProject } from "@/lib/repurpose/types";
 
 export default async function RepurposePage() {
+  const session = await auth();
+    const user = session?.user;
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   if (!user) {
     return null;

@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { NextRequest, NextResponse } from "next/server";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { PLANS, isPlan, toKobo } from "@/lib/billing/plans";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
@@ -8,7 +10,8 @@ import { checkoutSchema } from "@/lib/security/schemas";
 /** Start a Paystack checkout for a plan; returns an authorization_url to redirect to. */
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   // Rate limit: 10 checkout attempts/min per user (prevent abuse).

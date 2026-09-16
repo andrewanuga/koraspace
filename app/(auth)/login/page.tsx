@@ -16,7 +16,7 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
-import { createClient } from "@/lib/supabase/client";
+import { signIn } from "next-auth/react";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 const inputCls =
@@ -59,16 +59,14 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: email.trim(),
+        password,
+      });
 
-      const { error: authError } =
-        await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
-
-      if (authError) {
-        toastError("Couldn't sign in", authError.message);
+      if (result?.error) {
+        toastError("Couldn't sign in", "Invalid credentials");
         setLoading(false);
         return;
       }

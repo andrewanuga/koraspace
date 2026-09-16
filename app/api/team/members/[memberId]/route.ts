@@ -1,6 +1,6 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 
 interface RouteParams {
   params: Promise<{ memberId: string }>;
@@ -9,11 +9,8 @@ interface RouteParams {
 export async function PATCH(req: NextRequest, { params }: RouteParams) {
   try {
     const { memberId } = await params;
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authErr,
-    } = await supabase.auth.getUser();
+    const session = await auth();
+      const user = session?.user;
 
     if (authErr || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -26,9 +23,6 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     if (role && !validRoles.includes(role)) {
       return NextResponse.json({ error: "Invalid role specified" }, { status: 400 });
     }
-
-    const admin = createAdminClient();
-
     // Check target membership record
     const { data: targetMember, error: targetErr } = await admin
       .from("workspace_members")
@@ -97,18 +91,12 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 export async function DELETE(req: NextRequest, { params }: RouteParams) {
   try {
     const { memberId } = await params;
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authErr,
-    } = await supabase.auth.getUser();
+    const session = await auth();
+      const user = session?.user;
 
     if (authErr || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const admin = createAdminClient();
-
     // Check target membership record
     const { data: targetMember, error: targetErr } = await admin
       .from("workspace_members")

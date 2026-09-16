@@ -1,4 +1,9 @@
 "use client";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
@@ -41,8 +46,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import imageCompression from "browser-image-compression";
 
@@ -1045,9 +1048,9 @@ export default function CalendarPage() {
   /* ---------------------------------------------------------------------- */
 
   const loadData = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const supabase = await createClient();
+  const session = await auth();
+      const user = session?.user;
 
     if (!user) return;
 
@@ -1285,9 +1288,9 @@ export default function CalendarPage() {
     setIsSaving(true);
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const supabase = await createClient();
+  const session = await auth();
+        const user = session?.user;
 
       if (!user) {
         throw new Error("Not authenticated");

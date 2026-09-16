@@ -1,32 +1,37 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+﻿import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { callAI, isConfigured } from "@/lib/ai/gemini";
-import { getActiveWorkspace } from "@/lib/workspace";
 import { buildGeneratePrompt } from "@/lib/ai/prompts";
+import { buildBrandContext } from "@/lib/brand/context";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { scanForPromptInjection } from "@/lib/security/enforcement";
 
-/* â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* -------------------------------------------------------------------------- */
+/*                                   Types                                    */
+/* -------------------------------------------------------------------------- */
 
 interface GenerateBody {
   prompt?: string;
   platform?: string;
-  framework?: string;   // "aida" | "pas" | "hook" | "story"
+  framework?: string;
   tone?: string;
   context?: string;
-  type?: "caption" | "thread" | "reply" | "hashtags" | "bio" | "idea";
+  type?: "caption" | "thread" | "reply" | "hashtags" | "bio" | "idea" | "variations" | "repurpose" | "brand";
   useTrends?: boolean;
 }
 
-/* â”€â”€ POST /api/ai/generate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* -------------------------------------------------------------------------- */
+/*                            POST /api/ai/generate                           */
+/* -------------------------------------------------------------------------- */
 
 export async function POST(req: NextRequest) {
   try {
     // Auth guard
-    const supabase = await createClient();
-    const workspace = await getActiveWorkspace(supabase);
-    if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const workspaceId = workspace.workspaceId;
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return new Response("Unauthorized", { status: 401 });
+    const workspaceId = user.id;
 
     // Rate limit: 30 requests/min per user.
     const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
@@ -35,7 +40,7 @@ export async function POST(req: NextRequest) {
     const body: GenerateBody = await req.json();
     const { prompt, platform, framework, tone, context, type = "caption", useTrends } = body;
 
-    // Zero-Trust Defense Against Prompt Injection & Evasion (Mandate 5)
+    // Zero-Trust Defense Against Prompt Injection & Evasion
     if (prompt) {
       const scan = scanForPromptInjection(prompt, "Generate Prompt");
       if (!scan.safe) {
@@ -54,16 +59,16 @@ export async function POST(req: NextRequest) {
 
     if (useTrends) {
       // Fetch the top trend from the user's database cache
-      const { data: trends } = await supabase
-        .from("social_trends")
-        .select("topic, summary")
-        .eq("user_id", workspaceId)
-        .order("score", { ascending: false })
-        .limit(1);
+      const trends = await prisma.trend.findMany({
+        where: { user_id: workspaceId },
+        orderBy: { score: 'desc' },
+        take: 1,
+        select: { topic: true, summary: true }
+      });
       
       if (trends && trends.length > 0) {
         trendUsed = trends[0].topic;
-        finalPrompt = `Trend: ${trends[0].topic}. Context: ${trends[0].summary}`;
+        finalPrompt = `Trend: ${trendUsed}. Context: ${brandContext}`;
       } else {
         // Fallback if no trends generated yet
         trendUsed = "AI tools in our niche";
@@ -76,33 +81,36 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get user's model preference
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("ai_model, ai_temperature")
-      .eq("id", workspaceId)
-      .single();
+    // Load user's model preference and Brand Brain Context
+    const [profile, brandContext] = await Promise.all([
+      prisma.profile.findUnique({
+        where: { id: workspaceId },
+        select: { ai_model: true, ai_temperature: true }
+      }),
+      buildBrandContext(workspaceId).catch(() => null),
+    ]);
 
-    // Build the generation prompt
+    // Build the generation prompt with Brand Brain context
     const systemPrompt = buildGeneratePrompt({
       type,
       platform,
-      tone,
+      tone: tone || brandContext?.profile?.voice_summary || undefined,
       context: context || finalPrompt || "",
       framework,
+      brandContext,
     });
 
     const userPrompt = context
-      ? `Brand context: ${context}\n\nCreate a compelling ${platform || "social media"} post about: ${finalPrompt || "our brand"}`
-      : `Create a compelling ${platform || "social media"} post about: ${finalPrompt}`;
+      ? `Brand context: ${brandContext}\n\nCreate a compelling ${framework} piece about: ${trendUsed}`
+      : `Create a compelling ${framework} piece about: ${trendUsed}`;
 
-    // â”€â”€ No API key â†’ mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // No API key mock
     if (!isConfigured()) {
       await new Promise((r) => setTimeout(r, 800));
       return NextResponse.json({ content: getMockContent(platform, framework, tone) });
     }
 
-    // â”€â”€ Call OpenRouter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // Call OpenRouter / Gemini
     const result = await callAI(
       [
         { role: "system", content: systemPrompt },
@@ -115,7 +123,14 @@ export async function POST(req: NextRequest) {
     );
 
     // Deduct from user's generation quota
-    const { error: dbError } = await supabase.rpc("decrement_generations", { user_id: workspaceId });
+    try {
+      await prisma.profile.update({
+        where: { id: workspaceId },
+        data: { generations_used: { increment: 1 } }
+      });
+    } catch {
+      /* ignore quota errors */
+    }
 
     return NextResponse.json({ content: result.content, model: result.model, trendUsed });
   } catch (err) {
@@ -128,23 +143,24 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/* â”€â”€ Mock content for dev â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* -------------------------------------------------------------------------- */
+/* Mock content for dev */
+/* -------------------------------------------------------------------------- */
 
 function getMockContent(platform?: string, framework?: string, tone?: string): string {
+
   const mocks: Record<string, string> = {
-    aida: `ðŸ§µ Most founders are sleeping on this growth hack in 2026...\n\nI went from 0 to 10K followers in 60 days without spending a single Naira on ads.\n\nHere's the exact 5-step system I used ðŸ‘‡\n\nâ€¢ Stop posting content. Start sharing insights.\nâ€¢ The 80/20 engagement rule â€” spend 80% of your time commenting.\nâ€¢ Post at 6am or 8pm WAT. Most creators post during work hours.\nâ€¢ Every thread needs a retention hook at the end.\nâ€¢ Auto-Plug when posts blow up.\n\nWhich step are you missing? ðŸ‘‡`,
-    pas: `The biggest problem with social media in 2026?\n\nYou're working 3x harder for half the results.\n\nAlgorithms changed. Attention spans dropped. Competition tripled.\n\nAnd the playbook everyone taught you in 2022 is dead.\n\nHere's what actually works now â†’ [Link in bio]`,
-    hook: `"I post every day and still get zero engagement."\n\nI hear this from 9 out of 10 founders I talk to.\n\nHere's the uncomfortable truth:\n\nPosting more is not the solution.\n\nPosting smarter is.\n\nDrop a ðŸ™‹ if you want me to break down the system that changed everything for my clients.`,
+    aida: `🚀 Most founders are sleeping on this growth hack in 2026...\n\nI went from 0 to 10K followers in 60 days without spending a single Naira on ads.\n\nHere's the exact 5-step system I used 👇\n\n1️⃣ Stop posting content. Start sharing insights.\n2️⃣ The 80/20 engagement rule - spend 80% of your time commenting.\n3️⃣ Post at 6am or 8pm WAT. Most creators post during work hours.\n4️⃣ Every thread needs a retention hook at the end.\n5️⃣ Auto-Plug when posts blow up.\n\nWhich step are you missing? 👇`,
+    pas: `The biggest problem with social media in 2026?\n\nYou're working 3x harder for half the results.\n\nAlgorithms changed. Attention spans dropped. Competition tripled.\n\nAnd the playbook everyone taught you in 2022 is dead.\n\nHere's what actually works now 👇 [Link in bio]`,
+    hook: `"I post every day and still get zero engagement."\n\nI hear this from 9 out of 10 founders I talk to.\n\nHere's the uncomfortable truth:\n\nPosting more is not the solution.\n\nPosting smarter is.\n\nDrop a 🔥 if you want me to break down the system that changed everything for my clients.`,
     story: `18 months ago, I was ready to quit social media entirely.\n\n47 posts. 230 followers. Zero clients.\n\nThen I discovered one thing that changed everything.\n\nI stopped writing for the algorithm and started writing for one person.\n\nMy ideal client. Her exact problem. Her exact words.\n\nNext month? 4 inbound leads from a single thread.\n\nThe lesson: specificity beats volume every single time.`,
   };
 
   let content = mocks[framework || "aida"] || mocks.aida;
   
   if (platform === "linkedin") {
-    content = `Bold first line that stops the scroll.\n\nI've been quiet about this for months, but it's time to share.\n\nHere's what I learned after working with 50+ ${platform || "brands"} this quarter:\n\nâ€¢ Insight 1\nâ€¢ Insight 2\nâ€¢ Insight 3\n\nThe lesson? Consistency compounds. But only if you're consistent about the RIGHT things.\n\nWhat's your biggest challenge right now? ðŸ‘‡`;
+    content = `Bold first line that stops the scroll.\n\nI've been quiet about this for months, but it's time to share.\n\nHere's what I learned after working with 50+ founders this quarter:\n\n1️⃣ Insight 1\n2️⃣ Insight 2\n3️⃣ Insight 3\n\nThe lesson? Consistency compounds. But only if you're consistent about the RIGHT things.\n\nWhat's your biggest challenge right now? 👇`;
   }
 
-  // Inject tone indicator for mock mode so the user knows it's applying
-  return `[Mock Mode | Tone: ${tone || "Professional"} | Framework: ${framework || "AIDA"}]\n\n${content}`;
+  return `[Mock Mode | Tone: ${tone} | Framework: ${framework}]\n\n${content}`;
 }
-

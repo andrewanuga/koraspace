@@ -1,16 +1,13 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { teamInviteSchema } from "@/lib/security/schemas";
 const INVITABLE_ROLES = new Set(["admin", "manager", "member"]);
 
 async function getContext() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
 
   if (!user) {
     return {
@@ -103,9 +100,6 @@ export async function POST(request: NextRequest) {
       { status: 409 }
     );
   }
-
-  const admin = createAdminClient();
-
   // Search for an existing KoraSpace account
   const { data: users, error: usersError } = await admin.auth.admin.listUsers({
     page: 1,
@@ -273,9 +267,6 @@ export async function DELETE(request: NextRequest) {
       { status: 409 }
     );
   }
-
-  const admin = createAdminClient();
-
   const { error } = await admin
     .from("team_invitations")
     .update({

@@ -1,4 +1,8 @@
-﻿"use client";
+"use client";
+﻿import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useState, useCallback } from "react";
 import {
@@ -16,8 +20,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { GlassCard, PageHeader, StatTile, Pill } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
-
 type ServiceStatus = "operational" | "degraded" | "down";
 
 type Service = {
@@ -48,7 +50,6 @@ export default function AdminHealthMatrix() {
     setChecking(true);
     const startDb = performance.now();
     try {
-      const supabase = createClient();
       await supabase.from("profiles").select("id").limit(1);
       const dbLatency = Math.round(performance.now() - startDb);
 

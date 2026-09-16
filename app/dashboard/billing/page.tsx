@@ -1,9 +1,13 @@
 "use client";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useState } from "react";
 import { CreditCard, Check, Zap, Crown, Rocket, Shield, ArrowUpRight, AlertCircle, Loader2, Users } from "lucide-react";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { fmtNaira } from "@/lib/dashboard/helpers";
 import { PLANS, type PlanId } from "@/lib/billing/plans";
@@ -49,8 +53,9 @@ export default function BillingPage() {
 
   const load = async () => {
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const supabase = await createClient();
+  const session = await auth();
+        const user = session?.user;
       if (!user) return;
       const [{ data: p }, { data: pay }, { count: acctCount }, { count: botCount }, { count: collabCount }] = await Promise.all([
         supabase.from("profiles").select("plan, subscription_status, plan_renews_at, generations_used, generations_reset_at").eq("id", user.id).single(),

@@ -1,4 +1,8 @@
-﻿"use client";
+"use client";
+﻿import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -14,7 +18,6 @@ import {
   Filter,
 } from "lucide-react";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { timeAgo } from "@/lib/dashboard/helpers";
 import { blockIpAddress, unblockIpAddress } from "./actions";
@@ -55,7 +58,6 @@ export default function AdminSecurity() {
 
   const load = async () => {
     try {
-      const supabase = createClient();
       const [{ data: b }, { data: e }] = await Promise.all([
         supabase
           .from("blocked_ips")

@@ -1,11 +1,11 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

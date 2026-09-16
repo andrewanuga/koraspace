@@ -1,5 +1,6 @@
-﻿import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/db";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { Shield, Clock, ArrowLeft, Radio } from "lucide-react";
 import Link from "next/link";
@@ -10,20 +11,17 @@ export const metadata = {
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth();
+  const user = session?.user;
 
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_admin, full_name, plan")
-    .eq("id", user.id)
-    .single();
+  const profile = await prisma.profile.findUnique({
+    where: { id: user.id },
+    select: { is_admin: true, full_name: true, plan: true }
+  });
 
-  const isAdmin = profile?.is_admin || profile?.plan === "team";
+  const isAdmin = Boolean(profile?.is_admin || profile?.plan === "team");
   if (!isAdmin) redirect("/dashboard");
 
   return (

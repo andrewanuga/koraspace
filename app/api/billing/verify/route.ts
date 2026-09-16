@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { NextRequest, NextResponse } from "next/server";
 import { isPlan, PLANS } from "@/lib/billing/plans";
 
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
@@ -17,9 +18,9 @@ export async function GET(req: NextRequest) {
 
   const secret = process.env.PAYSTACK_SECRET_KEY;
   if (!reference || !secret) return done({ paid: "0" });
-
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) return NextResponse.redirect(new URL("/login", origin));
 
   // Rate limit payment verification attempts (10 req/min per user)
@@ -55,9 +56,6 @@ export async function GET(req: NextRequest) {
       console.warn(`[Security] Payment amount mismatch: user ${user.id} paid ${expectedAmountKobo} but ${minRequiredKobo} was required.`);
       return done({ paid: "0", error: "invalid_amount" });
     }
-
-    const admin = createAdminClient();
-
     // Update the subscription on the profile.
     await supabase.from("profiles").update({
       plan,

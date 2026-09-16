@@ -1,12 +1,9 @@
+import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { callAI } from "@/lib/ai/gemini";
+import { createAdminClient } from "@/lib/supabase/admin";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-// Make sure to use the service role key to bypass RLS in the cron job
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+const supabaseAdmin = createAdminClient();
 
 // GET request for Vercel Cron
 export async function GET(req: Request) {
@@ -49,7 +46,7 @@ export async function GET(req: Request) {
 
         let crmContext = "";
         if (crmTasks && crmTasks.length > 0) {
-          crmContext = `\n\nUSER'S CURRENT CRM TASKS (You may reference these if relevant to the post):\n${crmTasks.map(t => `- [${t.priority}] ${t.title} (${t.notes || ''})`).join('\n')}`;
+          crmContext = `\n\nUSER'S CURRENT CRM TASKS (You may reference these if relevant to the post):\n${crmTasks.map((t: any) => `- [${t.priority}] ${t.title} (${t.notes || ''})`).join('\n')}`;
         }
 
         // Fetch user's social account for this platform
@@ -83,8 +80,7 @@ export async function GET(req: Request) {
         const aiResponse = await callAI([
           {
             role: "system",
-            content: `You are an expert social media AI assistant. You have been scheduled to automatically execute a task for the user on ${task.platform}. 
-Generate the requested content directly without preamble. Make sure it is optimized for ${task.platform}.${accountContext}${crmContext}`
+            content: `You are an expert social media AI assistant. You have been scheduled to automatically execute a task for the user on ${task.platform}. \nGenerate the requested content directly without preamble. Make sure it is optimized for ${task.platform}.${accountContext}${crmContext}`
           },
           {
             role: "user",

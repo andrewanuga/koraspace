@@ -1,4 +1,8 @@
 "use client";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -13,7 +17,6 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { GlassCard, PageHeader, Pill, StatTile } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import Link from "next/link";
 import { impersonateUser, grantUserCredits } from "../actions";
@@ -31,9 +34,8 @@ export default function UserDetail() {
     if (!id) return;
     const load = async () => {
       try {
-        const supabase = createClient();
         const [prof, bots, ints, posts, securityEvents] = await Promise.all([
-          supabase.from("profiles").select("*").eq("id", id).single(),
+          supabase.from("profiles").select("*").eq("id", id).maybeSingle(),
           supabase.from("social_bots").select("*").eq("user_id", id),
           supabase.from("social_accounts").select("*").eq("user_id", id),
           supabase.from("social_posts").select("id, content, platform, posted_at, impressions").eq("user_id", id).limit(10),

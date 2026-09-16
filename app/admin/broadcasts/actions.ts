@@ -1,23 +1,20 @@
-﻿"use server";
+"use server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+
 
 async function verifyAdmin() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) throw new Error("Unauthorized");
-
-  const adminDb = createAdminClient();
   if (!adminDb) throw new Error("Admin client not configured");
 
   const { data: profile } = await adminDb
     .from("profiles")
     .select("is_admin, plan")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   if (!profile?.is_admin && profile?.plan !== "team") {
     throw new Error("Forbidden: Administrator privileges required");
@@ -34,7 +31,6 @@ export async function createBroadcast(
   linkUrl?: string
 ) {
   const admin = await verifyAdmin();
-  const adminDb = createAdminClient();
   if (!adminDb) throw new Error("Admin client not configured");
 
   // If targeted at a single user, create direct notification
@@ -65,7 +61,6 @@ export async function createBroadcast(
 
 export async function toggleBroadcast(id: string, is_active: boolean) {
   await verifyAdmin();
-  const adminDb = createAdminClient();
   if (!adminDb) throw new Error("Admin client not configured");
 
   const { error } = await adminDb
@@ -78,7 +73,6 @@ export async function toggleBroadcast(id: string, is_active: boolean) {
 
 export async function deleteBroadcast(id: string) {
   await verifyAdmin();
-  const adminDb = createAdminClient();
   if (!adminDb) throw new Error("Admin client not configured");
 
   const { error } = await adminDb

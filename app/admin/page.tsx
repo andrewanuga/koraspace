@@ -17,7 +17,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { GlassCard, PageHeader, StatTile, Pill } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
+import { getAdminOverviewStats } from "./actions";
 import { fmtNaira, fmtNum, timeAgo } from "@/lib/dashboard/helpers";
 import { PLAN_ORDER, PLANS, type PlanId } from "@/lib/billing/plans";
 
@@ -55,33 +55,16 @@ export default function AdminOverview() {
 
   const fetchData = useCallback(async () => {
     try {
-      const supabase = createClient();
-      const since7 = new Date(Date.now() - 7 * 864e5).toISOString();
-      const since24 = new Date(Date.now() - 864e5).toISOString();
-
-      const [
-        { count: users },
-        { count: new7 },
-        { count: suspended },
-        { count: blocked },
-        { count: events24 },
-        { data: profiles },
-        { data: pays },
-        { data: evs },
-      ] = await Promise.all([
-        supabase.from("profiles").select("id", { count: "exact", head: true }),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).gte("created_at", since7),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).eq("suspended", true),
-        supabase.from("blocked_ips").select("ip", { count: "exact", head: true }),
-        supabase.from("security_events").select("id", { count: "exact", head: true }).gte("created_at", since24),
-        supabase.from("profiles").select("plan, created_at, subscription_status"),
-        supabase.from("payments").select("amount, status"),
-        supabase
-          .from("security_events")
-          .select("id, type, ip, email, severity, created_at, detail")
-          .order("created_at", { ascending: false })
-          .limit(16),
-      ]);
+      const {
+        users,
+        new7,
+        suspended,
+        blocked,
+        events24,
+        profiles,
+        pays,
+        evs
+      } = await getAdminOverviewStats();
 
       const planMap: Record<string, number> = {};
       let paidCount = 0;

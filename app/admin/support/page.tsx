@@ -1,4 +1,8 @@
-﻿"use client";
+"use client";
+﻿import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -15,7 +19,6 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { resolveTicket, replyToTicket } from "./actions";
 import { timeAgo } from "@/lib/dashboard/helpers";
@@ -45,7 +48,6 @@ export default function AdminSupport() {
 
   const load = async () => {
     try {
-      const supabase = createClient();
       const { data, error } = await supabase
         .from("support_tickets")
         .select("*")

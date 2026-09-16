@@ -1,4 +1,9 @@
 "use client";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -6,7 +11,6 @@ import {
   Ghost, MessageCircleReply, Repeat2, DollarSign, Filter, MessageSquare,
   CalendarClock, FileText, Zap, Activity, Plug, Plus, Trash2, Loader2,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { GlassCard, PageHeader, Pill, StatTile } from "@/components/dashboard/ui";
 import type { SocialBot, SocialAccount } from "@/lib/social/types";
@@ -33,8 +37,9 @@ export default function BotsPage() {
 
   const load = async () => {
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const supabase = await createClient();
+  const session = await auth();
+        const user = session?.user;
       if (!user) return;
       setUserId(user.id);
       const [{ data: acc }, { data: b }] = await Promise.all([
@@ -58,7 +63,6 @@ export default function BotsPage() {
     if (!userId) return;
     setBusy(true);
     const acc = accounts.find((a) => a.id === accountId);
-    const supabase = createClient();
     const { data, error } = await supabase.from("social_bots").insert({
       user_id: userId, account_id: accountId, platform: acc?.platform ?? null,
       name: CATALOG.find((c) => c.kind === kind)?.name ?? kind, kind, status: "active", autonomy: "assist",
@@ -70,17 +74,14 @@ export default function BotsPage() {
 
   const setStatus = async (b: SocialBot, status: "active" | "paused") => {
     setBots((prev) => prev.map((x) => (x.id === b.id ? { ...x, status } : x)));
-    const supabase = createClient();
     await supabase.from("social_bots").update({ status }).eq("id", b.id);
   };
   const setAutonomy = async (b: SocialBot, autonomy: "assist" | "auto") => {
     setBots((prev) => prev.map((x) => (x.id === b.id ? { ...x, autonomy } : x)));
-    const supabase = createClient();
     await supabase.from("social_bots").update({ autonomy }).eq("id", b.id);
   };
   const remove = async (b: SocialBot) => {
     setBots((prev) => prev.filter((x) => x.id !== b.id));
-    const supabase = createClient();
     await supabase.from("social_bots").delete().eq("id", b.id);
   };
 
