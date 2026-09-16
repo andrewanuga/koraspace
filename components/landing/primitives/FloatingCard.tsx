@@ -52,8 +52,17 @@ export function FloatingCard({
 
   // `static` rather than `relative` on mobile: inset utilities are inert on a
   // static box, so a stray `bottom-6` cannot shift the stacked card.
+  //
+  // Scroll drift is also switched off below sm. It exists to express depth
+  // between overlapping layers; a card stacked in normal flow overlaps nothing,
+  // so drifting it only shoves it up to 46px into whatever sits above or below.
+  // framer writes `transform` inline, so the override needs Tailwind v4's
+  // trailing `!` important modifier. (`[transform:none!important]` looks
+  // equivalent but Tailwind silently generates no rule for it.)
   const flow =
-    float === "always" ? "absolute" : "static mt-3 w-full sm:absolute sm:mt-0";
+    float === "always"
+      ? "absolute"
+      : "static mt-3 w-full sm:absolute sm:mt-0 max-sm:transform-none!";
 
   return (
     <motion.div
