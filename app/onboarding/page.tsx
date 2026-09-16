@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
 import { OnboardingFlow } from "./OnboardingFlow";
+import { OnboardingBackground } from "./OnboardingBackground";
 
 export const metadata = {
   title: "Set up your workspace — Koraspace",
@@ -32,8 +33,11 @@ export default async function OnboardingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#121212] dark:text-white transition-colors duration-200">
-      <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col px-5 py-6 sm:px-8 lg:px-10">
+    <main className="relative min-h-screen bg-slate-50 text-slate-900 dark:bg-[#121212] dark:text-white transition-colors duration-200 overflow-hidden">
+      {/* Animated Ambient Background Blobs & Grid */}
+      <OnboardingBackground />
+
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1500px] flex-col px-5 py-6 sm:px-8 lg:px-10">
         {/* Top bar */}
         <header className="flex items-center justify-between">
           <Link

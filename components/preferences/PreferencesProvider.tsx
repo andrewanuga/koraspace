@@ -84,7 +84,7 @@ export function PreferencesProvider({
     root.dataset.theme = isDark ? "dark" : "light";
   }, []);
 
-  // Synchronize state when next-themes changes (e.g. from FloatingNav or ThemeSwitcher)
+  // Synchronize state when next-themes changes (e.g. from FloatingNav or ThemeSwitcher or OnboardingFlow)
   useEffect(() => {
     if (nextTheme && (nextTheme === "dark" || nextTheme === "light" || nextTheme === "system")) {
       setPreferences((prev) => {
@@ -93,10 +93,11 @@ export function PreferencesProvider({
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
         } catch {}
+        applyDOMAttributes(updated);
         return updated;
       });
     }
-  }, [nextTheme]);
+  }, [nextTheme, applyDOMAttributes]);
 
   // Initial load from server API
   useEffect(() => {
@@ -109,16 +110,35 @@ export function PreferencesProvider({
           const json = await res.json();
           if (json.ok && json.preferences && active) {
             setPreferences((prev) => {
-              const updated = { ...prev, ...json.preferences };
+              // Prioritize user's active client-side theme selection over server initial default
+              const localStoredTheme =
+                typeof window !== "undefined"
+                  ? (localStorage.getItem("theme") as ThemeMode | null)
+                  : null;
+              const effectiveTheme =
+                localStoredTheme && (localStoredTheme === "dark" || localStoredTheme === "light" || localStoredTheme === "system")
+                  ? localStoredTheme
+                  : json.preferences.theme_mode || prev.theme_mode;
+
+              const updated: UserPreferences = {
+                ...prev,
+                ...json.preferences,
+                theme_mode: effectiveTheme,
+              };
+
               try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
               } catch {}
+
               applyDOMAttributes(updated);
-              if (json.preferences.theme_mode) {
+
+              // Only call next-themes setTheme if user hasn't explicitly set one locally
+              if (json.preferences.theme_mode && !localStoredTheme) {
                 try {
                   setTheme(json.preferences.theme_mode);
                 } catch {}
               }
+
               return updated;
             });
           }

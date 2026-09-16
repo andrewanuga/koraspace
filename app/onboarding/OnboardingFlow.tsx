@@ -556,7 +556,7 @@ export function OnboardingFlow({
   initialUsername?: string;
 }) {
   const router = useRouter();
-  const { setTheme } = useTheme();
+  const { theme: nextTheme, setTheme } = useTheme();
   const { error: toastError, success: toastSuccess } = useToast();
   const { preferences, updatePreferences } = usePreferences();
   const { t } = useLanguage();
@@ -613,9 +613,23 @@ export function OnboardingFlow({
   const [fontFamily, setFontFamily] = useState<FontFamily>(
     preferences.font_family || "inter"
   );
-  const [themeMode, setThemeMode] = useState<ThemeMode>(
-    preferences.theme_mode || "dark"
-  );
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("theme") as ThemeMode | null;
+      if (stored === "dark" || stored === "light" || stored === "system") {
+        return stored;
+      }
+    }
+    return (nextTheme as ThemeMode) || preferences.theme_mode || "dark";
+  });
+
+  // Keep themeMode in sync with active theme
+  useEffect(() => {
+    if (nextTheme && (nextTheme === "dark" || nextTheme === "light" || nextTheme === "system")) {
+      setThemeMode(nextTheme as ThemeMode);
+    }
+  }, [nextTheme]);
+
   const [dashboardDensity, setDashboardDensity] = useState<DashboardDensity>(
     preferences.dashboard_density || "balanced"
   );
@@ -667,6 +681,11 @@ export function OnboardingFlow({
   const handleThemeModeSelect = (mode: ThemeMode) => {
     setThemeMode(mode);
     setTheme(mode);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("theme", mode);
+      } catch {}
+    }
   };
 
   const stepValid = useMemo(() => {
