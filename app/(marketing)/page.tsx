@@ -1,12 +1,12 @@
 import { Preloader } from "@/components/landing/Preloader";
 import { Hero } from "@/components/landing/Hero";
-import { DashboardShowcase } from "@/components/landing/DashboardShowcase";
 import { FragmentedMarketing } from "@/components/landing/sections/FragmentedMarketing";
 import { OutcomesSection } from "@/components/landing/sections/OutcomesSection";
 import { UnderstandBrand } from "@/components/landing/sections/UnderstandBrand";
 import { CreateWithContext } from "@/components/landing/sections/CreateWithContext";
 import { LearnFromResults } from "@/components/landing/sections/LearnFromResults";
 import { SystemThatLearns } from "@/components/landing/sections/SystemThatLearns";
+import { ProductPreview } from "@/components/landing/sections/ProductPreview";
 import { FinalCTA } from "@/components/landing/sections/FinalCTA";
 
 /**
@@ -57,7 +57,7 @@ export default function LandingPage() {
 
       {/* 6 — Product preview: one real environment, then the handoff into
           /product/create, /product/understand and /product/grow. */}
-      <DashboardShowcase />
+      <ProductPreview />
 
       {/* RESULTS / CASE STUDIES — insertion point, same rule as above. */}
       {/* TESTIMONIAL WALL — insertion point, same rule as above. */}

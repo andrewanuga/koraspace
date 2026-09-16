@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -19,7 +19,23 @@ import {
   Zap,
 } from "lucide-react";
 
-export function DashboardShowcase() {
+/**
+ * The homepage's product preview: one real environment rather than a wall of
+ * screenshots.
+ *
+ * `overlay` renders floating cards around the app frame. They sit OUTSIDE the
+ * frame element on purpose — the frame is overflow-hidden to contain its own
+ * UI, so anything placed inside it that breaks the frame's edge gets cropped.
+ */
+export function DashboardShowcase({
+  overlay,
+  after,
+}: {
+  /** Floating cards positioned relative to the app frame. */
+  overlay?: ReactNode;
+  /** Content below the frame, e.g. links into the product pages. */
+  after?: ReactNode;
+} = {}) {
   const [persona, setPersona] = useState<"creator" | "marketer">("creator");
 
   const isCreator = persona === "creator";
@@ -58,19 +74,19 @@ export function DashboardShowcase() {
                 className="h-1.5 w-1.5 rounded-full animate-pulse"
                 style={{ background: brandColor }}
               />
-              Live Interactive Workspace Preview
+              Interactive preview
             </span>
           </div>
 
-          <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-white max-w-2xl">
-            See KoraSpace in action:{" "}
+          <h2 className="font-display text-3xl sm:text-5xl font-bold leading-[1.1] tracking-tight text-white max-w-3xl">
+            Everything your marketing needs.{" "}
             <span style={{ color: brandColor }} className="transition-colors duration-300">
-              {isCreator ? "Creator Studio" : "Marketing Operator"}
+              Connected by intelligence.
             </span>
           </h2>
 
           <p className="mt-2 text-xs sm:text-sm text-white/60 max-w-xl">
-            Switch between Creator Mode and Marketer Mode to preview how KoraSpace adapts to your workflow.
+            One workspace for creating, publishing, engaging and learning. Switch modes to see how it adapts to the way you work.
           </p>
 
           <div className="mt-6 inline-flex items-center gap-1 rounded-2xl border border-white/[0.10] bg-[#161616]/90 p-1.5 shadow-[0_10px_35px_rgba(0,0,0,0.5)] backdrop-blur-xl">
@@ -119,6 +135,7 @@ export function DashboardShowcase() {
         {/* ================================================================ */}
         {/* INTERACTIVE HIGH-FIDELITY PRODUCT SHOWCASE FRAME */}
         {/* ================================================================ */}
+        <div className="relative">
         <motion.div
           initial={{ opacity: 0, y: 40, scale: 0.96 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -376,21 +393,14 @@ export function DashboardShowcase() {
           </div>
         </motion.div>
 
-        {/* ================================================================ */}
-        {/* METRIC STRIP SUMMARY */}
-        {/* ================================================================ */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-          className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto"
-        >
-          <KpiMetricCard number="10×" label="Faster Content Speed" sub="From idea to 6-platform draft in seconds" />
-          <KpiMetricCard number="₦8.4M+" label="Managed Pipeline Revenue" sub="Attributed social sales and conversions" />
-          <KpiMetricCard number="4.2×" label="Higher Lead Intent" sub="Automated comment & DM lead classification" />
-          <KpiMetricCard number="6+" label="Connected Networks" sub="Instagram, TikTok, LinkedIn, YouTube, X, Threads" />
-        </motion.div>
+          {overlay}
+        </div>
+
+        {/* A metric strip used to sit here claiming "₦8.4M+ managed pipeline
+            revenue", "10× faster content" and "4.2× higher lead intent", plus
+            LinkedIn and TikTok as connected networks. None of it is backed by
+            real customers or the PRD, so it was removed rather than reworded. */}
+        {after}
       </div>
     </section>
   );
@@ -457,33 +467,6 @@ function MockStat({
   );
 }
 
-function KpiMetricCard({
-  number,
-  label,
-  sub,
-}: {
-  number: string;
-  label: string;
-  sub: string;
-}) {
-  return (
-    <motion.div
-      whileHover={{ y: -6, scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="rounded-2xl border border-white/[0.08] bg-[#161616]/70 p-5 text-center transition-colors hover:border-white/20 hover:bg-[#1a1a1a] shadow-lg cursor-default"
-    >
-      <div className="font-display text-3xl font-bold tracking-tight text-white">
-        {number}
-      </div>
-      <div className="mt-1.5 text-xs font-semibold text-white/80">
-        {label}
-      </div>
-      <div className="mt-1 text-[11px] text-white/40">
-        {sub}
-      </div>
-    </motion.div>
-  );
-}
 
 export default DashboardShowcase;
 
