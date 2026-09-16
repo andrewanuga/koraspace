@@ -10,6 +10,7 @@ export { Scene } from "./Scene";
 export { SceneNumeral } from "./SceneNumeral";
 export { FloatingCard } from "./FloatingCard";
 export { ConnectorLine } from "./ConnectorLine";
+export { SectionThread } from "./SectionThread";
 export { useParallax, type ParallaxDepth } from "./useParallax";
 
 export { LandingButton } from "./LandingButton";

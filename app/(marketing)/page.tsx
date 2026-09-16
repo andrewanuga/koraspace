@@ -1,5 +1,6 @@
 import { Preloader } from "@/components/landing/Preloader";
 import { Hero } from "@/components/landing/Hero";
+import { SectionThread } from "@/components/landing/primitives";
 import { FragmentedMarketing } from "@/components/landing/sections/FragmentedMarketing";
 import { OutcomesSection } from "@/components/landing/sections/OutcomesSection";
 import { UnderstandBrand } from "@/components/landing/sections/UnderstandBrand";
@@ -12,19 +13,44 @@ import { FinalCTA } from "@/components/landing/sections/FinalCTA";
 /**
  * The homepage sells the outcome; the product pages carry the detail.
  *
- * It used to render twenty sections — the whole feature catalogue — which
- * asked a first-time visitor to evaluate KoraSpace before understanding what
- * it changes about their day. The six narrative sections that replace them
- * land one at a time; this is the lean frame they slot into.
+ * Read top to bottom it is one story: the promise, the problem, what changes,
+ * how KoraSpace understands, creates and learns, the system that turns data
+ * into a decision and repeats it, a look inside, and the close.
  *
- * Target order:
- *   1 Hero                — the promise                        [here]
- *   2 Old way vs KoraSpace— name the pain
- *   3 What you get back   — sell the outcome
- *   4 The difference      — data becomes a decision
- *   5 Marketing that learns — the loop, and the curiosity
- *   6 Product preview     — proof, then handoff                [DashboardShowcase]
+ *   01 Hero                      the promise
+ *   02 Fragmented marketing      name the problem
+ *   03 What you get back         the outcome, in three scenes
+ *   04 Understand your brand     ─┐
+ *   05 Create with context        ├ the alternating run
+ *   06 Learn from results        ─┘
+ *   07 Data → decision + loop    the centrepiece
+ *   08 Product preview           proof, then handoff to /product/*
+ *      Close                     the loop returns
  */
+
+/**
+ * Background tone, one continuous layer behind every section.
+ *
+ * It covers everything BELOW the hero rather than the whole page. The hero
+ * paints its own #07050d ground and its height varies with the viewport, so a
+ * percentage stop can never reliably line up with its bottom edge. Starting
+ * the layer at that edge on #07050d makes the join exact at any height; it
+ * ends on the footer's #070d24 for the same reason.
+ *
+ * In between it tints faintly warm through the outcome sections and cool
+ * through the intelligence section, so the chapters register without a hard
+ * edge anywhere. Deliberately close in value to its neighbours: this is
+ * atmosphere, not decoration.
+ */
+const TONE = `linear-gradient(180deg,
+  #07050d 0%,
+  #0f0b15 12%,
+  #120c17 30%,
+  #0f0c16 50%,
+  #0c0c1b 70%,
+  #0a0d20 87%,
+  #070d24 100%)`;
+
 export default function LandingPage() {
   return (
     <>
@@ -32,37 +58,42 @@ export default function LandingPage() {
 
       <Hero />
 
-      {/* SOCIAL PROOF STRIP — intentionally empty. Goes in when there are real
-          customers to name. Nothing invented sits on this page. */}
+      <div className="relative isolate">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{ background: TONE }}
+        />
 
-      {/* 2 — The problem: fragmented marketing */}
-      <FragmentedMarketing />
+        {/* SOCIAL PROOF STRIP — intentionally empty. Goes in when there are real
+            customers to name. Nothing invented sits on this page. */}
 
-      {/* 3 — What KoraSpace gives back */}
-      <OutcomesSection />
+        <FragmentedMarketing />
 
-      {/* 4 — Understand your brand (alternating run begins) */}
-      <UnderstandBrand />
+        {/* the core that resolves the scatter leads straight into what it gives back */}
+        <SectionThread />
 
-      {/* 5 — Create with context (reversed) */}
-      <CreateWithContext />
+        <OutcomesSection />
 
-      {/* 6 — Learn from results (alternating run ends) */}
-      <LearnFromResults />
+        <UnderstandBrand />
+        <CreateWithContext />
+        <LearnFromResults />
 
-      {/* 7 — Data → intelligence → next move, and the loop that repeats it */}
-      <SystemThatLearns />
+        {/* results feed the intelligence */}
+        <SectionThread />
 
+        <SystemThatLearns />
 
+        {/* the system, then a look inside it */}
+        <SectionThread />
 
-      {/* 6 — Product preview: one real environment, then the handoff into
-          /product/create, /product/understand and /product/grow. */}
-      <ProductPreview />
+        <ProductPreview />
 
-      {/* RESULTS / CASE STUDIES — insertion point, same rule as above. */}
-      {/* TESTIMONIAL WALL — insertion point, same rule as above. */}
+        {/* RESULTS / CASE STUDIES and TESTIMONIAL WALL — insertion points, same
+            rule as the social proof strip above. */}
 
-      <FinalCTA />
+        <FinalCTA />
+      </div>
     </>
   );
 }
