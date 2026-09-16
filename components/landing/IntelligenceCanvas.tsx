@@ -248,9 +248,9 @@ function IntelligenceCard({ card }: { card: CanvasCard }) {
 
 type IntelligenceCanvasProps = {
   /**
-   * When the GrowthRail below has a stage under the pointer, it names the
-   * canvas state here and the canvas holds it — so exploring the loop drives
-   * the intelligence rather than the two animating past each other.
+   * Lets an external control hold the canvas on a named state instead of
+   * auto-advancing. Its original caller, the GrowthRail under the hero, has
+   * been retired, so nothing passes this today; it stays as an optional hook.
    */
   focusedKey?: CanvasStateKey | null;
 };
@@ -402,7 +402,7 @@ export function IntelligenceCanvas({
       </div>
 
       {/* Stage rail — deliberately not pagination dots: this reads as one
-          continuous system, and rhymes with the GrowthRail below. */}
+          continuous system rather than a set of slides. */}
       <div className="mt-6 flex items-center gap-1.5">
         {canvasStates.map((s, i) => {
           const active = i === activeIndex;

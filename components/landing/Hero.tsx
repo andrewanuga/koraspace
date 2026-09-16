@@ -1,12 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Space_Grotesk, Inter } from "next/font/google";
 import { motion, type Variants } from "framer-motion";
-import { GrowthRail } from "@/components/landing/GrowthRail";
 import { IntelligenceCanvas } from "@/components/landing/IntelligenceCanvas";
-import type { CanvasStateKey } from "@/components/landing/canvas-states";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -87,11 +84,6 @@ const imageVariants: Variants = {
 };
 
 export function Hero() {
-  // The rail at the bottom of the hero and the canvas above it are the same
-  // loop shown twice, so hovering a stage down there drives the intelligence up
-  // here. Held at this level because it is the only common ancestor.
-  const [focusedStage, setFocusedStage] = useState<CanvasStateKey | null>(null);
-
   return (
     <section
       className={`${display.variable} ${body.variable} min-h-screen bg-[#07050d] px-3 py-3 font-[family-name:var(--font-body)] sm:px-6 sm:py-6 lg:px-10 lg:py-8 overflow-hidden`}
@@ -287,15 +279,11 @@ export function Hero() {
 
             <div className="relative flex flex-col items-center justify-center py-6 lg:min-h-[440px] lg:py-0">
               <motion.div variants={imageVariants} className="w-full">
-                <IntelligenceCanvas focusedKey={focusedStage} />
+                <IntelligenceCanvas />
               </motion.div>
             </div>
           </div>
 
-          {/* the intelligence rail — hero's interactive centerpiece */}
-          <motion.div variants={itemVariants} className="mt-2">
-            <GrowthRail onFocusStage={setFocusedStage} />
-          </motion.div>
         </div>
       </motion.div>
 

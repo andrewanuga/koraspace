@@ -6,7 +6,7 @@ import { OutcomesSection } from "@/components/landing/sections/OutcomesSection";
 import { UnderstandBrand } from "@/components/landing/sections/UnderstandBrand";
 import { CreateWithContext } from "@/components/landing/sections/CreateWithContext";
 import { LearnFromResults } from "@/components/landing/sections/LearnFromResults";
-import { DecisionFlow } from "@/components/landing/sections/DecisionFlow";
+import { SystemThatLearns } from "@/components/landing/sections/SystemThatLearns";
 import { FinalCTA } from "@/components/landing/sections/FinalCTA";
 
 /**
@@ -50,10 +50,9 @@ export default function LandingPage() {
       {/* 6 — Learn from results (alternating run ends) */}
       <LearnFromResults />
 
-      {/* 4 — The KoraSpace difference */}
-      <DecisionFlow />
+      {/* 7 — Data → intelligence → next move, and the loop that repeats it */}
+      <SystemThatLearns />
 
-      {/* 5 — Marketing that learns */}
 
 
       {/* 6 — Product preview: one real environment, then the handoff into

@@ -37,8 +37,8 @@ export type CanvasCard = {
 };
 
 /**
- * Stable ids for the five states. Exported so the GrowthRail below the hero
- * can point each of its stages at one of them by name rather than by index.
+ * Stable ids for the five states, so an external control can select one by
+ * name rather than by index (see IntelligenceCanvas's `focusedKey`).
  */
 export type CanvasStateKey =
   | "understand"
