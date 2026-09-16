@@ -3,6 +3,7 @@ import { Hero } from "@/components/landing/Hero";
 import { DashboardShowcase } from "@/components/landing/DashboardShowcase";
 import { FragmentedMarketing } from "@/components/landing/sections/FragmentedMarketing";
 import { OutcomesSection } from "@/components/landing/sections/OutcomesSection";
+import { UnderstandBrand } from "@/components/landing/sections/UnderstandBrand";
 import { DecisionFlow } from "@/components/landing/sections/DecisionFlow";
 import { FinalCTA } from "@/components/landing/sections/FinalCTA";
 
@@ -37,6 +38,9 @@ export default function LandingPage() {
 
       {/* 3 — What KoraSpace gives back */}
       <OutcomesSection />
+
+      {/* 4 — Understand your brand (alternating run begins) */}
+      <UnderstandBrand />
 
       {/* 4 — The KoraSpace difference */}
       <DecisionFlow />
