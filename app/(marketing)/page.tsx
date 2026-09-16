@@ -5,6 +5,7 @@ import { FragmentedMarketing } from "@/components/landing/sections/FragmentedMar
 import { OutcomesSection } from "@/components/landing/sections/OutcomesSection";
 import { UnderstandBrand } from "@/components/landing/sections/UnderstandBrand";
 import { CreateWithContext } from "@/components/landing/sections/CreateWithContext";
+import { LearnFromResults } from "@/components/landing/sections/LearnFromResults";
 import { DecisionFlow } from "@/components/landing/sections/DecisionFlow";
 import { FinalCTA } from "@/components/landing/sections/FinalCTA";
 
@@ -45,6 +46,9 @@ export default function LandingPage() {
 
       {/* 5 — Create with context (reversed) */}
       <CreateWithContext />
+
+      {/* 6 — Learn from results (alternating run ends) */}
+      <LearnFromResults />
 
       {/* 4 — The KoraSpace difference */}
       <DecisionFlow />
