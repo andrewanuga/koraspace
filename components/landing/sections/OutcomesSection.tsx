@@ -105,7 +105,7 @@ export function OutcomesSection() {
             <FloatingCard
               depth="back"
               drift="lift"
-              className="sm:-bottom-10 sm:-left-20 sm:w-[200px] lg:-left-24"
+              className="sm:-bottom-10 sm:-left-4 sm:w-[200px] lg:-left-6 xl:-left-12"
             >
               <span className={`${chipKicker} text-white/40`}>Learned</span>
               <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/80">
@@ -124,7 +124,7 @@ export function OutcomesSection() {
           <FloatingCard
             depth="front"
             drift="hover"
-            className="sm:-right-20 sm:-top-10 sm:w-[210px] lg:-right-28"
+            className="sm:-right-4 sm:-top-16 sm:w-[210px] lg:-right-6 xl:-right-12"
           >
             <div className="flex items-center gap-1.5">
               <Sparkles className="h-3 w-3 text-[#ff9fc9]" />
@@ -140,7 +140,7 @@ export function OutcomesSection() {
           <FloatingCard
             depth="back"
             drift="lift"
-            className="sm:-bottom-12 sm:-left-16 sm:w-[185px] lg:-left-24"
+            className="sm:-bottom-12 sm:-left-4 sm:w-[185px] lg:-left-6 xl:-left-12"
           >
             <span className={`${chipKicker} text-white/40`}>Tone check</span>
             <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/80">
@@ -178,7 +178,7 @@ export function OutcomesSection() {
             <FloatingCard
               depth="front"
               drift="hover"
-              className="sm:-right-20 sm:top-8 sm:w-[195px] lg:-right-28"
+              className="sm:-right-4 sm:-bottom-14 sm:w-[195px] lg:-right-6 xl:-right-12"
             >
               <span className={`${chipKicker} text-[#ff9fc9]`}>Signal</span>
               <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/80">

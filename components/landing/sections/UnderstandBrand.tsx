@@ -20,7 +20,7 @@ export function UnderstandBrand() {
           <FloatingCard
             depth="front"
             drift="lift"
-            className="sm:-right-16 sm:-top-8 sm:w-[200px] lg:-right-24"
+            className="sm:-right-4 sm:-top-16 sm:w-[200px] lg:-right-6 xl:-right-12"
           >
             <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ff9fc9]">
               Updated
