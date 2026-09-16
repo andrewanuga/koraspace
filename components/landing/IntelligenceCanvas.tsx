@@ -413,7 +413,7 @@ export function IntelligenceCanvas({
               onClick={() => setIndex(i)}
               aria-label={`Show ${s.stage}`}
               aria-current={active}
-              className="group flex flex-1 flex-col gap-1.5 outline-none"
+              className="group relative flex flex-1 flex-col gap-1.5 outline-none before:absolute before:inset-x-0 before:-inset-y-3 before:content-['']"
             >
               <span className="relative h-px w-full overflow-hidden bg-white/15">
                 {active && (

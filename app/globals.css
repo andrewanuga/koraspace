@@ -544,6 +544,7 @@ html.sai-js [data-reveal] { opacity: 0; }
 /* Accessibility: honour reduced motion everywhere */
 @media (prefers-reduced-motion: reduce) {
   .sai-flow-text { animation: none; }
+  .animate-pulse-glow { animation: none; }
   html.sai-js [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
   * { scroll-behavior: auto !important; }
 }

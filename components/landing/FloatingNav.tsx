@@ -120,7 +120,7 @@ export function FloatingNav() {
             type="button"
             onClick={() => setShowMobileMenu((prev) => !prev)}
             aria-label="Toggle navigation menu"
-            className="flex lg:hidden items-center justify-center h-9 w-9 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white transition-colors hover:bg-white/[0.08]"
+            className="relative flex lg:hidden items-center justify-center h-9 w-9 rounded-xl before:absolute before:-inset-1.5 before:content-[''] border border-white/[0.08] bg-white/[0.04] text-white transition-colors hover:bg-white/[0.08]"
           >
             {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -165,7 +165,7 @@ export function FloatingNav() {
             type="button"
             onClick={() => setShowMobileMenu((prev) => !prev)}
             aria-label="Toggle navigation menu"
-            className="flex lg:hidden items-center justify-center h-8 w-8 rounded-lg border border-white/[0.08] bg-white/[0.04] text-white"
+            className="relative flex lg:hidden items-center justify-center h-8 w-8 rounded-lg before:absolute before:-inset-2 before:content-[''] border border-white/[0.08] bg-white/[0.04] text-white"
           >
             {showMobileMenu ? <X size={18} /> : <Menu size={18} />}
           </button>

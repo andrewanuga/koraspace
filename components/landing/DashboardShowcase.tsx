@@ -71,7 +71,7 @@ export function DashboardShowcase({
           <div className="mb-4">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider font-semibold border text-white/80 bg-white/5 border-white/10 shadow-sm backdrop-blur-md">
               <span
-                className="h-1.5 w-1.5 rounded-full animate-pulse"
+                className="h-1.5 w-1.5 rounded-full motion-safe:animate-pulse"
                 style={{ background: brandColor }}
               />
               Interactive preview
@@ -93,7 +93,7 @@ export function DashboardShowcase({
             <button
               type="button"
               onClick={() => setPersona("creator")}
-              className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer ${
+              className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer before:absolute before:inset-x-0 before:-inset-y-1.5 before:content-[''] ${
                 isCreator ? "text-white" : "text-white/55 hover:text-white"
               }`}
             >
@@ -113,7 +113,7 @@ export function DashboardShowcase({
             <button
               type="button"
               onClick={() => setPersona("marketer")}
-              className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer ${
+              className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer before:absolute before:inset-x-0 before:-inset-y-1.5 before:content-[''] ${
                 !isCreator ? "text-white" : "text-white/55 hover:text-white"
               }`}
             >
@@ -219,7 +219,7 @@ export function DashboardShowcase({
               {/* Bottom status badge */}
               <div className="hidden sm:block rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5">
                 <div className="flex items-center gap-2 text-[11px] text-white/60">
-                  <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
+                  <span className="h-2 w-2 rounded-full bg-[#34d399] motion-safe:animate-pulse" />
                   <span>Real-time Sync</span>
                 </div>
               </div>

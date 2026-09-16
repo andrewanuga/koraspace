@@ -33,7 +33,7 @@ export function Eyebrow({
       className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider font-semibold border ${toneClass}`}
     >
       <span
-        className="h-1.5 w-1.5 rounded-full animate-pulse"
+        className="h-1.5 w-1.5 rounded-full motion-safe:animate-pulse"
         style={{
           background:
             tone === "blue" ? "#3b82f6" : tone === "white" ? "#ffffff" : "#ff0a8a",

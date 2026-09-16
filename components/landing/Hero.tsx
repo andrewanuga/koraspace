@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Space_Grotesk, Inter } from "next/font/google";
-import { motion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { IntelligenceCanvas } from "@/components/landing/IntelligenceCanvas";
 
 const display = Space_Grotesk({
@@ -84,6 +84,11 @@ const imageVariants: Variants = {
 };
 
 export function Hero() {
+  // The orbs and the CTA halo loop forever. Under prefers-reduced-motion they
+  // hold still at their resting glow rather than disappearing, so the hero
+  // keeps its look without any movement.
+  const reduce = useReducedMotion();
+
   return (
     <section
       className={`${display.variable} ${body.variable} min-h-screen bg-[#07050d] px-3 py-3 font-[family-name:var(--font-body)] sm:px-6 sm:py-6 lg:px-10 lg:py-8 overflow-hidden`}
@@ -105,34 +110,41 @@ export function Hero() {
 
         {/* Ambient floating glow orb 1 */}
         <motion.div
-          animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.35, 0.55, 0.35],
-            x: [0, 20, 0],
-            y: [0, -15, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
+          animate={
+            reduce
+              ? { opacity: 0.45 }
+              : {
+                  scale: [1, 1.15, 1],
+                  opacity: [0.35, 0.55, 0.35],
+                  x: [0, 20, 0],
+                  y: [0, -15, 0],
+                }
+          }
+          transition={
+            reduce
+              ? { duration: 0 }
+              : { duration: 8, repeat: Infinity, ease: "easeInOut" }
+          }
           className="pointer-events-none absolute -top-24 -right-24 h-[500px] w-[500px] rounded-full bg-[#5A3CFF]/40 blur-[120px]"
         />
 
         {/* Ambient floating glow orb 2 */}
         <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.25, 0.45, 0.25],
-            x: [0, -25, 0],
-            y: [0, 20, 0],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1,
-          }}
+          animate={
+            reduce
+              ? { opacity: 0.35 }
+              : {
+                  scale: [1, 1.2, 1],
+                  opacity: [0.25, 0.45, 0.25],
+                  x: [0, -25, 0],
+                  y: [0, 20, 0],
+                }
+          }
+          transition={
+            reduce
+              ? { duration: 0 }
+              : { duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }
+          }
           className="pointer-events-none absolute -bottom-32 -left-20 h-[500px] w-[500px] rounded-full bg-[#FF2E7A]/30 blur-[140px]"
         />
 
@@ -242,8 +254,16 @@ export function Hero() {
                 <div className="relative w-fit">
                   <motion.div
                     aria-hidden="true"
-                    animate={{ opacity: [0.35, 0.6, 0.35], scale: [1, 1.08, 1] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    animate={
+                      reduce
+                        ? { opacity: 0.45 }
+                        : { opacity: [0.35, 0.6, 0.35], scale: [1, 1.08, 1] }
+                    }
+                    transition={
+                      reduce
+                        ? { duration: 0 }
+                        : { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                    }
                     className="pointer-events-none absolute -inset-3 rounded-full bg-[#ff0a8a]/50 blur-2xl"
                   />
                   <motion.div
@@ -270,7 +290,7 @@ export function Hero() {
 
                 <a
                   href="#how-it-works"
-                  className="w-fit text-sm text-white/60 underline-offset-4 transition-colors hover:text-white hover:underline"
+                  className="relative w-fit text-sm text-white/60 underline-offset-4 transition-colors hover:text-white hover:underline before:absolute before:-inset-x-2 before:-inset-y-3 before:content-['']"
                 >
                   See how it works
                 </a>
