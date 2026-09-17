@@ -25,6 +25,7 @@ export const generateHashtagsTool: AITool<
 > = {
   name: "generate_hashtags",
   description: "Generate a curated list of highly relevant, viral, and niche hashtags for a given topic or draft.",
+  requiredCapabilities: ["content:generate"],
   parameters: {
     type: "object",
     properties: {

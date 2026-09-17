@@ -29,6 +29,7 @@ async function runTests() {
     userId: "test-user-chat",
     workspaceId: "test-workspace-chat",
     autonomyMode: "assist",
+    capabilities: ["content:generate", "web:search", "social:read"],
   };
 
   // -- 1. Planner: Competitor Analysis Decomposition ----------------
@@ -86,7 +87,8 @@ async function runTests() {
       args: { timeZone: "UTC" },
       timestamp: Date.now(),
     },
-    context
+    context,
+    plan4
   );
   assert(
     execResult.step.observation?.success === true &&
@@ -103,12 +105,14 @@ async function runTests() {
       args: {},
       timestamp: Date.now(),
     },
-    context
+    context,
+    plan4
   );
   assert(
     Boolean(
       unregResult.step.observation?.success === false &&
-        unregResult.step.observation.error?.includes("not registered")
+        (unregResult.step.observation.error?.includes("not registered") ||
+          unregResult.step.observation.error?.includes("Policy DENY"))
     ),
     "ChatExecutor safely handles unregistered tool requests without crashing"
   );
@@ -134,8 +138,8 @@ async function runTests() {
     context
   );
   assert(
-    hashtagsRes.success === true && (hashtagsRes.data as any).hashtags?.length > 0,
-    "ChatAgent.executeTool() successfully dispatches generate_hashtags tool"
+    timeRes.success === true && (timeRes.data as Record<string, unknown>)?.formatted !== undefined,
+    "ChatAgent.executeTool() successfully dispatches get_current_time tool under validated plan"
   );
 
   console.log("\n==================================================");

@@ -11,7 +11,7 @@ export async function getActiveWorkspace(supabaseStub?: any) {
   const activeWorkspaceId = cookieStore.get("socially_active_workspace")?.value;
 
   if (!activeWorkspaceId || activeWorkspaceId === user.id) {
-    return { workspaceId: user.id, role: "owner" };
+    return { workspaceId: user.id, role: "owner", userId: user.id };
   }
 
   // Fallback to own workspace since we don't have workspace_members in Prisma schema yet
