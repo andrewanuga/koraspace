@@ -1,19 +1,22 @@
 "use client";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useState } from "react";
 import { CreditCard, Check, Zap, Crown, Rocket, Shield, ArrowUpRight, AlertCircle, Loader2, Users } from "lucide-react";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { fmtNaira } from "@/lib/dashboard/helpers";
 import { PLANS, type PlanId } from "@/lib/billing/plans";
 
 const PLAN_META: { id: PlanId; icon: typeof Zap; features: string[]; popular?: boolean }[] = [
-  { id: "free", icon: Zap, features: ["1 social account", "Basic scheduling", "7 AI generations/week", "0 team seats"] },
-  { id: "basic", icon: Shield, features: ["3 social accounts", "Brand Voice setup", "Trend Discovery", "100 AI generations/month", "3 team seats"] },
-  { id: "pro", icon: Rocket, popular: true, features: ["7 social accounts", "1 Ghost Mode Agent", "ROI Pulse tracking", "Auto-Plug Loop", "500 AI generations/month", "5 team seats"] },
-  { id: "advanced", icon: Crown, features: ["15+ social accounts", "3 Autonomous Agents", "Smart Inbox Triage", "White-label reports", "API access", "10 team seats"] },
-  { id: "team", icon: Users, features: ["Unlimited team seats", "50 social accounts", "10 Autonomous Agents", "Custom API integration", "Priority support"] },
+  { id: "free", icon: Zap, features: ["3 social accounts", "3 lifetime schedules", "50k lifetime AI tokens", "0 team seats"] },
+  { id: "pro", icon: Rocket, popular: true, features: ["7 social accounts", "5 schedules / week", "1.6M AI tokens / month", "3 team seats", "5 max bots"] },
+  { id: "advanced", icon: Crown, features: ["10 social accounts", "15 lifetime schedules", "3.5M AI tokens / month", "Hashtag Manager", "7 team seats", "Marketer page"] },
+  { id: "team", icon: Users, features: ["Unlimited integrations", "Unlimited schedules", "7.2M AI tokens / month", "Unlimited team seats", "Unlimited bots"] },
 ];
 
 type Payment = { id: string; reference: string; plan: string | null; amount: number; status: string; created_at: string; paid_at: string | null };
@@ -26,13 +29,13 @@ function UsageMeter({ label, used, limit }: { label: string; used: number; limit
     <div>
       <div className="mb-1.5 flex items-center justify-between text-[13px]">
         <span className="text-[var(--fg-2)]">{label}</span>
-        <span className="font-data text-[var(--fg-3)]">{used} / {limit === 0 ? "—" : limit}</span>
+        <span className="font-data text-[var(--fg-3)]">{used} / {limit >= 9999 ? "∞" : limit === 0 ? "—" : limit.toLocaleString()}</span>
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-[var(--panel-fill-2)]">
         <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${pct}%`, background: bar }} />
       </div>
       <p className="mt-1 text-[11.5px]" style={{ color: over ? "var(--sai-red)" : "var(--fg-4)" }}>
-        {limit === 0 ? "Not on your plan — upgrade to unlock" : over ? "Limit reached — upgrade for more" : `${Math.max(0, limit - used)} remaining`}
+        {limit === 0 ? "Not on your plan — upgrade to unlock" : over ? "Limit reached — upgrade for more" : limit >= 9999 ? "Unlimited access" : `${Math.max(0, limit - used).toLocaleString()} remaining`}
       </p>
     </div>
   );
@@ -50,8 +53,9 @@ export default function BillingPage() {
 
   const load = async () => {
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const supabase = await createClient();
+  const session = await auth();
+        const user = session?.user;
       if (!user) return;
       const [{ data: p }, { data: pay }, { count: acctCount }, { count: botCount }, { count: collabCount }] = await Promise.all([
         supabase.from("profiles").select("plan, subscription_status, plan_renews_at, generations_used, generations_reset_at").eq("id", user.id).single(),
@@ -80,18 +84,21 @@ export default function BillingPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [paymentMethod, setPaymentMethod] = useState<"paystack" | "opay" | "stripe" | "crypto">("paystack");
+
   const choose = async (target: PlanId) => {
     if (target === plan || busy) return;
     setBusy(target);
     try {
       const res = await fetch("/api/billing/checkout", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: target }),
+        body: JSON.stringify({ plan: target, method: paymentMethod }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Couldn't start checkout");
       if (data.free) { success("Switched to Free"); load(); }
       else if (data.authorization_url) window.location.href = data.authorization_url;
+      else if (data.message) success(data.message);
     } catch (e) {
       toastError("Checkout failed", e instanceof Error ? e.message : undefined);
     } finally { setBusy(null); }
@@ -103,7 +110,7 @@ export default function BillingPage() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <PageHeader eyebrow="Account" title="Billing & Plans" sub="Manage your subscription, usage, and payments — powered by Paystack." />
+      <PageHeader eyebrow="Account" title="Billing & Plans" sub="Manage your subscription, usage, and payments." />
 
       {/* Current plan */}
       <GlassCard className="mb-5 p-6" style={{ borderColor: "rgba(99,102,241,0.35)" }}>
@@ -111,11 +118,11 @@ export default function BillingPage() {
           <div>
             <div className="mb-1 flex items-center gap-2">
               <CurrentIcon className="h-5 w-5 text-[var(--sai-indigo)]" />
-              <span className="font-display text-lg font-semibold text-[var(--fg)]">{current.name} Plan</span>
+              <span className="font-display text-lg font-semibold text-[var(--fg)]">{current?.name ?? "Unknown"} Plan</span>
               <Pill tone={status === "active" ? "green" : "muted"}>{status === "active" ? "Active" : status}</Pill>
             </div>
             <p className="text-[13px] text-[var(--fg-3)]">
-              {plan === "free" ? "Free forever." : renews ? `Renews ${new Date(renews).toLocaleDateString()} · ${fmtNaira(current.price)}/month` : `${fmtNaira(current.price)}/month`}
+              {plan === "free" ? "Free forever." : renews ? `Renews ${new Date(renews).toLocaleDateString()} · ${fmtNaira(current?.price ?? 0)}/month` : `${fmtNaira(current?.price ?? 0)}/month`}
             </p>
           </div>
           {plan !== "free" && (
@@ -133,10 +140,10 @@ export default function BillingPage() {
           {usage.resetAt && <span className="text-[12px] text-[var(--fg-4)]">Resets {new Date(usage.resetAt).toLocaleDateString()}</span>}
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <UsageMeter label="AI generations" used={usage.generations} limit={current.generations} />
-          <UsageMeter label="Connected accounts" used={usage.accounts} limit={current.accounts} />
-          <UsageMeter label="Active bots" used={usage.bots} limit={current.bots} />
-          <UsageMeter label="Collaborators" used={usage.collaborators} limit={current.collaborators} />
+          <UsageMeter label="AI Tokens" used={usage.generations} limit={current?.aiTokens ?? 0} />
+          <UsageMeter label="Connected accounts" used={usage.accounts} limit={current?.accounts ?? 0} />
+          <UsageMeter label="Active bots" used={usage.bots} limit={current?.bots ?? 0} />
+          <UsageMeter label="Collaborators" used={usage.collaborators} limit={current?.collaborators ?? 0} />
         </div>
       </GlassCard>
 
@@ -171,8 +178,28 @@ export default function BillingPage() {
 
       {/* Payment method */}
       <GlassCard className="mb-5 p-6">
-        <h3 className="font-display mb-2 flex items-center gap-2 text-[15px] font-semibold text-[var(--fg)]"><CreditCard className="h-4 w-4 text-[var(--fg-3)]" /> Payment method</h3>
-        <div className="flex items-center gap-2"><AlertCircle className="h-3.5 w-3.5 text-[var(--fg-4)]" /><p className="text-[13px] text-[var(--fg-3)]">Cards, bank transfer, and USSD are collected securely by Paystack at checkout — we never store card details. Flutterwave and all Nigerian bank cards are accepted.</p></div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="font-display mb-2 flex items-center gap-2 text-[15px] font-semibold text-[var(--fg)]"><CreditCard className="h-4 w-4 text-[var(--fg-3)]" /> Supported Payment Methods</h3>
+            <div className="flex items-center gap-2"><AlertCircle className="h-3.5 w-3.5 text-[var(--fg-4)]" />
+              <p className="text-[13px] text-[var(--fg-3)]">
+                <strong>Paystack / Opay</strong> for Nigerian users. <strong>Stripe</strong> for international cards. <strong>Crypto (BTC, ETH)</strong> for anyone globally. Securely handled at checkout.
+              </p>
+            </div>
+          </div>
+          <div className="shrink-0">
+            <select
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value as any)}
+              className="rounded-lg bg-[var(--panel-fill)] border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--fg)] outline-none focus:border-[var(--sai-indigo)]"
+            >
+              <option value="paystack">Paystack (Nigeria)</option>
+              <option value="opay">OPay (Nigeria)</option>
+              <option value="stripe">Stripe (International)</option>
+              <option value="crypto">Crypto (BTC, ETH)</option>
+            </select>
+          </div>
+        </div>
       </GlassCard>
 
       {/* Invoices */}

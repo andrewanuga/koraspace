@@ -1,9 +1,12 @@
 "use client";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useState } from "react";
 import { ToggleLeft, Loader2 } from "lucide-react";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { toggleFeatureFlag } from "./actions";
 
@@ -17,7 +20,6 @@ export default function AdminFeatures() {
 
   const load = async () => {
     try {
-      const supabase = createClient();
       const { data, error } = await supabase.from("feature_flags").select("*").order("key");
       if (error) throw error;
       if (data) setFlags(data as Flag[]);

@@ -119,7 +119,7 @@ export function PowerAIHero() {
             className="text-xl font-bold tracking-tight"
             style={{ color: "hsl(40 6% 95%)" }}
           >
-            Koraspace<span style={{ color: "#818cf8" }}> AI</span>
+            Socially<span style={{ color: "#818cf8" }}>AI</span>
           </span>
 
           {/* Nav links — hidden on small screens */}

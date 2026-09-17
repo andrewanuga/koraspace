@@ -9,7 +9,7 @@ import { z } from "zod";
 import type { AgentContext, AgentResult } from "../core/types";
 import { callAI, isConfigured } from "../openrouter";
 
-/* ── 1. Schemas & Type Contracts ──────────────────────────────── */
+/* -- 1. Schemas & Type Contracts -------------------------------- */
 
 export const TrendTopicSchema = z.object({
   topic: z.string(),
@@ -35,7 +35,7 @@ export interface TrendAgentInput {
   region?: string;
 }
 
-/* ── 2. Fallback / Deterministic Trend Generator ───────────────── */
+/* -- 2. Fallback / Deterministic Trend Generator ----------------- */
 
 function generateFallbackTrends(niche: string): TrendTopic[] {
   return [
@@ -47,7 +47,7 @@ function generateFallbackTrends(niche: string): TrendTopic[] {
       momentum: "Accelerating",
       why: `High relevance to ${niche}-focused creators navigating new copyright & AI monetization standards.`,
       draft:
-        "🚨 The new digital copyright framework just dropped — here's what it means for every founder building in 2026...\n\nThis changes everything about how we protect and monetize original content.\n\nThread 🧵👇",
+        "🚨 The new digital copyright framework just dropped - here's what it means for every founder building in 2026...\n\nThis changes everything about how we protect and monetize original content.\n\nThread 🧵👇",
     },
     {
       topic: "Macro Shifts & SaaS Subscription Fatigue",
@@ -72,7 +72,7 @@ function generateFallbackTrends(niche: string): TrendTopic[] {
   ];
 }
 
-/* ── 3. Unified Trend Agent Implementation ────────────────────── */
+/* -- 3. Unified Trend Agent Implementation ---------------------- */
 
 export class TrendAgent {
   public static async discover(

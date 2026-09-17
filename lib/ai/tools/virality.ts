@@ -9,7 +9,7 @@ import { z } from "zod";
 import type { AITool, AgentContext, AgentResult } from "../core/types";
 import { callAI, isConfigured } from "../openrouter";
 
-/* ── 1. Schemas & Type Contracts ──────────────────────────────── */
+/* -- 1. Schemas & Type Contracts -------------------------------- */
 
 export const ViralityDimensionScoresSchema = z.object({
   hook: z.number().min(0).max(100),
@@ -40,7 +40,7 @@ export interface EvaluateViralityInput {
   platform?: "x" | "linkedin" | "instagram" | "tiktok" | "facebook" | "threads";
 }
 
-/* ── 2. Weighted Score Calculator ─────────────────────────────── */
+/* -- 2. Weighted Score Calculator ------------------------------- */
 
 export function calculateWeightedScore(dims: ViralityDimensionScores): number {
   const weighted =
@@ -61,7 +61,7 @@ export function determineTier(score: number): EvaluateViralityOutput["tier"] {
   return "low";
 }
 
-/* ── 3. Deterministic / Offline Evaluator ──────────────────────── */
+/* -- 3. Deterministic / Offline Evaluator ------------------------ */
 
 function evaluateHeuristics(content: string, platform?: string): EvaluateViralityOutput {
   const lower = content.toLowerCase().trim();
@@ -160,7 +160,7 @@ function evaluateHeuristics(content: string, platform?: string): EvaluateViralit
   };
 }
 
-/* ── 4. Executable AI Tool Definition ─────────────────────────── */
+/* -- 4. Executable AI Tool Definition --------------------------- */
 
 export const evaluateViralityTool: AITool<
   EvaluateViralityInput,

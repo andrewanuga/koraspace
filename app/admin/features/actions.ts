@@ -1,14 +1,17 @@
 "use server";
-
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 async function verifyAdmin() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+    const session = await auth();
+    const user = session?.user;
   if (!user) throw new Error("Unauthorized");
   
-  const { data: profile } = await supabase.from("profiles").select("is_admin").eq("id", user.id).single();
+  const { data: profile } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
   if (!profile?.is_admin) throw new Error("Forbidden: Not an admin");
   
   return user;
@@ -16,7 +19,6 @@ async function verifyAdmin() {
 
 export async function toggleFeatureFlag(key: string, isEnabled: boolean) {
   const user = await verifyAdmin();
-  const adminDb = createAdminClient();
   if (!adminDb) throw new Error("Admin client not configured");
   
   const { error } = await adminDb.from("feature_flags").update({

@@ -1,18 +1,10 @@
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
-import { SupabaseClient } from "@supabase/supabase-js";
-import type { WorkspaceRole } from "./ai/core/rbac";
+﻿import { cookies } from "next/headers";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 
-export interface ActiveWorkspace {
-  workspaceId: string;
-  role: WorkspaceRole;
-  userId: string;
-}
-
-const VALID_WORKSPACE_ROLES = new Set<WorkspaceRole>(["owner", "admin", "member", "viewer"]);
-
-export async function getActiveWorkspace(supabase: SupabaseClient): Promise<ActiveWorkspace | null> {
-  const { data: { user } } = await supabase.auth.getUser();
+export async function getActiveWorkspace(supabaseStub?: any) {
+  const session = await auth();
+  const user = session?.user;
   if (!user) return null;
 
   const cookieStore = await cookies();
@@ -22,24 +14,8 @@ export async function getActiveWorkspace(supabase: SupabaseClient): Promise<Acti
     return { workspaceId: user.id, role: "owner", userId: user.id };
   }
 
-  // Verify membership
-  const { data: member } = await supabase
-    .from("workspace_members")
-    .select("role")
-    .eq("workspace_id", activeWorkspaceId)
-    .eq("user_id", user.id)
-    .single();
-
-  if (member) {
-    if (VALID_WORKSPACE_ROLES.has(member.role as WorkspaceRole)) {
-      return { workspaceId: activeWorkspaceId, role: member.role as WorkspaceRole, userId: user.id };
-    }
-    // Fail-closed if membership role is unrecognized
-    return null;
-  }
-
-  // Fallback to own workspace if not a member
-  return { workspaceId: user.id, role: "owner", userId: user.id };
+  // Fallback to own workspace since we don't have workspace_members in Prisma schema yet
+  return { workspaceId: user.id, role: "owner" };
 }
 
 export function enforceRole(role: string, required: "manager" | "admin") {

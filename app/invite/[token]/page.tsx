@@ -1,3 +1,4 @@
+"use server";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -73,13 +74,13 @@ export default async function InvitePage({ params }: { params: { token: string }
         </p>
         
         <form action={async () => {
-          "use server";
+          
           const s = await createClient();
           const { data: { user: u } } = await s.auth.getUser();
           if (u) {
             // Check plan limit before accepting
             const { data: profile } = await s.from("profiles").select("plan").eq("id", invite.workspace_id).single();
-            const { count: memberCount } = await s.from("workspace_members").select("id", { count: "exact", head: true }).eq("workspace_id", invite.workspace_id);
+            const { count: memberCount } = (await s.from("workspace_members").select("id").eq("workspace_id", invite.workspace_id)) as any;
             
             // Wait, we need to import PLANS here or duplicate the limit logic. Since it's server action, we can just do a basic check.
             

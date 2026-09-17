@@ -32,7 +32,7 @@ async function runTests() {
     capabilities: ["content:generate", "web:search", "social:read"],
   };
 
-  // ── 1. Planner: Competitor Analysis Decomposition ────────────────
+  // -- 1. Planner: Competitor Analysis Decomposition ----------------
   const plan1 = ChatPlanner.plan([
     { role: "user", content: "Can you analyze our competitor https://acme.com and find strategic gaps?" },
   ]);
@@ -43,7 +43,7 @@ async function runTests() {
     "ChatPlanner decomposes competitor research intent into scrape_url + analyze_competitor"
   );
 
-  // ── 2. Planner: Virality Evaluation Intent ────────────────────────
+  // -- 2. Planner: Virality Evaluation Intent ------------------------
   const plan2 = ChatPlanner.plan([
     { role: "user", content: "Score my post and tell me if this draft will go viral" },
   ]);
@@ -52,7 +52,7 @@ async function runTests() {
     "ChatPlanner decomposes virality intent into evaluate_virality"
   );
 
-  // ── 3. Planner: Fact Verification Intent ──────────────────────────
+  // -- 3. Planner: Fact Verification Intent --------------------------
   const plan3 = ChatPlanner.plan([
     { role: "user", content: "Please verify if the claim that TikTok was banned in 2024 is true" },
   ]);
@@ -61,7 +61,7 @@ async function runTests() {
     "ChatPlanner decomposes fact checking into verify_claim"
   );
 
-  // ── 4. Planner: Temporal & Weather Intent ─────────────────────────
+  // -- 4. Planner: Temporal & Weather Intent -------------------------
   const plan4 = ChatPlanner.plan([
     { role: "user", content: "What day of the week is it and what is the current time?" },
   ]);
@@ -70,7 +70,7 @@ async function runTests() {
     "ChatPlanner identifies temporal lookup into get_current_time"
   );
 
-  // ── 5. Planner: Repurposing Intent ────────────────────────────────
+  // -- 5. Planner: Repurposing Intent --------------------------------
   const plan5 = ChatPlanner.plan([
     { role: "user", content: "Please repurpose this long article into a 5-tweet thread and LinkedIn post" },
   ]);
@@ -79,7 +79,7 @@ async function runTests() {
     "ChatPlanner identifies repurposing intent into repurpose_longform"
   );
 
-  // ── 6. Executor: Safe Tool Invocation ─────────────────────────────
+  // -- 6. Executor: Safe Tool Invocation -----------------------------
   const execResult = await ChatExecutor.executeTool(
     1,
     {
@@ -97,7 +97,7 @@ async function runTests() {
     "ChatExecutor successfully runs registered tool with observation trace"
   );
 
-  // ── 7. Executor: Unregistered Tool Handling ───────────────────────
+  // -- 7. Executor: Unregistered Tool Handling -----------------------
   const unregResult = await ChatExecutor.executeTool(
     2,
     {
@@ -117,7 +117,7 @@ async function runTests() {
     "ChatExecutor safely handles unregistered tool requests without crashing"
   );
 
-  // ── 8. ChatAgent.execute() End-to-End Fallback ───────────────────
+  // -- 8. ChatAgent.execute() End-to-End Fallback -------------------
   const chatRes = await ChatAgent.execute(
     {
       messages: [{ role: "user", content: "How do I build an audience on LinkedIn?" }],
@@ -131,12 +131,11 @@ async function runTests() {
     "ChatAgent.execute() returns structured output with plan and draft content"
   );
 
-  // ── 9. ChatAgent.executeTool() Direct Dispatch ───────────────────
-  const timeRes = await ChatAgent.executeTool(
-    "get_current_time",
-    { timeZone: "UTC" },
-    context,
-    plan4
+  // -- 9. ChatAgent.executeTool() Direct Dispatch -------------------
+  const hashtagsRes = await ChatAgent.executeTool(
+    "generate_hashtags",
+    { topic: "AI productivity", platform: "linkedin", count: 5 },
+    context
   );
   assert(
     timeRes.success === true && (timeRes.data as Record<string, unknown>)?.formatted !== undefined,

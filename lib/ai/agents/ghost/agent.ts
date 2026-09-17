@@ -26,7 +26,7 @@ import {
 } from "./types";
 import { GhostPolicyEngine } from "./policy";
 
-/* ── 1. Fallback Heuristic Classifier (Offline / Mock / Safety) ─ */
+/* -- 1. Fallback Heuristic Classifier (Offline / Mock / Safety) - */
 
 function evaluateFallback(
   input: GhostInput
@@ -107,7 +107,7 @@ function evaluateFallback(
   };
 }
 
-/* ── 2. Unified Ghost Agent Class ─────────────────────────────── */
+/* -- 2. Unified Ghost Agent Class ------------------------------- */
 
 export class GhostAgent {
   /**

@@ -1,0 +1,1064 @@
+import { TranslationDictionary } from "../types";
+
+export const es: TranslationDictionary = {
+  onboarding: {
+  "topBarTitle": "Configuración del Espacio",
+  "secureBadge": "Incorporación Segura",
+  "exit": "Salir",
+  "stepIndicator": "Paso",
+  "personalizingBadge": "Personalizando KoraSpace",
+  "stepTitles": [
+    "Su rol",
+    "Sus objetivos",
+    "Sus canales",
+    "Su contenido",
+    "Su audiencia",
+    "Su flujo de trabajo",
+    "Estilo de análisis",
+    "Tipografía",
+    "Apariencia"
+  ],
+  "step1": {
+    "eyebrow": "01",
+    "titleStart": "Construyamos su",
+    "titleHighlight": "KoraSpace a su medida.",
+    "description": "Cuéntenos cómo trabaja con las redes sociales para configurar su espacio correctamente.",
+    "roles": {
+      "businessTitle": "Empresa / Marca",
+      "businessBlurb": "Dirijo un negocio y quiero que las redes generen leads calificados.",
+      "businessDetail": "Crecimiento empresarial, clientes potenciales, ventas y presencia.",
+      "creatorTitle": "Estudio de Creador",
+      "creatorBlurb": "Construyo una audiencia, publico contenido y aumento mi influencia.",
+      "creatorDetail": "Crecimiento de audiencia, contenido exclusivo y reutilización.",
+      "marketerTitle": "Operador de Marketing",
+      "marketerBlurb": "Gestiono marketing, flujos de clientes y campañas multicanal.",
+      "marketerDetail": "Campañas, triaje de leads en CRM, análisis y automatización."
+    }
+  },
+  "step2": {
+    "eyebrow": "02",
+    "titleStart": "¿Qué debería ayudarle",
+    "titleHighlight": "a lograr KoraSpace?",
+    "description": "Seleccione todo lo que importe. Usaremos estos objetivos para priorizar su panel y agente.",
+    "goals": {
+      "growth": {
+        "title": "Hacer crecer mi audiencia",
+        "description": "Llegar a más personas y aumentar la visibilidad."
+      },
+      "leads": {
+        "title": "Generar clientes potenciales",
+        "description": "Convertir la atención social en prospectos."
+      },
+      "sales": {
+        "title": "Aumentar las ventas",
+        "description": "Conectar contenido y campañas con ingresos."
+      },
+      "content": {
+        "title": "Crear mejor contenido",
+        "description": "Producir publicaciones de mayor calidad con su voz."
+      },
+      "brand": {
+        "title": "Construir autoridad de marca",
+        "description": "Establecer una presencia clara y consistente."
+      },
+      "management": {
+        "title": "Ahorrar tiempo en planificación",
+        "description": "Optimizar la programación y los recursos."
+      },
+      "repurpose": {
+        "title": "Reutilizar entre plataformas",
+        "description": "Convertir una pieza en múltiples formatos."
+      },
+      "analytics": {
+        "title": "Rastrear métricas del embudo",
+        "description": "Comprender la interacción, el ROAS y la conversión."
+      }
+    },
+    "selectedCount": "objetivos seleccionados",
+    "selectAtLeastOne": "Seleccione al menos un objetivo"
+  },
+  "step3": {
+    "eyebrow": "03",
+    "titleStart": "¿Dónde le encuentra",
+    "titleHighlight": "su audiencia?",
+    "description": "Seleccione los canales que utiliza o planea hacer crecer. Puede conectar cuentas más tarde.",
+    "platformsLabel": "Sus plataformas y redes conectadas",
+    "usernameLabel": "Su nombre de usuario del espacio",
+    "usernameHint": "Este es su nombre único en KoraSpace. Solo caracteres alfanuméricos y guiones bajos.",
+    "usernamePlaceholder": "suusuario",
+    "selectedCount": "plataformas seleccionadas"
+  },
+  "step4": {
+    "eyebrow": "04",
+    "titleStart": "Cuéntenos qué",
+    "titleHighlight": "es lo que crea.",
+    "description": "Esto le da contexto al motor de IA antes de que empiece a dar recomendaciones.",
+    "nicheLabel": "Su nicho o sector",
+    "nichePlaceholder": "ej. IA, SaaS, moda, fitness, inmobiliaria, fintech...",
+    "formatsLabel": "¿Qué formatos utiliza?",
+    "formats": {
+      "short_video": {
+        "title": "Video corto",
+        "description": "Reels, TikToks, Shorts"
+      },
+      "text": {
+        "title": "Texto y reflexiones",
+        "description": "Publicaciones en X, insights en LinkedIn"
+      },
+      "carousel": {
+        "title": "Carruseles y diapositivas",
+        "description": "Desgloses visuales de varias páginas"
+      },
+      "image": {
+        "title": "Imágenes individuales y gráficos",
+        "description": "Fotos de producto, citas, volantes"
+      },
+      "long_form": {
+        "title": "Contenido de formato largo",
+        "description": "Artículos, boletines, YouTube"
+      },
+      "mixed": {
+        "title": "Una mezcla de todo",
+        "description": "Formato diverso multiplataforma"
+      }
+    },
+    "cadenceLabel": "¿Con qué frecuencia desea publicar?",
+    "cadences": {
+      "1": {
+        "title": "1-2 publicaciones / semana",
+        "description": "Baja frecuencia, enfoque y constancia"
+      },
+      "3": {
+        "title": "3-5 publicaciones / semana",
+        "description": "Crecimiento activo e impulso de audiencia"
+      },
+      "7": {
+        "title": "Diario (7 publicaciones / semana)",
+        "description": "Presencia multicanal agresiva"
+      },
+      "14": {
+        "title": "Varias veces al día",
+        "description": "Gran volumen de publicación en canales"
+      }
+    }
+  },
+  "step5": {
+    "eyebrow": "05",
+    "titleStart": "Un poco más",
+    "titleHighlight": "de contexto.",
+    "creatorDesc": "Ayúdenos a entender su audiencia para que las sugerencias no sean genéricas.",
+    "clientDesc": "Cuéntenos sobre el negocio que busca hacer crecer.",
+    "marketerDesc": "Proporcione el contexto necesario para una mejor inteligencia de marketing.",
+    "audienceSizeLabel": "Tamaño actual de la audiencia",
+    "targetAudienceLabel": "¿A quién intenta llegar?",
+    "targetAudiencePlaceholderCreator": "ej. fundadores creando startups de IA",
+    "businessTypeLabel": "¿Qué tipo de negocio?",
+    "targetAudiencePlaceholderClient": "ej. dueños de pequeñas empresas en Madrid",
+    "industryLabel": "¿En qué industria trabaja?",
+    "industryPlaceholder": "ej. SaaS, fintech, comercio electrónico...",
+    "primarilyMarketLabel": "¿Qué comercializa principalmente?"
+  },
+  "step6": {
+    "eyebrow": "06",
+    "titleStart": "¿Cuánto debería hacer",
+    "titleHighlight": "KoraSpace por usted?",
+    "description": "Usted mantiene el control. Esto indica qué tan proactivo debe ser su espacio.",
+    "levels": {
+      "suggestions": {
+        "title": "Sugerencias e Ideas",
+        "description": "Deme ideas y sugerencias. Yo crearé el resto."
+      },
+      "drafts": {
+        "title": "Borradores de IA",
+        "description": "Convierta sugerencias en borradores listos para editar."
+      },
+      "create_schedule": {
+        "title": "Crear y Auto-Programar",
+        "description": "Genere borradores y colóquelos en el calendario visual."
+      },
+      "automate": {
+        "title": "Operador Autónomo",
+        "description": "Permita que KoraSpace clasifique leads y optimice campañas."
+      }
+    },
+    "summaryConfigured": "Su espacio de trabajo se configurará según sus respuestas."
+  },
+  "step7": {
+    "eyebrow": "07",
+    "titleStart": "Elija su estilo",
+    "titleHighlight": "de análisis gráfico.",
+    "description": "Seleccione su visualización de gráficos predeterminada para el panel de control.",
+    "bestForPrefix": "Ideal para:",
+    "styles": {
+      "auto": {
+        "title": "Inteligente / Auto",
+        "subtitle": "Adaptativo al contexto",
+        "bestFor": "Ajuste óptimo automático según métrica"
+      },
+      "area": {
+        "title": "Gráfico de Área",
+        "subtitle": "Volumen e interacción",
+        "bestFor": "Tráfico, alcance y volumen acumulado"
+      },
+      "bar": {
+        "title": "Gráfico de Barras",
+        "subtitle": "Desglose comparativo",
+        "bestFor": "Comparación de campañas y canales"
+      },
+      "line": {
+        "title": "Gráfico de Líneas",
+        "subtitle": "Crecimiento y tendencias",
+        "bestFor": "Trayectoria, velocidad y evolución temporal"
+      },
+      "donut": {
+        "title": "Gráfico Circular",
+        "subtitle": "Distribución de canales",
+        "bestFor": "Desglose de audiencia y porcentaje de leads"
+      },
+      "funnel": {
+        "title": "Gráfico de Embudo",
+        "subtitle": "Pipeline de conversión",
+        "bestFor": "Embudo de Lead → Calificado → Ingresos"
+      },
+      "radar": {
+        "title": "Gráfico Radial",
+        "subtitle": "Salud multieje",
+        "bestFor": "Visión global del rendimiento multidimensional"
+      }
+    }
+  },
+  "step8": {
+    "eyebrow": "08",
+    "titleStart": "Elija su",
+    "titleHighlight": "tipografía y fuente.",
+    "description": "Seleccione la fuente principal que define el estilo de su interfaz y borradores.",
+    "fonts": {
+      "inter": {
+        "label": "Inter",
+        "category": "Moderno y Neutral",
+        "preview": "El veloz murciélago hindú comía feliz cardillo y kiwi · 1,234,567"
+      },
+      "geist": {
+        "label": "Geist",
+        "category": "Precisión Técnica",
+        "preview": "Agentes autónomos analizando telemetría de conversión · 98.4%"
+      },
+      "dm-sans": {
+        "label": "DM Sans",
+        "category": "Geométrico Contemporáneo",
+        "preview": "Velocidad de crecimiento de audiencia en cuentas verificadas · +24.8%"
+      },
+      "manrope": {
+        "label": "Manrope",
+        "category": "Geométrico Refinado",
+        "preview": "Operaciones de marketing de alto rendimiento y programación autónoma"
+      },
+      "plus-jakarta": {
+        "label": "Plus Jakarta Sans",
+        "category": "Ejecutivo Premium",
+        "preview": "Señales ejecutivas de ingresos e inteligencia predictiva · $45,280"
+      },
+      "space-grotesk": {
+        "label": "Space Grotesk",
+        "category": "Vanguardista",
+        "preview": "Ejecución de pipelines de IA en tiempo real y enrutamiento multicanal"
+      },
+      "ibm-plex": {
+        "label": "IBM Plex Sans",
+        "category": "Editorial Estructurado",
+        "preview": "Red de distribución global con credenciales de confianza cero"
+      }
+    }
+  },
+  "step9": {
+    "eyebrow": "09",
+    "titleStart": "Apariencia y",
+    "titleHighlight": "densidad del panel.",
+    "description": "Ajuste el tema visual y la densidad de la interfaz antes de ingresar a su espacio en vivo.",
+    "themeModeLabel": "Modo de Tema",
+    "themes": {
+      "dark": {
+        "label": "Modo Oscuro",
+        "description": "Obsidiana profundo"
+      },
+      "light": {
+        "label": "Modo Claro",
+        "description": "Luz de día nítida"
+      },
+      "system": {
+        "label": "Sincronizar con Sistema",
+        "description": "Sigue la preferencia del SO"
+      }
+    },
+    "densityLabel": "Densidad del Panel",
+    "densities": {
+      "minimal": {
+        "label": "Mínimo",
+        "badge": "Limpio",
+        "description": "Espacios generosos con resúmenes claros"
+      },
+      "balanced": {
+        "label": "Equilibrado",
+        "badge": "Predeterminado",
+        "description": "Equilibrio ideal entre tarjetas y datos ricos"
+      },
+      "detailed": {
+        "label": "Detallado",
+        "badge": "Avanzado",
+        "description": "Tablas densas de telemetría y cuadrículas multimétricas"
+      }
+    },
+    "readyTitle": "Su Espacio de Trabajo Está Listo",
+    "readyDesc": "Todo quedará configurado y guardado en su perfil de Supabase."
+  },
+  "navigation": {
+    "back": "Atrás",
+    "continue": "Continuar",
+    "enterWorkspace": "Entrar a su espacio",
+    "settingUp": "Configurando...",
+    "getStartedBadge": "Comencemos su configuración",
+    "changeAnytimeReassurance": "Puede cambiar estos ajustes en cualquier momento desde la configuración"
+  }
+},
+  dashboardShowcase: {
+  eyebrow: "Vista Previa Interactiva",
+  title: "Vea KoraSpace en acción:",
+  subtitle: "Cambie entre el Modo Creador y el Operador de Marketing para ver cómo KoraSpace se adapta a su flujo.",
+  creatorMode: "Estudio de Creadores",
+  marketerMode: "Operador de Marketing",
+  composerTitle: "Canalización de IA",
+  composerDesc: "Coincidencia de voz de 8 pasos, puntuación de borradores y reflexiones.",
+  calendarTitle: "Calendario Visual (6 Plataformas)",
+  calendarDesc: "Programación en Instagram, TikTok, LinkedIn, YouTube, X y Threads.",
+  crmTitle: "CRM Social y Leads",
+  crmDesc: "Detecte señales de compra de alta intención en DMs y comentarios.",
+  pipelineScore: "KoraScore 88/100",
+  engagementRate: "3.8% Tasa de Interacción",
+  revenueAttributed: "€12,450 Ingresos de Pipeline",
+  previewMode: "Modo",
+  aiStudio: "Estudio IA",
+  visualCalendar: "Calendario",
+  viralTrends: "Tendencias",
+  repurpose: "Reutilizar",
+  audience: "Audiencia",
+  brandKit: "Kit de Marca",
+  realTimeSync: "Sincronización Real",
+  totalReach: "Alcance Total",
+  engagement: "Interacción",
+  scheduled: "Programado",
+  allSynced: "Todo sincronizado",
+  aiContentScore: "Puntaje IA",
+  optimalVoice: "Voz óptima",
+  activeAiGeneration: "Generación IA Activa • Voz Exclusiva",
+  hookPreview: "Gancho: 3 estrategias de IA que los creadores modernos utilizan para escalar su audiencia. El 1% superior construye bucles repetibles. Aquí tienes el sistema de 4 pasos...",
+  eightStepReflection: "Reflexión de 8 pasos completada",
+  scheduleToPlatforms: "Programar en 5 plataformas",
+  unifiedIntelligenceCloud: "Nube de Inteligencia Unificada",
+  fasterContentSpeed: "10× Velocidad de Contenido",
+  fasterContentDesc: "De idea a borrador en segundos",
+  managedPipelineRevenue: "€8.4M+ Ingresos Gestionados",
+  managedPipelineDesc: "Ventas y conversiones atribuidas a redes",
+  higherLeadIntent: "4.2× Mayor Intención",
+  higherLeadDesc: "Clasificación automática de leads en DM",
+  connectedNetworks: "6+ Redes Conectadas",
+  connectedNetworksDesc: "Instagram, TikTok, LinkedIn, YouTube, X, Threads",
+  agentOperator: "Agente Operador",
+  campaigns: "Campañas",
+  crmLeads: "CRM y Leads",
+  automations: "Automatizaciones",
+  attribution: "Atribución",
+  strategy: "Estrategia"
+},
+  authLayout: {
+  commandCenter: "Su centro de mando de marketing y creadores",
+  titleStart: "Convierta su audiencia",
+  titleHighlight: "en impulso.",
+  description: "Gestione campañas multicanal, redacte con su voz de marca, automatice flujos CRM y rastree ingresos reales.",
+  feature1: "Flujos multicanal",
+  feature2: "Inteligencia impulsada por IA",
+  feature3: "Atribución en tiempo real",
+  secureCloud: "Espacio en la Nube Seguro",
+  workspaceCommand: "Centro de Mando",
+  overview: "Resumen",
+  create: "Crear",
+  campaignsNav: "Campañas",
+  analytics: "Analítica",
+  crmNav: "CRM y Leads",
+  brandKitNav: "Kit de Marca",
+  settings: "Ajustes",
+  revenue: "Ingresos",
+  roas: "ROAS",
+  leads: "Leads",
+  growth: "Crecimiento"
+},
+  authPages: {
+  loginTitle: "Bienvenido de nuevo",
+  loginSubtitle: "Inicie sesión para acceder a su espacio KoraSpace.",
+  signupTitle: "Cree su cuenta",
+  signupSubtitle: "Comience su viaje de crecimiento autónomo hoy.",
+  emailLabel: "Correo electrónico",
+  passwordLabel: "Contraseña",
+  nameLabel: "Nombre completo",
+  loginButton: "Iniciar sesión",
+  signupButton: "Crear cuenta",
+  googleButton: "Continuar con Google",
+  noAccount: "¿No tienes cuenta?",
+  haveAccount: "¿Ya tienes cuenta?",
+  forgotPassword: "¿Olvidó su contraseña?",
+  marketingSuite: "Suite de Marketing y Creadores"
+},
+  nav: {
+    product: "Producto",
+    audience: "Para quién",
+    integrations: "Integraciones",
+    resources: "Recursos",
+    pricing: "Precios",
+    signIn: "Iniciar sesión",
+    getStarted: "Empezar gratis",
+    platform: "Plataforma",
+    company: "Empresa",
+    languageAndCurrency: "Idioma y Moneda",
+  },
+  megaMenus: {
+    productEyebrow: "PRODUCTO",
+    productLede: "Todo integrado para hacer crecer tu marca e ingresos.",
+    productCta: "Explorar la plataforma KoraSpace",
+    audienceEyebrow: "DISEÑADO PARA",
+    audienceLede: "Construido exactamente según tu forma de trabajar.",
+    audienceCta: "Descubre cómo se adapta KoraSpace",
+    integrationsEyebrow: "INTEGRACIONES",
+    integrationsLede: "Conecta las herramientas y redes que ya usas.",
+    integrationsMore: "Más integraciones",
+    integrationsCta: "Explorar integraciones",
+    categories: {
+      createTitle: "Crear",
+      createItems: ["Contenido IA", "Voz de Marca", "Reutilización"],
+      manageTitle: "Gestionar",
+      manageItems: ["Publicación", "Calendario", "Cuentas Sociales"],
+      understandTitle: "Entender",
+      understandItems: ["Analítica", "Tendencias", "Competencia"],
+      growTitle: "Crecer",
+      growItems: ["Estrategia", "Campañas", "Experimentos"],
+      convertTitle: "Convertir",
+      convertItems: ["Inteligencia de Leads", "CRM", "Ingresos"],
+      automateTitle: "Automatizar",
+      automateItems: ["Bots de IA", "Buzón Inteligente", "Flujos"],
+    },
+    audiences: [
+      {
+        label: "Startups y fundadores",
+        desc: "Construye tu audiencia sin contratar un equipo de marketing.",
+      },
+      {
+        label: "Creadores de contenido",
+        desc: "Crea, programa y expande tu marca personal.",
+      },
+      {
+        label: "Empresas y marcas",
+        desc: "Convierte las redes en un motor de crecimiento predecible.",
+      },
+      {
+        label: "Agencias de marketing",
+        desc: "Gestiona múltiples marcas y clientes en un solo portal.",
+      },
+      {
+        label: "Equipos de marketing",
+        desc: "Planifica, colabora y ejecuta campañas en equipo.",
+      },
+      {
+        label: "Tiendas online y E-commerce",
+        desc: "Convierte comentarios y mensajes directos en clientes compradores.",
+      },
+    ],
+    resourceGroups: [
+      {
+        title: "Aprender",
+        items: [
+          { label: "Blog" },
+          { label: "Guías de Marketing" },
+          { label: "Academia KoraSpace" },
+        ],
+      },
+      {
+        title: "Ayuda",
+        items: [
+          { label: "Centro de Ayuda" },
+          { label: "Documentación" },
+          { label: "Preguntas Frecuentes", href: "#faq" },
+        ],
+      },
+      {
+        title: "Desarrolladores",
+        items: [
+          { label: "Portal de Desarrolladores" },
+          { label: "API" },
+          { label: "Integraciones", href: "#integrations" },
+        ],
+      },
+    ],
+  },
+  hero: {
+    badge: "Agente de Marketing Autónomo con IA para Marcas Modernas",
+    title1: "Convierte la voz de tu marca en",
+    titleHighlight: "publicaciones y clientes potenciales",
+    title2: "en piloto automático.",
+    subtitle:
+      "Deja de perder más de 15 horas a la semana frente al bloqueo creativo. KoraSpace despliega dos motores de IA: un Estudio de Creadores para contenido auténtico y un Operador de Marketing para convertir leads en CRM.",
+    startTrial: "Prueba gratuita de 14 días",
+    compareModes: "Comparar Modos Duales",
+    noCardRequired: "Sin tarjeta de crédito",
+    instantSetup: "Configuración en 2 minutos",
+    statCreators: "+5.000 creadores y especialistas en marketing",
+    statPosts: "+1,2M publicaciones generadas",
+    statRoas: "4,2x ROAS promedio en captación",
+    supportedPlatforms: "Diseñado para crecer en Instagram, TikTok, X, LinkedIn y Threads.",
+  },
+  heroLoop: {
+    badge: "EL CICLO DE CRECIMIENTO KORASPACE",
+    stages: [
+      {
+        label: "Tu Marca",
+        kicker: "Cerebro de Marca",
+        body: "KoraSpace aprende tu tono, productos, posicionamiento y directrices.",
+        action: "Ver perfil de marca",
+      },
+      {
+        label: "IA",
+        kicker: "Inteligencia",
+        body: "Múltiples motores de IA transforman tus datos en decisiones de marketing de alta conversión.",
+        action: "Ver los motores",
+      },
+      {
+        label: "Contenido",
+        kicker: "Crear",
+        body: "Genera contenido adaptado a tu estilo, audiencia y red social.",
+        action: "Abrir compositor",
+      },
+      {
+        label: "Audiencia",
+        kicker: "Alcance",
+        body: "Tu contenido se publica cuando y donde tu audiencia está más activa.",
+        action: "Ver calendario",
+      },
+      {
+        label: "Resultados",
+        kicker: "Aprender",
+        body: "Tu audiencia interactúa un 34% más con contenido educativo y práctico de fundadores.",
+        action: "Oportunidad detectada",
+      },
+      {
+        label: "Próximo Paso",
+        kicker: "Inteligencia Kora",
+        body: "Convierte tu publicación más exitosa en una campaña de 3 partes.",
+        action: "Generar campaña",
+      },
+    ],
+    canvas: {
+      understandKicker: "Marca comprendida",
+      understandBody: "Tu audiencia responde mejor a contenido práctico liderado por fundadores.",
+      createKicker: "3 oportunidades detectadas",
+      createPrompt: "Redactar historia de fundador",
+      createItems: ["Historia de fundador", "Desglose de producto", "Solución al cliente"],
+      createAction: "Generar contenido",
+      createPerformance: "Basado en tu rendimiento reciente",
+      publishKicker: "Campaña lista",
+      publishBody: "Programada en Instagram, LinkedIn y TikTok para horas de máxima actividad.",
+      learnKicker: "Interacción",
+      learnBody: "Este formato supera el promedio habitual de tu canal.",
+      learnSignalKicker: "Señal de audiencia detectada",
+      learnSignalBody: "Las publicaciones educativas superan a las promocionales en un 42%",
+      nextMoveKicker: "Próximo paso",
+      nextMoveBody: "Convierte tu post más viral en una campaña de 3 fases.",
+      nextMoveAction: "Generar",
+      stageLabels: ["Entender", "Crear", "Publicar", "Aprender", "Próximo Paso"],
+    },
+  },
+  
+  problemSolver: {
+    eyebrow: "El Método Antiguo vs El Método KoraSpace",
+    heading:
+      "Deja de perder más de 15 horas a la semana luchando contra el bloqueo creativo, copiando textos entre apps y perdiendo clientes en DMs desordenados.",
+    paragraph:
+      "Los programadores tradicionales solo envían publicaciones. KoraSpace es un espacio de trabajo autónomo con motores duales: un Estudio de Creadores para contenido distintivo y un Operador de Marketing para conversión de leads.",
+    pillar1Title: "Cerebro de Marca con IA",
+    pillar1Desc:
+      "Aprende tu tono auténtico, ganchos exitosos anteriores y pautas estrictas para que tus publicaciones nunca suenen genéricas.",
+    pillar2Title: "Sincronización en 6 Plataformas",
+    pillar2Desc:
+      "Programa y organiza mediante arrastrar y soltar en Instagram, TikTok, LinkedIn, YouTube, X y Threads en un solo calendario.",
+    pillar3Title: "CRM Social e Ingresos Reales",
+    pillar3Desc:
+      "Detecta preguntas de compra ('¿Cuánto cuesta?'), califica leads y atribuye ingresos verificables.",
+    ctaButton: "Empezar Gratis",
+    secondaryButton: "Comparar Modos Duales",
+  },
+  dualModes: {
+    eyebrow: "Dos Modos de Operación Especializados",
+    titleLead: "Diseñado para",
+    titleCreators: "Creadores",
+    titleAnd: "y",
+    titleMarketers: "Equipos de Marketing",
+    subtitle:
+      "Cambia sin esfuerzo entre el Modo Creador y el Modo Marketing según quieras crear contenido auténtico o ejecutar campañas automatizadas de captación.",
+    creatorStudioTitle: "Estudio de Voz de Marca y Audiencia",
+    creatorStudioDesc:
+      "Para creadores independientes, líderes de opinión e influencers que necesitan publicar con impacto constante en más de 6 redes sin agotarse.",
+    marketerStudioTitle: "Operador de Marketing y CRM Social",
+    marketerStudioDesc:
+      "Para equipos de marketing, agencias y empresas que buscan automatizar la atención a leads, la ejecución de campañas y la atribución de ingresos.",
+    launchCreator: "Iniciar Estudio de Creador",
+    launchMarketer: "Iniciar Operador de Marketing",
+  },
+  growthLoop: {
+    eyebrow: "El Ciclo de Crecimiento Autónomo",
+    title: "Marketing en redes sociales que se optimiza continuamente.",
+    subtitle:
+      "Buffer y Hootsuite te obligan a hacerlo todo manualmente. KoraSpace conecta investigación, creación, distribución y atribución de ingresos en un único ciclo automatizado.",
+    stage1Title: "Comprender e Investigar",
+    stage1Desc:
+      "Analiza las pautas de tu marca, contenidos virales anteriores y tendencias en tiempo real de tu sector.",
+    stage2Title: "Estrategia y Composición",
+    stage2Desc:
+      "Ejecuta una tubería de IA en 8 etapas con ajuste de tono, calificación de borradores y verificación web.",
+    stage3Title: "Publicar y Clasificar",
+    stage3Desc:
+      "Programa automáticamente en más de 6 redes y clasifica comentarios y DMs detectando intención de compra.",
+    stage4Title: "Medir y Optimizar",
+    stage4Desc:
+      "Atribuye clics sociales a ingresos reales en cartera e introduce aprendizajes en tu estrategia futura.",
+    feedsNext: "Alimenta la siguiente etapa",
+  },
+  featureRows: {
+    composer: {
+      badge: "Tubería de Composición IA",
+      title: "Convierte la voz de tu marca en publicaciones listas para publicar",
+      description:
+        "Ejecuta un flujo de IA en 8 pasos: analiza el nicho -> lee publicaciones pasadas -> detecta tendencias -> redacta texto y subtítulos -> asigna hashtags -> doble verificación web.",
+    },
+    calendar: {
+      badge: "Calendario Visual 2.0",
+      title: "Planifica y arrastra tu estrategia de crecimiento social",
+      description:
+        "Superficie visual para programar, organizar y mover publicaciones en Instagram, TikTok, LinkedIn, YouTube, X y Threads con total fluidez.",
+    },
+    crm: {
+      badge: "Buzón Social y CRM",
+      title: "Clasifica clientes potenciales y mensajes automáticamente",
+      description:
+        "Buzón unificado que detecta preguntas de alta intención ('¿Cuánto cuesta?'), etiqueta leads y registra oportunidades directamente en tu CRM.",
+    },
+    agency: {
+      badge: "Espacios para Agencias",
+      title: "Aprobación de equipos con múltiples cuentas y portales de clientes",
+      description:
+        "Gestiona múltiples marcas con seguridad a nivel de fila (RLS). Tu equipo revisa borradores mientras tú mantienes el control total.",
+    },
+  },
+  features: {
+    composerTitle: "Tubería de Composición IA",
+    composerTagline: "Motor de Reflexión Multi-Etapa",
+    composerDesc:
+      "Ejecuta un flujo de IA en 8 pasos: verifica directrices de voz -> analiza éxitos virales -> analiza tendencias -> redacta copys -> asigna hashtags -> reflexión web.",
+    calendarTitle: "Calendario Visual Arrastrar y Soltar",
+    calendarTagline: "Programación Multiplataforma",
+    calendarDesc:
+      "Panel de planificación unificado para programar, reorganizar y gestionar publicaciones en Instagram, TikTok, LinkedIn, YouTube, X y Threads sin esfuerzo.",
+    repurposerTitle: "Reutilizador de Contenido",
+    repurposerTagline: "1 Recurso a 6 Formatos",
+    repurposerDesc:
+      "Transforma un vídeo de YouTube, audio o artículo en carruseles de LinkedIn, hilos de X, reels de Instagram y newsletters con un solo clic.",
+    inboxTitle: "CRM Social y Clasificación de Leads",
+    inboxTagline: "Detección de Señales de Compra",
+    inboxDesc:
+      "Buzón unificado que clasifica comentarios y DMs en Leads, Soporte o Consultas, creando automáticamente oportunidades en el CRM.",
+    agencyTitle: "Espacios de Trabajo para Agencias y Clientes",
+    agencyTagline: "Colaboración Multiusuario",
+    agencyDesc:
+      "Diseñado para agencias y equipos de crecimiento. Gestiona múltiples marcas con permisos estrictos, enlaces de aprobación y reportes personalizados.",
+    attributionTitle: "Atribución de Ingresos y ROAS",
+    attributionTagline: "Analítica de Embudo Completo",
+    attributionDesc:
+      "Rastrea desde las impresiones sociales hasta visitas web, leads calificados e ingresos cerrados con datos de conversión comprobables.",
+  },
+  featureShowcase: [
+    {
+      id: "ai-composer",
+      title: "Tubería de Composición IA",
+      tagline: "Motor de Reflexión Multi-Etapa",
+      description:
+        "Ejecuta un flujo de IA en 8 pasos: verifica directrices de voz -> analiza éxitos virales -> analiza tendencias -> redacta copys -> asigna hashtags -> reflexión web.",
+      tone: "pink",
+    },
+    {
+      id: "visual-calendar",
+      title: "Calendario Visual Arrastrar y Soltar",
+      tagline: "Programación Multiplataforma",
+      description:
+        "Panel de planificación unificado para programar, reorganizar y gestionar publicaciones en Instagram, TikTok, LinkedIn, YouTube, X y Threads sin esfuerzo.",
+      tone: "pink",
+    },
+    {
+      id: "repurposer",
+      title: "Reutilizador de Contenido",
+      tagline: "1 Recurso a 6 Formatos",
+      description:
+        "Transforma un vídeo de YouTube, audio o artículo en carruseles de LinkedIn, hilos de X, reels de Instagram y newsletters con un solo clic.",
+      tone: "pink",
+    },
+    {
+      id: "inbox-crm",
+      title: "CRM Social y Clasificación de Leads",
+      tagline: "Detección de Señales de Compra",
+      description:
+        "Buzón unificado que clasifica comentarios y DMs en Leads, Soporte o Consultas, creando automáticamente oportunidades en el CRM.",
+      tone: "blue",
+    },
+    {
+      id: "agency-workspaces",
+      title: "Espacios de Trabajo para Agencias y Clientes",
+      tagline: "Colaboración Multiusuario",
+      description:
+        "Diseñado para agencias y equipos de crecimiento. Gestiona múltiples marcas con permisos estrictos, enlaces de aprobación y reportes personalizados.",
+      tone: "blue",
+    },
+    {
+      id: "growth-marketing",
+      title: "Atribución de Ingresos y ROAS",
+      tagline: "Analítica de Embudo Completo",
+      description:
+        "Rastrea desde las impresiones sociales hasta visitas web, leads calificados e ingresos cerrados con datos de conversión comprobables.",
+      tone: "blue",
+    },
+  ],
+  brandBrain: {
+    eyebrow: "Arquitectura Multi-Agente con IA",
+    title: "Impulsado por el Cerebro de Marca Kora y un Enjambre de 8 Agentes",
+    subtitle:
+      "En lugar de prompts genéricos de un solo uso, KoraSpace coordina un equipo de agentes especializados conectados a tu base de conocimiento.",
+    brainTitle: "Cerebro de Marca KoraSpace",
+    brainDesc:
+      "Sube la URL de tu web, guías de marca, fichas de producto y mejores publicaciones. El Cerebro de Marca crea una memoria persistente para que todo suene 100% auténtico.",
+    brainCheck1: "Aprende tu vocabulario, tono característico y emojis",
+    brainCheck2: "Aplica reglas de seguridad ('Nunca mencionar a rivales')",
+    brainCheck3: "Utiliza contenidos ganadores como referencia de calidad",
+    swarmTitle: "Enjambre Autónomo de 8 Agentes",
+    swarmAgents: [
+      { name: "Agente de Investigación", role: "Rastrea tendencias virales y datos web" },
+      { name: "Guardián de Voz de Marca", role: "Garantiza el tono auténtico y formato" },
+      { name: "Agente de Creación", role: "Redacta subtítulos, carruseles y guiones" },
+      { name: "Agente de Estrategia", role: "Elabora planes de crecimiento a 30/60/90 días" },
+      { name: "Agente de Analítica", role: "Mide métricas del embudo y ROAS" },
+      { name: "Agente Espía de Competencia", role: "Supervisa formatos y ganchos rivales" },
+      { name: "Agente de Atención a Leads", role: "Gestiona DMs y detecta clientes calificados" },
+      { name: "Agente de Optimización", role: "Calcula puntuaciones y pruebas A/B" },
+    ],
+  },
+  agentTools: {
+    eyebrow: "Caja de Herramientas Autónoma",
+    title: "Potencia tu presencia en redes con herramientas de IA dedicadas",
+    subtitle:
+      "Todo lo necesario para automatizar flujos de marketing desde la ideación hasta la atribución de ingresos.",
+    list: [
+      {
+        title: "Tubería de Composición en 8 Pasos",
+        desc: "Comprueba nicho, histórico, tendencias, redacta contenido, añade hashtags y valida antes de publicar.",
+        badge: "Motor de Creación",
+        tone: "pink",
+      },
+      {
+        title: "Predictor de Rendimiento",
+        desc: "La IA puntúa la fuerza del gancho y la probabilidad de interacción (1-100) antes de publicar.",
+        badge: "Optimización",
+        tone: "pink",
+      },
+      {
+        title: "CRM Social y Modo Fantasma™",
+        desc: "Monitor automatizado de DMs con pausas humanizadas que detecta interés de compra y crea leads.",
+        badge: "Automatización",
+        tone: "blue",
+      },
+      {
+        title: "Espía de Vídeos de la Competencia",
+        desc: "Analiza vídeos virales de tu sector desglosando ganchos, ritmo y llamadas a la acción.",
+        badge: "Inteligencia",
+        tone: "blue",
+      },
+      {
+        title: "Generador de Hashtags y Palabras Clave",
+        desc: "Genera grupos de hashtags optimizados para maximizar el alcance algorítmico.",
+        badge: "Alcance",
+        tone: "pink",
+      },
+      {
+        title: "Reutilizador Multiplataforma",
+        desc: "Convierte 1 vídeo, audio o artículo en carruseles de LinkedIn, hilos de X y reels en segundos.",
+        badge: "Reutilización",
+        tone: "pink",
+      },
+    ],
+  },
+  integrationsSection: {
+    eyebrow: "Ecosistema Multiplataforma",
+    titleLead: "Publica y gestiona mensajes en",
+    titleHighlight: "todos tus canales",
+    subtitle: "Integraciones oficiales mediante OAuth 2.0 para programación instantánea y mensajería bidireccional.",
+  },
+  revenueAttribution: {
+    eyebrow: "Seguimiento de Ingresos y Conversión",
+    titleLead: "De impresiones sociales a",
+    titleHighlight: "ingresos verificables en tu cartera",
+    subtitle:
+      "Deja de adivinar el retorno de tus publicaciones. Sigue el recorrido completo desde visitas de perfil hasta leads calificados y ventas cerradas.",
+    funnelTitle: "Embudo de Redes Sociales a Ingresos",
+    funnelSubtitle: "Atribución en tiempo real impulsada por seguimiento UTM",
+    liveSync: "Sincronización en Vivo",
+    impressionsLabel: "50.000 Impresiones en Redes",
+    impressionsVal: "Inicio del Embudo",
+    visitsLabel: "1.420 Visitas al Perfil",
+    visitsVal: "2,84% Conversión",
+    clicksLabel: "310 Clics a la Web",
+    clicksVal: "Verificado por UTM",
+    leadsLabel: "48 Clientes Potenciales Calificados",
+    leadsVal: "Embudo CRM Social",
+    closedCustomers: "14 Clientes Cerrados",
+    revenueVal: "12.450 € Ingresos",
+    attributionModel: "Modelo de Atribución: Multitoque",
+    roas: "ROAS: 4,2x",
+    koraScoreLabel: "Puntuación de Salud de Cuenta",
+    koraScoreTip: "Consistencia de publicación en el 5% superior. Programa 2 vídeos cortos más para alcanzar el pico de alcance.",
+    radarTitle: "Radar de Oportunidades de Leads",
+    radarHeading: "4 Oportunidades Clave Detectadas en tu Nicho",
+    radarDesc: "3 preguntas con alta intención de compra en DMs de Instagram + 1 formato viral emergente de la competencia.",
+  },
+  collaboration: {
+    eyebrow: "Espacios de Trabajo para Equipos y Agencias",
+    title: "Colabora sin fricciones con controles multiusuario",
+    subtitle:
+      "Diseñado para agencias de marketing y equipos de crecimiento que gestionan múltiples marcas bajo una misma cuenta.",
+    list: [
+      {
+        title: "Portales de Espacios para Clientes",
+        desc: "Entornos aislados con seguridad por filas. Ofrece a tus clientes una vista limpia de su calendario y reportes.",
+      },
+      {
+        title: "Aprobaciones con Enlaces Compartibles en 1 Clic",
+        desc: "Envía enlaces de revisión a clientes o directivos sin obligarles a crear cuenta ni iniciar sesión.",
+      },
+      {
+        title: "Permisos de Equipo Basados en Roles",
+        desc: "Asigna roles (Administrador, Editor, Revisor, Cliente) con permisos específicos sobre publicaciones y facturación.",
+      },
+      {
+        title: "Registro de Actividad y Auditoría",
+        desc: "Supervisa cada edición, aprobación, cambio de pauta y post publicado con marcas de tiempo y autor.",
+      },
+    ],
+  },
+  stories: {
+    eyebrow: "Casos de Éxito",
+    title: "Elegido por creadores, fundadores y equipos de crecimiento",
+    subtitle: "Descubre cómo empresas de todo el mundo escalan su presencia social e ingresos con KoraSpace.",
+    list: [
+      {
+        name: "Sara Jiménez",
+        role: "Fundadora Tech y Creadora, Madrid",
+        avatar: "SJ",
+        text: "Reemplacé Buffer y un gestor freelance por KoraSpace. El operador de IA atiende los comentarios y programa el contenido semanal mientras cierro acuerdos.",
+        highlight: "Ahorra 15 h / semana",
+        tone: "pink",
+      },
+      {
+        name: "David Castillo",
+        role: "Director de Agencia Digital, Barcelona",
+        avatar: "DC",
+        text: "Gestionar 8 cuentas de clientes antes requería 3 gestores junior. Ahora lo gestiono todo yo con KoraSpace. Los enlaces de aprobación facilitan todo el proceso.",
+        highlight: "Gestiona 8 marcas en solitario",
+        tone: "blue",
+      },
+      {
+        name: "Elena Morales",
+        role: "Fundadora de E-Commerce, Valencia",
+        avatar: "EM",
+        text: "El CRM Social detectó preguntas con intención de compra en nuestros comentarios de Instagram y generó 4.800 € en ventas directas en solo 2 semanas.",
+        highlight: "4.800 € en ventas directas",
+        tone: "blue",
+      },
+      {
+        name: "Marcos Varela",
+        role: "Coach Ejecutivo de Marca, Buenos Aires",
+        avatar: "MV",
+        text: "La función de tendencia a borrador es como tener un redactor que nunca duerme. Detecta noticias de actualidad y prepara tres borradores antes de que me despierte.",
+        highlight: "Siempre en tendencia",
+        tone: "pink",
+      },
+      {
+        name: "Claudia Navarro",
+        role: "Directora de Marca de Moda, CDMX",
+        avatar: "CN",
+        text: "Tenía dudas sobre si la IA captaría el tono de mi marca. El Cerebro de Marca aprendió tan bien de mis publicaciones anteriores que nadie nota la diferencia.",
+        highlight: "Ajuste de voz 100% auténtico",
+        tone: "pink",
+      },
+      {
+        name: "Alejandro Ruiz",
+        role: "Marketer de Crecimiento B2B SaaS, Bogotá",
+        avatar: "AR",
+        text: "Precios transparentes y una incorporación rápida hicieron que nuestro equipo lo adoptara de inmediato. La atribución multicanal es excelente.",
+        highlight: "Atribución clara de ROI",
+        tone: "blue",
+      },
+    ],
+  },
+  pricing: {
+    eyebrow: "Precios Transparentes",
+    titleLead: "Planes sencillos.",
+    titleHighlight: "Valor predecible.",
+    subtitle:
+      "Facturado en tu moneda local. Cambia de plan o cancela en cualquier momento. Todos los planes de pago incluyen 14 días de prueba gratuita.",
+    monthlyBilling: "Facturación Mensual",
+    annualBilling: "Facturación Anual",
+    discountBadge: "20% DTO",
+    perMonth: "/mes",
+    billedAnnually: "/mes (facturado anualmente)",
+                                    enterpriseTitle: "Espacios Personalizados para Empresas y Gran Volumen",
+    enterpriseDesc:
+      "¿Necesitas modelos personalizados, IPs dedicadas, garantías de SLA o más de 20 accesos de equipo?",
+    enterpriseButton: "Contactar con Ventas",
+    plans: [
+      {
+            planKey: "free",
+            name: "Gratis",
+            desc: "Para individuos que empiezan.",
+            posts: "3 programaciones de por vida",
+            features: [
+                  "3 integraciones",
+                  "50k tokens IA de por vida",
+                  "0 colaboradores",
+                  "Páginas de Análisis y Visión general",
+                  "Soporte al Cliente"
+            ],
+            cta: "Empezar Gratis"
+      },
+      {
+            planKey: "pro",
+            name: "Pro",
+            desc: "Para creadores en crecimiento.",
+            posts: "5 programaciones / semana",
+            features: [
+                  "7 integraciones",
+                  "1.6M tokens IA / mes",
+                  "3 colaboradores",
+                  "5 bots máximo",
+                  "Todas las páginas (Sin página de Marketer)"
+            ],
+            cta: "Obtener Pro",
+            highlight: true,
+            badge: "Popular"
+      },
+      {
+            planKey: "advanced",
+            name: "Avanzado",
+            desc: "Para usuarios avanzados.",
+            posts: "15 programaciones de por vida",
+            features: [
+                  "10 integraciones",
+                  "3.5M tokens IA / mes",
+                  "Gestor de Hashtags",
+                  "7 colaboradores",
+                  "15 bots gestionados",
+                  "Página de Marketer incluida"
+            ],
+            cta: "Obtener Avanzado"
+      },
+      {
+            planKey: "team",
+            name: "Equipos",
+            desc: "Para agencias grandes.",
+            posts: "Programaciones ilimitadas",
+            features: [
+                  "Integraciones ilimitadas",
+                  "7.2M tokens IA / mes",
+                  "Colaboradores ilimitados",
+                  "Bots ilimitados",
+                  "Todas las funciones incluidas"
+            ],
+            cta: "Contactar Ventas"
+      }
+],
+  },
+  faq: {
+    eyebrow: "Preguntas Frecuentes",
+    title: "¿Tienes dudas? Tenemos respuestas.",
+    subtitle:
+      "Todo lo que necesitas saber sobre KoraSpace, los modos duales de operación, seguridad y precios.",
+    q1: "¿Cuál es la diferencia entre el Modo Creador y el Modo Marketing?",
+    a1: "El Modo Creador está diseñado para creadores individuales, fundadores e influencers enfocados en aprender la voz de marca, componer publicaciones con IA, reutilizar formatos y programar mediante arrastrar y soltar en más de 6 redes. El Modo Marketing está creado para especialistas en crecimiento y agencias que necesitan ejecutar campañas, clasificar leads desde comentarios y DMs en el CRM y medir la atribución real de ingresos.",
+    q2: "¿Cómo garantiza el Cerebro de Marca que los textos suenen como yo?",
+    a2: "Simplemente introduce la URL de tu web, directrices de marca o mejores publicaciones pasadas. El Cerebro de Marca crea un perfil de memoria persistente con reglas de vocabulario, tono y filtros para que cada publicación generada suene 100% auténtica.",
+    q3: "¿Qué plataformas de redes sociales son compatibles?",
+    a3: "KoraSpace se conecta directamente con Instagram, TikTok, LinkedIn, YouTube, X (Twitter), Facebook, Threads, WhatsApp, Telegram y más a través de APIs oficiales con OAuth 2.0.",
+    q4: "¿Cómo funciona la clasificación de clientes potenciales en Modo Fantasma™?",
+    a4: "El Modo Fantasma™ supervisa tus comentarios y mensajes directos en tiempo real. Utilizando procesamiento de lenguaje natural y pausas aleatorias de aspecto humano, detecta preguntas de compra y registra automáticamente leads calificados en tu tablero CRM.",
+    q5: "¿Puedo usar KoraSpace para gestionar clientes en agencias o equipos?",
+    a5: "¡Sí! El plan de Agencias incluye portales dedicados por cliente, roles de permisos con seguridad por filas, enlaces de aprobación sin necesidad de login para clientes y reportes de rendimiento personalizables.",
+    q6: "¿Qué métodos de pago se aceptan?",
+    a6: "Aceptamos las principales tarjetas de crédito y débito (Visa, Mastercard, American Express), Apple Pay, Google Pay y pasarelas de pago locales.",
+  },
+  cta: {
+    eyebrow: "14 Días de Prueba Gratuita — Sin Tarjeta de Crédito",
+    titleLead: "Tu equipo autónomo de marketing con IA",
+    titleHighlight: "comienza hoy.",
+    subtitle:
+      "Únete a miles de creadores, fundadores y equipos que automatizan la creación de contenido, la programación, el CRM social y el crecimiento de ingresos.",
+    startTrial: "Empezar Gratis",
+    signIn: "Entrar al Espacio de Trabajo",
+    feature1: "Incorporación en solo 2 minutos",
+    feature2: "Compatible con más de 6 redes sociales",
+  },
+  footer: {
+    brandDesc:
+      "Sistema operativo de marketing autónomo con IA creado para creadores modernos, startups y agencias de marketing.",
+    productHeading: "Producto",
+    platformHeading: "Plataforma",
+    legalHeading: "Legal",
+    supportHeading: "Soporte",
+    directContact: "Contacto Directo",
+    rightsReserved: "KoraSpace por Techla. Todos los derechos reservados.",
+    builtLocation: "Motor Global de Marketing con IA",
+    links: {
+      product: [
+        { label: "Tubería de Composición IA", href: "#engines" },
+        { label: "Calendario Visual 2.0", href: "#engines" },
+        { label: "Cerebro de Marca", href: "#brain" },
+        { label: "Ciclo de Crecimiento Autónomo", href: "#how" },
+        { label: "Planes y Precios", href: "#pricing" },
+      ],
+      platform: [
+        { label: "Integración con Instagram", href: "#integrations" },
+        { label: "Programador de TikTok", href: "#integrations" },
+        { label: "Publicador en LinkedIn y X", href: "#integrations" },
+        { label: "Reutilizador de YouTube", href: "#integrations" },
+        { label: "CRM para WhatsApp y Telegram", href: "#integrations" },
+      ],
+      legal: [
+        { label: "Política de Privacidad", href: "/privacy" },
+        { label: "Términos de Servicio", href: "/terms" },
+        { label: "Protección de Datos", href: "/privacy" },
+        { label: "Política de Cookies", href: "/privacy" },
+      ],
+      support: [
+        { label: "Documentación", href: "#" },
+        { label: "Centro de Ayuda", href: "#" },
+        { label: "Comunidad", href: "#" },
+        { label: "Estado del Sistema", href: "#" },
+      ],
+    },
+  },
+  common: {
+    exploreFeature: "Explorar Función",
+    launchStudio: "Iniciar Estudio",
+    viewPricing: "Ver Precios",
+    loading: "Cargando...",
+    secureBadge: "Acceso Seguro",
+  },
+};

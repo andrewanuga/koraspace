@@ -1,5 +1,6 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { syncAccount } from "@/lib/social/sync";
 
@@ -8,7 +9,6 @@ import { syncAccount } from "@/lib/social/sync";
  * Trigger from the dashboard ("Sync now") or on a cron/queue in production.
  */
 export async function POST() {
-  const supabase = await createClient();
   const workspace = await getActiveWorkspace(supabase);
   if (!workspace) return new Response("Unauthorized", { status: 401 });
   const workspaceId = workspace.workspaceId;

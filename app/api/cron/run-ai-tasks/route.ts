@@ -1,0 +1,133 @@
+import { prisma } from "@/lib/db";
+import { NextResponse } from "next/server";
+import { callAI } from "@/lib/ai/gemini";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+const supabaseAdmin = createAdminClient();
+
+// GET request for Vercel Cron
+export async function GET(req: Request) {
+  // Protect cron route against unauthorized execution
+  const authHeader = req.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    // 1. Fetch pending tasks where trigger_at is in the past
+    const { data: scheduledTasks, error: fetchError } = await supabaseAdmin
+      .from("scheduled_ai_tasks")
+      .select("*")
+      .eq("status", "pending")
+      .lte("trigger_at", new Date().toISOString());
+
+    if (fetchError) throw fetchError;
+    if (!scheduledTasks || scheduledTasks.length === 0) {
+      return NextResponse.json({ message: "No pending tasks to run" });
+    }
+
+    // 2. Process each task
+    for (const task of scheduledTasks) {
+      // Mark as running
+      await supabaseAdmin
+        .from("scheduled_ai_tasks")
+        .update({ status: "running" })
+        .eq("id", task.id);
+
+      try {
+        // Fetch user's pending CRM tasks to provide context to the AI
+        const { data: crmTasks } = await supabaseAdmin
+          .from("tasks")
+          .select("title, priority, notes")
+          .eq("user_id", task.user_id)
+          .eq("status", "pending")
+          .limit(5);
+
+        let crmContext = "";
+        if (crmTasks && crmTasks.length > 0) {
+          crmContext = `\n\nUSER'S CURRENT CRM TASKS (You may reference these if relevant to the post):\n${crmTasks.map((t: any) => `- [${t.priority}] ${t.title} (${t.notes || ''})`).join('\n')}`;
+        }
+
+        // Fetch user's social account for this platform
+        const { data: accounts } = await supabaseAdmin
+          .from("social_accounts")
+          .select("handle, display_name")
+          .eq("user_id", task.user_id)
+          .eq("platform", task.platform)
+          .limit(1);
+
+        let accountContext = "";
+        if (accounts && accounts.length > 0) {
+          const acc = accounts[0];
+          accountContext = `\n\nACCOUNT IDENTITY: You are posting on behalf of ${acc.display_name || 'the user'} (Handle: ${acc.handle || 'unknown'}). Maintain a tone consistent with this identity.`;
+        }
+
+        // Format the content array for OpenRouter (Multimodal Support)
+        const userMessageContent: any[] = [{ type: "text", text: task.prompt }];
+        
+        // If there are media URLs attached, pass them to the vision model
+        if (task.media_urls && task.media_urls.length > 0) {
+          task.media_urls.forEach((url: string) => {
+            userMessageContent.push({
+              type: "image_url",
+              image_url: { url }
+            });
+          });
+        }
+
+        // Call the AI
+        const aiResponse = await callAI([
+          {
+            role: "system",
+            content: `You are an expert social media AI assistant. You have been scheduled to automatically execute a task for the user on ${task.platform}. \nGenerate the requested content directly without preamble. Make sure it is optimized for ${task.platform}.${accountContext}${crmContext}`
+          },
+          {
+            role: "user",
+            content: userMessageContent
+          }
+        ], {
+          agent: "ghost",
+        });
+
+        const generatedText = aiResponse.content;
+
+        // Automatically save the result as a queued draft in the content calendar for tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        await supabaseAdmin
+          .from("scheduled_posts")
+          .insert({
+            user_id: task.user_id,
+            platform: task.platform,
+            content: generatedText,
+            media_urls: task.media_urls || [],
+            status: "queued",
+            scheduled_at: tomorrow.toISOString(),
+          });
+
+        // Mark scheduled_ai_task as completed
+        await supabaseAdmin
+          .from("scheduled_ai_tasks")
+          .update({ 
+            status: "completed",
+            result_text: generatedText 
+          })
+          .eq("id", task.id);
+
+      } catch (err) {
+        console.error(`Error processing task ${task.id}:`, err);
+        await supabaseAdmin
+          .from("scheduled_ai_tasks")
+          .update({ status: "failed" })
+          .eq("id", task.id);
+      }
+    }
+
+    return NextResponse.json({ message: `Successfully processed ${scheduledTasks.length} tasks` });
+  } catch (error) {
+    console.error("Cron run failed:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}

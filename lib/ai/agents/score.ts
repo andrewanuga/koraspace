@@ -9,7 +9,7 @@ import { z } from "zod";
 import type { AgentContext, AgentResult } from "../core/types";
 import { evaluateViralityTool, EvaluateViralityOutput, EvaluateViralityInput } from "../tools/virality";
 
-/* ── 1. Schemas & Contracts ───────────────────────────────────── */
+/* -- 1. Schemas & Contracts ------------------------------------- */
 
 export const ScoreAgentOutputSchema = z.object({
   score: z.number().min(0).max(100),
@@ -27,7 +27,7 @@ export interface ScoreAgentInput {
   platform?: EvaluateViralityInput["platform"];
 }
 
-/* ── 2. Unified Score Agent Implementation ────────────────────── */
+/* -- 2. Unified Score Agent Implementation ---------------------- */
 
 export class ScoreAgent {
   public static async evaluate(

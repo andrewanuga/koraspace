@@ -1,7 +1,7 @@
 /**
  * Model registry with per-agent defaults.
  *
- * Each "agent" in Koraspace AI (Chat, Generate, Ghost, Score, Trends)
+ * Each "agent" in Koraspace (Chat, Generate, Ghost, Score, Trends)
  * gets its own default model and temperature — personalized for the task.
  * Users can override the model globally in Settings, or per-conversation
  * in the Create page.
@@ -36,7 +36,7 @@ export const AGENT_DEFAULTS: Record<AgentId, AgentConfig> = {
   chat: {
     label: "Create Agent",
     description: "Drafts posts, threads, captions, and replies in your voice",
-    defaultModel: "google/gemma-4-26b-a4b-it:free",
+    defaultModel: "gemini-1.5-flash",
     temperature: 0.7,
     maxTokens: 1024,
     supportsVision: false,
@@ -44,7 +44,7 @@ export const AGENT_DEFAULTS: Record<AgentId, AgentConfig> = {
   generate: {
     label: "Content Generator",
     description: "Structured content generation with frameworks (AIDA, PAS, etc.)",
-    defaultModel: "google/gemma-4-26b-a4b-it:free",
+    defaultModel: "gemini-1.5-flash",
     temperature: 0.8,
     maxTokens: 1024,
     supportsVision: false,
@@ -52,7 +52,7 @@ export const AGENT_DEFAULTS: Record<AgentId, AgentConfig> = {
   ghost: {
     label: "Ghost Mode Agent",
     description: "Auto-replies to comments and classifies leads/complaints",
-    defaultModel: "google/gemma-4-26b-a4b-it:free",
+    defaultModel: "gemini-1.5-flash",
     temperature: 0.4,
     maxTokens: 256,
     supportsVision: false,
@@ -60,7 +60,7 @@ export const AGENT_DEFAULTS: Record<AgentId, AgentConfig> = {
   score: {
     label: "Content Scorer",
     description: "Scores posts on engagement potential and gives improvement tips",
-    defaultModel: "google/gemma-4-26b-a4b-it:free",
+    defaultModel: "gemini-1.5-flash",
     temperature: 0.3,
     maxTokens: 512,
     supportsVision: false,
@@ -68,7 +68,7 @@ export const AGENT_DEFAULTS: Record<AgentId, AgentConfig> = {
   trends: {
     label: "Trend Analyst",
     description: "Discovers trending topics and suggests content ideas for your niche",
-    defaultModel: "google/gemma-4-26b-a4b-it:free",
+    defaultModel: "gemini-1.5-flash",
     temperature: 0.7,
     maxTokens: 1024,
     supportsVision: false,

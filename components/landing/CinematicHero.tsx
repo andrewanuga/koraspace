@@ -250,7 +250,7 @@ export function CinematicHero() {
 
   return (
     <section
-      aria-label="Koraspace AI in motion"
+      aria-label="Koraspace in motion"
       className="relative"
       style={{ background: "#121212" }}
     >

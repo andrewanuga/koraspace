@@ -11,7 +11,7 @@ import type { AITool, AgentContext, AgentResult } from "../core/types";
 import { callAI, isConfigured } from "../openrouter";
 import { scrapeUrlTool } from "./web";
 
-/* ── 1. Schemas & Type Contracts ──────────────────────────────── */
+/* -- 1. Schemas & Type Contracts -------------------------------- */
 
 export const AnalyzeCompetitorOutputSchema = z.object({
   target: z.string(),
@@ -32,7 +32,7 @@ export interface AnalyzeCompetitorInput {
   niche?: string;
 }
 
-/* ── 2. Fallback / Deterministic Generator ─────────────────────── */
+/* -- 2. Fallback / Deterministic Generator ----------------------- */
 
 function generateFallbackAnalysis(target: string, scrapedTitle?: string): AnalyzeCompetitorOutput {
   const isUrl = /^https?:\/\//i.test(target);
@@ -62,13 +62,13 @@ function generateFallbackAnalysis(target: string, scrapedTitle?: string): Analyz
     recommendedHooks: [
       `Most people follow ${target}'s advice on this topic. Here's why that playbook stopped working in 2026:`,
       `I spent 20 hours analyzing ${target}'s top campaigns. Here are the 3 critical mistakes they're making:`,
-      `Why 90% of creators blindly copy ${target} — and the alternative strategy that gets 3× more reach:`,
+      `Why 90% of creators blindly copy ${target} - and the alternative strategy that gets 3× more reach:`,
     ],
     summary: `Competitor Analysis for ${target}:\n1. Content Strategy: Heavy on high-level overviews, light on technical depth.\n2. Key Gap: Misses actionable frameworks and contrarian takes.\n3. Outperformance Vector: Focus on deep teardowns and transparent proof points.`,
   };
 }
 
-/* ── 3. Executable AI Tool Definition ─────────────────────────── */
+/* -- 3. Executable AI Tool Definition --------------------------- */
 
 export const analyzeCompetitorTool: AITool<
   AnalyzeCompetitorInput,

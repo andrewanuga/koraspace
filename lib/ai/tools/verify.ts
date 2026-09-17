@@ -9,7 +9,7 @@ import { z } from "zod";
 import type { AITool, AgentContext, AgentResult } from "../core/types";
 import { callAI, isConfigured } from "../openrouter";
 
-/* ── 1. Schemas & Type Contracts ──────────────────────────────── */
+/* -- 1. Schemas & Type Contracts -------------------------------- */
 
 export const ClaimVerdictSchema = z.enum([
   "verified_true",
@@ -39,7 +39,7 @@ export interface VerifyClaimInput {
   context?: string;
 }
 
-/* ── 2. Fallback / Deterministic Generator ─────────────────────── */
+/* -- 2. Fallback / Deterministic Generator ----------------------- */
 
 function generateFallbackVerification(claim: string): VerifyClaimOutput {
   return {
@@ -57,7 +57,7 @@ function generateFallbackVerification(claim: string): VerifyClaimOutput {
   };
 }
 
-/* ── 3. Executable AI Tool Definition ─────────────────────────── */
+/* -- 3. Executable AI Tool Definition --------------------------- */
 
 export const verifyClaimTool: AITool<
   VerifyClaimInput,

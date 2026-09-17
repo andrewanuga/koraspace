@@ -31,9 +31,9 @@ export async function sendBroadcastEmail(emails: string[], message: string, type
   const transporter = getTransporter();
   if (!transporter) return;
 
-  const subject = type === "critical" ? "Critical Update from Koraspace AI" : 
-                  type === "warning" ? "Action Required: Koraspace AI Warning" : 
-                  "Koraspace AI Announcement";
+  const subject = type === "critical" ? "Critical Update from Koraspace" : 
+                  type === "warning" ? "Action Required: Koraspace Warning" : 
+                  "Koraspace Announcement";
 
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px;">
@@ -43,7 +43,7 @@ export async function sendBroadcastEmail(emails: string[], message: string, type
       </p>
       <hr style="border: 0; border-top: 1px solid #eaeaea; margin: 30px 0;" />
       <p style="color: #999; font-size: 12px; text-align: center;">
-        You're receiving this because you are registered on Koraspace AI.
+        You're receiving this because you are registered on Koraspace.
       </p>
     </div>
   `;
@@ -52,7 +52,7 @@ export async function sendBroadcastEmail(emails: string[], message: string, type
   await Promise.allSettled(
     emails.map(email => 
       transporter.sendMail({
-        from: `"Koraspace AI" <${MAIL_FROM}>`,
+        from: `"Koraspace" <${MAIL_FROM}>`,
         to: email,
         subject,
         html,

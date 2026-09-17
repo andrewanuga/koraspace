@@ -1,7 +1,8 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { isPlan } from "@/lib/billing/plans";
+import { isPlan, type PlanId } from "@/lib/billing/plans";
 
 /** Paystack webhook — verify signature, then reconcile subscription state. */
 export async function POST(req: NextRequest) {
@@ -15,8 +16,6 @@ export async function POST(req: NextRequest) {
   if (a.length !== b.length || !timingSafeEqual(a, b)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
-
-  const admin = createAdminClient();
   if (!admin) return NextResponse.json({ ok: true });
 
   const event = JSON.parse(raw);
@@ -36,14 +35,21 @@ export async function POST(req: NextRequest) {
   switch (event.event) {
     case "charge.success": {
       const uid = await findUser();
-      const plan = isPlan(data.metadata?.plan) ? data.metadata.plan : undefined;
+      const plan = (isPlan(data.metadata?.plan) ? data.metadata.plan : undefined) as PlanId | undefined;
       if (uid) {
         if (plan) {
-          await admin.from("profiles").update({
-            plan, subscription_status: "active",
-            plan_renews_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          }).eq("id", uid);
+          const expectedKobo = data.amount || 0;
+          const minRequired = require("@/lib/billing/plans").PLANS[plan].price * 100;
+          if (expectedKobo >= minRequired) {
+            await admin.from("profiles").update({
+              plan, subscription_status: "active",
+              plan_renews_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            }).eq("id", uid);
+          } else {
+            console.warn(`[Webhook Security] Ignored underpaid upgrade for ${uid}: paid ${expectedKobo} vs req ${minRequired}`);
+          }
         }
+
         await admin.from("payments").upsert({
           user_id: uid, reference: data.reference, plan: plan ?? null,
           amount: (data.amount ?? 0) / 100, currency: data.currency ?? "NGN",

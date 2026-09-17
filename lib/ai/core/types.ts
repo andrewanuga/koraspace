@@ -7,14 +7,14 @@
  * - Tool specifications and contracts (AITool<TInput, TOutput>)
  * - Model & Provider contracts (ToolDefinition)
  *
- * NOTE: Pure type definitions only — no side-effects or external dependencies.
+ * NOTE: Pure type definitions only - no side-effects or external dependencies.
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Capability, AgentPermission } from "./capabilities";
 export type { Capability, AgentPermission } from "./capabilities";
 
-/* ── 1. Execution Context ─────────────────────────────────────── */
+/* -- 1. Execution Context --------------------------------------- */
 
 export type AutonomyMode = "assist" | "auto";
 
@@ -37,7 +37,7 @@ export interface AgentContext {
   metadata?: Record<string, unknown>;
 }
 
-/* ── 2. Standardized Result Envelope ──────────────────────────── */
+/* -- 2. Standardized Result Envelope ---------------------------- */
 
 export interface AgentError {
   code: string;
@@ -64,7 +64,7 @@ export interface AgentResult<T = unknown> {
   metadata?: AgentResultMetadata;
 }
 
-/* ── 3. Tool Definition (OpenRouter / OpenAI Function Spec) ──── */
+/* -- 3. Tool Definition (OpenRouter / OpenAI Function Spec) ---- */
 
 export interface ToolPropertySchema {
   type: "string" | "number" | "boolean" | "object" | "array";
@@ -90,7 +90,7 @@ export interface ToolDefinition {
   };
 }
 
-/* ── 4. Executable AI Tool Interface ──────────────────────────── */
+/* -- 4. Executable AI Tool Interface ---------------------------- */
 
 export interface AITool<TInput = Record<string, unknown>, TOutput = unknown> {
   /** Unique tool identifier matching the LLM function name */
@@ -121,7 +121,7 @@ export interface AITool<TInput = Record<string, unknown>, TOutput = unknown> {
   ): Promise<AgentResult<TOutput>>;
 }
 
-/* ── 5. Persona & Memory Contracts ────────────────────────────── */
+/* -- 5. Persona & Memory Contracts ------------------------------ */
 
 export interface PersonaStyleTraits {
   formality: "casual" | "formal" | "balanced";

@@ -39,10 +39,10 @@ export function useGenerations() {
         const plan = data.plan as Plan;
         const limits = PLAN_LIMITS[plan];
         const limit =
-          "generationsPerMonth" in limits
-            ? limits.generationsPerMonth
-            : "generationsPerWeek" in limits
-              ? limits.generationsPerWeek * 4
+          "tokensPerMonth" in limits
+            ? limits.tokensPerMonth
+            : "tokensPerLifetime" in limits
+              ? limits.tokensPerLifetime
               : 0;
 
         setState({

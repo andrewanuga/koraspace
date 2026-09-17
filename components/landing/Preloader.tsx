@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FRAME_COUNT, framePath, WARM_FRAMES } from "@/lib/frames";
 
 /**
- * Full-screen #121212 preloader. The "Koraspace AI" wordmark has a bright lead
+ * Full-screen #121212 preloader. The "Koraspace" wordmark has a bright lead
  * sweeping through it like water flow (CSS .sai-flow-text). Warms the first
  * frames + fonts so the hero paints instantly, then fades away.
  */
@@ -22,7 +21,16 @@ export function Preloader() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     async function warm() {
-      const total = Math.min(WARM_FRAMES, FRAME_COUNT);
+      // Only what the hero actually paints. This list used to warm hero1-hero5,
+      // left behind when the hero moved to the portrait + canvas: two of them
+      // didn't exist (a 404 each per load) and the rest were rendered nowhere,
+      // so it blocked on ~6.4MB of nothing while skipping the one image that
+      // does render. Those files have since been deleted from the repo.
+      const WARM_IMAGES = [
+        "/landing-img/founder-portrait.png",
+        "/logo.png",
+      ];
+      const total = WARM_IMAGES.length;
       let loaded = 0;
 
       // Fonts first (so the wordmark is in General Sans immediately)
@@ -36,9 +44,9 @@ export function Preloader() {
       };
 
       await Promise.all(
-        Array.from({ length: total }, (_, k) => {
+        WARM_IMAGES.map((src) => {
           const img = new Image();
-          img.src = framePath(k + 1);
+          img.src = src;
           const settle = () =>
             (img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(bump);
           return img.complete ? settle() : new Promise<void>((res) => {
@@ -69,6 +77,9 @@ export function Preloader() {
   useEffect(() => {
     if (!done) return;
     document.documentElement.classList.add("sai-loaded");
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("koraspace-loader-done"));
+    }
     const t = window.setTimeout(() => setHidden(true), 700);
     return () => window.clearTimeout(t);
   }, [done]);
@@ -79,7 +90,7 @@ export function Preloader() {
     <div
       ref={rootRef}
       aria-hidden={done}
-      className="fixed inset-0 z-[120] flex flex-col items-center justify-center transition-opacity duration-700"
+      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center transition-opacity duration-700"
       style={{
         background: "#121212",
         opacity: done ? 0 : 1,
@@ -91,7 +102,7 @@ export function Preloader() {
         className="pointer-events-none absolute h-[340px] w-[340px] rounded-full"
         style={{
           background:
-            "radial-gradient(circle, rgba(99,102,241,0.18), transparent 70%)",
+            "radial-gradient(circle, rgba(255,10,138,0.15), rgba(59,130,246,0.15), transparent 70%)",
           filter: "blur(20px)",
         }}
       />
@@ -101,11 +112,11 @@ export function Preloader() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo.png"
-          alt="Koraspace AI"
+          alt="Koraspace"
           width={78}
           height={67}
           className="h-[64px] w-auto animate-pulse-glow"
-          style={{ filter: "drop-shadow(0 0 18px rgba(99,102,241,0.45))" }}
+          style={{ filter: "drop-shadow(0 0 18px rgba(255,10,138,0.35))" }}
         />
 
         {/* Wordmark with water-flow light sweep */}
@@ -117,7 +128,7 @@ export function Preloader() {
             letterSpacing: "-0.03em",
           }}
         >
-          Koraspace AI
+          KoraSpace
         </div>
 
         {/* thin progress track */}
@@ -127,7 +138,7 @@ export function Preloader() {
             style={{
               width: `${progress}%`,
               background:
-                "linear-gradient(90deg, #6366f1, #a855f7, #f5c451)",
+                "linear-gradient(90deg, #ff0a8a, #3b82f6)",
             }}
           />
         </div>

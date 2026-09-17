@@ -1,7 +1,7 @@
 // Auto-generate full types with: npx supabase gen types typescript --project-id YOUR_ID
 // These manual types cover the core tables used by the app
 
-export type Plan = "free" | "basic" | "pro" | "advanced";
+export type Plan = "free" | "pro" | "advanced" | "team";
 
 export type PostStatus = "scheduled" | "queued" | "posted" | "failed" | "cancelled";
 

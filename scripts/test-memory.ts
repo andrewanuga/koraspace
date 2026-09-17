@@ -33,7 +33,7 @@ async function runTests() {
     autonomyMode: "assist",
   };
 
-  // ── 1. Brand Intelligence Loader & Defaults ──────────────────────
+  // -- 1. Brand Intelligence Loader & Defaults ----------------------
   const brand = await BrandIntelligenceLoader.load("test-workspace-mem");
   assert(
     Boolean(
@@ -45,7 +45,7 @@ async function runTests() {
     "BrandIntelligenceLoader loads valid brand contracts with default guardrails"
   );
 
-  // ── 2. Brand Prompt Section Formatting ───────────────────────────
+  // -- 2. Brand Prompt Section Formatting ---------------------------
   const customBrand: BrandIntelligence = {
     workspaceId: "test-workspace-custom",
     brandName: "Acme AI",
@@ -76,7 +76,7 @@ async function runTests() {
     "BrandIntelligenceLoader formats structured system prompt section"
   );
 
-  // ── 3. Brand Guardrail Compliance Check ───────────────────────────
+  // -- 3. Brand Guardrail Compliance Check ---------------------------
   const violatingText = "Try our product today for guaranteed overnight success!";
   const complianceViolated = BrandIntelligenceLoader.checkCompliance(violatingText, customBrand);
   assert(
@@ -93,7 +93,7 @@ async function runTests() {
     "Brand compliance checker passes clean text"
   );
 
-  // ── 4. Persona Learning Engine Style Analysis ────────────────────
+  // -- 4. Persona Learning Engine Style Analysis --------------------
   const sampleTexts = [
     "Hey guys! Super excited to share this new update lol 🎉",
     "Haha yeah, omg this works so well fr 🔥",
@@ -107,7 +107,7 @@ async function runTests() {
     "PersonaLearningEngine correctly identifies casual, emoji-rich tone"
   );
 
-  // ── 5. Performance Memory Formatting ─────────────────────────────
+  // -- 5. Performance Memory Formatting -----------------------------
   const samplePerf: PerformanceInsight = {
     workspaceId: "test-workspace-perf",
     totalPostsAnalyzed: 12,
@@ -139,7 +139,7 @@ async function runTests() {
     "PerformanceMemoryEngine formats empirical performance patterns"
   );
 
-  // ── 6. Unified Memory Retrieval Engine ───────────────────────────
+  // -- 6. Unified Memory Retrieval Engine ---------------------------
   const memoryBundle = await MemoryRetrievalEngine.retrieveContext(
     "How should we announce our new AI feature?",
     context

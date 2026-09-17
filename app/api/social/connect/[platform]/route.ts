@@ -1,8 +1,12 @@
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { randomBytes } from "node:crypto";
-import { createClient } from "@/lib/supabase/server";
 import { PLATFORMS, isPlatformConfigured, type PlatformId } from "@/lib/social/platforms";
+import { validateOAuthScopes } from "@/lib/security/enforcement";
+import { encryptToken } from "@/lib/security/tokenCrypto";
 
 function backToIntegrations(origin: string, params: Record<string, string>) {
   const url = new URL("/dashboard/integrations", origin);
@@ -22,9 +26,9 @@ export async function GET(
   if (!p || p.connectType !== "oauth" || !p.oauth) {
     return backToIntegrations(origin, { error: "unsupported", platform });
   }
-
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) return NextResponse.redirect(new URL("/login", origin));
 
   if (!isPlatformConfigured(platform as PlatformId)) {
@@ -39,11 +43,14 @@ export async function GET(
     httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 600,
   });
 
+  // Enforce Zero-Trust Least-Privilege OAuth Scoping
+  const { sanitizedScopes } = validateOAuthScopes(p.oauth.scopes);
+
   const url = new URL(p.oauth.authorizeUrl);
   url.searchParams.set("response_type", "code");
   url.searchParams.set("client_id", process.env[p.oauth.clientIdEnv]!);
   url.searchParams.set("redirect_uri", `${origin}/api/social/callback/${platform}`);
-  url.searchParams.set("scope", p.oauth.scopes.join(platform === "reddit" ? "," : " "));
+  url.searchParams.set("scope", sanitizedScopes.join(platform === "reddit" ? "," : " "));
   url.searchParams.set("state", state);
 
   // Provider-specific extras for a refresh token.
@@ -65,9 +72,9 @@ export async function POST(
   if (!p || p.connectType !== "token") {
     return NextResponse.json({ error: "This platform uses OAuth, not a token." }, { status: 400 });
   }
-
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { token } = await req.json();
@@ -99,7 +106,7 @@ export async function POST(
     {
       user_id: user.id, platform, account_type: "bot",
       external_id, handle, display_name,
-      access_token: token, status: "connected",
+      access_token: encryptToken(token), status: "connected",
       scopes: p.capabilities,
     },
     { onConflict: "user_id,platform,external_id" }

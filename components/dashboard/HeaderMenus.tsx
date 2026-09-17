@@ -46,8 +46,8 @@ export function NotificationsMenu() {
         supabase.from("user_notifications").select("id, title, body, type, created_at, is_read").eq("is_read", false).order("created_at", { ascending: false }).limit(8)
       ]);
       
-      const inboxList = (inboxRes.data ?? []).map((m) => ({ id: m.id, author: m.author_name, body: m.body, category: m.category, received_at: m.received_at, table: "social_inbox" as const }));
-      const notifList = (notifRes.data ?? []).map((m) => ({ id: m.id, author: m.title || "System", body: m.body, category: m.type, received_at: m.created_at, table: "user_notifications" as const }));
+      const inboxList = (inboxRes.data ?? []).map((m: any) => ({ id: m.id, author: m.author_name, body: m.body, category: m.category, received_at: m.received_at, table: "social_inbox" as const }));
+      const notifList = (notifRes.data ?? []).map((m: any) => ({ id: m.id, author: m.title || "System", body: m.body, category: m.type, received_at: m.created_at, table: "user_notifications" as const }));
       
       const merged = [...inboxList, ...notifList].sort((a, b) => new Date(b.received_at).getTime() - new Date(a.received_at).getTime()).slice(0, 8);
       setItems(merged);

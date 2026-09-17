@@ -1,301 +1,178 @@
-# 🌌 Koraspace AI
+# Koraspace
 
-<div align="center">
+> Your personal social agent — the AI-powered social workspace built for the African creator economy.
 
-[![Build & Typecheck](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=nextdotjs)](https://nextjs.org)
-[![Automated Tests](https://img.shields.io/badge/Tests-160%20Passing-success?style=for-the-badge&logo=vitest)](https://vitest.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Strict%205.x-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org)
-[![Next.js](https://img.shields.io/badge/Next.js-16.2.6-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
-[![Database](https://img.shields.io/badge/Supabase-PostgreSQL%20%2B%20pgvector-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com)
-[![License](https://img.shields.io/badge/License-MIT-purple?style=for-the-badge)](LICENSE)
-
-<br />
-
-**The Autonomous Social AI Operating System**  
-*Engineered for creators, digital agencies, and high-growth marketing teams.*
-
-[Frontend Integration Guide](file:///docs/frontend-integration-guide.md) • [Features](#-core-capabilities) • [Architecture](#-platform-architecture) • [API Quick Reference](#-api-quick-reference-for-frontend) • [Test Pyramid (160 Tests)](#-automated-test-pyramid-160-tests) • [Security & RBAC](#-security--multi-tenant-isolation) • [Quickstart](#-quickstart--deployment)
-
-</div>
+**Koraspace** shifts social media from *automation* (doing what you tell it) to *delegation* (owning goals autonomously). Powered by self-hosted **Llama 3.3 70B** via vLLM, it avoids per-token API fees and gives creators, clients, and marketers a world-class tool priced for their market.
 
 ---
 
-## 📖 Overview
+## What it does
 
-**Koraspace AI** elevates social media operations from passive automation (scheduled broadcasts) to **true autonomous delegation** (goal-oriented multi-agent reasoning, closed-loop empirical memory learning, deterministic policy safety, live infrastructure validation, and versioned service contract governance). 
+Most tools tell you what happened. Koraspace tells you what will — and often handles it before you open the app.
 
-Built atop **Next.js 16**, **Supabase with `pgvector`**, and **Google Gemini**, Koraspace empowers teams to orchestrate social growth across LinkedIn, X, Instagram, YouTube, and Telegram with zero brand drift and complete auditability.
-
----
-
-## 🎨 Frontend Developer Quickstart
-
-For developers working on UI components, pages, and dashboard forms, refer to the **[Complete Frontend Integration Guide](file:///docs/frontend-integration-guide.md)**.
-
-### API Quick Reference for Frontend:
-
-| Feature / UI Flow | Endpoint | Method | Purpose & Payload |
-| :--- | :--- | :---: | :--- |
-| **AI Assistant Chat** | `/api/v1/ai/chat` | `POST` | ReAct multi-step chat with tools & memory RAG (`{ message, workspaceId }`) |
-| **Ghost Mode™ Triage** | `/api/v1/ai/ghost/evaluate` | `POST` | Deterministic triage for inbound comments/DMs (`{ message, senderName, platform, workspaceId }`) |
-| **Content Studio Engine** | `/api/v1/ai/content/generate` | `POST` | Multi-platform drafting & repurposing (`{ topic, targetPlatform, workspaceId }`) |
-| **Brand Memory (RAG)** | `/api/ai/memory` | `GET/POST` | Search & save brand rules, audience facts, and voice preferences |
-| **Post Scheduling** | `/api/posts/schedule` | `GET/POST` | Calendar schedule entries & fetch calendar events (`{ content, platforms, scheduledAt }`) |
-| **Social Account Connect** | `/api/social/connect/[platform]`| `GET` | Initiates OAuth 2.0 PKCE flow (LinkedIn, X, Instagram, YouTube) |
-| **Social Metric Sync** | `/api/social/sync` | `POST` | Pulls follower analytics & post performance into workspace database |
-| **Telemetry & Latency** | `/api/ai/observability` | `GET` | P50/P95/P99 latency percentiles, cost accounting, and trace histories |
-| **Health Probes** | `/api/health` & `/api/readiness`| `GET` | Liveness and deep dependency database/AI provider checks |
+| Feature | What it means |
+|---|---|
+| **Create (AI chat)** | A per-user agent that drafts posts, threads, captions, and replies in your voice — with image/video/file uploads for context. |
+| **Agentic Loop** | Our AI runs a full ReAct loop. Before it answers, it can autonomously use tools to fetch weather, scrape URLs, and fact-check claims. |
+| **Premium Tools** | The agent has 11 native tools: `schedule_post`, `analyze_competitor`, `repurpose_longform`, `verify_claim`, `fetch_unread_messages`, and more. |
+| **Ghost Mode™ Agent** | Replies to surface-level comments in your voice, flags leads, escalates complaints. You only touch what matters. |
+| **Tasks (LIFO stack)** | A last-in, first-out task stack that keeps the newest work front-of-mind. |
+| **Scheduler** | A month calendar of everything scheduled across every connected account. |
+| **Smart Inbox** | One tab per connected account; messages arrive as a stack, AI-triaged into leads / complaints / questions / fluff. |
+| **Analytics** | Real per-post analytics with cross-post *referral* suggestions (creators) and per-campaign boards with improvement tips (marketers). |
+| **Collaboration** | Multi-seat workspaces with Row-Level Security (RLS). Invite your team to manage specific accounts. |
+| **Trends** | Live web-search trends for your niche/persona, each referred to the right connected account. |
+| **Bots** | Real bots across connected accounts with a management system (assist vs. full-auto). |
+| **Personalization** | The agent stores past messages, learns your tone, and mirrors how you write. |
 
 ---
 
-## 🏛️ Platform Architecture
+## Supported platforms
 
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                    FRONTEND (Next.js UI)                    │
-│    App Router • Server Components • Dashboard UI • Forms    │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                       fetch / API Routes
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    KORASPACE BACKEND                        │
-│   Supabase Auth • RBAC • Workspaces • DB • Social Accounts  │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                    AI Service Contract v1
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│                  KORASPACE AI SERVICE                       │
-│                                                             │
-│  ┌───────────────────────┐         ┌──────────────────────┐ │
-│  │       ChatAgent       │         │      GhostAgent™     │ │
-│  │ (ReAct Multi-Step)    │         │ (Deterministic Policy│ │
-│  └───────────┬───────────┘         └───────────┬──────────┘ │
-│              │                                 │            │
-│              └────────────────┬────────────────┘            │
-│                               ▼                             │
-│                  Persistent Memory (pgvector)               │
-│               (Brand Rules + Empirical Learning)            │
-│                               │                             │
-│                               ▼                             │
-│                  Governed Tool Registry (8 Tools)           │
-│                               │                             │
-│              ┌────────────────┴────────────────┐            │
-│              ▼                                 ▼            │
-│     PromptSecurityGuard                 CircuitBreaker      │
-│   (Zero-Leakage Defense)              (Resilient Retry)     │
-└─────────────────────────────────────────────────────────────┘
+**Publishing:** Instagram · YouTube · X (Twitter) · Facebook · Threads 
+*(Coming Soon: LinkedIn · Snapchat · Reddit)*
+
+**Messaging & bots:** Telegram 
+*(Coming Soon: WhatsApp)*
+
+**Tools & analytics (Coming Soon):** Google Calendar · Google Analytics · Google Sheets · Slack · Notion · Discord · Mailchimp · Zapier · Webhooks.
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) · TypeScript |
+| Styling | Tailwind CSS v4, CSS-variable theming (dark + blue-tinted light) |
+| Motion | GSAP (cinematic hero + scroll reveals), Framer Motion |
+| Auth & DB | Supabase (PostgreSQL + pgvector, RLS) |
+| AI | OpenRouter (200+ models: GPT-4o, Claude, Gemini, Llama, etc.) |
+| Payments | Paystack / Flutterwave |
+| Jobs | BullMQ + Redis |
+
+---
+
+## Project structure
+
+```
+app/
+├── page.tsx                       # Cinematic landing (canvas scroll hero)
+├── (auth)/{login,signup}          # Auth
+├── onboarding/                    # Persona onboarding (client/creator/marketer)
+├── privacy/ · terms/              # Privacy Policy + Terms of Service
+├── dashboard/                     # Overview, Create, Tasks, Scheduler, Inbox,
+│                                  #   Analytics, Trends, Bots, Ghost Mode,
+│                                  #   Integrations, Billing, Settings
+└── api/
+    ├── ai/{chat,generate,score,trends,ghost}
+    ├── social/{connect,callback}/[platform]   # Dynamic per-platform OAuth / token
+    ├── social/sync                            # Dynamic Sync Worker & Scraper fallbacks
+    └── tools/{connect,callback}/[provider]    # calendar/analytics/tools OAuth
+
+lib/social/{platforms,tools,types,sync}.ts     # registries + sync worker
+supabase/schema.sql                            # core (profiles, posts, etc.)
+supabase/social_integration_schema.sql         # ALL social-integration tables
 ```
 
 ---
 
-## 🚀 Core Capabilities
+## Getting started
 
-### 1. 🧠 Autonomous Agents
-- **`ChatAgent` (General Reasoning & ReAct)**:
-  - Deconstructs complex user prompts into step-by-step reasoning plans.
-  - Dynamically selects, executes, and observes tools from the governed `ToolRegistry`.
-  - Automatically verifies output against brand guardrails and self-corrects prior to completion.
-- **`GhostAgent™` (Social Ingest & Triage)**:
-  - Triages incoming social comments and direct messages into `flag_lead`, `escalate_complaint`, `auto_reply`, or `ignore`.
-  - Enforces deterministic safety policies (`ALLOW` vs `REQUIRE_APPROVAL` vs `DENY`).
-  - High-value sales leads and sensitive complaints **never auto-dispatch without human review**.
-
-### 2. 📚 Persistent Memory & Closed-Loop Learning
-- **Brand Intelligence**: Injects brand voice, target audience, content pillars, and strictly forbidden terms into agent prompts.
-- **Performance Intelligence**: Learns viral hooks, formats, and high-engagement themes from historical workspace post analytics.
-- **Consolidation Engine**: Detects near-duplicate memory entries ($\ge 0.85$ vector/lexical similarity) and consolidates them into canonical records with full provenance tracking (`mergedFrom`, `consolidatedAt`).
-
-### 3. 🛠️ Governed Tool Ecosystem
-Every tool is validated at runtime with Zod schemas and executed under timeout protection:
-- `scrape_url`: Clean HTML-to-markdown web extraction.
-- `analyze_competitor`: Evaluates competitor strategies, hook styles, and positioning.
-- `verify_claim`: Cross-checks claims against verified web sources.
-- `evaluate_virality`: Empirical virality scoring (0–100) with concrete structural recommendations.
-- `repurpose_longform`: Formats long-form transcripts into platform-optimized threads.
-- `schedule_post`: Validates posting schedules across connected accounts.
-- `fetch_weather` & `get_temporal_context`: Injects real-time context and localized data.
-
-### 4. 🛡️ Enterprise Defense & Resilience
-- **Prompt Security**: Scans for system overrides (*"ignore previous instructions"*), jailbreak roleplay (*"you are now DAN"*), and SQL/destructive commands.
-- **Zero Secret Leakage**: Recursively sanitizes API keys (`sk-or-v1-`, `sk-proj-`), JWT tokens, and OAuth secrets from logs, traces, and client responses.
-- **Circuit Breaker**: Prevents cascading failures during external AI provider or API outages (`CLOSED` $\rightarrow$ `OPEN` $\rightarrow$ `HALF_OPEN`).
-- **AI Budget Enforcement**: Multi-tier sliding-window rate limiting ($60\text{ req/min}$, $100\text{k tokens/min}$) and monthly USD budget controls ($0–$70 normal, $70–$90 warning, $90–$100 restricted, $\ge 100\%$ blocked).
-
----
-
-## 🧪 Automated Test Pyramid (160 Tests)
-
-Koraspace AI enforces a 100% deterministic automated test suite executed on every commit and pull request via CI:
-
+### 1. Install
 ```bash
-# Run complete test suite (160 tests passing)
-npm test
-
-# Segmented test layers
-npm run test:unit         # Unit tests (cost, rate-limit, alerts, brand, policies)
-npm run test:contracts    # Zod contracts, API route payloads, and webhooks
-npm run test:security     # Injection defense, zero secret audit, and RBAC
-npm run test:integration  # Streaming, concurrency, RLS isolation, failure injection
-npm run test:e2e          # Complete chat flows, ghost triage, and memory lifecycle
-npm run test:eval         # Golden LLM benchmarks, brand adherence, regression gates
-npm run test:all          # Comprehensive test run across all 52 test files
-```
-
-```text
- ✓ tests/contracts/service-gateway.test.ts (4 tests)
- ✓ tests/integration/failure-injection.test.ts (3 tests)
- ✓ tests/integration/chaos-matrix.test.ts (6 tests)
- ✓ tests/integration/platform-ai-contract.test.ts (3 tests)
- ✓ tests/e2e/memory-lifecycle.test.ts (1 test)
- ✓ tests/unit/memory-consolidation.test.ts (4 tests)
- ✓ tests/e2e/product-journeys.test.ts (4 tests)
- ✓ tests/evaluations/evaluation-history.test.ts (3 tests)
- ✓ tests/unit/resilience.test.ts (3 tests)
- ✓ tests/unit/tools.test.ts (4 tests)
- ✓ tests/integration/streaming.test.ts (2 tests)
- ✓ tests/unit/memory-service.test.ts (5 tests)
- ✓ tests/integration/ghost-agent.test.ts (3 tests)
- ✓ tests/integration/ai-client.test.ts (2 tests)
- ✓ tests/unit/memory-brand.test.ts (3 tests)
- ✓ tests/evaluations/ghost-quality.test.ts (2 tests)
- ✓ tests/contracts/api-routes.test.ts (4 tests)
- ✓ tests/unit/rbac.test.ts (3 tests)
- ✓ tests/e2e/chat-workflow.test.ts (1 test)
- ✓ tests/evaluations/regression-gate.test.ts (2 tests)
- ✓ tests/integration/memory-security.test.ts (5 tests)
- ✓ tests/contracts/v1-routes.test.ts (5 tests)
- ✓ tests/integration/concurrency.test.ts (2 tests)
- ✓ tests/contracts/schemas.test.ts (5 tests)
- ✓ tests/unit/memory-formation.test.ts (6 tests)
- ✓ tests/evaluations/chat-quality.test.ts (2 tests)
- ✓ tests/evaluations/content-intelligence.test.ts (2 tests)
- ✓ tests/observability/telemetry.test.ts (3 tests)
- ✓ tests/e2e/platform-ai-e2e.test.ts (4 tests)
- ✓ tests/integration/telemetry-store.test.ts (2 tests)
- ✓ tests/unit/ghost-policy.test.ts (6 tests)
- ✓ tests/security/prompt-injection.test.ts (3 tests)
- ✓ tests/unit/attribution.test.ts (3 tests)
- ✓ tests/e2e/ghost-workflow.test.ts (1 test)
- ✓ tests/unit/rate-limit.test.ts (4 tests)
- ✓ tests/live/supabase-rls.test.ts (2 tests)
- ✓ tests/contracts/webhooks.test.ts (4 tests)
- ✓ tests/security/secrets-audit.test.ts (2 tests)
- ✓ tests/evaluations/tool-selection.test.ts (2 tests)
- ✓ tests/unit/closed-loop-learning.test.ts (2 tests)
- ✓ tests/evaluations/dataset-versioning.test.ts (3 tests)
- ✓ tests/unit/cost.test.ts (3 tests)
- ✓ tests/live/webhook-verification.test.ts (2 tests)
- ✓ tests/unit/alerts.test.ts (4 tests)
- ✓ tests/evaluations/brand-adherence.test.ts (2 tests)
- ✓ tests/unit/chat-planner.test.ts (5 tests)
- ✓ tests/evaluations/release-gate-governance.test.ts (3 tests)
- ✓ tests/integration/chat-agent.test.ts (2 tests)
- ✓ tests/evaluations/ghost-fail-closed.test.ts (3 tests)
- ✓ tests/live/llm-provider.test.ts (2 tests)
- ✓ tests/integration/database-rls.test.ts (2 tests)
- ✓ tests/integration/disaster-recovery.test.ts (2 tests)
-
- Test Files  52 passed (52)
-      Tests  160 passed (160)
-```
-
----
-
-## 🛡️ Security & Multi-Tenant Isolation
-
-All memory reads, tool executions, and social accounts enforce strict workspace boundaries (`workspace_id = auth.uid()`):
-
-| Resource / Action | Owner | Admin | Member | Viewer |
-| :--- | :---: | :---: | :---: | :---: |
-| **Execute ChatAgent** | ✅ | ✅ | ✅ | ❌ |
-| **Read Workspace Memory** | ✅ | ✅ | ✅ | ✅ |
-| **Create & Update Memory** | ✅ | ✅ | ✅ | ❌ |
-| **Delete Memory (Forget)** | ✅ | ✅ | ❌ | ❌ |
-| **Connect Social Accounts** | ✅ | ✅ | ✅ | ❌ |
-| **Autonomous Social Auto-Posting** | ✅ | ✅ | ❌ | ❌ |
-| **AI Observability Dashboard** | ✅ | ✅ | ❌ | ❌ |
-| **Workspace Settings & Billing** | ✅ | ❌ | ❌ | ❌ |
-
----
-
-## 🏁 Quickstart & Deployment
-
-### 1. Prerequisites
-- Node.js `20.x` or higher
-- Supabase Project with `pgvector` extension enabled
-
-### 2. Clone & Install
-```bash
-git clone git@github.com:TheclaOrg/koraspace.ai.git
-cd koraspace.ai
 npm install
 ```
 
-### 3. Environment Configuration
-Create a `.env.local` file:
-```env
-NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
-SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
-GEMINI_API_KEY="your-gemini-api-key"
+### 2. Environment
+```bash
+cp .env.local.example .env.local
 ```
+Only Supabase is required for local dev. AI falls back to mocks, and each
+integration activates only once its keys are present. See the commented
+`.env.local.example` for every provider.
 
-### 4. Database Setup
-Execute the vector memory schema in your Supabase SQL Editor:
-```sql
--- Located in supabase/memory_migration.sql and supabase/social_integration_schema.sql
-```
+### 3. Database
+Run the SQL files in the Supabase SQL editor, in order:
+1. `supabase/schema.sql`
+2. `supabase/social_integration_schema.sql`
+3. `supabase/support.sql`
 
-### 5. Launch Development Server
+Then add `http://localhost:3000/auth/callback` to **Authentication → URL Configuration → Redirect URLs**.
+
+### 4. Run
 ```bash
 npm run dev
 ```
-Navigate to [http://localhost:3000](http://localhost:3000) to view the application.
+Open http://localhost:3000
 
 ---
 
-## 📄 License & Architecture Documentation
+## Connecting platforms & Data Sync
 
-- [Frontend Integration Guide](file:///docs/frontend-integration-guide.md)
-- [Architecture Overview](file:///docs/architecture/overview.md)
-- [Service Boundary & Contracts](file:///docs/architecture/service-boundary.md)
-- [ADR 001: Agent Architecture & Deterministic Policies](file:///docs/adr/001-agent-architecture.md)
-- [ADR 002: Persistent Memory & Consolidation Engine](file:///docs/adr/002-memory-architecture.md)
-- [Production Readiness Checklist](file:///docs/architecture/production-readiness.md)
+Each platform needs a registered developer app (most require review/approval).
+- **OAuth callback:** `{APP_URL}/api/social/callback/<platform>`
+- **Tools callback:** `{APP_URL}/api/tools/callback/<provider>`
+- **Telegram:** token-based — connect from **Integrations** by pasting a bot token.
 
-Distributed under the MIT License. See `LICENSE` for more information.
-Distributed under the MIT License. See `LICENSE` for more information.
+### Robust Sync & Scrape Engine
+Koraspace uses a dual-engine architecture to fetch metrics:
+1. **API Primary:** Attempts to fetch deep metrics directly from native APIs (Graph API for FB/IG, YouTube Data API, etc.)
+2. **Web Scraper Fallback:** If the API fails (e.g. personal profiles, missing scope, expired tokens), our custom-built Node scraping engine uses the user's `@handle` (collected securely via OAuth Modals) to parse public subscriber/follower counts seamlessly from the web!
 
-## 🔐 Milestone 2 — Policy & Authorization (Planned)
+Once connected, a silent background sync triggers automatically when the user visits the Dashboard to ensure follower counts and recent posts are always perfectly up-to-date.
 
-**Goal:** Introduce a strict policy layer that enforces permissions, autonomy mode, and risk assessments *before* any execution step. This creates the invariant:
+---
 
-> The AI can reason about an action, but reasoning does **not** grant permission to execute it.
+## AI model
 
-**Proposed Architecture**
+Koraspace uses **OpenRouter** to access 200+ AI models. Each agent
+(Create, Ghost Mode, Trends, Scoring) can use a different model,
+and users choose their preferred model in **Settings → AI**.
 
-```text
-                 Plan
-                   │
-                   ▼
-          Policy / Authorization
-                   │
-       ┌───────────┼───────────┐
-       ▼           ▼           ▼
-   Permissions  Autonomy      Risk
-       │           │           │
-       └───────────┼───────────┘
-                   ▼
-             ALLOW / DENY
-                   │
-                   ▼
-             ExecutionEngine
+### Setup
+
+1. Sign up at [openrouter.ai](https://openrouter.ai)
+2. Create an API key at [openrouter.ai/keys](https://openrouter.ai/keys)
+3. Add to your `.env`:
+
+```bash
+OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxx
+OPENROUTER_DEFAULT_MODEL=google/gemini-2.5-flash
 ```
 
-This layer will sit between the **Planner** and **ExecutionEngine**, ensuring that only authorized actions reach the executor. Future work will implement the `PolicyEngine` and extend the `ExecutionEngine` to respect these decisions.
+### Recommended models
+
+| Tier | Model | Best for |
+|------|-------|----------|
+| Free | `google/gemini-2.0-flash-exp:free` | Testing, zero cost |
+| Budget | `deepseek/deepseek-chat-v3-0324` | Extremely cheap, solid quality |
+| Standard | `google/gemini-2.5-flash` | Fast + affordable (default) |
+| Premium | `anthropic/claude-sonnet-4` | Best writing quality |
+| Premium | `openai/gpt-4o` | Best multimodal/vision |
+
+### Per-agent personalization
+
+Each AI agent is tuned for its task:
+- **Create Agent** — higher creativity (temp 0.7), vision-capable
+- **Content Generator** — structured output (temp 0.8), framework-aware
+- **Ghost Mode** — conservative (temp 0.4), JSON output
+- **Content Scorer** — analytical (temp 0.3), JSON output
+- **Trend Analyst** — creative + contextual (temp 0.7)
+
+Leave `OPENROUTER_API_KEY` empty in dev to use built-in mock responses.
 
 ---
+
+## Security & privacy
+
+- Supabase Auth (JWT); Row-Level Security on every user table.
+- OAuth tokens only — no social passwords stored.
+- Secure, HTTP-Only Cookie Session management during OAuth redirects.
+- [Privacy Policy](/privacy) and [Terms of Service](/terms) are shipped in-app (required for platform app review).
+
+---
+
+## License
+
+MIT · Built with care in Nigeria for the African creator economy.

@@ -1,0 +1,12 @@
+﻿{
+  "crons": [
+    {
+      "path": "/api/cron/sync-backup",
+      "schedule": "0 */3 * * *"
+    },
+    {
+      "path": "/api/cron/run-ai-tasks",
+      "schedule": "*/15 * * * *"
+    }
+  ]
+}

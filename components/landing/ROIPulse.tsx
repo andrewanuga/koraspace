@@ -65,7 +65,7 @@ export function ROIPulse() {
 
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
               Every other tool shows you vanity metrics — likes, impressions,
-              reach. Koraspace AI tracks the full funnel from post to payment.
+              reach. Koraspace tracks the full funnel from post to payment.
             </p>
 
             <div className="space-y-5 mb-10">
@@ -73,7 +73,7 @@ export function ROIPulse() {
                 {
                   icon: Link,
                   title: "Auto-injected tracked links",
-                  desc: "Every post Koraspace AI schedules gets a unique UTM link automatically. No manual setup.",
+                  desc: "Every post Koraspace schedules gets a unique UTM link automatically. No manual setup.",
                 },
                 {
                   icon: MousePointerClick,
@@ -99,7 +99,7 @@ export function ROIPulse() {
             </div>
 
             <p className="text-sm text-muted-foreground italic">
-              &ldquo;ROI Pulse turned our Koraspace AI subscription from a cost into an
+              &ldquo;ROI Pulse turned our Koraspace subscription from a cost into an
               investment. We showed a client ₦2.4M in tracked revenue from 3
               posts.&rdquo;
               <br />

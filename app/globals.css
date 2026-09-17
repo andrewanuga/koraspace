@@ -85,7 +85,36 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: var(--font-inter);
+  font-family: var(--font-inter, 'Inter', sans-serif);
+}
+
+/* ── Dynamic User Typography Settings ───────────────── */
+html[data-font="inter"], html[data-font="inter"] body {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+}
+
+html[data-font="geist"], html[data-font="geist"] body {
+  font-family: var(--font-geist-sans, 'Geist', sans-serif);
+}
+
+html[data-font="dm-sans"], html[data-font="dm-sans"] body {
+  font-family: 'DM Sans', sans-serif;
+}
+
+html[data-font="manrope"], html[data-font="manrope"] body {
+  font-family: 'Manrope', sans-serif;
+}
+
+html[data-font="plus-jakarta"], html[data-font="plus-jakarta"] body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+html[data-font="space-grotesk"], html[data-font="space-grotesk"] body {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+html[data-font="ibm-plex"], html[data-font="ibm-plex"] body {
+  font-family: 'IBM Plex Sans', sans-serif;
 }
 
 /* ── Keyframes ──────────────────────────────────────── */
@@ -233,7 +262,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   KORASPACE AI — cinematic landing design layer
+   Koraspace — cinematic landing design layer
    Palette (5): #121212 near-black · frosted white · #6366f1 indigo ·
    #a855f7 soft violet · #f43f5e electric red  (gold #f5c451 = one accent)
    Motion signature: expo.out cubic-bezier(0.16,1,0.3,1)
@@ -242,6 +271,7 @@ body {
   /* Body + data faces: real Inter/JetBrains when the <link> loads, else Geist/system. */
   --font-inter: "Inter", var(--font-geist-sans), system-ui, sans-serif;
   --font-jetbrains: "JetBrains Mono", var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-inter);
 
   --sai-bg: #121212;
   --sai-ink: #f5f4f2;
@@ -250,6 +280,44 @@ body {
   --sai-red: #f43f5e;
   --sai-gold: #f5c451;
   --sai-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Typography Selection ── */
+html[data-font="inter"] {
+  --font-sans: "Inter", var(--font-geist-sans), system-ui, sans-serif;
+}
+html[data-font="geist"] {
+  --font-sans: var(--font-geist-sans), "Inter", system-ui, sans-serif;
+}
+html[data-font="dm-sans"] {
+  --font-sans: "DM Sans", var(--font-geist-sans), system-ui, sans-serif;
+}
+html[data-font="manrope"] {
+  --font-sans: "Manrope", var(--font-geist-sans), system-ui, sans-serif;
+}
+html[data-font="plus-jakarta"] {
+  --font-sans: "Plus Jakarta Sans", var(--font-geist-sans), system-ui, sans-serif;
+}
+html[data-font="space-grotesk"] {
+  --font-sans: "Space Grotesk", var(--font-geist-sans), system-ui, sans-serif;
+}
+html[data-font="ibm-plex"] {
+  --font-sans: "IBM Plex Sans", var(--font-geist-sans), system-ui, sans-serif;
+}
+
+body, button, input, select, textarea {
+  font-family: var(--font-sans);
+}
+
+/* ── Dashboard Density ── */
+html[data-density="minimal"] {
+  --density-space: 1.25rem;
+}
+html[data-density="balanced"] {
+  --density-space: 1rem;
+}
+html[data-density="detailed"] {
+  --density-space: 0.75rem;
 }
 
 .font-display { font-family: var(--font-display); }
@@ -266,17 +334,17 @@ body {
 .sai-app {
   color-scheme: dark;
   --app-bg: #0d0d10;
-  --app-surface: rgba(16, 16, 20, 0.92); /* sidebar */
-  --app-header: rgba(18, 18, 22, 0.72);
+  --app-surface: rgba(16, 16, 20, 0.94); /* sidebar */
+  --app-header: rgba(18, 18, 22, 0.85);
   --fg: #f5f4f2;
-  --fg-2: rgba(245, 244, 242, 0.62);
-  --fg-3: rgba(245, 244, 242, 0.46);
+  --fg-2: rgba(245, 244, 242, 0.68);
+  --fg-3: rgba(245, 244, 242, 0.48);
   --fg-4: rgba(245, 244, 242, 0.34);
   --stroke: rgba(255, 255, 255, 0.09);
   --panel-fill: rgba(255, 255, 255, 0.04);
   --panel-fill-2: rgba(255, 255, 255, 0.07);
   --hover: rgba(255, 255, 255, 0.07);
-  --glass-bg: rgba(24, 24, 28, 0.55);
+  --glass-bg: rgba(24, 24, 28, 0.65);
   --glass-border: rgba(255, 255, 255, 0.09);
   --glass-top: rgba(255, 255, 255, 0.28);
   --glass-inset: rgba(255, 255, 255, 0.10);
@@ -285,24 +353,120 @@ body {
   color: var(--fg);
 }
 
-html.light .sai-app {
+html.light .sai-app,
+html[data-theme="light"] .sai-app,
+.light .sai-app {
   color-scheme: light;
-  --app-bg: #eef3ff;                       /* white, electric-blue tint */
-  --app-surface: rgba(255, 255, 255, 0.9);
-  --app-header: rgba(255, 255, 255, 0.78);
-  --fg: #0b1533;                           /* deep navy ink */
-  --fg-2: rgba(11, 21, 51, 0.66);
-  --fg-3: rgba(11, 21, 51, 0.52);
-  --fg-4: rgba(11, 21, 51, 0.42);
-  --stroke: rgba(37, 99, 235, 0.14);       /* blue-tinted hairline */
-  --panel-fill: rgba(37, 99, 235, 0.05);
-  --panel-fill-2: rgba(37, 99, 235, 0.09);
-  --hover: rgba(37, 99, 235, 0.08);
-  --glass-bg: rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(37, 99, 235, 0.14);
-  --glass-top: rgba(255, 255, 255, 0.9);
-  --glass-inset: rgba(255, 255, 255, 0.7);
-  --glass-shadow: 0 18px 44px -26px rgba(30, 58, 138, 0.3);
+  --app-bg: #f8fafc;
+  --app-surface: #ffffff;
+  --app-header: rgba(255, 255, 255, 0.88);
+  --fg: #0f172a;
+  --fg-2: #334155;
+  --fg-3: #64748b;
+  --fg-4: #94a3b8;
+  --stroke: rgba(15, 23, 42, 0.10);
+  --panel-fill: #ffffff;
+  --panel-fill-2: #f1f5f9;
+  --hover: #f1f5f9;
+  --glass-bg: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(15, 23, 42, 0.09);
+  --glass-top: rgba(255, 255, 255, 0.98);
+  --glass-inset: rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
+  background: var(--app-bg);
+  color: var(--fg);
+}
+
+/* In light mode, override hardcoded dark backgrounds inside .sai-app */
+html.light .sai-app .bg-\[\#121212\],
+html[data-theme="light"] .sai-app .bg-\[\#121212\],
+.light .sai-app .bg-\[\#121212\] {
+  background-color: var(--app-bg) !important;
+}
+
+html.light .sai-app .bg-\[\#171717\],
+html.light .sai-app .bg-\[\#181818\],
+html.light .sai-app .bg-\[\#191919\],
+html.light .sai-app .bg-\[\#141414\],
+html.light .sai-app .bg-\[\#0d0d10\],
+html[data-theme="light"] .sai-app .bg-\[\#171717\],
+html[data-theme="light"] .sai-app .bg-\[\#181818\],
+html[data-theme="light"] .sai-app .bg-\[\#191919\],
+html[data-theme="light"] .sai-app .bg-\[\#141414\],
+html[data-theme="light"] .sai-app .bg-\[\#0d0d10\] {
+  background-color: var(--panel-fill) !important;
+  color: var(--fg) !important;
+}
+
+html.light .sai-app .border-\[\#292929\],
+html.light .sai-app .border-\[\#252525\],
+html.light .sai-app .border-\[\#303030\],
+html[data-theme="light"] .sai-app .border-\[\#292929\],
+html[data-theme="light"] .sai-app .border-\[\#252525\],
+html[data-theme="light"] .sai-app .border-\[\#303030\] {
+  border-color: var(--stroke) !important;
+}
+
+html.light .sai-app input,
+html.light .sai-app select,
+html.light .sai-app textarea,
+html[data-theme="light"] .sai-app input,
+html[data-theme="light"] .sai-app select,
+html[data-theme="light"] .sai-app textarea {
+  background-color: #ffffff !important;
+  color: var(--fg) !important;
+  border-color: var(--stroke) !important;
+}
+
+/* Light mode text readability overrides */
+html.light .sai-app h1.text-white,
+html.light .sai-app h2.text-white,
+html.light .sai-app h3.text-white,
+html.light .sai-app h4.text-white,
+html.light .sai-app p.text-white,
+html.light .sai-app span.text-white:not([class*="bg-"]):not([class*="rounded-full"]),
+html[data-theme="light"] .sai-app h1.text-white,
+html[data-theme="light"] .sai-app h2.text-white,
+html[data-theme="light"] .sai-app h3.text-white,
+html[data-theme="light"] .sai-app h4.text-white,
+html[data-theme="light"] .sai-app p.text-white,
+html[data-theme="light"] .sai-app span.text-white:not([class*="bg-"]):not([class*="rounded-full"]) {
+  color: var(--fg) !important;
+}
+
+html.light .sai-app .text-white\/40,
+html.light .sai-app .text-white\/50,
+html.light .sai-app .text-white\/60,
+html[data-theme="light"] .sai-app .text-white\/40,
+html[data-theme="light"] .sai-app .text-white\/50,
+html[data-theme="light"] .sai-app .text-white\/60 {
+  color: var(--fg-3) !important;
+}
+
+html.light .sai-app .border-white\/\[0\.08\],
+html.light .sai-app .border-white\/\[0\.07\],
+html.light .sai-app .border-white\/\[0\.09\],
+html.light .sai-app .border-white\/\[0\.10\],
+html.light .sai-app .border-white\/10,
+html[data-theme="light"] .sai-app .border-white\/\[0\.08\],
+html[data-theme="light"] .sai-app .border-white\/\[0\.07\],
+html[data-theme="light"] .sai-app .border-white\/\[0\.09\],
+html[data-theme="light"] .sai-app .border-white\/\[0\.10\],
+html[data-theme="light"] .sai-app .border-white\/10 {
+  border-color: var(--stroke) !important;
+}
+
+html.light .sai-app .bg-white\/\[0\.02\],
+html.light .sai-app .bg-white\/\[0\.025\],
+html.light .sai-app .bg-white\/\[0\.03\],
+html.light .sai-app .bg-white\/\[0\.04\],
+html.light .sai-app .bg-white\/\[0\.05\],
+html[data-theme="light"] .sai-app .bg-white\/\[0\.02\],
+html[data-theme="light"] .sai-app .bg-white\/\[0\.025\],
+html[data-theme="light"] .sai-app .bg-white\/\[0\.03\],
+html[data-theme="light"] .sai-app .bg-white\/\[0\.04\],
+html[data-theme="light"] .sai-app .bg-white\/\[0\.05\] {
+  background-color: var(--panel-fill) !important;
 }
 
 /* ── Premium glass — Vision Pro / Control Center feel ──
@@ -493,4 +657,235 @@ html.sai-js [data-reveal] { opacity: 0; }
   background:
     radial-gradient(120% 80% at 50% 0%, rgba(99, 102, 241, 0.08), transparent 60%),
     radial-gradient(100% 60% at 50% 100%, rgba(168, 85, 247, 0.06), transparent 60%);
+}
+
+
+@keyframes koraspace-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes koraspace-chart-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scaleY(0.96);
+    transform-origin: bottom;
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+}
+
+.skeleton-shimmer {
+  background: rgba(255, 255, 255, 0.055);
+  animation: koraspace-pulse 1.8s ease-in-out infinite;
+}
+
+.skeleton-chart {
+  background: rgba(255, 0, 128, 0.12);
+  border: 1px solid rgba(255, 0, 128, 0.15);
+  animation: koraspace-chart-pulse 2s ease-in-out infinite;
+}
+
+.skeleton-pink {
+  background: rgba(255, 0, 128, 0.18);
+  border: 1px solid rgba(255, 0, 128, 0.2);
+  animation: koraspace-pulse 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer,
+  .skeleton-chart,
+  .skeleton-pink {
+    animation: none;
+  }
+}
+
+
+.sai-app {
+  --app-bg: #121212;
+
+  --panel-fill: #181818;
+  --panel-fill-2: #1e1e1e;
+
+  --hover: #242424;
+
+  --stroke: rgba(255, 255, 255, 0.08);
+  --stroke-strong: rgba(255, 255, 255, 0.14);
+
+  --fg: #f7f7f8;
+  --fg-2: #c6c6cc;
+  --fg-3: #96969f;
+  --fg-4: #65656e;
+
+  /* KoraSpace brand — Electric Pink (Creator Mode) */
+  --kora-pink: #ec4899;
+  --kora-pink-hover: #db2777;
+  --kora-pink-soft: rgba(236, 72, 153, 0.12);
+  --kora-pink-border: rgba(236, 72, 153, 0.28);
+  --kora-pink-shadow: 0 8px 24px rgba(236, 72, 153, 0.18);
+
+  /* KoraSpace brand — Electric Blue (Marketer Mode) */
+  --kora-blue: #3b82f6;
+  --kora-blue-hover: #2563eb;
+  --kora-blue-soft: rgba(59, 130, 246, 0.12);
+  --kora-blue-border: rgba(59, 130, 246, 0.28);
+  --kora-blue-shadow: 0 8px 24px rgba(59, 130, 246, 0.18);
+
+  /* Dynamic Brand Primary Tokens (default = creator pink) */
+  --brand-primary: var(--kora-pink);
+  --brand-primary-hover: var(--kora-pink-hover);
+  --brand-primary-soft: var(--kora-pink-soft);
+  --brand-primary-border: var(--kora-pink-border);
+  --brand-primary-shadow: var(--kora-pink-shadow);
+
+  /* Semantic */
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.12);
+
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.12);
+
+  --danger: #fb7185;
+  --danger-soft: rgba(251, 113, 133, 0.12);
+
+  --info: var(--kora-blue);
+  --info-soft: var(--kora-blue-soft);
+
+  background: var(--app-bg);
+  color: var(--fg);
+}
+
+/* ── Creator Mode Active Persona Theming ── */
+[data-persona="creator"],
+.sai-app[data-persona="creator"] {
+  --brand-primary: #ec4899;
+  --brand-primary-hover: #db2777;
+  --brand-primary-soft: rgba(236, 72, 153, 0.12);
+  --brand-primary-border: rgba(236, 72, 153, 0.28);
+  --brand-primary-shadow: 0 8px 24px rgba(236, 72, 153, 0.18);
+  --sai-indigo: #ec4899;
+  --sai-violet: #db2777;
+}
+
+/* ── Marketer Mode Active Persona Theming ── */
+[data-persona="marketer"],
+.sai-app[data-persona="marketer"] {
+  --brand-primary: #3b82f6;
+  --brand-primary-hover: #2563eb;
+  --brand-primary-soft: rgba(59, 130, 246, 0.12);
+  --brand-primary-border: rgba(59, 130, 246, 0.28);
+  --brand-primary-shadow: 0 8px 24px rgba(59, 130, 246, 0.18);
+  --sai-indigo: #3b82f6;
+  --sai-violet: #2563eb;
+}
+
+/* ── KoraSpace global design tokens ─────────────────── */
+:root {
+  /* -------------------------------------------------------------------------- */
+  /*                              BACKGROUND                                    */
+  /* -------------------------------------------------------------------------- */
+
+  --app-bg: #121212;
+
+  --panel-fill: #181818;
+  --panel-fill-2: #1e1e1e;
+
+  --hover: #242424;
+
+  /* -------------------------------------------------------------------------- */
+  /*                              BORDERS                                       */
+  /* -------------------------------------------------------------------------- */
+
+  --stroke: rgba(255, 255, 255, 0.08);
+  --stroke-strong: rgba(255, 255, 255, 0.14);
+
+  /* -------------------------------------------------------------------------- */
+  /*                              TEXT                                          */
+  /* -------------------------------------------------------------------------- */
+
+  --fg: #f7f7f8;
+
+  --fg-2: #c6c6cc;
+
+  --fg-3: #96969f;
+
+  --fg-4: #65656e;
+
+  /* -------------------------------------------------------------------------- */
+  /*                           KORASPACE BRAND                                  */
+  /* -------------------------------------------------------------------------- */
+
+  /* Electric Pink — Primary */
+  --kora-pink: #ff0080;
+
+  --kora-pink-hover: #e60073;
+
+  --kora-pink-soft: rgba(255, 0, 128, 0.14);
+
+  --kora-pink-border: rgba(255, 0, 128, 0.28);
+
+
+  /* Electric Blue — Secondary */
+  --kora-blue: #3b82f6;
+
+  --kora-blue-hover: #2563eb;
+
+  --kora-blue-soft: rgba(59, 130, 246, 0.14);
+
+  --kora-blue-border: rgba(59, 130, 246, 0.28);
+
+
+  /* -------------------------------------------------------------------------- */
+  /*                              SEMANTIC                                       */
+  /* -------------------------------------------------------------------------- */
+
+  --success: #34d399;
+
+  --success-soft: rgba(52, 211, 153, 0.12);
+
+  --warning: #fbbf24;
+
+  --warning-soft: rgba(251, 191, 36, 0.12);
+
+  --danger: #fb7185;
+
+  --danger-soft: rgba(251, 113, 133, 0.12);
+
+  --info: var(--kora-blue);
+
+  --info-soft: var(--kora-blue-soft);
+
+
+  --kora-bg: #121212;
+  --kora-surface: #15181d;
+  --kora-surface-2: #101419;
+
+  --kora-stroke: #28313d;
+  --kora-stroke-soft: #242b34;
+
+  /* Marketer primary */
+  --kora-blue: #3b82f6;
+  --kora-blue-soft: #10223b;
+
+  /* Secondary intelligence accent */
+  --kora-pink: #ff0a8a;
+  --kora-pink-soft: #24182a;
+
+  --kora-green: #35d69d;
+
+  --fg: #f0f3f7;
+  --fg-2: #c3cad4;
+  --fg-3: #7b8593;
+  --fg-4: #596473;
 }

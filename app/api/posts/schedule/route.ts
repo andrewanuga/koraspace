@@ -1,13 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { getActiveWorkspace } from "@/lib/workspace";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
+import { verifyExecutionGate } from "@/lib/security/enforcement";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const workspace = await getActiveWorkspace(supabase);
-    if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const workspaceId = workspace.workspaceId;
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return new Response("Unauthorized", { status: 401 });
+    const workspaceId = user.id;
+
+    // Rate limit post scheduling (30 requests/minute per workspace)
+    const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
+    if (guard) return guard;
+
+    // We used to fetch workspace role. Let's get it from the profile (admin/owner)
+    const profile = await prisma.profile.findUnique({
+      where: { id: workspaceId },
+      select: { is_admin: true }
+    });
 
     const body = await req.json();
     const { content, platforms, scheduledAt, score } = body;
@@ -19,24 +31,46 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Zero-Trust Execution Gate: Verify action, target scope, and scan content
+    try {
+      verifyExecutionGate({
+        workspaceId,
+        action: "publish",
+        targetScope: "post",
+        untrustedInput: typeof content === "string" ? content : undefined,
+      });
+    } catch (gateErr: any) {
+      return NextResponse.json(
+        { error: `Post scheduling blocked by security policy: ${gateErr.message}` },
+        { status: 403 }
+      );
+    }
+
     // Insert scheduled post for each platform
-    const posts = platforms.map((platform: string) => ({
+    const postsData = platforms.map((platform: string) => ({
       user_id: workspaceId,
       content,
       platform,
-      scheduled_at: scheduledAt || new Date().toISOString(),
+      scheduled_at: scheduledAt ? new Date(scheduledAt) : new Date(),
       status: scheduledAt ? "scheduled" : "queued",
       socially_score: score || null,
     }));
 
-    const { data, error } = await supabase
-      .from("scheduled_posts")
-      .insert(posts)
-      .select();
+    await prisma.scheduledPost.createMany({
+      data: postsData
+    });
 
-    if (error) throw error;
+    // Return the inserted posts by fetching them since createMany doesn't return the records
+    const latestPosts = await prisma.scheduledPost.findMany({
+      where: {
+        user_id: workspaceId,
+        content: content,
+      },
+      orderBy: { created_at: 'desc' },
+      take: platforms.length
+    });
 
-    return NextResponse.json({ success: true, posts: data });
+    return NextResponse.json({ success: true, posts: latestPosts });
   } catch (err) {
     console.error("[/api/posts/schedule]", err);
     return NextResponse.json(
@@ -48,31 +82,30 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const workspace = await getActiveWorkspace(supabase);
-    if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const workspaceId = workspace.workspaceId;
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return new Response("Unauthorized", { status: 401 });
+    const workspaceId = user.id;
 
     const { searchParams } = new URL(req.url);
     const month = searchParams.get("month");
     const year = searchParams.get("year");
 
-    let query = supabase
-      .from("scheduled_posts")
-      .select("*")
-      .eq("user_id", workspaceId)
-      .order("scheduled_at", { ascending: true });
+    let whereClause: any = { user_id: workspaceId };
 
     if (month && year) {
       const start = new Date(parseInt(year), parseInt(month) - 1, 1);
       const end = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59);
-      query = query
-        .gte("scheduled_at", start.toISOString())
-        .lte("scheduled_at", end.toISOString());
+      whereClause.scheduled_at = {
+        gte: start,
+        lte: end
+      };
     }
 
-    const { data, error } = await query;
-    if (error) throw error;
+    const data = await prisma.scheduledPost.findMany({
+      where: whereClause,
+      orderBy: { scheduled_at: 'asc' }
+    });
 
     return NextResponse.json({ posts: data });
   } catch (err) {

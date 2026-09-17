@@ -12,7 +12,7 @@
 import { z } from "zod";
 import type { AgentResult } from "../../core/types";
 
-/* ── 1. Action Types & Enums ──────────────────────────────────── */
+/* -- 1. Action Types & Enums ------------------------------------ */
 
 export const GhostActionTypeSchema = z.enum([
   "auto_reply",
@@ -33,7 +33,7 @@ export const GhostPolicyDecisionSchema = z.enum([
 ]);
 export type GhostPolicyDecision = z.infer<typeof GhostPolicyDecisionSchema>;
 
-/* ── 2. Rule & Interaction Inputs ─────────────────────────────── */
+/* -- 2. Rule & Interaction Inputs ------------------------------- */
 
 export interface GhostRule {
   id?: string;
@@ -56,7 +56,7 @@ export interface GhostInput {
   accountToken?: string;
 }
 
-/* ── 3. Decision & Policy Contracts ───────────────────────────── */
+/* -- 3. Decision & Policy Contracts ----------------------------- */
 
 export const GhostDecisionSchema = z.object({
   action: GhostActionTypeSchema,
