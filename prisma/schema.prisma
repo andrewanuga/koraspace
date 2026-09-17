@@ -29,6 +29,11 @@ model Profile {
   suspended             Boolean   @default(false)
   suspended_at          DateTime?
   subscription_status   String?
+  plan_renews_at        DateTime?
+  paystack_customer_code String?
+  paystack_subscription_code String?
+  stripe_customer_id    String?
+  stripe_subscription_id String?
   username              String?
   persona               String?
   onboarded             Boolean   @default(false)
@@ -319,8 +324,15 @@ model BlockedIp {
 model Payment {
   id         String   @id @default(uuid())
   user_id    String
+  reference  String   @unique
+  plan       String?
   amount     Float
+  currency   String   @default("NGN")
+  provider   String   @default("paystack")
   status     String
+  channel    String?
+  paid_at    DateTime?
+  raw        Json?
   created_at DateTime @default(now())
 
   @@map("payments")

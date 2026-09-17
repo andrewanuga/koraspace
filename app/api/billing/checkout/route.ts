@@ -7,11 +7,11 @@ import { PLANS, isPlan, toKobo } from "@/lib/billing/plans";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { checkoutSchema } from "@/lib/security/schemas";
 
-/** Start a Paystack checkout for a plan; returns an authorization_url to redirect to. */
+/** Start a checkout for a plan; returns an authorization_url to redirect to. */
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
   const session = await auth();
-    const user = session?.user;
+  const user = session?.user;
   if (!user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   // Rate limit: 10 checkout attempts/min per user (prevent abuse).
@@ -44,24 +44,112 @@ export async function POST(req: NextRequest) {
   }
 
   const cfg = PLANS[plan];
-  
-  if (method === "stripe" || method === "crypto" || method === "opay") {
-    // For now, mock these gateways since API keys aren't present yet,
-    // or just return a dummy authorization_url that goes straight to success.
-    // In production, you would generate a real Stripe/Coinbase/Opay checkout session here.
-    return NextResponse.json({ 
-      authorization_url: `${req.nextUrl.origin}/dashboard/billing?paid=1&plan=${plan}`, 
-      reference: `mock_${method}_${Date.now()}` 
-    });
+  const origin = req.nextUrl.origin;
+
+  // --- 1. STRIPE (International) ---
+  if (method === "stripe") {
+    const secret = process.env.STRIPE_SECRET_KEY;
+    if (!secret) return NextResponse.json({ error: "Stripe isn't configured yet." }, { status: 501 });
+
+    const stripeParams = new URLSearchParams();
+    stripeParams.append("payment_method_types[0]", "card");
+    stripeParams.append("line_items[0][price_data][currency]", "usd");
+    stripeParams.append("line_items[0][price_data][product_data][name]", `${cfg.name} Plan`);
+    stripeParams.append("line_items[0][price_data][unit_amount]", String(Math.round(cfg.priceUsd * 100)));
+    stripeParams.append("line_items[0][quantity]", "1");
+    stripeParams.append("mode", "payment");
+    stripeParams.append("success_url", `${origin}/dashboard/billing?paid=1&plan=${plan}`);
+    stripeParams.append("cancel_url", `${origin}/dashboard/billing?paid=0`);
+    stripeParams.append("client_reference_id", workspaceId);
+    stripeParams.append("metadata[user_id]", workspaceId);
+    stripeParams.append("metadata[plan]", plan);
+
+    try {
+      const res = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${secret}`, "Content-Type": "application/x-www-form-urlencoded" },
+        body: stripeParams.toString()
+      });
+      const data = await res.json();
+      if (data.error) return NextResponse.json({ error: data.error.message }, { status: 502 });
+      return NextResponse.json({ authorization_url: data.url, reference: data.id });
+    } catch {
+      return NextResponse.json({ error: "Couldn't reach Stripe." }, { status: 502 });
+    }
   }
 
-  // Paystack flow
+  // --- 2. OPAY (Nigeria) ---
+  if (method === "opay") {
+    const secret = process.env.OPAY_SECRET_KEY;
+    const merchantId = process.env.OPAY_MERCHANT_ID;
+    if (!secret || !merchantId) return NextResponse.json({ error: "OPay isn't configured yet." }, { status: 501 });
+
+    const reference = `opay_${Date.now()}_${workspaceId.slice(0,8)}`;
+    try {
+      const res = await fetch("https://api.opaycheckout.com/api/v1/international/cashier/create", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${secret}`,
+          "MerchantId": merchantId,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          reference,
+          mchShortName: "Koraspace",
+          productName: `${cfg.name} Plan`,
+          productDesc: `Subscription to Koraspace ${cfg.name} Plan`,
+          userPhone: "+2340000000000",
+          userRequestIp: req.ip || "127.0.0.1",
+          amount: { total: toKobo(cfg.price), currency: "NGN" },
+          returnUrl: `${origin}/dashboard/billing?paid=1&plan=${plan}`,
+          callbackUrl: `${origin}/api/billing/webhook/opay`,
+          payTypes: ["BalancePayment", "BonusPayment", "OWealth", "BankCard"]
+        })
+      });
+      const data = await res.json();
+      if (data.code !== "00000") return NextResponse.json({ error: data.message }, { status: 502 });
+      return NextResponse.json({ authorization_url: data.data.cashierUrl, reference });
+    } catch {
+      return NextResponse.json({ error: "Couldn't reach OPay." }, { status: 502 });
+    }
+  }
+
+  // --- 3. CRYPTO (Coinbase Commerce) ---
+  if (method === "crypto") {
+    const secret = process.env.COINBASE_API_KEY;
+    if (!secret) return NextResponse.json({ error: "Crypto payments aren't configured yet." }, { status: 501 });
+
+    try {
+      const res = await fetch("https://api.commerce.coinbase.com/charges", {
+        method: "POST",
+        headers: {
+          "X-CC-Api-Key": secret,
+          "X-CC-Version": "2018-03-22",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: `${cfg.name} Plan`,
+          description: `Koraspace ${cfg.name} Subscription`,
+          pricing_type: "fixed_price",
+          local_price: { amount: String(cfg.priceUsd), currency: "USD" },
+          metadata: { user_id: workspaceId, plan },
+          redirect_url: `${origin}/dashboard/billing?paid=1&plan=${plan}`,
+          cancel_url: `${origin}/dashboard/billing?paid=0`
+        })
+      });
+      const data = await res.json();
+      if (data.error) return NextResponse.json({ error: data.error.message }, { status: 502 });
+      return NextResponse.json({ authorization_url: data.data.hosted_url, reference: data.data.code });
+    } catch {
+      return NextResponse.json({ error: "Couldn't reach Crypto gateway." }, { status: 502 });
+    }
+  }
+
+  // --- 4. PAYSTACK (Nigeria) ---
   const secret = process.env.PAYSTACK_SECRET_KEY;
   if (!secret) return NextResponse.json({ error: "Paystack isn't configured yet." }, { status: 501 });
 
   const planCode = cfg.planCodeEnv ? process.env[cfg.planCodeEnv] : undefined;
-  const origin = req.nextUrl.origin;
-
   try {
     const res = await fetch("https://api.paystack.co/transaction/initialize", {
       method: "POST",
@@ -70,10 +158,9 @@ export async function POST(req: NextRequest) {
         email: user.email,
         amount: toKobo(cfg.price),
         currency: "NGN",
-        // If a subscription plan code exists, Paystack uses it (and its amount).
         ...(planCode ? { plan: planCode } : {}),
         callback_url: `${origin}/api/billing/verify`,
-        metadata: { user_id: workspaceId, plan },
+        metadata: { user_id: workspaceId, plan, method: "paystack" },
       }),
     });
     const data = await res.json();
@@ -83,4 +170,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Couldn't reach Paystack." }, { status: 502 });
   }
 }
+
 

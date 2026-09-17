@@ -6,6 +6,8 @@ export interface PlanConfig {
   name: string;
   /** Naira per month (major units). */
   price: number;
+  /** USD per month. */
+  priceUsd: number;
   /** Env var holding the Paystack plan code for subscriptions. */
   planCodeEnv?: string;
   /** Monthly AI generation/token allowance. */
@@ -19,10 +21,10 @@ export interface PlanConfig {
 }
 
 export const PLANS: Record<PlanId, PlanConfig> = {
-  free: { id: "free", name: "Free", price: 0, aiTokens: 50000, accounts: 3, bots: 0, collaborators: 0 },
-  pro: { id: "pro", name: "Pro", price: 13500, planCodeEnv: "NEXT_PUBLIC_PAYSTACK_PRO_PLAN", aiTokens: 1600000, accounts: 7, bots: 5, collaborators: 3 },
-  advanced: { id: "advanced", name: "Advanced", price: 30000, planCodeEnv: "NEXT_PUBLIC_PAYSTACK_ADVANCED_PLAN", aiTokens: 3500000, accounts: 10, bots: 15, collaborators: 7 },
-  team: { id: "team", name: "Teams", price: 130000, planCodeEnv: "NEXT_PUBLIC_PAYSTACK_TEAM_PLAN", aiTokens: 7200000, accounts: 9999, bots: 9999, collaborators: 9999 },
+  free: { id: "free", name: "Free", price: 0, priceUsd: 0, aiTokens: 50000, accounts: 3, bots: 0, collaborators: 0 },
+  pro: { id: "pro", name: "Pro", price: 13500, priceUsd: 15, planCodeEnv: "NEXT_PUBLIC_PAYSTACK_PRO_PLAN", aiTokens: 1600000, accounts: 7, bots: 5, collaborators: 3 },
+  advanced: { id: "advanced", name: "Advanced", price: 30000, priceUsd: 35, planCodeEnv: "NEXT_PUBLIC_PAYSTACK_ADVANCED_PLAN", aiTokens: 3500000, accounts: 10, bots: 15, collaborators: 7 },
+  team: { id: "team", name: "Teams", price: 130000, priceUsd: 150, planCodeEnv: "NEXT_PUBLIC_PAYSTACK_TEAM_PLAN", aiTokens: 7200000, accounts: 9999, bots: 9999, collaborators: 9999 },
 };
 
 export const PLAN_ORDER: PlanId[] = ["free", "pro", "advanced", "team"];
