@@ -48,7 +48,7 @@ export function CTA() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 text-sm mb-8">
             <Zap className="w-3.5 h-3.5 fill-current" />
-            Free for 14 days — no credit card required
+            Free for 14 days - no credit card required
           </div>
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-[1.1]">

@@ -9,7 +9,7 @@ import { z } from "zod";
 import type { AITool, AgentContext, AgentResult } from "../core/types";
 import { callAI, isConfigured } from "../openrouter";
 
-/* ── 1. Schemas & Type Contracts ──────────────────────────────── */
+/* -- 1. Schemas & Type Contracts -------------------------------- */
 
 export const RepurposedPlatformOutputSchema = z.object({
   platform: z.enum(["x", "linkedin", "instagram_carousel", "tiktok_script", "newsletter"]),
@@ -35,7 +35,7 @@ export interface RepurposeLongformInput {
   sourceType?: "blog" | "video_script" | "transcript" | "article" | "notes";
 }
 
-/* ── 2. Fallback / Deterministic Generator ─────────────────────── */
+/* -- 2. Fallback / Deterministic Generator ----------------------- */
 
 function generateFallbackRepurposed(text: string): RepurposeLongformOutput {
   const preview = text.slice(0, 80).trim() || "your topic";
@@ -70,7 +70,7 @@ function generateFallbackRepurposed(text: string): RepurposeLongformOutput {
   };
 }
 
-/* ── 3. Executable AI Tool Definition ─────────────────────────── */
+/* -- 3. Executable AI Tool Definition --------------------------- */
 
 export const repurposeLongformTool: AITool<
   RepurposeLongformInput,

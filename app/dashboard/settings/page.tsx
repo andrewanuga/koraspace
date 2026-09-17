@@ -748,7 +748,7 @@ export default function SettingsPage() {
           >
             {ANALYTICS_STYLES.map((style) => (
               <option key={style.id} value={style.id}>
-                {style.title} — {style.subtitle}
+                {style.title} - {style.subtitle}
               </option>
             ))}
           </select>
@@ -1370,7 +1370,7 @@ export default function SettingsPage() {
             </>
           )}
 
-          {/* ── AI TAB ─────────────────────────────────────────── */}
+          {/* -- AI TAB ------------------------------------------- */}
           {tab === "ai" && (
             <>
               {/* Current model display */}
@@ -1379,7 +1379,7 @@ export default function SettingsPage() {
                   <div>
                     <p className="font-display text-[15px] font-semibold text-[var(--fg)]">AI Model</p>
                     <p className="mt-1 text-[13px] text-[var(--fg-3)]">
-                      Powers all your agents — Create, Ghost Mode, Trends, Scoring
+                      Powers all your agents - Create, Ghost Mode, Trends, Scoring
                     </p>
                   </div>
                   <a
@@ -1550,7 +1550,7 @@ export default function SettingsPage() {
                       ))}
                       {filteredAllModels.length > 50 && (
                         <p className="py-2 text-center text-[11px] text-[var(--fg-4)]">
-                          Showing 50 of {filteredAllModels.length} — refine your search
+                          Showing 50 of {filteredAllModels.length} - refine your search
                         </p>
                       )}
                       {filteredAllModels.length === 0 && modelSearch && (
@@ -1572,7 +1572,7 @@ export default function SettingsPage() {
                       <p className="font-display text-[15px] font-semibold text-[var(--fg)]">Raw language mode</p>
                     </div>
                     <p className="mt-1.5 max-w-md text-[13px] text-[var(--fg-3)]">
-                      Let the agent write directly, without softening or corporate filters. Output stays lawful — you own what you post.
+                      Let the agent write directly, without softening or corporate filters. Output stays lawful - you own what you post.
                     </p>
                   </div>
                   <Toggle on={form.ai_unfiltered} onChange={(v) => setForm({ ...form, ai_unfiltered: v })} />

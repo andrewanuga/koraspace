@@ -13,7 +13,7 @@ import { buildScorePrompt } from "@/lib/ai/prompts";
 import { buildBrandContext } from "@/lib/brand/context";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
-/* ── Types ────────────────────────────────────────────────────── */
+/* -- Types ------------------------------------------------------ */
 
 export interface ScoreResponse {
   score: number;
@@ -30,7 +30,7 @@ export interface ScoreResponse {
 }
 >>>>>>> main
 
-/* ── POST /api/ai/score ────────────────────────────────────────── */
+/* -- POST /api/ai/score ------------------------------------------ */
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,13 +67,13 @@ export async function POST(req: NextRequest) {
       buildBrandContext(workspaceId).catch(() => null),
     ]);
 
-    // ── No API key → mock ──────────────────────────────────────────
+    // -- No API key → mock ------------------------------------------
     if (!isConfigured()) {
       await new Promise((r) => setTimeout(r, 500));
       return NextResponse.json(mockScore(content));
     }
 
-    // ── Call OpenRouter / Gemini ──────────────────────────────────
+    // -- Call OpenRouter / Gemini ----------------------------------
     const prompt = buildScorePrompt(content, platform, brandContext);
 
     const result = await callAI(
@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
 <<<<<<< HEAD
 =======
 
-/* ── Mock fallback ────────────────────────────────────────────── */
+/* -- Mock fallback ---------------------------------------------- */
 
 function mockScore(content: string): ScoreResponse {
   const length = content.length;
@@ -183,7 +183,7 @@ function mockScore(content: string): ScoreResponse {
     reasoning:
       weighted >= 75
         ? "Strong scroll-stopping hook, high niche relevance, and clear reader value."
-        : "Solid foundational idea — strengthen the opening hook and call-to-action to boost reach.",
+        : "Solid foundational idea - strengthen the opening hook and call-to-action to boost reach.",
     improvements: [
       "Add a concrete metric or result in the first sentence to increase stop-rate",
       "End with a direct conversion prompt or question to spark replies",

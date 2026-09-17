@@ -17,7 +17,7 @@ const PLANS = [
     badge: null,
     highlight: false,
     accounts: "1 social account",
-    ai: "Llama 3.3 70B — 7 generations/week",
+    ai: "Llama 3.3 70B - 7 generations/week",
     features: [
       "Basic post scheduling",
       "Simple analytics dashboard",
@@ -36,7 +36,7 @@ const PLANS = [
     badge: null,
     highlight: false,
     accounts: "3 social accounts",
-    ai: "Llama 3.3 70B — 100 generations/month",
+    ai: "Llama 3.3 70B - 100 generations/month",
     features: [
       "Everything in Free",
       "Website-to-Voice onboarding",
@@ -57,7 +57,7 @@ const PLANS = [
     badge: "Most Popular",
     highlight: true,
     accounts: "7 social accounts",
-    ai: "Llama 3.3 70B — 500 gen/month",
+    ai: "Llama 3.3 70B - 500 gen/month",
     features: [
       "Everything in Basic",
       "1 Active Ghost Mode™ Agent",
@@ -80,7 +80,7 @@ const PLANS = [
     badge: "Best for Agencies",
     highlight: false,
     accounts: "15+ social accounts",
-    ai: "Full Agent Suite — 1,000 gen/month",
+    ai: "Full Agent Suite - 1,000 gen/month",
     features: [
       "Everything in Pro",
       "3 Autonomous Agents",

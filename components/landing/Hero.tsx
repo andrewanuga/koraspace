@@ -119,7 +119,7 @@ export function Hero() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-500/30 bg-red-500/10 text-red-400 text-sm">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Powered by Gemma AI — Zero per-token API fees</span>
+            <span>Powered by Gemma AI - Zero per-token API fees</span>
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
           </div>
         </motion.div>
@@ -147,7 +147,7 @@ export function Hero() {
         >
           Koraspace AI deploys autonomous AI agents that create content, engage
           your followers, predict viral trends, and convert likes into real
-          revenue — 24/7, at a price built for the African market.
+          revenue - 24/7, at a price built for the African market.
         </motion.p>
 
         {/* CTA buttons */}
@@ -159,7 +159,7 @@ export function Hero() {
         >
           <Link href="/signup">
             <Button variant="gradient" size="xl" className="group w-full sm:w-auto">
-              Start free — no credit card
+              Start free - no credit card
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
@@ -378,7 +378,7 @@ export function Hero() {
             </div>
           </div>
 
-          {/* the intelligence rail — hero's interactive centerpiece */}
+          {/* the intelligence rail - hero's interactive centerpiece */}
           <motion.div variants={itemVariants} className="mt-2">
             <GrowthRail onFocusStage={setFocusedStage} />
           </motion.div>

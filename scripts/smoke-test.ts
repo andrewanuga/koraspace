@@ -60,7 +60,7 @@ async function runSmokeTests() {
   }
 
   const allPassed = results.every((r) => r.passed);
-  console.log("\n───────────────────────────────────────────────");
+  console.log("\n-----------------------------------------------");
   if (allPassed) {
     console.log("✨ All Post-Deployment Smoke Checks PASSED!\n");
     process.exit(0);

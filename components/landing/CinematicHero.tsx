@@ -35,7 +35,7 @@ export function CinematicHero() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isMobile = window.matchMedia("(max-width: 767px)").matches;
 
-    // ── Frame store with progressive loading + nearest-loaded fallback ──
+    // -- Frame store with progressive loading + nearest-loaded fallback --
     const images: HTMLImageElement[] = new Array(FRAME_COUNT);
     const loaded: boolean[] = new Array(FRAME_COUNT).fill(false);
     let lastDrawn = -1;
@@ -88,7 +88,7 @@ export function CinematicHero() {
       return idx;
     }
 
-    // ── Canvas sizing (retina, dpr capped at 2) ──
+    // -- Canvas sizing (retina, dpr capped at 2) --
     function sizeCanvas() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const w = stage!.clientWidth;
@@ -138,7 +138,7 @@ export function CinematicHero() {
 
     sizeCanvas();
 
-    // ── Reduced motion: static poster, no scrub, overlays all shown ──
+    // -- Reduced motion: static poster, no scrub, overlays all shown --
     if (reduce) {
       const poster = new Image();
       poster.src = POSTER_START;
@@ -167,7 +167,7 @@ export function CinematicHero() {
       return () => window.removeEventListener("resize", onResize);
     }
 
-    // ── Warm the first frames, paint frame 1, then scrub the rest ──
+    // -- Warm the first frames, paint frame 1, then scrub the rest --
     let cleanup = () => {};
     let cancelled = false;
     (async () => {
@@ -207,12 +207,12 @@ export function CinematicHero() {
         tl.to(scrollHintRef.current, { opacity: 0, duration: 0.04 }, 0);
       }
 
-      // ── Overlay choreography (positions are 0→1 of the pinned scroll) ──
+      // -- Overlay choreography (positions are 0→1 of the pinned scroll) --
       // autoAlpha = opacity + visibility, so hidden panels never catch clicks.
       const enter = { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.05, ease: "power2.out" };
       const exit = { autoAlpha: 0, y: -18, filter: "blur(6px)", duration: 0.05, ease: "power2.in" };
 
-      // Overlay 1 — intro (visible at load → out early)
+      // Overlay 1 - intro (visible at load → out early)
       gsap.set(o1.current, { autoAlpha: 1, y: 0, filter: "blur(0px)" });
       tl.to(o1.current, exit, 0.12);
 
@@ -224,7 +224,7 @@ export function CinematicHero() {
       gsap.set(o3.current, { autoAlpha: 0, y: 26, filter: "blur(8px)" });
       tl.to(o3.current, enter, 0.5).to(o3.current, exit, 0.68);
 
-      // Overlay 4 — final, stays in
+      // Overlay 4 - final, stays in
       gsap.set(o4.current, { autoAlpha: 0, y: 26, filter: "blur(8px)" });
       tl.to(o4.current, enter, 0.82);
 
@@ -283,7 +283,7 @@ export function CinematicHero() {
           }}
         />
 
-        {/* ── Overlay 1 — intro (center) ── */}
+        {/* -- Overlay 1 - intro (center) -- */}
         <div
           ref={o1}
           className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
@@ -319,7 +319,7 @@ export function CinematicHero() {
           </div>
         </div>
 
-        {/* ── Overlay 2 — feature panel (lower-left) ── */}
+        {/* -- Overlay 2 - feature panel (lower-left) -- */}
         <div
           ref={o2}
           className="pointer-events-none absolute inset-0 flex items-end justify-start p-6 sm:items-center sm:p-16"
@@ -332,13 +332,13 @@ export function CinematicHero() {
               Your voice, on autopilot
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-white/70">
-              Drafts posts in your tone across every platform — the moment a trend
+              Drafts posts in your tone across every platform - the moment a trend
               breaks, not hours later.
             </p>
           </div>
         </div>
 
-        {/* ── Overlay 3 — feature panel (upper-right) ── */}
+        {/* -- Overlay 3 - feature panel (upper-right) -- */}
         <div
           ref={o3}
           className="pointer-events-none absolute inset-0 flex items-start justify-end p-6 sm:items-center sm:p-16"
@@ -357,7 +357,7 @@ export function CinematicHero() {
           </div>
         </div>
 
-        {/* ── Overlay 4 — final CTA (center) ── */}
+        {/* -- Overlay 4 - final CTA (center) -- */}
         <div
           ref={o4}
           className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center"

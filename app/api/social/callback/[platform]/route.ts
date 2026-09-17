@@ -13,7 +13,7 @@ function back(origin: string, params: Record<string, string>) {
   return NextResponse.redirect(url);
 }
 
-/** OAuth callback — exchange the code for tokens and store the account. */
+/** OAuth callback - exchange the code for tokens and store the account. */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ platform: string }> }
@@ -50,7 +50,7 @@ export async function GET(
   const redirectUri = `${origin}/api/social/callback/${platform}`;
 
   try {
-    // ── Exchange the authorization code for an access token ──
+    // -- Exchange the authorization code for an access token --
     const body = new URLSearchParams({
       grant_type: "authorization_code",
       code,
@@ -76,7 +76,7 @@ export async function GET(
     const token = await tokenRes.json();
     if (!tokenRes.ok || !token.access_token) return back(origin, { error: "token_failed", platform });
 
-    // ── Best-effort profile lookup (fills handle/id; sync fills the rest) ──
+    // -- Best-effort profile lookup (fills handle/id; sync fills the rest) --
     const profile = await fetchProfile(platform as PlatformId, token.access_token);
 
     // Enforce Zero-Trust Least-Privilege OAuth Scoping

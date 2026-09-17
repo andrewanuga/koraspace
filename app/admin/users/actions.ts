@@ -61,7 +61,7 @@ export async function toggleUserSuspension(
       user_id: userId,
       severity: suspend ? "warning" : "info",
       detail: `${suspend ? "Suspended" : "Reinstated"} ${fullName || userId}${
-        reason ? ` — Reason: ${reason}` : ""
+        reason ? ` - Reason: ${reason}` : ""
       } by Admin`,
     }
   }).catch(() => {});

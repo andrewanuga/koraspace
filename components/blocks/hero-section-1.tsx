@@ -24,7 +24,7 @@ export function HeroSection() {
     <>
       <HeroHeader />
       <section className="overflow-hidden">
-        {/* Decorative gradient blobs — red-tinted */}
+        {/* Decorative gradient blobs - red-tinted */}
         <div
           aria-hidden
           className="z-[2] absolute inset-0 pointer-events-none isolate opacity-60 contain-strict hidden lg:block"
@@ -36,7 +36,7 @@ export function HeroSection() {
 
         <section>
           <div className="relative pt-24 md:pt-36">
-            {/* Red ambient glow — top-centre */}
+            {/* Red ambient glow - top-centre */}
             <div
               aria-hidden
               className="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 w-[700px] h-[420px] blur-[120px] rounded-full opacity-[0.18] dark:opacity-[0.25]"
@@ -74,7 +74,7 @@ export function HeroSection() {
             <div className="mx-auto max-w-7xl px-6">
               <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
                 <AnimatedGroup variants={transitionVariants}>
-                  {/* Announcement badge — branded red pill */}
+                  {/* Announcement badge - branded red pill */}
                   <Link
                     href="#"
                     className="group mx-auto flex w-fit items-center gap-3 rounded-full border border-red-500/25 bg-red-500/[0.07] px-4 py-2 shadow-lg shadow-red-500/10 backdrop-blur-sm transition-all duration-300 hover:border-red-400/45 hover:bg-red-500/[0.13] hover:shadow-red-500/20"
@@ -95,7 +95,7 @@ export function HeroSection() {
                     {" "}with AI
                   </h1>
                   <p className="mx-auto mt-8 max-w-2xl text-balance text-lg text-muted-foreground">
-                    Schedule posts, analyse trends, and let AI generate content that sounds exactly like you — for every platform.
+                    Schedule posts, analyse trends, and let AI generate content that sounds exactly like you - for every platform.
                   </p>
                 </AnimatedGroup>
 
@@ -198,7 +198,7 @@ export function HeroSection() {
   );
 }
 
-/* ── Navigation ─────────────────────────────────────────────────────── */
+/* -- Navigation ------------------------------------------------------- */
 const menuItems = [
   { name: "Features",    href: "#features"    },
   { name: "How It Works", href: "#how-it-works" },
@@ -285,7 +285,7 @@ const HeroHeader = () => {
   );
 };
 
-/* ── Brand logo ─────────────────────────────────────────────────────── */
+/* -- Brand logo ------------------------------------------------------- */
 const KoraspaceLogo = ({ className }: { className?: string }) => (
   <div className={cn("flex items-center gap-2", className)}>
     <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center shadow-md shadow-red-600/30">

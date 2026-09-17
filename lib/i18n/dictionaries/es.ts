@@ -1005,7 +1005,7 @@ export const es: TranslationDictionary = {
     a6: "Aceptamos las principales tarjetas de crédito y débito (Visa, Mastercard, American Express), Apple Pay, Google Pay y pasarelas de pago locales.",
   },
   cta: {
-    eyebrow: "14 Días de Prueba Gratuita — Sin Tarjeta de Crédito",
+    eyebrow: "14 Días de Prueba Gratuita - Sin Tarjeta de Crédito",
     titleLead: "Tu equipo autónomo de marketing con IA",
     titleHighlight: "comienza hoy.",
     subtitle:

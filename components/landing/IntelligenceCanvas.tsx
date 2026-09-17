@@ -12,7 +12,7 @@ import {
 } from "@/components/landing/canvas-states";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 
-/** Organic, slightly asymmetric radius — a boundary, not a photo frame. */
+/** Organic, slightly asymmetric radius - a boundary, not a photo frame. */
 const FRAME_RADIUS = "58% 42% 52% 48% / 44% 48% 52% 56%";
 
 const cardSurface =
@@ -26,7 +26,7 @@ const depthStyles: Record<CanvasCard["depth"], string> = {
 /** Card placement around the portrait. */
 /**
  * All card slots hug the left so they orbit the subject's shoulder/torso
- * rather than their face — the portrait is right-aligned, so anything wider
+ * rather than their face - the portrait is right-aligned, so anything wider
  * than ~215px here would start covering the head.
  */
 const slotStyles: Record<CanvasCard["slot"], string> = {
@@ -222,7 +222,7 @@ function IntelligenceCard({ card }: { card: CanvasCard }) {
         </span>
       )}
 
-      {/* Ghost cursor — framer handles the path here because this is the one
+      {/* Ghost cursor - framer handles the path here because this is the one
           piece that genuinely needs smooth interpolation. */}
       {hasSequence && step >= 2 && (
         <motion.div
@@ -250,7 +250,7 @@ function IntelligenceCard({ card }: { card: CanvasCard }) {
 type IntelligenceCanvasProps = {
   /**
    * When the GrowthRail below has a stage under the pointer, it names the
-   * canvas state here and the canvas holds it — so exploring the loop drives
+   * canvas state here and the canvas holds it - so exploring the loop drives
    * the intelligence rather than the two animating past each other.
    */
   focusedKey?: CanvasStateKey | null;
@@ -267,7 +267,7 @@ export function IntelligenceCanvas({
   const timer = useRef<number | null>(null);
 
   // Derived, not pushed into state, so the canvas answers the rail on the same
-  // render as the hover — no frame of lag and nothing to keep in sync.
+  // render as the hover - no frame of lag and nothing to keep in sync.
   const focusedIndex = focusedKey
     ? currentCanvasStates.findIndex((s) => s.key === focusedKey)
     : -1;
@@ -297,7 +297,7 @@ export function IntelligenceCanvas({
     >
       {/* fixed height so advancing never shifts the hero */}
       <div className="relative h-[430px] sm:h-[460px]">
-        {/* ── the intelligence boundary + portrait ──
+        {/* -- the intelligence boundary + portrait --
              Right-aligned rather than centred so the taller cards in the left
              slots clear the subject's head instead of covering it. */}
         <div className="absolute bottom-0 right-0 h-[340px] w-[230px] sm:h-[370px] sm:w-[250px]">
@@ -327,7 +327,7 @@ export function IntelligenceCanvas({
             />
           </div>
 
-          {/* the boundary itself — a light travels it as the loop advances */}
+          {/* the boundary itself - a light travels it as the loop advances */}
           <svg
             aria-hidden="true"
             viewBox="0 0 100 100"
@@ -356,7 +356,7 @@ export function IntelligenceCanvas({
               vectorEffect="non-scaling-stroke"
             />
 
-            {/* the travelling signal — re-runs on every state change */}
+            {/* the travelling signal - re-runs on every state change */}
             {!reduce && (
               <motion.rect
                 key={state.key}
@@ -381,7 +381,7 @@ export function IntelligenceCanvas({
           </svg>
         </div>
 
-        {/* ── cards orbiting the portrait ── */}
+        {/* -- cards orbiting the portrait -- */}
         {state.cards.map((card, i) => (
           <motion.div
             key={`${state.key}-${card.id}`}
@@ -399,7 +399,7 @@ export function IntelligenceCanvas({
         ))}
       </div>
 
-      {/* Stage rail — deliberately not pagination dots: this reads as one
+      {/* Stage rail - deliberately not pagination dots: this reads as one
           continuous system, and rhymes with the GrowthRail below. */}
       <div className="mt-6 flex items-center gap-1.5">
         {currentCanvasStates.map((s, i) => {

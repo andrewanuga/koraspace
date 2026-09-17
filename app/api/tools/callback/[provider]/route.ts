@@ -13,7 +13,7 @@ function back(origin: string, params: Record<string, string>) {
   return NextResponse.redirect(url);
 }
 
-/** OAuth callback for a tool — exchange the code and store in `integrations`. */
+/** OAuth callback for a tool - exchange the code and store in `integrations`. */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ provider: string }> }) {
   const { provider } = await params;
   const origin = req.nextUrl.origin;

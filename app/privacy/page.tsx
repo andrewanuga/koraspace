@@ -3,10 +3,10 @@ import { LegalShell, Section, Bullets, type LegalSectionItem } from "@/component
 
 export const metadata: Metadata = {
 <<<<<<< HEAD
-  title: "Privacy Policy — Koraspace AI",
+  title: "Privacy Policy - Koraspace AI",
   description: "How Koraspace AI collects, uses, and protects your data.",
 =======
-  title: "Privacy Policy — KoraSpace",
+  title: "Privacy Policy - KoraSpace",
   description: "How KoraSpace collects, uses, protects, and handles your personal data.",
 >>>>>>> main
 };
@@ -232,7 +232,7 @@ export default function PrivacyPage() {
       <Section id="complaints" title="20. Regulatory Inquiries & Contact">
         <p>For any privacy inquiries, data subject access requests, or regulatory questions, please contact our Data Protection Officer:</p>
         <div className="mt-3 rounded-xl border border-slate-200 bg-white p-4 text-[13.5px] text-slate-700 shadow-sm space-y-1 dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white/80">
-          <p><strong className="text-slate-900 dark:text-white">Koraspace Technologies — Privacy &amp; Data Protection Office</strong></p>
+          <p><strong className="text-slate-900 dark:text-white">Koraspace Technologies - Privacy &amp; Data Protection Office</strong></p>
           <p>Email: <a href="mailto:privacy@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">privacy@koraspace.com</a></p>
           <p>Support Desk: <a href="mailto:support@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">support@koraspace.com</a></p>
         </div>

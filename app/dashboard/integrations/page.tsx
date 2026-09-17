@@ -281,7 +281,7 @@ export default function IntegrationsPage() {
     } else if (err) {
       const map: Record<string, string> = {
         not_configured:
-          "This platform isn't configured yet — add its API keys.",
+          "This platform isn't configured yet - add its API keys.",
         denied: "Connection was cancelled.",
         bad_state: "Session expired. Please try again.",
         token_failed: "The platform rejected the token exchange.",

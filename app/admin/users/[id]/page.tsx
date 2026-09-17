@@ -204,13 +204,13 @@ export default function UserDetail() {
             <div className="flex justify-between border-b border-white/[0.06] pb-2.5">
               <span className="text-white/40">Username Handle</span>
               <span className="font-data font-semibold text-white">
-                {profile.username ? "@" + profile.username : "—"}
+                {profile.username ? "@" + profile.username : "-"}
               </span>
             </div>
             <div className="flex justify-between border-b border-white/[0.06] pb-2.5">
               <span className="text-white/40">Registered Persona</span>
               <span className="font-semibold text-white capitalize">
-                {profile.persona || "—"}
+                {profile.persona || "-"}
               </span>
             </div>
             <div className="flex justify-between border-b border-white/[0.06] pb-2.5">

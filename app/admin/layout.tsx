@@ -6,10 +6,10 @@ import { Shield, Clock, ArrowLeft, Radio } from "lucide-react";
 import Link from "next/link";
 
 <<<<<<< HEAD
-export const metadata = { title: "Admin — Koraspace AI" };
+export const metadata = { title: "Admin - Koraspace AI" };
 =======
 export const metadata = {
-  title: "Admin SOC — Koraspace",
+  title: "Admin SOC - Koraspace",
   description: "Security Operations Center, User Administration, and Health Matrix",
 };
 >>>>>>> main

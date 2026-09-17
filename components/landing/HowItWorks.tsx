@@ -9,18 +9,18 @@ const STEPS = [
     icon: Link2,
     title: "Connect Your Accounts",
 <<<<<<< HEAD
-    desc: "Link your X, LinkedIn, Instagram, and TikTok accounts in seconds. Koraspace AI handles OAuth securely — we never store your credentials.",
+    desc: "Link your X, LinkedIn, Instagram, and TikTok accounts in seconds. Koraspace AI handles OAuth securely - we never store your credentials.",
 =======
-    desc: "Link your X, LinkedIn, Instagram, and TikTok accounts in seconds. Koraspace handles OAuth securely — we never store your credentials.",
+    desc: "Link your X, LinkedIn, Instagram, and TikTok accounts in seconds. Koraspace handles OAuth securely - we never store your credentials.",
 >>>>>>> main
-    detail: "Secure OAuth 2.0 — no passwords stored",
+    detail: "Secure OAuth 2.0 - no passwords stored",
   },
   {
     step: "02",
     icon: Brain,
     title: "Train Your Brand Voice",
     desc: "Paste your website URL or upload past posts. Our AI extracts your tone, vocabulary, and core messaging in 60 seconds. No writing required.",
-    detail: "Powered by Llama 3.3 70B — self-hosted AI",
+    detail: "Powered by Llama 3.3 70B - self-hosted AI",
   },
   {
     step: "03",
@@ -33,7 +33,7 @@ const STEPS = [
     step: "04",
     icon: BarChart3,
     title: "Watch ROI Grow",
-    desc: "Track performance with the ROI Pulse dashboard. See which posts drove real revenue — not just vanity metrics.",
+    desc: "Track performance with the ROI Pulse dashboard. See which posts drove real revenue - not just vanity metrics.",
     detail: "UTM tracking + conversion attribution",
   },
 ];

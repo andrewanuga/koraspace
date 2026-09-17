@@ -37,7 +37,7 @@ async function runTests() {
     autonomyMode: "auto",
   };
 
-  // ── 1. Policy Engine: Lead Detection Gating ──────────────────────
+  // -- 1. Policy Engine: Lead Detection Gating ----------------------
   const leadDecision: GhostDecision = {
     action: "flag_lead",
     confidence: 95,
@@ -56,7 +56,7 @@ async function runTests() {
     "Lead inquiry in AUTO mode must require human approval"
   );
 
-  // ── 2. Policy Engine: Complaint Escalation Gating ────────────────
+  // -- 2. Policy Engine: Complaint Escalation Gating ----------------
   const complaintDecision: GhostDecision = {
     action: "escalate_complaint",
     confidence: 90,
@@ -75,7 +75,7 @@ async function runTests() {
     "Complaint in AUTO mode must require human escalation"
   );
 
-  // ── 3. Policy Engine: Routine Auto-Reply in Assist Mode ──────────
+  // -- 3. Policy Engine: Routine Auto-Reply in Assist Mode ----------
   const routineReplyDecision: GhostDecision = {
     action: "auto_reply",
     confidence: 95,
@@ -95,7 +95,7 @@ async function runTests() {
     "Auto-reply in ASSIST mode must hold draft for human click"
   );
 
-  // ── 4. Policy Engine: Routine Auto-Reply in Auto Mode ────────────
+  // -- 4. Policy Engine: Routine Auto-Reply in Auto Mode ------------
   const autoReplyPolicy = GhostPolicyEngine.evaluate(routineReplyDecision, routineInput, autoCtx);
   assert(
     autoReplyPolicy.decision === "ALLOW" &&
@@ -104,7 +104,7 @@ async function runTests() {
     "High confidence auto-reply in AUTO mode is permitted to dispatch"
   );
 
-  // ── 5. Policy Engine: Low Confidence Auto-Reply Gating ───────────
+  // -- 5. Policy Engine: Low Confidence Auto-Reply Gating -----------
   const lowConfDecision: GhostDecision = {
     action: "auto_reply",
     confidence: 65, // Below 80%
@@ -122,7 +122,7 @@ async function runTests() {
     "Low confidence (< 80%) auto-reply in AUTO mode must be held for review"
   );
 
-  // ── 6. End-to-End GhostAgent Evaluation ──────────────────────────
+  // -- 6. End-to-End GhostAgent Evaluation --------------------------
   const leadEvalRes = await GhostAgent.evaluate(
     { message: "What is your pricing for consulting?" },
     assistCtx
@@ -133,7 +133,7 @@ async function runTests() {
   assert(leadEvalRes.data?.isLead === true, "GhostAgent marks isLead as true");
   assert(leadEvalRes.data?.policy.requiresHumanApproval === true, "GhostAgent enforces policy in result");
 
-  // ── 7. Tool Execution via ToolRegistry ───────────────────────────
+  // -- 7. Tool Execution via ToolRegistry ---------------------------
   const toolRes = await GhostAgent.executeTool(
     "get_current_time",
     { timeZone: "UTC" },

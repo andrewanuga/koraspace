@@ -200,7 +200,7 @@ export default function AdminModeration() {
                       <Pill tone={sevTone(r.severity)}>{r.type.replace(/_/g, " ")}</Pill>
                       <span className="ml-auto text-[11px] text-[var(--fg-4)]">{timeAgo(r.created_at)}</span>
                     </div>
-                    <p className="mt-1 truncate text-[12.5px] text-[var(--fg-3)]">{r.detail ?? "—"}</p>
+                    <p className="mt-1 truncate text-[12.5px] text-[var(--fg-3)]">{r.detail ?? "-"}</p>
                   </div>
                 </div>
               ))}

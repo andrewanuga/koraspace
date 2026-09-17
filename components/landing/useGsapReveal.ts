@@ -6,7 +6,7 @@ const EASE = "power3.out"; // ≈ expo.out feel without over-shoot
 
 /**
  * Scroll-triggered reveal for a container's `[data-reveal]` children.
- * Gentle fade + translate + blur, staggered — no bounce. Honours
+ * Gentle fade + translate + blur, staggered - no bounce. Honours
  * prefers-reduced-motion (elements simply appear).
  *
  * GSAP is imported dynamically inside the effect so it never loads during SSR

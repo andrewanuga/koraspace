@@ -64,7 +64,7 @@ export function ROIPulse() {
             </h2>
 
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-              Every other tool shows you vanity metrics — likes, impressions,
+              Every other tool shows you vanity metrics - likes, impressions,
 <<<<<<< HEAD
               reach. Koraspace AI tracks the full funnel from post to payment.
 =======
@@ -86,7 +86,7 @@ export function ROIPulse() {
                 {
                   icon: MousePointerClick,
                   title: "Click-to-conversion attribution",
-                  desc: "We track which clicks landed on your Gumroad, Shopify, or landing page — and whether they converted.",
+                  desc: "We track which clicks landed on your Gumroad, Shopify, or landing page - and whether they converted.",
                 },
                 {
                   icon: ShoppingCart,
@@ -116,12 +116,12 @@ export function ROIPulse() {
               posts.&rdquo;
               <br />
               <span className="not-italic font-medium text-foreground">
-                — Beta user, Lagos digital agency
+                - Beta user, Lagos digital agency
               </span>
             </p>
           </motion.div>
 
-          {/* Right — Attribution cards */}
+          {/* Right - Attribution cards */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}

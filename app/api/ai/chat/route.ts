@@ -19,7 +19,7 @@ import { AI_TOOLS, executeTool } from "@/lib/ai/tools";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { scanForPromptInjection } from "@/lib/security/enforcement";
 
-/* ── Types ────────────────────────────────────────────────────── */
+/* -- Types ------------------------------------------------------ */
 
 type InputMessage = { role: "user" | "assistant" | "system"; content: string };
 type Attachment = {
@@ -27,11 +27,11 @@ type Attachment = {
   name: string;
   mime?: string;
   content?: string;   // extracted text (for text-like files)
-  dataUrl?: string;   // base64 (images) — used with vision models
+  dataUrl?: string;   // base64 (images) - used with vision models
 };
 >>>>>>> main
 
-/* ── POST /api/ai/chat ────────────────────────────────────────── */
+/* -- POST /api/ai/chat ------------------------------------------ */
 
 export async function POST(req: NextRequest) {
   try {
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ── Per-user AI preferences from profile ───────────────────
+    // -- Per-user AI preferences from profile -------------------
     const { data: profile } = await supabase
       .from("profiles")
       .select("full_name, persona, niche, brand_voice, ai_model, ai_unfiltered, ai_temperature")
@@ -90,12 +90,12 @@ export async function POST(req: NextRequest) {
     const userModel = profile?.ai_model || undefined;
     const selectedModel = model || userModel || undefined;
 
-    // ── Personalization: learned writing style ──────────────────
+    // -- Personalization: learned writing style ------------------
     const lastUserText = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
     const tone = await getPersonaTone(supabase, workspaceId);
     learnPersona(supabase, workspaceId, lastUserText); // fire-and-forget
 
-    // ── Database persistence: save user message ─────────────────
+    // -- Database persistence: save user message -----------------
     let activeChatId = inputChatId;
     if (!activeChatId) {
       const title = lastUserText
@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // ── Inject past chat context ────────────────────────────────
+    // -- Inject past chat context --------------------------------
     let pastChatsContext = "";
     if (activeChatId) {
       const { data: pastMsgs } = await supabase
@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
     if (attachments?.length) {
       for (const a of attachments) {
         if (a.type === "image" && a.dataUrl) {
-          attachmentLines.push(`Image: "${a.name}" — visual anchor.`);
+          attachmentLines.push(`Image: "${a.name}" - visual anchor.`);
         } else if (a.type === "video") {
           attachmentLines.push(`Video: "${a.name}" (${a.mime || "video"}).`);
         } else if (a.type === "file" && a.content) {
@@ -174,7 +174,7 @@ export async function POST(req: NextRequest) {
       supabase,
     };
 
-    // ── Execute Unified ChatAgent ───────────────────────────────
+    // -- Execute Unified ChatAgent -------------------------------
     const agentResult = await ChatAgent.execute(
       {
         messages,
@@ -196,7 +196,7 @@ export async function POST(req: NextRequest) {
       brandContext,
     ) + pastChatsContext;
 
-    // ── Build messages array for OpenRouter ─────────────────────
+    // -- Build messages array for OpenRouter ---------------------
     const aiMessages: ChatMessage[] = [
       { role: "system", content: systemPrompt },
     ];
@@ -206,7 +206,7 @@ export async function POST(req: NextRequest) {
       aiMessages.push({ role: msg.role, content: msg.content });
     }
 
-    // ── Inject images into the last user message (vision) ───────
+    // -- Inject images into the last user message (vision) -------
     if (imageDataUrls.length > 0 && canDoVision) {
       const lastUserMsg = [...aiMessages].reverse().find((m) => m.role === "user");
       if (lastUserMsg) {
@@ -230,15 +230,15 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ── No API key configured → mock ────────────────────────────
+    // -- No API key configured → mock ----------------------------
     if (!isConfigured()) {
       await new Promise((r) => setTimeout(r, 700));
       const reply = mockReply(lastUserText, unfiltered, attachments ?? []);
       return NextResponse.json({ reply });
     }
 
-    // ── Agentic Tool Calling Loop ───────────────────────────────
-    // ── Agentic Tool Calling Loop ───────────────────────────────
+    // -- Agentic Tool Calling Loop -------------------------------
+    // -- Agentic Tool Calling Loop -------------------------------
     let loopCount = 0;
     const MAX_LOOPS = 4;
     let finalContent = "";
@@ -269,7 +269,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // ── Return Response ──────────────────────────────────────────
+    // -- Return Response ------------------------------------------
     if (!wantsStream) {
       return NextResponse.json({
         reply: finalContent,

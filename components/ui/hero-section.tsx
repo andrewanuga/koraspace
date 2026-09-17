@@ -144,7 +144,7 @@ function KoraspaceHeroShowcase() {
             customVariants={revealVariants}
             className="lg:text-xl text-muted-foreground sm:text-lg text-sm max-w-2xl mx-auto"
           >
-            Schedule posts, discover trends, and let AI engage your audience — all from one powerful dashboard.
+            Schedule posts, discover trends, and let AI engage your audience - all from one powerful dashboard.
           </TimelineContent>
         </article>
 
@@ -185,7 +185,7 @@ function KoraspaceHeroShowcase() {
 
 export default KoraspaceHeroShowcase;
 
-/* ── Feature Showcase Grid ── exported for use in landing page ── */
+/* -- Feature Showcase Grid -- exported for use in landing page -- */
 export function FeatureShowcaseGrid() {
   const ref = useRef<HTMLDivElement>(null);
 

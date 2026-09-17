@@ -24,7 +24,7 @@ export default function AuthLayout({
     <div className="min-h-screen bg-[#121212] text-white">
       <div className="min-h-screen lg:grid lg:grid-cols-[minmax(0,1.08fr)_minmax(460px,0.92fr)] xl:grid-cols-[minmax(0,1.15fr)_minmax(500px,0.85fr)]">
         {/* =========================================================
-            LEFT — PRODUCT / BRAND EXPERIENCE (Desktop)
+            LEFT - PRODUCT / BRAND EXPERIENCE (Desktop)
         ========================================================= */}
         <aside className="relative hidden min-h-screen overflow-hidden border-r border-white/[0.07] bg-[#0e0e10] lg:flex">
           {/* Animated Ambient Brand Blobs */}
@@ -211,7 +211,7 @@ export default function AuthLayout({
         </aside>
 
         {/* =========================================================
-            RIGHT — AUTH FORM CONTAINER
+            RIGHT - AUTH FORM CONTAINER
         ========================================================= */}
         <main className="relative flex min-h-screen flex-1 flex-col justify-between overflow-hidden bg-[#121212]">
           {/* Animated Background Blobs on Auth form side */}
@@ -493,7 +493,7 @@ function MiniStat({
       </div>
 <<<<<<< HEAD
 
-      {/* ── Brand panel (desktop) ── */}
+      {/* -- Brand panel (desktop) -- */}
       <aside className="relative hidden w-[46%] flex-col justify-between p-14 lg:flex">
         <Link href="/" className="flex items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -513,7 +513,7 @@ function MiniStat({
             <span className="sai-gradient-text">understood.</span>
           </h2>
           <p className="mt-5 max-w-sm text-white/55">
-            Deploy a personal agent that creates, engages, and converts — around
+            Deploy a personal agent that creates, engages, and converts - around
             the clock.
           </p>
 
@@ -534,7 +534,7 @@ function MiniStat({
         </p>
       </aside>
 
-      {/* ── Form panel ── */}
+      {/* -- Form panel -- */}
       <main className="relative flex flex-1 flex-col">
         {/* Mobile top bar */}
         <div className="flex items-center justify-between px-5 pt-5 lg:hidden">

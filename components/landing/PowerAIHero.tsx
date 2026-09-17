@@ -112,7 +112,7 @@ export function PowerAIHero() {
           style={{ filter: "blur(82px)", zIndex: 0 }}
         />
 
-        {/* ── Navbar ── */}
+        {/* -- Navbar -- */}
         <nav className="relative z-10 flex items-center justify-between py-5 px-8">
           {/* Logo */}
           <span
@@ -122,7 +122,7 @@ export function PowerAIHero() {
             Koraspace<span style={{ color: "#818cf8" }}> AI</span>
           </span>
 
-          {/* Nav links — hidden on small screens */}
+          {/* Nav links - hidden on small screens */}
           <div className="hidden md:flex items-center gap-7">
             {NAV_ITEMS.map(({ label, hasChevron }) => (
               <button
@@ -179,7 +179,7 @@ export function PowerAIHero() {
           style={{ background: "linear-gradient(to right, transparent, hsla(40,6%,95%,0.12), transparent)" }}
         />
 
-        {/* ── Headline area — vertically centred ── */}
+        {/* -- Headline area - vertically centred -- */}
         <div
           className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-6"
           style={{ overflow: "visible", paddingTop: "2rem", paddingBottom: "3rem" }}
@@ -224,7 +224,7 @@ export function PowerAIHero() {
             className="text-lg leading-8 max-w-lg mx-auto mt-5"
             style={{ color: "hsl(40 6% 82%)", opacity: 0.8 }}
           >
-            The most powerful AI social media system ever deployed —
+            The most powerful AI social media system ever deployed -
             automate content, engage followers, and turn attention into revenue.
           </p>
 
@@ -273,7 +273,7 @@ export function PowerAIHero() {
             className="mt-6 text-sm"
             style={{ color: "hsla(40,6%,95%,0.4)" }}
           >
-            Join 2,000+ creators and businesses — no credit card required
+            Join 2,000+ creators and businesses - no credit card required
           </p>
         </div>
 

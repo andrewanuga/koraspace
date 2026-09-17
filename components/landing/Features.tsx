@@ -31,7 +31,7 @@ const STANDARD_FEATURES = [
   {
     icon: Globe,
     title: "Optimal Timing Scheduler",
-    desc: "Don't just post now — post when your specific audience is actively scrolling and engaged.",
+    desc: "Don't just post now - post when your specific audience is actively scrolling and engaged.",
     color: "text-teal-400",
     bg: "bg-teal-500/10",
   },
@@ -41,7 +41,7 @@ const GAME_CHANGERS = [
   {
     icon: Brain,
     title: "Predictive Koraspace Score",
-    desc: "Before you hit schedule, our AI analyzes your post history and current trends to give you an engagement probability score. No more guessing — know what will perform.",
+    desc: "Before you hit schedule, our AI analyzes your post history and current trends to give you an engagement probability score. No more guessing - know what will perform.",
     color: "text-indigo-400",
     bg: "bg-indigo-500/10",
     glow: "hover:shadow-indigo-500/10",
@@ -94,7 +94,7 @@ const GAME_CHANGERS = [
   {
     icon: BarChart3,
     title: "Smart Inbox Triage",
-    desc: "Llama AI clusters your comments by intent — Leads, Complaints, and Fluff. Spend 2 minutes on the 4 messages that make money and skip the 96 emojis.",
+    desc: "Llama AI clusters your comments by intent - Leads, Complaints, and Fluff. Spend 2 minutes on the 4 messages that make money and skip the 96 emojis.",
     color: "text-orange-400",
     bg: "bg-orange-500/10",
     glow: "hover:shadow-orange-500/10",
@@ -138,7 +138,7 @@ export function Features() {
 =======
             Most tools tell you what happened. Koraspace tells you what will
 >>>>>>> main
-            happen — and often handles it before you even open the app.
+            happen - and often handles it before you even open the app.
           </p>
         </motion.div>
 

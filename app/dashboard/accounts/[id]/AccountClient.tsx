@@ -93,7 +93,7 @@ export function AccountClient({
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#34d399]/10">
               <Users className="h-4 w-4 text-[#34d399]" />
             </span>
-            {followerChange.change !== "—" && (
+            {followerChange.change !== "-" && (
               <span className="font-data flex items-center gap-0.5 text-[12px]" style={{ color: followerChange.positive ? "#34d399" : "var(--sai-red)" }}>
                 {followerChange.positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}{followerChange.change}
               </span>
@@ -107,7 +107,7 @@ export function AccountClient({
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--sai-indigo)]/10">
               <Eye className="h-4 w-4 text-[var(--sai-indigo)]" />
             </span>
-            {imprChange.change !== "—" && (
+            {imprChange.change !== "-" && (
               <span className="font-data flex items-center gap-0.5 text-[12px]" style={{ color: imprChange.positive ? "#34d399" : "var(--sai-red)" }}>
                 {imprChange.positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}{imprChange.change}
               </span>
@@ -121,7 +121,7 @@ export function AccountClient({
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--sai-violet)]/10">
               <Heart className="h-4 w-4 text-[var(--sai-violet)]" />
             </span>
-            {engChange.change !== "—" && (
+            {engChange.change !== "-" && (
               <span className="font-data flex items-center gap-0.5 text-[12px]" style={{ color: engChange.positive ? "#34d399" : "var(--sai-red)" }}>
                 {engChange.positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}{engChange.change}
               </span>

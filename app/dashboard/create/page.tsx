@@ -34,10 +34,10 @@ const GREETING: Msg = {
   id: 0,
   role: "assistant",
   content:
-    "Hey — I'm your Koraspace agent. Tell me what you're working on and I'll draft it in your voice.\n\nAttach images or documents for context, pick your AI model below, and I'll handle the rest. ✨",
+    "Hey - I'm your Koraspace agent. Tell me what you're working on and I'll draft it in your voice.\n\nAttach images or documents for context, pick your AI model below, and I'll handle the rest. ✨",
 };
 
-/* ── Model display name helper ────────────────────────────────── */
+/* -- Model display name helper ---------------------------------- */
 
 function modelDisplayName(id: string, models: ModelOption[]): string {
   const found = models.find((m) => m.id === id);
@@ -46,39 +46,39 @@ function modelDisplayName(id: string, models: ModelOption[]): string {
   return parts[parts.length - 1].replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-/* ── Main component ───────────────────────────────────────────── */
+/* -- Main component --------------------------------------------- */
 
 =======
 >>>>>>> main
 export default function CreatePage() {
   const { error: toastError, success: toastSuccess } = useToast();
 
-  /* ── Mode ── */
+  /* -- Mode -- */
   const [mode, setMode] = useState<CreateMode>("post");
   const [prompt, setPrompt] = useState("");
 
-  /* ── Generation state ── */
+  /* -- Generation state -- */
   const [isGenerating, setIsGenerating] = useState(false);
   const [draft, setDraft] = useState<string | null>(null);
   const [draftHashtags, setDraftHashtags] = useState<string[]>([]);
   const [scoreData, setScoreData] = useState<ScoreResponse | null>(null);
 
-  /* ── Models ── */
+  /* -- Models -- */
   const [models, setModels] = useState<ModelOption[]>([]);
   const [selectedModel, setSelectedModel] = useState("");
   const [showModelPicker, setShowModelPicker] = useState(false);
   const [showToolPicker, setShowToolPicker] = useState(false);
 
-  /* ── Attachments ── */
+  /* -- Attachments -- */
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const attIdRef = useRef(1);
   const abortRef = useRef<AbortController | null>(null);
 
-  /* ── Picker refs (for outside-click close) ── */
+  /* -- Picker refs (for outside-click close) -- */
   const modelPickerRef = useRef<HTMLDivElement>(null);
   const toolPickerRef = useRef<HTMLDivElement>(null);
 
-  /* ── Load user profile & models ── */
+  /* -- Load user profile & models -- */
   useEffect(() => {
     (async () => {
       try {
@@ -104,7 +104,7 @@ export default function CreatePage() {
     })();
   }, []);
 
-  /* ── Close pickers on outside click ── */
+  /* -- Close pickers on outside click -- */
   useEffect(() => {
     const handle = (e: MouseEvent) => {
       if (modelPickerRef.current && !modelPickerRef.current.contains(e.target as Node)) setShowModelPicker(false);
@@ -116,7 +116,7 @@ export default function CreatePage() {
     }
   }, [showModelPicker, showToolPicker]);
 
-  /* ── File helpers ── */
+  /* -- File helpers -- */
   const readFile = (file: File) =>
     new Promise<string>((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result as string); r.onerror = rej; r.readAsDataURL(file); });
   const readText = (file: File) =>
@@ -145,7 +145,7 @@ export default function CreatePage() {
   const currentModelInfo = models.find((m) => m.id === selectedModel);
   const hasVision = currentModelInfo?.supportsVision ?? true;
 
-  /* ── Score content helper ── */
+  /* -- Score content helper -- */
   const evaluateDraftScore = async (text: string) => {
     if (!text || text.length < 20) return;
     try {
@@ -163,7 +163,7 @@ export default function CreatePage() {
     }
   };
 
-  /* ── Generate / send ── */
+  /* -- Generate / send -- */
   const handleGenerate = useCallback(async () => {
     if (!prompt.trim() || isGenerating) return;
 
@@ -244,7 +244,7 @@ export default function CreatePage() {
     }
   }, [prompt, attachments, selectedModel, isGenerating, mode, toastError]);
 
-  /* ── Generate A/B Variations ── */
+  /* -- Generate A/B Variations -- */
   const handleGenerateVariations = async () => {
     if (!draft && !prompt.trim()) return;
     setIsGenerating(true);
@@ -270,21 +270,21 @@ export default function CreatePage() {
     }
   };
 
-  /* ── Quick prompts ── */
+  /* -- Quick prompts -- */
   const handleQuickPrompt = (selected: string) => setPrompt(selected);
 
-  /* ── Draft actions ── */
+  /* -- Draft actions -- */
   const handleImprove = () => {
     if (!draft) return;
     setPrompt(`Improve this content and make it more engaging with higher hook retention:\n\n${draft}`);
   };
 
-  /* ── Format select ── */
+  /* -- Format select -- */
   const handleFormatSelect = (format: string) => {
     setPrompt(`Create a high-converting ${format} tailored to my brand voice.`);
   };
 
-  /* ── Tool select ── */
+  /* -- Tool select -- */
   const handleToolSelect = (toolPrompt: string, needsInput: boolean) => {
     if (needsInput) {
       setPrompt((prev) => (prev ? `${prev}\n${toolPrompt}` : toolPrompt));
@@ -312,7 +312,7 @@ export default function CreatePage() {
             <h1 className="font-display text-[17px] font-semibold text-[var(--fg)]">Create</h1>
             <p className="text-[12px] text-[var(--fg-3)]">Your personal Koraspace agent</p>
 =======
-      {/* ── Page header ── */}
+      {/* -- Page header -- */}
       <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="mb-2 flex items-center gap-2">
@@ -336,10 +336,10 @@ export default function CreatePage() {
         </div>
       </header>
 
-      {/* ── Create type tabs ── */}
+      {/* -- Create type tabs -- */}
       <CreateTypeTabs value={mode} onChange={setMode} />
 
-      {/* ── Prompt workspace ── */}
+      {/* -- Prompt workspace -- */}
       <AiPromptWorkspace
         mode={mode}
         prompt={prompt}
@@ -362,10 +362,10 @@ export default function CreatePage() {
         hasVision={hasVision}
       />
 
-      {/* ── Quick prompts ── */}
+      {/* -- Quick prompts -- */}
       <QuickPrompts onSelect={handleQuickPrompt} />
 
-      {/* ── Main content area ── */}
+      {/* -- Main content area -- */}
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_330px]">
         <AiDraftCard
           content={draft ?? undefined}
@@ -478,7 +478,7 @@ export default function CreatePage() {
         </div>
 
         <p className="mt-2 text-center text-[11px] text-[var(--fg-4)]">
-          Koraspace can draft and refine — always review before you post.
+          Koraspace can draft and refine - always review before you post.
         </p>
         </div>
 =======
@@ -486,7 +486,7 @@ export default function CreatePage() {
 >>>>>>> main
       </div>
 
-      {/* ── More formats ── */}
+      {/* -- More formats -- */}
       <ContentFormats onSelect={handleFormatSelect} />
     </div>
   );

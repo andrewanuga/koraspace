@@ -6,10 +6,10 @@ import { OnboardingFlow } from "./OnboardingFlow";
 import { OnboardingBackground } from "./OnboardingBackground";
 
 <<<<<<< HEAD
-export const metadata = { title: "Set up your workspace — Koraspace AI" };
+export const metadata = { title: "Set up your workspace - Koraspace AI" };
 =======
 export const metadata = {
-  title: "Set up your workspace — Koraspace",
+  title: "Set up your workspace - Koraspace",
 };
 >>>>>>> main
 

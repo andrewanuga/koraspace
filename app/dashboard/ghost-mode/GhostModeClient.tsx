@@ -248,7 +248,7 @@ export function GhostModeClient({ initialActions, statsToday, initiallyActive, b
       <PageHeader
         eyebrow="Automation"
         title="Ghost Mode™"
-        sub="Your autonomous engagement agent. It handles the noise — you handle the signal."
+        sub="Your autonomous engagement agent. It handles the noise - you handle the signal."
         actions={
           <div className="flex items-center gap-2.5">
             <span

@@ -9,7 +9,7 @@
  * for single-turn generators and UI fallback routes.
  */
 
-/* ── Types ────────────────────────────────────────────────────── */
+/* -- Types ------------------------------------------------------ */
 
 import type { BrandContext } from "@/lib/brand/types";
 
@@ -31,7 +31,7 @@ export interface GenerateOptions {
   variationsCount?: number;
 }
 
-/* ── Chat Agent System Prompt ─────────────────────────────────── */
+/* -- Chat Agent System Prompt ----------------------------------- */
 
 import { KORASPACE_SECURITY_ENFORCEMENT_SYSTEM_PROMPT } from "@/lib/security/enforcement";
 
@@ -49,9 +49,9 @@ export function buildChatSystemPrompt(
   // Core identity
   sections.push(
 <<<<<<< HEAD
-    `You are **Koraspace AI** — a world-class personal social media agent. You don't give vague advice — you produce ready-to-post content.`,
+    `You are **Koraspace AI** - a world-class personal social media agent. You don't give vague advice - you produce ready-to-post content.`,
 =======
-    `You are **Koraspace** — a world-class personal social media agent and AI marketing operating system. You don't give vague advice — you produce ready-to-post, high-converting content that aligns with the user's Growth Loop.`,
+    `You are **Koraspace** - a world-class personal social media agent and AI marketing operating system. You don't give vague advice - you produce ready-to-post, high-converting content that aligns with the user's Growth Loop.`,
 >>>>>>> main
     `You are highly autonomous. If the user asks for current information, URL contents, or trends, USE YOUR TOOLS. Don't hallucinate.`,
     `Current Date and Time: ${new Date().toLocaleString("en-US", { timeZoneName: "short" })}`
@@ -62,7 +62,7 @@ export function buildChatSystemPrompt(
     sections.push(`This user is a **${profile.persona}**${profile.niche ? ` in the **${profile.niche}** space` : ""}.`);
   }
   if (profile?.brand_voice) {
-    sections.push(`Their brand voice: "${profile.brand_voice}" — match this tone in every draft.`);
+    sections.push(`Their brand voice: "${profile.brand_voice}" - match this tone in every draft.`);
   }
 
   // Persistent Brand Brain Context (Memories, Styles, Preferences, Guidelines)
@@ -94,7 +94,7 @@ export function buildChatSystemPrompt(
   // Learned writing style
   if (personaTone) {
     sections.push(
-      `Personality mirror — this is how the user naturally writes: "${personaTone}". ` +
+      `Personality mirror - this is how the user naturally writes: "${personaTone}". ` +
       `Match their energy, sentence structure, and emoji style. Don't sanitize their voice.`,
     );
   }
@@ -103,7 +103,7 @@ export function buildChatSystemPrompt(
   if (attachmentSummary) {
     sections.push(
       `The user has attached media. ${attachmentSummary} ` +
-      `Reference and anchor your content to these attachments — they are the visual/media component of the post.`,
+      `Reference and anchor your content to these attachments - they are the visual/media component of the post.`,
     );
   }
 
@@ -115,14 +115,14 @@ export function buildChatSystemPrompt(
     `- Connected Accounts: If the user asks about their connected accounts or pages, use the \`get_connected_accounts\` tool to check their integration status and real account data.`,
     `- Social Analytics: If the user asks about stats, engagement, followers, or performance, use the \`get_social_analytics\` tool to get real data instead of making it up.`,
     `- Scheduling Content: If the user asks you to schedule, queue, or create a ready post for a specific time, USE the \`schedule_post\` tool directly. Do not say you can't or ask them to do it manually.`,
-    `- Always produce **concrete, ready-to-post drafts** — not outlines or suggestions`,
-    `- Start with a scroll-stopping hook — the first line decides everything`,
+    `- Always produce **concrete, ready-to-post drafts** - not outlines or suggestions`,
+    `- Start with a scroll-stopping hook - the first line decides everything`,
     `- Keep it platform-native: short punchy lines for X, bold openers for LinkedIn, visual hooks for Instagram`,
     `- Use specific numbers and details, never generic filler like "In today's world"`,
-    `- Emojis are strategic, not decorative — 2-4 per post max`,
+    `- Emojis are strategic, not decorative - 2-4 per post max`,
     `- End with a clear engagement driver (question, CTA, or open loop)`,
     `- DO NOT use unnecessary markdown header clutter. Output high quality text with clear formatting.`,
-    `- If the user asks to refine or iterate, build on the previous draft — don't restart`,
+    `- If the user asks to refine or iterate, build on the previous draft - don't restart`,
     `- When in doubt, ask a clarifying question rather than guessing`,
   );
 
@@ -130,14 +130,14 @@ export function buildChatSystemPrompt(
   if (profile?.ai_unfiltered) {
     sections.push(
       `🔓 **Raw mode is ON**: Write naturally and directly. No corporate hedging, no softening. ` +
-      `Be bold, opinionated, and real — the way content actually goes viral. Still stay lawful and safe.`,
+      `Be bold, opinionated, and real - the way content actually goes viral. Still stay lawful and safe.`,
     );
   }
 
   return sections.join("\n\n");
 }
 
-/* ── Content Generation Prompts ───────────────────────────────── */
+/* -- Content Generation Prompts --------------------------------- */
 
 const PLATFORM_GUIDELINES: Record<string, string> = {
   x: "Platform: X (Twitter). Max 280 chars per tweet. Use numbered tweets (1/, 2/) for threads. Hook in the first line. Use open loops between tweets for retention. No hashtags in the first tweet.",
@@ -152,7 +152,7 @@ const PLATFORM_GUIDELINES: Record<string, string> = {
 
 const FRAMEWORK_INSTRUCTIONS: Record<string, string> = {
   aida: "Use the AIDA framework:\n- **Attention**: Start with a provocative hook that creates curiosity\n- **Interest**: Expand with an unexpected insight or data point\n- **Desire**: Show the transformation/value the reader gets\n- **Action**: End with a specific CTA or engagement hook",
-  pas: "Use the PAS framework:\n- **Problem**: Name a specific pain your audience feels (use their words)\n- **Agitate**: Make the cost of inaction visceral — what happens if they don't act?\n- **Solve**: Present your solution as the natural, obvious answer",
+  pas: "Use the PAS framework:\n- **Problem**: Name a specific pain your audience feels (use their words)\n- **Agitate**: Make the cost of inaction visceral - what happens if they don't act?\n- **Solve**: Present your solution as the natural, obvious answer",
   hook: "Use the Hook framework:\n- Open with a provocative, surprising, or contrarian statement\n- Create an open loop that makes the reader NEED to keep reading\n- Deliver on the hook with real substance (don't clickbait)\n- Close with a reflection or CTA",
   story: "Use the Story framework:\n- **Scene**: Set a specific moment in time (\"18 months ago, I was...\")\n- **Conflict**: Introduce the challenge, struggle, or turning point\n- **Transformation**: Show what changed and how\n- **Insight**: End with the lesson the reader can apply today",
 };
@@ -164,10 +164,10 @@ export function buildGeneratePrompt(options: GenerateOptions): string {
 
   sections.push(
 <<<<<<< HEAD
-    `You are Koraspace AI — an elite social media copywriter specializing in the African creator economy. ` +
+    `You are Koraspace AI - an elite social media copywriter specializing in the African creator economy. ` +
     `You write content that stops the scroll, drives engagement, and sounds authentically human.`,
 =======
-    `You are Koraspace — an elite social media copywriter and growth strategist. ` +
+    `You are Koraspace - an elite social media copywriter and growth strategist. ` +
     `You write content that stops the scroll, drives measurable engagement, and matches the creator's exact brand identity.`,
 >>>>>>> main
   );
@@ -225,14 +225,14 @@ export function buildGeneratePrompt(options: GenerateOptions): string {
     `- Sound human, NEVER robotic or generic`,
     `- Use specific numbers and facts when possible`,
     `- Never use filler: "In conclusion", "In today's world", "Here's the thing"`,
-    `- Emojis are strategic and sparing — 2-4 max per piece`,
-    `- Every line must earn its place — cut anything that doesn't add value`,
+    `- Emojis are strategic and sparing - 2-4 max per piece`,
+    `- Every line must earn its place - cut anything that doesn't add value`,
   );
 
   return sections.join("\n\n");
 }
 
-/* ── Ghost Mode Prompts ───────────────────────────────────────── */
+/* -- Ghost Mode Prompts ----------------------------------------- */
 
 export function buildGhostSystemPrompt(
   mode: "reply" | "classify",
@@ -275,7 +275,7 @@ export function buildGhostSystemPrompt(
     botRole === "closer" ? `- You are The Closer. Reply to comments with the goal of moving them to DMs or pushing a sale.` :
     botRole === "support" ? `- You are The Support Bot. Be highly empathetic, de-escalate tension, and offer solutions.` :
     botRole === "hype" ? `- You are The Hype Bot. Use high energy, emojis, and validate the commenter.` :
-    `- Reply in the creator's voice — warm, genuine, and on-brand`,
+    `- Reply in the creator's voice - warm, genuine, and on-brand`,
     ``,
     `Rules:`,
     `- Keep under 280 characters`,
@@ -288,7 +288,7 @@ export function buildGhostSystemPrompt(
   ].join("\n");
 }
 
-/* ── Score Prompt (PRD Section 6.5) ────────────────────────────── */
+/* -- Score Prompt (PRD Section 6.5) ------------------------------ */
 
 export function buildScorePrompt(
   content: string,
@@ -346,7 +346,7 @@ export function buildScorePrompt(
   ].join("\n");
 }
 
-/* ── Ideas Prompt (PRD Section 5.1 & 5.4) ─────────────────────── */
+/* -- Ideas Prompt (PRD Section 5.1 & 5.4) ----------------------- */
 
 export function buildIdeasPrompt(
   prompt: string,
@@ -391,7 +391,7 @@ export function buildIdeasPrompt(
   ].join("\n");
 }
 
-/* ── Trends Prompt ────────────────────────────────────────────── */
+/* -- Trends Prompt ---------------------------------------------- */
 
 export function buildTrendsPrompt(
   profile: any,
@@ -429,6 +429,6 @@ export function buildTrendsPrompt(
     `- **draft**: A 100-word ready-to-post draft about this trend in their brand voice`,
     ``,
     `Return ONLY a valid JSON object: { "trends": [...] }`,
-    `No markdown, no backticks, no explanation — only the JSON.`,
+    `No markdown, no backticks, no explanation - only the JSON.`,
   ].join("\n");
 }

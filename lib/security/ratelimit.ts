@@ -89,7 +89,7 @@ export function logSecurityEvent(evt: { type: string; ip?: string; path?: string
   } catch { /* ignore */ }
 }
 
-// ── Convenience helpers for API routes ─────────────────────────────────────
+// -- Convenience helpers for API routes -------------------------------------
 
 /** Build a rate limit key from a user ID (preferred) or IP address. */
 export function requestKey(req: NextRequest, userId?: string): string {

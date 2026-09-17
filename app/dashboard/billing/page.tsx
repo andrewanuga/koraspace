@@ -29,13 +29,13 @@ function UsageMeter({ label, used, limit }: { label: string; used: number; limit
     <div>
       <div className="mb-1.5 flex items-center justify-between text-[13px]">
         <span className="text-[var(--fg-2)]">{label}</span>
-        <span className="font-data text-[var(--fg-3)]">{used} / {limit >= 9999 ? "∞" : limit === 0 ? "—" : limit.toLocaleString()}</span>
+        <span className="font-data text-[var(--fg-3)]">{used} / {limit >= 9999 ? "∞" : limit === 0 ? "-" : limit.toLocaleString()}</span>
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-[var(--panel-fill-2)]">
         <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${pct}%`, background: bar }} />
       </div>
       <p className="mt-1 text-[11.5px]" style={{ color: over ? "var(--sai-red)" : "var(--fg-4)" }}>
-        {limit === 0 ? "Not on your plan — upgrade to unlock" : over ? "Limit reached — upgrade for more" : limit >= 9999 ? "Unlimited access" : `${Math.max(0, limit - used).toLocaleString()} remaining`}
+        {limit === 0 ? "Not on your plan - upgrade to unlock" : over ? "Limit reached - upgrade for more" : limit >= 9999 ? "Unlimited access" : `${Math.max(0, limit - used).toLocaleString()} remaining`}
       </p>
     </div>
   );

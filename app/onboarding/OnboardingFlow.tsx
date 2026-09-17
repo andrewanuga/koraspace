@@ -884,7 +884,7 @@ export function OnboardingFlow({
 <<<<<<< HEAD
       <div className="glass-panel rounded-3xl p-7 sm:p-9">
         <div key={step} className="sai-step-in">
-          {/* ── Step 0: persona ── */}
+          {/* -- Step 0: persona -- */}
           {step === 0 && (
             <>
               <span className="font-data text-[11px] uppercase tracking-[0.24em] text-[var(--sai-indigo)]">
@@ -1442,9 +1442,9 @@ export function OnboardingFlow({
 
                         <div className="grid grid-cols-2 gap-2.5">
                           {[
-                            "0 – 1K",
-                            "1K – 10K",
-                            "10K – 100K",
+                            "0 - 1K",
+                            "1K - 10K",
+                            "10K - 100K",
                             "100K+",
                           ].map((range) => (
                             <ChoiceCard

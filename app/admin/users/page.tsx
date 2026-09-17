@@ -296,7 +296,7 @@ export default function AdminUsers() {
 
                 {/* Persona */}
                 <span className="text-[12.5px] font-medium capitalize text-white/70">
-                  {r.persona || "—"}
+                  {r.persona || "-"}
                 </span>
 
                 {/* Plan Select */}

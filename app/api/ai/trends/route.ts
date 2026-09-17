@@ -10,7 +10,7 @@ import { getActiveWorkspace } from "@/lib/workspace";
 import { TrendAgent } from "@/lib/ai/agents/trend";
 import type { AgentContext } from "@/lib/ai/core/types";
 
-/* ── GET /api/ai/trends ───────────────────────────────────────── */
+/* -- GET /api/ai/trends ----------------------------------------- */
 
 export async function GET(req: NextRequest) {
   try {
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
         model: res.metadata?.model,
       });
 =======
-    // ── No API key → mock ───────────────────────────────────────
+    // -- No API key → mock ---------------------------------------
     if (!isConfigured()) {
       return NextResponse.json({ trends: getMockTrends(userNiche, profile) });
 >>>>>>> main
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
 <<<<<<< HEAD
 =======
 
-    // ── Call OpenRouter ─────────────────────────────────────────
+    // -- Call OpenRouter -----------------------------------------
     const prompt = buildTrendsPrompt(profile, userNiche, searchResults || undefined);
 
     const result = await callAI(
@@ -96,7 +96,7 @@ export async function GET(req: NextRequest) {
 <<<<<<< HEAD
 =======
 
-/* ── Mock trends ──────────────────────────────────────────────── */
+/* -- Mock trends ------------------------------------------------ */
 
 function getMockTrends(niche: string, profile?: any): TrendResult[] {
   const loc = profile?.location ? ` in ${profile.location}` : " in Africa";
@@ -110,7 +110,7 @@ function getMockTrends(niche: string, profile?: any): TrendResult[] {
       momentum: "Accelerating",
       why: `High relevance to ${niche}-focused accounts${loc} with strong policy discussion history`,
       draft:
-        "🚨 Nigeria's AI governance framework just dropped — here's what it means for every founder building AI products in Africa...\n\nThis changes everything about how we build, deploy, and monetize AI in 2026.\n\nThread 🧵",
+        "🚨 Nigeria's AI governance framework just dropped - here's what it means for every founder building AI products in Africa...\n\nThis changes everything about how we build, deploy, and monetize AI in 2026.\n\nThread 🧵",
     },
     {
       topic: "Naira Stabilization & SaaS Pricing",

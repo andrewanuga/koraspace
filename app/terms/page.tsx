@@ -3,10 +3,10 @@ import { LegalShell, Section, Bullets, type LegalSectionItem } from "@/component
 
 export const metadata: Metadata = {
 <<<<<<< HEAD
-  title: "Terms of Service — Koraspace AI",
+  title: "Terms of Service - Koraspace AI",
   description: "The terms for using Koraspace AI.",
 =======
-  title: "Terms of Service — KoraSpace",
+  title: "Terms of Service - KoraSpace",
   description: "The Terms of Service governing access to and use of KoraSpace.",
 >>>>>>> main
 };
@@ -229,7 +229,7 @@ export default function TermsPage() {
       <Section id="contact" title="24. Contact & Legal Notices">
         <p>For questions regarding these Terms of Service or formal legal inquiries, please contact:</p>
         <div className="mt-3 rounded-xl border border-slate-200 bg-white p-4 text-[13.5px] text-slate-700 shadow-sm space-y-1 dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white/80">
-          <p><strong className="text-slate-900 dark:text-white">Koraspace Technologies — Legal Operations</strong></p>
+          <p><strong className="text-slate-900 dark:text-white">Koraspace Technologies - Legal Operations</strong></p>
           <p>Email: <a href="mailto:legal@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">legal@koraspace.com</a></p>
           <p>General Support: <a href="mailto:support@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">support@koraspace.com</a></p>
         </div>

@@ -175,7 +175,7 @@ export function FloatingNav() {
           }`}
 >>>>>>> main
         >
-          {/* ── WHEN AT TOP: Unified Glass Bar ── */}
+          {/* -- WHEN AT TOP: Unified Glass Bar -- */}
           {!isScrolled ? (
             <motion.div
               layout
@@ -250,7 +250,7 @@ export function FloatingNav() {
               </div>
             </motion.div>
           ) : (
-            /* ── WHEN SCROLLED: Clean Glass Bar ── */
+            /* -- WHEN SCROLLED: Clean Glass Bar -- */
             <motion.div
               layout
               transition={capsuleSpring}
@@ -323,7 +323,7 @@ export function FloatingNav() {
             </motion.div>
           )}
 
-          {/* ── Mobile Menu Dropdown ── */}
+          {/* -- Mobile Menu Dropdown -- */}
           <AnimatePresence>
             {showMobileMenu && (
               <motion.div

@@ -1037,7 +1037,7 @@ export function AnalyticsClient({
               </div>
               <div className="flex-1">
                 <p className="text-xs leading-relaxed text-[var(--fg-2)]">
-                  Posting consistently between <strong className="text-[var(--fg)]">4:00 PM – 8:00 PM on Wednesdays and Thursdays</strong> yields a 2.4× higher comment rate.
+                  Posting consistently between <strong className="text-[var(--fg)]">4:00 PM - 8:00 PM on Wednesdays and Thursdays</strong> yields a 2.4× higher comment rate.
                 </p>
               </div>
               <ChevronRight className="mt-0.5 h-4 w-4 text-[var(--fg-4)]" />

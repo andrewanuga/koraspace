@@ -31,7 +31,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* ── Light mode ─────────────────────────────────────── */
+/* -- Light mode --------------------------------------- */
 :root {
   --radius: 0.625rem;
   --background: 0 0% 100%;
@@ -55,7 +55,7 @@
   --ring: 239 65% 55%;
 }
 
-/* ── Dark mode — near-black #121212 (no pure black: OLED smear) ── */
+/* -- Dark mode - near-black #121212 (no pure black: OLED smear) -- */
 .dark {
   --background: 240 6% 7%;
   --foreground: 40 8% 96%;
@@ -88,7 +88,7 @@ body {
   font-family: var(--font-inter, 'Inter', sans-serif);
 }
 
-/* ── Dynamic User Typography Settings ───────────────── */
+/* -- Dynamic User Typography Settings ----------------- */
 html[data-font="inter"], html[data-font="inter"] body {
   font-family: var(--font-inter, 'Inter', sans-serif);
 }
@@ -117,7 +117,7 @@ html[data-font="ibm-plex"], html[data-font="ibm-plex"] body {
   font-family: 'IBM Plex Sans', sans-serif;
 }
 
-/* ── Keyframes ──────────────────────────────────────── */
+/* -- Keyframes ---------------------------------------- */
 @keyframes shimmer {
   0%   { background-position: -200% center; }
   100% { background-position: 200% center; }
@@ -144,7 +144,7 @@ html[data-font="ibm-plex"], html[data-font="ibm-plex"] body {
   100% { background-position: 0% 50%; }
 }
 
-/* ── Utilities ──────────────────────────────────────── */
+/* -- Utilities ---------------------------------------- */
 .animate-shimmer {
   background: linear-gradient(90deg, transparent, rgba(99,102,241,0.12), transparent);
   background-size: 200% 100%;
@@ -168,7 +168,7 @@ html[data-font="ibm-plex"], html[data-font="ibm-plex"] body {
   animation: gradient-shift 8s ease infinite;
 }
 
-/* Glass — neutral on pure black */
+/* Glass - neutral on pure black */
 .glass {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -183,7 +183,7 @@ html[data-font="ibm-plex"], html[data-font="ibm-plex"] body {
   border: 1px solid rgba(255, 255, 255, 0.10);
 }
 
-/* Brand gradient — rose → red spectrum */
+/* Brand gradient - rose → red spectrum */
 .gradient-text {
   background: linear-gradient(135deg, #818cf8 0%, #6366f1 30%, #a855f7 60%, #f59e0b 100%);
   -webkit-background-clip: text;
@@ -191,7 +191,7 @@ html[data-font="ibm-plex"], html[data-font="ibm-plex"] body {
   background-clip: text;
 }
 
-/* Animated version — used on hero headings */
+/* Animated version - used on hero headings */
 .gradient-text-animated {
   background: linear-gradient(135deg, #818cf8, #6366f1, #a855f7, #f59e0b, #a855f7, #818cf8);
   background-size: 300% 300%;
@@ -201,7 +201,7 @@ html[data-font="ibm-plex"], html[data-font="ibm-plex"] body {
   animation: gradient-shift 6s ease infinite;
 }
 
-/* ── Marquee ────────────────────────────────────────── */
+/* -- Marquee ------------------------------------------ */
 @keyframes marquee {
   from { transform: translateX(0%); }
   to   { transform: translateX(-50%); }
@@ -211,7 +211,7 @@ html[data-font="ibm-plex"], html[data-font="ibm-plex"] body {
   animation: marquee 20s linear infinite;
 }
 
-/* ── Liquid glass ───────────────────────────────────── */
+/* -- Liquid glass ------------------------------------- */
 .liquid-glass {
   background: rgba(255, 255, 255, 0.01);
   background-blend-mode: luminosity;
@@ -261,16 +261,16 @@ html[data-font="ibm-plex"], html[data-font="ibm-plex"] body {
   mask-composite: exclude;
 }
 
-/* ═══════════════════════════════════════════════════════════════════
+/* -------------------------------------------------------------------
 <<<<<<< HEAD
-   KORASPACE AI — cinematic landing design layer
+   KORASPACE AI - cinematic landing design layer
 =======
-   Koraspace — cinematic landing design layer
+   Koraspace - cinematic landing design layer
 >>>>>>> main
    Palette (5): #121212 near-black · frosted white · #6366f1 indigo ·
    #a855f7 soft violet · #f43f5e electric red  (gold #f5c451 = one accent)
    Motion signature: expo.out cubic-bezier(0.16,1,0.3,1)
-   ═══════════════════════════════════════════════════════════════════ */
+   ------------------------------------------------------------------- */
 :root {
   /* Body + data faces: real Inter/JetBrains when the <link> loads, else Geist/system. */
   --font-inter: "Inter", var(--font-geist-sans), system-ui, sans-serif;
@@ -286,7 +286,7 @@ html[data-font="ibm-plex"], html[data-font="ibm-plex"] body {
   --sai-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Typography Selection ── */
+/* -- Typography Selection -- */
 html[data-font="inter"] {
   --font-sans: "Inter", var(--font-geist-sans), system-ui, sans-serif;
 }
@@ -313,7 +313,7 @@ body, button, input, select, textarea {
   font-family: var(--font-sans);
 }
 
-/* ── Dashboard Density ── */
+/* -- Dashboard Density -- */
 html[data-density="minimal"] {
   --density-space: 1.25rem;
 }
@@ -330,11 +330,11 @@ html[data-density="detailed"] {
   font-feature-settings: "tnum" 1;
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   APP THEME TOKENS — scoped to .sai-app (the dashboard shell).
+/* -------------------------------------------------------------------
+   APP THEME TOKENS - scoped to .sai-app (the dashboard shell).
    Default = dark. Light mode = #fff with an electric-blue tint,
    applied only under html.light so the landing + auth stay dark.
-   ═══════════════════════════════════════════════════════════════════ */
+   ------------------------------------------------------------------- */
 .sai-app {
   color-scheme: dark;
   --app-bg: #0d0d10;
@@ -473,7 +473,7 @@ html[data-theme="light"] .sai-app .bg-white\/\[0\.05\] {
   background-color: var(--panel-fill) !important;
 }
 
-/* ── Premium glass — Vision Pro / Control Center feel ──
+/* -- Premium glass - Vision Pro / Control Center feel --
    Uses app tokens when inside .sai-app; falls back to dark everywhere else. */
 .glass-panel {
   position: relative;
@@ -545,7 +545,7 @@ html[data-theme="light"] .sai-app .bg-white\/\[0\.05\] {
   );
 }
 
-/* ── Preloader: bright lead sweeping through the wordmark ── */
+/* -- Preloader: bright lead sweeping through the wordmark -- */
 @keyframes sai-flow {
   0%   { background-position: -140% center; }
   100% { background-position: 240% center; }
@@ -569,7 +569,7 @@ html[data-theme="light"] .sai-app .bg-white\/\[0\.05\] {
   animation: sai-flow 2.1s linear infinite;
 }
 
-/* Reveal defaults — GSAP hides + animates [data-reveal] once mounted.
+/* Reveal defaults - GSAP hides + animates [data-reveal] once mounted.
    We only pre-hide when JS is confirmed present (html.sai-js), so content is
    never trapped invisible for no-JS users. */
 html.sai-js [data-reveal] { opacity: 0; }
@@ -581,7 +581,7 @@ html.sai-js [data-reveal] { opacity: 0; }
   * { scroll-behavior: auto !important; }
 }
 
-/* ── Toasts ─────────────────────────────────────────── */
+/* -- Toasts ------------------------------------------- */
 @keyframes sai-toast-in {
   from { opacity: 0; transform: translateY(-14px) scale(0.97); filter: blur(4px); }
   to   { opacity: 1; transform: translateY(0) scale(1);        filter: blur(0);   }
@@ -602,14 +602,14 @@ html.sai-js [data-reveal] { opacity: 0; }
   .sai-toast-in, .sai-toast-out, .sai-toast-bar { animation: none; }
 }
 
-/* ── Onboarding step transition ─────────────────────── */
+/* -- Onboarding step transition ----------------------- */
 @keyframes sai-step-in {
   from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
   to   { opacity: 1; transform: translateY(0);    filter: blur(0);   }
 }
 .sai-step-in { animation: sai-step-in 0.5s var(--sai-ease); }
 
-/* ── Route-transition loader bar (indeterminate sweep) ── */
+/* -- Route-transition loader bar (indeterminate sweep) -- */
 @keyframes sai-loader-sweep {
   0%   { transform: translateX(-120%); }
   100% { transform: translateX(320%); }
@@ -618,7 +618,7 @@ html.sai-js [data-reveal] { opacity: 0; }
   animation: sai-loader-sweep 1.1s var(--sai-ease) infinite;
 }
 
-/* ── Infinite marquee (testimonials) ────────────────── */
+/* -- Infinite marquee (testimonials) ------------------ */
 .sai-marquee {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
@@ -732,14 +732,14 @@ html.sai-js [data-reveal] { opacity: 0; }
   --fg-3: #96969f;
   --fg-4: #65656e;
 
-  /* KoraSpace brand — Electric Pink (Creator Mode) */
+  /* KoraSpace brand - Electric Pink (Creator Mode) */
   --kora-pink: #ec4899;
   --kora-pink-hover: #db2777;
   --kora-pink-soft: rgba(236, 72, 153, 0.12);
   --kora-pink-border: rgba(236, 72, 153, 0.28);
   --kora-pink-shadow: 0 8px 24px rgba(236, 72, 153, 0.18);
 
-  /* KoraSpace brand — Electric Blue (Marketer Mode) */
+  /* KoraSpace brand - Electric Blue (Marketer Mode) */
   --kora-blue: #3b82f6;
   --kora-blue-hover: #2563eb;
   --kora-blue-soft: rgba(59, 130, 246, 0.12);
@@ -770,7 +770,7 @@ html.sai-js [data-reveal] { opacity: 0; }
   color: var(--fg);
 }
 
-/* ── Creator Mode Active Persona Theming ── */
+/* -- Creator Mode Active Persona Theming -- */
 [data-persona="creator"],
 .sai-app[data-persona="creator"] {
   --brand-primary: #ec4899;
@@ -782,7 +782,7 @@ html.sai-js [data-reveal] { opacity: 0; }
   --sai-violet: #db2777;
 }
 
-/* ── Marketer Mode Active Persona Theming ── */
+/* -- Marketer Mode Active Persona Theming -- */
 [data-persona="marketer"],
 .sai-app[data-persona="marketer"] {
   --brand-primary: #3b82f6;
@@ -794,7 +794,7 @@ html.sai-js [data-reveal] { opacity: 0; }
   --sai-violet: #2563eb;
 }
 
-/* ── KoraSpace global design tokens ─────────────────── */
+/* -- KoraSpace global design tokens ------------------- */
 :root {
   /* -------------------------------------------------------------------------- */
   /*                              BACKGROUND                                    */
@@ -830,7 +830,7 @@ html.sai-js [data-reveal] { opacity: 0; }
   /*                           KORASPACE BRAND                                  */
   /* -------------------------------------------------------------------------- */
 
-  /* Electric Pink — Primary */
+  /* Electric Pink - Primary */
   --kora-pink: #ff0080;
 
   --kora-pink-hover: #e60073;
@@ -840,7 +840,7 @@ html.sai-js [data-reveal] { opacity: 0; }
   --kora-pink-border: rgba(255, 0, 128, 0.28);
 
 
-  /* Electric Blue — Secondary */
+  /* Electric Blue - Secondary */
   --kora-blue: #3b82f6;
 
   --kora-blue-hover: #2563eb;

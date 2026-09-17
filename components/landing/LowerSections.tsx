@@ -41,7 +41,7 @@ import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { PlanKey } from "@/lib/i18n/pricing";
 
-/* ── Animation Physics & Variants ─────────────────────────────────── */
+/* -- Animation Physics & Variants ----------------------------------- */
 
 const springTransition = {
   type: "spring" as const,
@@ -87,7 +87,7 @@ const scaleIn: Variants = {
   },
 };
 
-/* ── Shared Action Button ─────────────────────────────────────────── */
+/* -- Shared Action Button ------------------------------------------- */
 
 function LandingButton({
   href,
@@ -115,7 +115,7 @@ function LandingButton({
   );
 }
 
-/* ── Section Eyebrow & Header ─────────────────────────────────────── */
+/* -- Section Eyebrow & Header --------------------------------------- */
 
 function Eyebrow({
   children,
@@ -185,7 +185,7 @@ function SectionHead({
   );
 }
 
-/* ── 1. Problem Solver Section ────────────────────────────────────── */
+/* -- 1. Problem Solver Section -------------------------------------- */
 
 export function ProblemSolverSection() {
   const { t } = useLanguage();
@@ -197,7 +197,7 @@ const GAME_CHANGERS = [
   { icon: TrendingUp, title: "Trend-to-Draft", desc: "Three drafts waiting the moment something breaks in your niche.", tone: "indigo", badge: "Pro" },
   { icon: DollarSign, title: "Auto-Plug Loop", desc: "Hits your threshold, drops the conversion comment automatically.", tone: "gold", badge: "Pro" },
   { icon: Target, title: "Brand Voice", desc: "Paste a URL. It sounds like you in sixty seconds. Not a bot.", tone: "violet", badge: "Basic+" },
-  { icon: BarChart3, title: "Smart Inbox Triage", desc: "Leads, complaints, fluff — sorted. Spend minutes, not hours.", tone: "indigo", badge: "Advanced" },
+  { icon: BarChart3, title: "Smart Inbox Triage", desc: "Leads, complaints, fluff - sorted. Spend minutes, not hours.", tone: "indigo", badge: "Advanced" },
 ];
 
 const toneColor = (t?: string) =>
@@ -211,7 +211,7 @@ export function Features() {
         <SectionHead
           eyebrow="Full feature suite"
           title={<>Everything you need.<br /><span className="sai-gradient-text">Then some.</span></>}
-          sub="Most tools tell you what happened. Koraspace AI tells you what will — and often handles it before you open the app."
+          sub="Most tools tell you what happened. Koraspace AI tells you what will - and often handles it before you open the app."
 =======
   return (
     <section className="relative px-4 sm:px-6 lg:px-8 py-16">
@@ -323,7 +323,7 @@ export function Features() {
   );
 }
 
-/* ── 2. Dual-Mode Showcase Section (#dual-modes) ─────────────────── */
+/* -- 2. Dual-Mode Showcase Section (#dual-modes) ------------------- */
 
 export function DualModeShowcaseSection() {
   const { t } = useLanguage();
@@ -507,7 +507,7 @@ export function DualModeShowcaseSection() {
   );
 }
 
-/* ── 3. Growth Loop Section (#how) ────────────────────────────────── */
+/* -- 3. Growth Loop Section (#how) ---------------------------------- */
 
 export function GrowthLoopSection() {
   const { t } = useLanguage();
@@ -619,7 +619,7 @@ export function GrowthLoopSection() {
   );
 }
 
-/* ── 4. Alternating FeatureSection Layout ─────────────────────────── */
+/* -- 4. Alternating FeatureSection Layout --------------------------- */
 
 interface FeatureProps {
   id?: string;
@@ -706,7 +706,7 @@ export function FeatureSection({
   );
 }
 
-/* ── 5. Interactive FeatureShowcase (#engines) ────────────────────── */
+/* -- 5. Interactive FeatureShowcase (#engines) ---------------------- */
 
 const FEATURE_SCREEN_MAP: Record<string, { icon: React.ComponentType<{ className?: string }>; screenPath: string }> = {
   "ai-composer": { icon: Sparkles, screenPath: "/features/Kora-AI-Composer.jpg" },
@@ -824,7 +824,7 @@ export function FeatureShowcase() {
   );
 }
 
-/* ── 6. Brand Brain & 8-Agent Swarm (#brain) ──────────────────────── */
+/* -- 6. Brand Brain & 8-Agent Swarm (#brain) ------------------------ */
 
 const SWARM_ICONS = [
   Search,
@@ -943,7 +943,7 @@ export function BrainAndAgentsSection() {
   );
 }
 
-/* ── 7. Agent Tools Grid (#tools / #features) ─────────────────────── */
+/* -- 7. Agent Tools Grid (#tools / #features) ----------------------- */
 
 const AGENT_TOOL_ICONS = [
   Sparkles,
@@ -1019,7 +1019,7 @@ export function AgentTools() {
   );
 }
 
-/* ── 8. Platform Integrations Section (#integrations) ─────────────── */
+/* -- 8. Platform Integrations Section (#integrations) --------------- */
 
 const PLATFORMS = [
   { name: "Instagram", iconPath: "/integrations/insta.png" },
@@ -1088,7 +1088,7 @@ export function Integrations() {
   );
 }
 
-/* ── 9. Revenue Attribution & Intelligence (#revenue) ─────────────── */
+/* -- 9. Revenue Attribution & Intelligence (#revenue) --------------- */
 
 export function RevenueAttributionSection() {
   const { t } = useLanguage();
@@ -1223,14 +1223,14 @@ export function RevenueAttributionSection() {
   );
 }
 
-/* ── 10. Collaboration & Agency Workspaces (#collaboration) ───────── */
+/* -- 10. Collaboration & Agency Workspaces (#collaboration) --------- */
 
 <<<<<<< HEAD
 const STORIES = [
   { name: "Adaeze Okonkwo", role: "Fintech Founder, Lagos", avatar: "AO", text: "I replaced Buffer and a freelance manager with Koraspace AI. Ghost Mode handles engagement while I close deals. ROI in week one.", highlight: "Replaced a freelance manager" },
   { name: "Chukwuemeka Dike", role: "Digital Agency, Abuja", avatar: "CD", text: "Eight client accounts used to need three people. Now it's me and the agent. Inbox Triage alone saves two hours a day.", highlight: "Manages 8 clients solo" },
   { name: "Fatima Al-Hassan", role: "E-commerce, Kano", avatar: "FA", text: "ROI Pulse is wild. I can show 'this post made us ₦340,000 this week.' The marketing budget stopped being a question.", highlight: "₦340k from one post" },
-  { name: "Tunde Fashola", role: "Brand Coach, Lagos", avatar: "TF", text: "Trend-to-Draft is a ghostwriter that never sleeps. It caught the news cycle before I woke up — three drafts waiting.", highlight: "Trend content before it peaks" },
+  { name: "Tunde Fashola", role: "Brand Coach, Lagos", avatar: "TF", text: "Trend-to-Draft is a ghostwriter that never sleeps. It caught the news cycle before I woke up - three drafts waiting.", highlight: "Trend content before it peaks" },
   { name: "Ngozi Eze", role: "Fashion, Port Harcourt", avatar: "NE", text: "I was skeptical about AI sounding like me. My followers can't tell. Engagement went up three times.", highlight: "3× engagement" },
   { name: "Biodun Afolabi", role: "SaaS Founder, Lagos", avatar: "BA", text: "They self-host Llama 3.3 70B, so my content data doesn't go to anyone else. And the pricing makes sense here.", highlight: "Privacy-first" },
 ];
@@ -1338,7 +1338,7 @@ export function Stories() {
   );
 }
 
-/* ── 11. Customer Stories (Testimonials) (#stories) ────────────────── */
+/* -- 11. Customer Stories (Testimonials) (#stories) ------------------ */
 
 export function Stories() {
   const { t } = useLanguage();
@@ -1410,7 +1410,7 @@ export function Stories() {
   );
 }
 
-/* ── 12. Transparent Pricing Section (#pricing) ───────────────────── */
+/* -- 12. Transparent Pricing Section (#pricing) --------------------- */
 
 export function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
@@ -1593,7 +1593,7 @@ export function Pricing() {
   );
 }
 
-/* ── 13. FAQ Accordion (#faq) ─────────────────────────────────────── */
+/* -- 13. FAQ Accordion (#faq) --------------------------------------- */
 
 export function FAQ() {
   const { t } = useLanguage();
@@ -1674,7 +1674,7 @@ export function FAQ() {
   );
 }
 
-/* ── 14. Final Call To Action ─────────────────────────────────────── */
+/* -- 14. Final Call To Action --------------------------------------- */
 
 export function FinalCTA() {
   const { t } = useLanguage();
@@ -1743,7 +1743,7 @@ export function FinalCTA() {
   );
 }
 
-/* ── 15. Upgraded Footer ──────────────────────────────────────────── */
+/* -- 15. Upgraded Footer -------------------------------------------- */
 
 export function SiteFooter() {
   const { t } = useLanguage();
@@ -1858,7 +1858,7 @@ export function FinalCTA() {
           className="pointer-events-none absolute inset-x-0 top-0 h-64 opacity-40"
           style={{ background: "radial-gradient(60% 100% at 50% 0%, rgba(99,102,241,0.35), transparent 70%)" }}
         />
-        <div data-reveal><Eyebrow>Free for 14 days — no card required</Eyebrow></div>
+        <div data-reveal><Eyebrow>Free for 14 days - no card required</Eyebrow></div>
         <h2 data-reveal className="font-display mx-auto mt-5 max-w-2xl text-4xl font-semibold leading-[1.05] tracking-[-0.02em] text-white sm:text-6xl">
           Your AI marketing team<br /><span className="sai-gradient-text">starts today.</span>
         </h2>
@@ -1889,7 +1889,7 @@ export function FinalCTA() {
   );
 }
 
-/* ── Footer -------------------------------------------------------- */
+/* -- Footer -------------------------------------------------------- */
 
 export function SiteFooter() {
   return (
@@ -1911,7 +1911,7 @@ export function SiteFooter() {
         </div>
       </div>
       <p className="mx-auto mt-8 max-w-6xl text-center text-xs text-white/30 sm:text-left">
-        © {new Date().getFullYear()} Koraspace AI — Personal Social Agent. Powered by Llama 3.3 70B.
+        © {new Date().getFullYear()} Koraspace AI - Personal Social Agent. Powered by Llama 3.3 70B.
       </p>
 =======
         {/* Bottom Credits Bar */}

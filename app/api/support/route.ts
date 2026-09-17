@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // 2) Email it to the team via SMTP (nodemailer). Best-effort — the ticket
+  // 2) Email it to the team via SMTP (nodemailer). Best-effort - the ticket
   //    is stored regardless of whether SMTP is configured.
   const transporter = getTransporter();
   if (transporter) {

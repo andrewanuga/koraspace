@@ -111,7 +111,7 @@ export function AiDraftCard({
     );
   };
 
-  /* ── Skeleton ── */
+  /* -- Skeleton -- */
   if (isGenerating) {
     return (
       <section className="min-h-[420px] rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
@@ -163,7 +163,7 @@ export function AiDraftCard({
     );
   }
 
-  /* ── Empty state ── */
+  /* -- Empty state -- */
   if (!content) {
     return (
       <section className="flex min-h-[420px] flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--stroke-strong)] bg-[var(--panel-fill)] p-8 text-center">
@@ -187,7 +187,7 @@ export function AiDraftCard({
       ? "var(--sai-gold, #f59e0b)"
       : "var(--danger)";
 
-  /* ── Draft ── */
+  /* -- Draft -- */
   return (
     <section className="relative overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)]">
       {/* Score bar */}
@@ -320,7 +320,7 @@ export function AiDraftCard({
         </div>
       </div>
 
-      {/* ── Schedule Dialog Modal ── */}
+      {/* -- Schedule Dialog Modal -- */}
       {showScheduleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-6 shadow-2xl">

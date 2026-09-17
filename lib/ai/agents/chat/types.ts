@@ -12,7 +12,7 @@
 import { z } from "zod";
 import type { AgentContext, AgentResult } from "../../core/types";
 
-/* ── 1. Message & Attachment Inputs ───────────────────────────── */
+/* -- 1. Message & Attachment Inputs ----------------------------- */
 
 export interface Attachment {
   type: "image" | "video" | "file";
@@ -37,7 +37,7 @@ export interface ChatAgentInput {
   requireSelfCorrection?: boolean;
 }
 
-/* ── 2. Tool Invocation & Observation Trace ───────────────────── */
+/* -- 2. Tool Invocation & Observation Trace --------------------- */
 
 export const ToolInvocationSchema = z.object({
   id: z.string().optional(),
@@ -65,7 +65,7 @@ export interface AgentStep {
   timestamp: number;
 }
 
-/* ── 3. Planning & Decomposition ──────────────────────────────── */
+/* -- 3. Planning & Decomposition -------------------------------- */
 
 export interface ChatPlan {
   intent: string;
@@ -75,7 +75,7 @@ export interface ChatPlan {
   estimatedRisk: "low" | "medium" | "high";
 }
 
-/* ── 4. Output & Telemetry Results ────────────────────────────── */
+/* -- 4. Output & Telemetry Results ------------------------------ */
 
 export interface ChatAgentOutput {
   content: string;

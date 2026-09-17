@@ -32,7 +32,7 @@ async function runTests() {
     autonomyMode: "assist",
   };
 
-  // ── 1. Memory Formation: Brand Rule Detection ─────────────────────
+  // -- 1. Memory Formation: Brand Rule Detection ---------------------
   const ruleResult = MemoryFormationEngine.evaluateText(
     "Don't use the phrase 'revolutionary AI' in any of our drafts."
   );
@@ -44,7 +44,7 @@ async function runTests() {
     "MemoryFormationEngine classifies brand rule and extracts forbidden term"
   );
 
-  // ── 2. Memory Formation: Target Audience Fact Detection ───────────
+  // -- 2. Memory Formation: Target Audience Fact Detection -----------
   const factResult = MemoryFormationEngine.evaluateText(
     "Our target audience consists of Nigerian tech entrepreneurs and founders."
   );
@@ -56,7 +56,7 @@ async function runTests() {
     "MemoryFormationEngine classifies business fact and extracts target audience"
   );
 
-  // ── 3. Memory Formation: Preference Detection ────────────────────
+  // -- 3. Memory Formation: Preference Detection --------------------
   const prefResult = MemoryFormationEngine.evaluateText(
     "From now on, always write in a technical, concise tone for LinkedIn."
   );
@@ -67,7 +67,7 @@ async function runTests() {
     "MemoryFormationEngine classifies user tone preference with high importance"
   );
 
-  // ── 4. Memory Formation: Trivial Chatter Discard ─────────────────
+  // -- 4. Memory Formation: Trivial Chatter Discard -----------------
   const trivialResult1 = MemoryFormationEngine.evaluateText("ok thanks");
   const trivialResult2 = MemoryFormationEngine.evaluateText("🔥❤️🙌");
   assert(
@@ -77,7 +77,7 @@ async function runTests() {
     "MemoryFormationEngine discards trivial conversational fluff"
   );
 
-  // ── 5. Embedding & Lexical Similarity ────────────────────────────
+  // -- 5. Embedding & Lexical Similarity ----------------------------
   const sim1 = EmbeddingService.lexicalSimilarity(
     "social media growth strategy",
     "Here is our complete strategy for social media growth"
@@ -91,7 +91,7 @@ async function runTests() {
     "EmbeddingService lexical similarity ranks matching concepts high and unrelated zero"
   );
 
-  // ── 6. ChatAgent Execution with Memory Context ───────────────────
+  // -- 6. ChatAgent Execution with Memory Context -------------------
   const chatRes = await ChatAgent.execute(
     {
       messages: [{ role: "user", content: "Draft an announcement about our new feature." }],
@@ -105,7 +105,7 @@ async function runTests() {
     "ChatAgent executes with memory context injection"
   );
 
-  // ── 7. GhostAgent Execution with Memory Context ──────────────────
+  // -- 7. GhostAgent Execution with Memory Context ------------------
   const ghostRes = await GhostAgent.evaluate(
     {
       message: "How much does the enterprise plan cost?",

@@ -355,7 +355,7 @@ export default function AdminOverview() {
                   />
                   <Pill tone={sevTone(e.severity)}>{e.type.replace(/_/g, " ")}</Pill>
                   <p className="truncate text-white/80 font-medium">
-                    {e.detail || e.email || e.ip || "—"}
+                    {e.detail || e.email || e.ip || "-"}
                   </p>
                 </div>
 

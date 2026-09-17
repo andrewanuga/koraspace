@@ -1,5 +1,5 @@
 // Small input hardening helpers for API routes. React escapes on render, so
-// the main risks are oversized payloads and control characters — bound both.
+// the main risks are oversized payloads and control characters - bound both.
 
 const CONTROL = new RegExp("[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]", "g");
 

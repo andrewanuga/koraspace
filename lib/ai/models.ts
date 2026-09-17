@@ -6,16 +6,16 @@
 =======
  * Each "agent" in Koraspace (Chat, Generate, Ghost, Score, Trends)
 >>>>>>> main
- * gets its own default model and temperature — personalized for the task.
+ * gets its own default model and temperature - personalized for the task.
  * Users can override the model globally in Settings, or per-conversation
  * in the Create page.
  */
 
-/* ── Agent IDs ────────────────────────────────────────────────── */
+/* -- Agent IDs -------------------------------------------------- */
 
 export type AgentId = "chat" | "generate" | "ghost" | "score" | "trends";
 
-/* ── Per-agent defaults ───────────────────────────────────────── */
+/* -- Per-agent defaults ----------------------------------------- */
 
 export interface AgentConfig {
   /** Display name for the agent */
@@ -79,7 +79,7 @@ export const AGENT_DEFAULTS: Record<AgentId, AgentConfig> = {
   },
 };
 
-/* ── Recommended models for the model picker ──────────────────── */
+/* -- Recommended models for the model picker -------------------- */
 
 export interface RecommendedModel {
   id: string;
@@ -93,12 +93,12 @@ export interface RecommendedModel {
 }
 
 export const RECOMMENDED_MODELS: RecommendedModel[] = [
-  // — Free tier —
+  // - Free tier -
   {
     id: "google/gemma-4-26b-a4b-it:free",
     name: "Gemma 4 26B (Free)",
     provider: "Google",
-    description: "Free model — great for trying out the platform",
+    description: "Free model - great for trying out the platform",
     tier: "free",
     supportsVision: false,
     contextWindow: "128K",
@@ -116,7 +116,7 @@ export const RECOMMENDED_MODELS: RecommendedModel[] = [
   },
 ];
 
-/* ── Tier metadata ────────────────────────────────────────────── */
+/* -- Tier metadata ---------------------------------------------- */
 
 export const TIER_META: Record<
   RecommendedModel["tier"],
@@ -125,7 +125,7 @@ export const TIER_META: Record<
   free: {
     label: "Free",
     color: "#34d399",
-    description: "No cost — great for testing",
+    description: "No cost - great for testing",
   },
   budget: {
     label: "Budget",
@@ -144,7 +144,7 @@ export const TIER_META: Record<
   },
 };
 
-/* ── Helper: get display name for any model ID ────────────────── */
+/* -- Helper: get display name for any model ID ------------------ */
 
 export function getModelDisplayName(modelId: string): string {
   const recommended = RECOMMENDED_MODELS.find((m) => m.id === modelId);
@@ -158,7 +158,7 @@ export function getModelDisplayName(modelId: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-/* ── Helper: get provider name from model ID ──────────────────── */
+/* -- Helper: get provider name from model ID -------------------- */
 
 export function getModelProvider(modelId: string): string {
   const recommended = RECOMMENDED_MODELS.find((m) => m.id === modelId);

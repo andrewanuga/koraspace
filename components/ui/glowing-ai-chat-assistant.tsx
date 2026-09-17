@@ -13,9 +13,9 @@ const STYLES = `
 const GREETING: Msg = {
   id: 0, role: "assistant",
 <<<<<<< HEAD
-  content: "Hey — I'm your Koraspace agent. Ask me to draft a post, plan your week, or summarise your inbox.",
+  content: "Hey - I'm your Koraspace agent. Ask me to draft a post, plan your week, or summarise your inbox.",
 =======
-  content: "Hey — I'm your kora agent. Ask me to draft a post, plan your week, or summarise your inbox.",
+  content: "Hey - I'm your kora agent. Ask me to draft a post, plan your week, or summarise your inbox.",
 >>>>>>> main
 };
 

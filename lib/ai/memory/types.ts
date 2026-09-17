@@ -10,7 +10,7 @@
 
 import { z } from "zod";
 
-/* ── 1. Brand Intelligence & Guardrails ───────────────────────── */
+/* -- 1. Brand Intelligence & Guardrails ------------------------- */
 
 export const StyleTraitsSchema = z.object({
   formality: z.enum(["formal", "balanced", "casual"]).default("balanced"),
@@ -45,7 +45,7 @@ export interface BrandComplianceReport {
   suggestions: string[];
 }
 
-/* ── 2. Semantic Memory & Knowledge Base ──────────────────────── */
+/* -- 2. Semantic Memory & Knowledge Base ------------------------ */
 
 export const MemoryTypeSchema = z.enum([
   "brand_rule",
@@ -91,7 +91,7 @@ export interface MemorySearchResult {
   similarityScore: number;
 }
 
-/* ── 3. Performance Memory & Analytics Intelligence ──────────── */
+/* -- 3. Performance Memory & Analytics Intelligence ------------ */
 
 export interface PostPerformanceSummary {
   id: string;
@@ -118,7 +118,7 @@ export interface PerformanceInsight {
   topPosts: PostPerformanceSummary[];
 }
 
-/* ── 4. Unified Memory Context Bundle ─────────────────────────── */
+/* -- 4. Unified Memory Context Bundle --------------------------- */
 
 export interface MemoryContextBundle {
   brand: BrandIntelligence;

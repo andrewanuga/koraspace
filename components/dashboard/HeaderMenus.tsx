@@ -30,7 +30,7 @@ const catTone: Record<string, string> = {
   mention: "var(--sai-violet)", fluff: "var(--fg-3)",
 };
 
-/* ── Notifications ─────────────────────────────────────────────── */
+/* -- Notifications ----------------------------------------------- */
 export function NotificationsMenu() {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<Notif[]>([]);
@@ -142,7 +142,7 @@ export function NotificationsMenu() {
   );
 }
 
-/* ── Workspace menu ──────────────────────────────────────────────── */
+/* -- Workspace menu ------------------------------------------------ */
 export function WorkspaceMenu() {
   const { workspaces, activeWorkspace, setActiveWorkspace } = useWorkspace();
   const [open, setOpen] = useState(false);
@@ -192,7 +192,7 @@ export function WorkspaceMenu() {
   );
 }
 
-/* ── Profile menu ──────────────────────────────────────────────── */
+/* -- Profile menu ------------------------------------------------ */
 type Me = { name: string; email: string; username: string | null; plan: string; avatar: string | null };
 
 export function ProfileMenu() {

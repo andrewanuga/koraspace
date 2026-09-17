@@ -69,7 +69,7 @@ export function Preloader() {
     }
 
     warm();
-    // Safety valve — never trap the user behind the loader.
+    // Safety valve - never trap the user behind the loader.
     const failsafe = window.setTimeout(() => !cancelled && setDone(true), 6000);
 
     return () => {

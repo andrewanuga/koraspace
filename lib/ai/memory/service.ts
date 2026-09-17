@@ -18,7 +18,7 @@ import {
 } from "./types";
 import { EmbeddingService } from "./embeddings";
 
-/* ── Zod Contracts for CRUD ───────────────────────────────────── */
+/* -- Zod Contracts for CRUD ------------------------------------- */
 
 export const StoreMemoryInputSchema = z.object({
   content: z.string().min(3, "Memory content must be at least 3 characters").max(4000),

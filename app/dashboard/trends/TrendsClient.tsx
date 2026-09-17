@@ -754,7 +754,7 @@ export function TrendsClient({
                           text-[var(--brand-primary)]
                         "
                       >
-                        {trend.score ?? "—"}
+                        {trend.score ?? "-"}
                       </div>
 
                     </div>
@@ -1429,7 +1429,7 @@ export function TrendsClient({
                   text-[var(--brand-primary)]
                 "
               >
-                {selectedTrend.score ?? "—"}
+                {selectedTrend.score ?? "-"}
               </div>
 
             </div>
@@ -1463,7 +1463,7 @@ export function TrendsClient({
                 </p>
 
                 <p className="mt-1 text-[12px] font-medium text-[var(--fg)]">
-                  {selectedTrend.score ?? "—"}
+                  {selectedTrend.score ?? "-"}
                 </p>
 
               </div>

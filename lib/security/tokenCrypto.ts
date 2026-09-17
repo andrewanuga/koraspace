@@ -1,5 +1,5 @@
 /**
- * Koraspace Token Cryptography — AES-256-GCM Authenticated Encryption
+ * Koraspace Token Cryptography - AES-256-GCM Authenticated Encryption
  *
  * Core Security Mandate 2:
  * - All OAuth access tokens and long-lived refresh tokens must exist in application

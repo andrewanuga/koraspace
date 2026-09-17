@@ -152,7 +152,7 @@ async function fetchProfile(acc: Account, token: string | null): Promise<{ follo
               display_name: d1.name,
             };
           }
-          // Strategy 2: The token is a Meta User token — get the user's name+picture at minimum
+          // Strategy 2: The token is a Meta User token - get the user's name+picture at minimum
           const r2 = await fetch(
             `https://graph.facebook.com/v19.0/me?fields=name,picture.type(large)&access_token=${token}`
           );
@@ -337,17 +337,17 @@ async function fetchPosts(acc: Account, token: string | null): Promise<Normalize
             likes: Number(p.like_count ?? 0), comments: Number(p.comments_count ?? 0), impressions: 0,
           }));
         }
-        // If IG Business API fails (personal token), return empty — can't get IG posts without proper IG Business Account
+        // If IG Business API fails (personal token), return empty - can't get IG posts without proper IG Business Account
         return [];
       }
       case "threads": {
-        // Threads Graph API — only works with a proper Threads access token
+        // Threads Graph API - only works with a proper Threads access token
         const r = await fetch(
           `https://graph.threads.net/v1.0/me/threads?fields=id,text,timestamp,like_count,reply_count&limit=20&access_token=${token}`
         );
         const d = await r.json();
         if (d.error) {
-          // Token is not a Threads token — silently skip
+          // Token is not a Threads token - silently skip
           return [];
         }
         return (d.data ?? []).map((p: Record<string, unknown>) => ({

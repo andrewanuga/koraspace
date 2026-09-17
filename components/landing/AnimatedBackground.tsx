@@ -5,10 +5,10 @@ import { useEffect, useRef } from "react";
 export function AnimatedBackground() {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-      {/* Base — pure black dark, white light */}
+      {/* Base - pure black dark, white light */}
       <div className="absolute inset-0 bg-white dark:bg-black" />
 
-      {/* Primary indigo blob — top left */}
+      {/* Primary indigo blob - top left */}
       <div
         className="absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full opacity-[0.20] blur-[130px] animate-float"
         style={{
@@ -18,7 +18,7 @@ export function AnimatedBackground() {
         }}
       />
 
-      {/* Gold/amber blob — right */}
+      {/* Gold/amber blob - right */}
       <div
         className="absolute top-1/3 -right-40 w-[600px] h-[600px] rounded-full opacity-[0.14] blur-[110px] animate-float"
         style={{
@@ -28,7 +28,7 @@ export function AnimatedBackground() {
         }}
       />
 
-      {/* Purple blob — bottom */}
+      {/* Purple blob - bottom */}
       <div
         className="absolute bottom-0 left-1/3 w-[500px] h-[500px] rounded-full opacity-[0.12] blur-[100px] animate-float"
         style={{
@@ -60,7 +60,7 @@ export function AnimatedBackground() {
         }}
       />
 
-      {/* Radial fade — black centre vignette */}
+      {/* Radial fade - black centre vignette */}
       <div
         className="absolute inset-0 hidden dark:block"
         style={{

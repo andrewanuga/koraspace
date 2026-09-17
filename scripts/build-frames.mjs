@@ -1,5 +1,5 @@
 // One-off asset pipeline: the source hero sequence is 300 PNGs at 1600x900
-// (~471 MB total) — far too heavy to ship. This resizes + re-encodes them to
+// (~471 MB total) - far too heavy to ship. This resizes + re-encodes them to
 // WebP into public/frames/ so the cinematic hero can stream them in the browser.
 //
 //   node scripts/build-frames.mjs

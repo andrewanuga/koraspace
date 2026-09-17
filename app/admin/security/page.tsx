@@ -312,7 +312,7 @@ export default function AdminSecurity() {
                     <span className="text-[11px] text-white/40 font-data">{timeAgo(e.created_at)}</span>
                   </div>
 
-                  <p className="text-white/80 font-medium pt-0.5">{e.detail || e.email || e.path || "—"}</p>
+                  <p className="text-white/80 font-medium pt-0.5">{e.detail || e.email || e.path || "-"}</p>
                 </div>
               ))}
             </div>

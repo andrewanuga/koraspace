@@ -31,7 +31,7 @@ import type {
 import { ChatPlanner } from "./planner";
 import { ChatExecutor } from "./executor";
 
-/* ── 1. Fallback Response Generator ───────────────────────────── */
+/* -- 1. Fallback Response Generator ----------------------------- */
 
 function generateFallbackResponse(
   input: ChatAgentInput,
@@ -44,7 +44,7 @@ function generateFallbackResponse(
   const content = [
     `Here is a ready-to-post draft on "${topic}":`,
     "",
-    `"Everyone thinks ${topic} is complicated. It isn't — here is the 3-minute breakdown of what actually works:"`,
+    `"Everyone thinks ${topic} is complicated. It isn't - here is the 3-minute breakdown of what actually works:"`,
     "",
     "1. The hidden leverage point most people ignore",
     "2. The tactical shift that delivers immediate traction",
@@ -63,7 +63,7 @@ function generateFallbackResponse(
   };
 }
 
-/* ── 2. Unified Chat Agent Class ──────────────────────────────── */
+/* -- 2. Unified Chat Agent Class -------------------------------- */
 
 export class ChatAgent {
   /**
@@ -129,7 +129,7 @@ export class ChatAgent {
     for (const a of attachments) {
       if (a.type === "image" && a.dataUrl) {
         imageDataUrls.push(a.dataUrl);
-        attachmentLines.push(`Image: "${a.name}" — visual anchor.`);
+        attachmentLines.push(`Image: "${a.name}" - visual anchor.`);
       } else if (a.type === "video") {
         attachmentLines.push(`Video: "${a.name}" (${a.mime || "video"}).`);
       } else if (a.type === "file" && a.content) {

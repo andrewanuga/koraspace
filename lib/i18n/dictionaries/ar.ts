@@ -1005,7 +1005,7 @@ export const ar: TranslationDictionary = {
     a6: "نقبل جميع بطاقات الائتمان والخصم الرئيسية (Visa و Mastercard و Mada و Amex) بالإضافة إلى Apple Pay و Google Pay وبوابات الدفع الإقليمية المعتمدة.",
   },
   cta: {
-    eyebrow: "تجربة مجانية لمدة 14 يوماً — لا حاجة لبطاقة ائتمان",
+    eyebrow: "تجربة مجانية لمدة 14 يوماً - لا حاجة لبطاقة ائتمان",
     titleLead: "فريقك التسويقي المستقل بالذكاء الاصطناعي",
     titleHighlight: "ينطلق اليوم.",
     subtitle:

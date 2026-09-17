@@ -35,7 +35,7 @@ export async function executeTool(
     throw new Error(msg);
 =======
 export const AI_TOOLS = [
-  // ── Existing ──
+  // -- Existing --
   {
     type: "function",
     function: {
@@ -112,7 +112,7 @@ export const AI_TOOLS = [
       },
     },
   },
-  // ── New Premium Content & Strategy Tools ──
+  // -- New Premium Content & Strategy Tools --
   {
     type: "function",
     function: {
@@ -177,7 +177,7 @@ export const AI_TOOLS = [
       parameters: { type: "object", properties: {}, required: [] },
     },
   },
-  // ── Database & Action Tools ──
+  // -- Database & Action Tools --
   {
     type: "function",
     function: {
@@ -244,7 +244,7 @@ export const AI_TOOLS = [
   },
 ];
 
-/* ── Tool Executors ───────────────────────────────────────────── */
+/* -- Tool Executors --------------------------------------------- */
 
 interface ToolContext {
   supabase?: any;
@@ -343,7 +343,7 @@ export async function executeTool(name: string, args: Record<string, any>, ctx: 
         return `Security/Query error: ${e.message}`;
       }
 
-    // ── New Premium Content & Strategy Tools ──
+    // -- New Premium Content & Strategy Tools --
     case "analyze_competitor":
       return `Competitor Analysis for ${args.competitor_handle_or_url}: 
 1. They post heavily about basic concepts but miss advanced insights.
@@ -384,7 +384,7 @@ Suggestion: Tweak claim to specify "For B2B enterprises...".`;
         "Stop doing [Common Mistake]. It's costing you [Metric]. Do this instead:"
       ]);
 
-    // ── Database & Action Tools ──
+    // -- Database & Action Tools --
     case "schedule_post":
       if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
       try {

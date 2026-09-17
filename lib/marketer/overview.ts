@@ -27,7 +27,7 @@ export async function getMarketerOverview({
 }: GetMarketerOverviewParams): Promise<MarketerOverview> {
   const supabase = await createClient();
 
-  // ── Period Windows ──────────────────────────────────────────
+  // -- Period Windows ------------------------------------------
   const now = new Date();
   const days = range === "7d" ? 7 : range === "90d" ? 90 : 30;
 
@@ -49,7 +49,7 @@ export async function getMarketerOverview({
   const previousStartDate = previousStartISO.slice(0, 10);
   const previousEndDate = previousEndISO.slice(0, 10);
 
-  // ── Workspaces ──────────────────────────────────────────────
+  // -- Workspaces ----------------------------------------------
   const [{ data: workspaces }, { data: userProfile }] = await Promise.all([
     supabase
       .from("workspace_members")
@@ -82,7 +82,7 @@ export async function getMarketerOverview({
 
   const workspaceIds = Object.keys(workspaceMap);
 
-  // ── Parallel DB Queries ─────────────────────────────────────
+  // -- Parallel DB Queries -------------------------------------
   const [
     { data: rawCampaigns },
     { data: dailyMetrics },
@@ -145,7 +145,7 @@ export async function getMarketerOverview({
       .lte("period_end", previousEndDate),
   ]);
 
-  // ── Process Campaigns ───────────────────────────────────────
+  // -- Process Campaigns ---------------------------------------
   const campaigns = (rawCampaigns || []).map((c: any) => {
     const spend = Number(c.spend) || 0;
     const revenue = Number(c.revenue) || 0;
@@ -178,7 +178,7 @@ export async function getMarketerOverview({
     };
   });
 
-  // ── Previous Period Totals (from real snapshots) ────────────
+  // -- Previous Period Totals (from real snapshots) ------------
   const prevSnapshotList = prevSnapshots || [];
 
   const prevTotals = prevSnapshotList.reduce(
@@ -212,7 +212,7 @@ export async function getMarketerOverview({
     return { ...c, changePct };
   });
 
-  // ── Aggregate Totals ────────────────────────────────────────
+  // -- Aggregate Totals ----------------------------------------
   const totalSpend = annotatedCampaigns.reduce((s: number, c: any) => s + c.spend, 0);
   const totalRevenue = annotatedCampaigns.reduce((s: number, c: any) => s + c.revenue, 0);
   const totalConversions = annotatedCampaigns.reduce((s: number, c: any) => s + c.conversions, 0);
@@ -237,7 +237,7 @@ export async function getMarketerOverview({
     impressionsPct: calcPctChange(totalImpressions, prevTotals.impressions),
   };
 
-  // ── Client Health ───────────────────────────────────────────
+  // -- Client Health -------------------------------------------
   const clientHealth: ClientHealth[] = workspaceIds.map((wId) => {
     const info = workspaceMap[wId];
     const clientCampaigns = annotatedCampaigns.filter((c: any) => c.workspaceId === wId);
@@ -279,7 +279,7 @@ export async function getMarketerOverview({
     };
   });
 
-  // ── Spend Trend from Real Daily Metrics ────────────────────
+  // -- Spend Trend from Real Daily Metrics --------------------
   const metricsByDate = new Map<
     string,
     { spend: number; revenue: number; impressions: number; clicks: number; conversions: number }
@@ -330,12 +330,12 @@ export async function getMarketerOverview({
     };
   });
 
-  // ── Top Campaigns ───────────────────────────────────────────
+  // -- Top Campaigns -------------------------------------------
   const topCampaigns: CampaignPerformance[] = [...annotatedCampaigns]
     .sort((a, b) => b.roas * b.spend - a.roas * a.spend)
     .slice(0, 5);
 
-  // ── Recent Activity (real DB only, no fallbacks) ────────────
+  // -- Recent Activity (real DB only, no fallbacks) ------------
   const recentActivity: ActivityItem[] = (dbActivity || []).map((a: any) => ({
     id: a.id as string,
     workspaceId: a.workspace_id as string,
@@ -346,7 +346,7 @@ export async function getMarketerOverview({
     createdAt: a.created_at as string,
   }));
 
-  // ── Upcoming Tasks (real DB only, no fallbacks) ─────────────
+  // -- Upcoming Tasks (real DB only, no fallbacks) -------------
   const upcoming: UpcomingItem[] = (dbTasks || []).map((t: any) => ({
     id: t.id as string,
     workspaceId: t.workspace_id as string,
@@ -359,7 +359,7 @@ export async function getMarketerOverview({
     status: t.status as string,
   }));
 
-  // ── Opportunities (real DB only) ────────────────────────────
+  // -- Opportunities (real DB only) ----------------------------
   const opportunities: MarketingOpportunity[] = (dbOpportunities || []).map(
     (o: any) => ({
       id: o.id as string,

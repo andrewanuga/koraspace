@@ -197,7 +197,7 @@ function trendDirection(pct: {
   change: string;
   positive?: boolean;
 }) {
-  if (pct.change === "—") return "flat" as const;
+  if (pct.change === "-") return "flat" as const;
 
   return pct.positive
     ? ("up" as const)
@@ -219,7 +219,7 @@ function buildRecommendations(
       color: "var(--brand-primary)",
       title: "Content opportunity",
       text: topAccount
-        ? `Post more video — ${platformLabel(
+        ? `Post more video - ${platformLabel(
             topAccount.platform
           )} is your strongest channel right now.`
         : "Connect an account to unlock platform-specific recommendations.",
@@ -244,7 +244,7 @@ function buildRecommendations(
           ? `${leadsCount} new lead${
               leadsCount > 1 ? "s" : ""
             } came in. Reply quickly to improve conversion.`
-          : "Your audience is most likely to engage between 7–9pm.",
+          : "Your audience is most likely to engage between 7-9pm.",
     },
   ];
 }
@@ -787,10 +787,10 @@ export default async function DashboardPage() {
 
               <div className="mt-2 flex flex-wrap items-end gap-2">
                 <p className="font-display text-[24px] font-semibold tracking-[-0.02em] text-[var(--fg)]">
-                  {metric.value || "—"}
+                  {metric.value || "-"}
                 </p>
 
-                {metric.change !== "—" && (
+                {metric.change !== "-" && (
                   <span
                     className="mb-1 flex items-center gap-0.5 text-[10.5px] font-semibold"
                     style={{
@@ -968,13 +968,13 @@ export default async function DashboardPage() {
                     : "#F87171",
               }}
             >
-              {metrics[0].change !== "—"
+              {metrics[0].change !== "-"
                 ? `${
                     metrics[0].positive
                       ? "+"
                       : ""
                   }${metrics[0].change}`
-                : "—"}
+                : "-"}
             </p>
 
             <p className="mt-1 text-[12px] text-[var(--fg-4)]">
