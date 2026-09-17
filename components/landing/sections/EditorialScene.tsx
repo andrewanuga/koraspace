@@ -25,6 +25,7 @@ export function EditorialScene({
   reverse = false,
   surface = "dark",
   ground = 1,
+  visualBleed = false,
   id,
 }: {
   /** Two-digit section number, e.g. "04". */
@@ -39,8 +40,30 @@ export function EditorialScene({
   surface?: "dark" | "light";
   /** Step in the background rhythm, when light. */
   ground?: 1 | 2 | 3;
+  /**
+   * Let the visual run past its grid cell toward the outer margin, so the row
+   * stops reading as two tidy columns. Use it on one row, not all of them —
+   * the rhythm comes from the exception.
+   */
+  visualBleed?: boolean;
   id?: string;
 }) {
+  /**
+   * Capped at 16px from lg and 32px from xl — measured, not guessed. The
+   * content column is max-w-6xl, so at 1280 there is only ~56px of margin
+   * outside it once the scrollbar is counted; a 48px bleed left the panel 8px
+   * from the viewport edge, which reads as a mistake rather than a composition.
+   * These values leave 16px at 1024 and 24px at 1280.
+   *
+   * Translate rather than a negative margin: this tree has no negative margins
+   * anywhere, and Scene's overflow-x-clip makes the bleed safe regardless.
+   */
+  const bleed = !visualBleed
+    ? ""
+    : reverse
+      ? "lg:w-[calc(100%+1rem)] lg:-translate-x-4 xl:w-[calc(100%+2rem)] xl:-translate-x-8"
+      : "lg:w-[calc(100%+1rem)] xl:w-[calc(100%+2rem)]";
+
   return (
     <Scene
       id={id}
@@ -71,7 +94,7 @@ export function EditorialScene({
         </motion.div>
 
         {/* visual — the product layer and whatever floats over it */}
-        <div className={`relative ${reverse ? "lg:order-1" : ""}`}>
+        <div className={`relative ${reverse ? "lg:order-1" : ""} ${bleed}`}>
           {visual}
         </div>
       </div>

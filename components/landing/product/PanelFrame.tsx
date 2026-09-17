@@ -32,7 +32,7 @@ export function PanelFrame({
 }) {
   return (
     <div
-      className={`overflow-hidden rounded-3xl border border-[var(--ks-line-strong)] bg-[var(--ks-panel-frame)] shadow-[var(--ks-panel-shadow)] ${className}`}
+      className={`overflow-hidden rounded-3xl border border-[var(--ks-panel-line)] bg-[var(--ks-panel-frame)] shadow-[var(--ks-panel-shadow)] ${className}`}
     >
       {/* chrome */}
       <div className="flex items-center justify-between border-b border-[var(--ks-line)] bg-[var(--ks-panel-chrome)] px-4 py-3">

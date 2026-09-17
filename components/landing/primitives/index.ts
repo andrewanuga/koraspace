@@ -7,6 +7,7 @@
 // The layered-scene system. A section built from these reads as a composition
 // with depth rather than a rectangle in a column.
 export { Scene } from "./Scene";
+export { Surface } from "./Surface";
 export { SceneNumeral } from "./SceneNumeral";
 export { FloatingCard } from "./FloatingCard";
 export { ConnectorLine } from "./ConnectorLine";

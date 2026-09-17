@@ -904,6 +904,10 @@ html.sai-js [data-reveal] { opacity: 0; }
   --ks-panel-canvas: #121212;
   --ks-panel-raised: #181818;
   --ks-panel-inset: rgba(255, 255, 255, 0.07);
+  /* The frame's own outline, kept apart from --ks-line-strong: a panel edge
+     wants to be quieter than an emphasis border, and on a large rounded frame
+     the difference between 0.10 and 0.14 is visible. */
+  --ks-panel-line: rgba(255, 255, 255, 0.1);
   --ks-panel-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
 
   /* floating intelligence card */
@@ -943,6 +947,7 @@ html.sai-js [data-reveal] { opacity: 0; }
   --ks-panel-canvas: #ffffff;
   --ks-panel-raised: #f8f7fb;
   --ks-panel-inset: rgba(14, 10, 28, 0.08);
+  --ks-panel-line: rgba(14, 10, 28, 0.09);
   --ks-panel-shadow: 0 1px 2px rgba(14, 10, 28, 0.05), 0 18px 48px rgba(14, 10, 28, 0.1);
 
   --ks-card: #ffffff;
