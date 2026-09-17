@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "postinstall": "prisma generate",
     "sync:backup": "node scripts/sync-to-neon.js",
     "sync:backup:daemon": "node scripts/sync-to-neon.js --daemon"
   },
