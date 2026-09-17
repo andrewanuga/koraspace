@@ -12,6 +12,8 @@ export function UnderstandBrand() {
   return (
     <EditorialScene
       index="04"
+      surface="light"
+      ground={1}
       title="Understand your brand — and who it's for."
       body="KoraSpace builds context around your business as you work: who engages, what they respond to, when they are listening. Every decision after this starts from that, not from a guess."
       visual={
@@ -22,10 +24,10 @@ export function UnderstandBrand() {
             drift="lift"
             className="sm:-right-4 sm:-top-16 sm:w-[200px] lg:-right-6 xl:-right-12"
           >
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ff9fc9]">
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--ks-accent-ink)]">
               Updated
             </span>
-            <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/80">
+            <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--ks-ink-2)]">
               Refreshed after every post you publish.
             </p>
           </FloatingCard>

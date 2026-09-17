@@ -24,8 +24,8 @@ export function AudiencePanel() {
 
   return (
     <PanelFrame title="Audience">
-      <div className="rounded-xl border border-white/[0.08] bg-[#181818] p-4">
-        <span className="text-[11px] uppercase tracking-[0.14em] text-white/35">
+      <div className="rounded-xl border border-[var(--ks-line)] bg-[var(--ks-panel-raised)] p-4">
+        <span className="text-[11px] uppercase tracking-[0.14em] text-[var(--ks-ink-3)]">
           Responds most to
         </span>
 
@@ -33,10 +33,10 @@ export function AudiencePanel() {
           {TOPICS.map(({ label, share }, i) => (
             <div key={label}>
               <div className="flex items-center justify-between text-[12.5px]">
-                <span className="text-white/80">{label}</span>
-                <span className="text-white/35">{share}</span>
+                <span className="text-[var(--ks-ink-2)]">{label}</span>
+                <span className="text-[var(--ks-ink-3)]">{share}</span>
               </div>
-              <div className="mt-1.5 h-[3px] overflow-hidden rounded-full bg-white/[0.07]">
+              <div className="mt-1.5 h-[3px] overflow-hidden rounded-full bg-[var(--ks-panel-inset)]">
                 <motion.span
                   initial={reduce ? false : { width: 0 }}
                   whileInView={{ width: `${share}%` }}
@@ -56,17 +56,17 @@ export function AudiencePanel() {
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-2">
-        <div className="rounded-xl border border-white/[0.07] bg-[#141414] px-3.5 py-3">
-          <span className="text-[10px] uppercase tracking-[0.14em] text-white/35">
+        <div className="rounded-xl border border-[var(--ks-line)] bg-[var(--ks-panel-chrome)] px-3.5 py-3">
+          <span className="text-[10px] uppercase tracking-[0.14em] text-[var(--ks-ink-3)]">
             Most active
           </span>
-          <p className="mt-1 text-[13px] text-white/80">Thu, 7–9pm</p>
+          <p className="mt-1 text-[13px] text-[var(--ks-ink-2)]">Thu, 7–9pm</p>
         </div>
-        <div className="rounded-xl border border-white/[0.07] bg-[#141414] px-3.5 py-3">
-          <span className="text-[10px] uppercase tracking-[0.14em] text-white/35">
+        <div className="rounded-xl border border-[var(--ks-line)] bg-[var(--ks-panel-chrome)] px-3.5 py-3">
+          <span className="text-[10px] uppercase tracking-[0.14em] text-[var(--ks-ink-3)]">
             Prefers
           </span>
-          <p className="mt-1 text-[13px] text-white/80">Short video</p>
+          <p className="mt-1 text-[13px] text-[var(--ks-ink-2)]">Short video</p>
         </div>
       </div>
     </PanelFrame>

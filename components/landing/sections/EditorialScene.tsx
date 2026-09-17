@@ -23,6 +23,8 @@ export function EditorialScene({
   body,
   visual,
   reverse = false,
+  surface = "dark",
+  ground = 1,
   id,
 }: {
   /** Two-digit section number, e.g. "04". */
@@ -33,6 +35,10 @@ export function EditorialScene({
   visual: React.ReactNode;
   /** Put the visual on the left from lg up. */
   reverse?: boolean;
+  /** Which token scope the row renders in. */
+  surface?: "dark" | "light";
+  /** Step in the background rhythm, when light. */
+  ground?: 1 | 2 | 3;
   id?: string;
 }) {
   return (
@@ -41,6 +47,8 @@ export function EditorialScene({
       numeral={index}
       numeralSide={reverse ? "right" : "left"}
       atmosphere={reverse ? "left" : "right"}
+      surface={surface}
+      ground={ground}
     >
       <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
         {/* copy — first on mobile always; on desktop, second when reversed */}
@@ -51,13 +59,13 @@ export function EditorialScene({
           transition={springTransition}
           className={reverse ? "lg:order-2" : ""}
         >
-          <span className="font-mono text-[11px] font-bold tracking-[0.2em] text-[#ff9fc9]">
+          <span className="font-mono text-[11px] font-bold tracking-[0.2em] text-[var(--ks-accent-ink)]">
             {index}
           </span>
-          <h2 className="font-display mt-3 text-3xl font-bold leading-[1.1] tracking-tight text-white sm:text-4xl lg:text-5xl">
+          <h2 className="font-display mt-3 text-3xl font-bold leading-[1.1] tracking-tight text-[var(--ks-ink)] sm:text-4xl lg:text-5xl">
             {title}
           </h2>
-          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/60 sm:text-base">
+          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[var(--ks-ink-2)] sm:text-base">
             {body}
           </p>
         </motion.div>

@@ -31,7 +31,7 @@ export function SceneNumeral({
   return (
     <span
       aria-hidden="true"
-      className={`pointer-events-none absolute top-0 select-none font-display font-bold leading-none text-white opacity-[0.045] text-[8rem] sm:text-[12rem] lg:text-[16rem] ${position} ${className}`}
+      className={`pointer-events-none absolute top-0 select-none font-display font-bold leading-none text-[var(--ks-numeral)] text-[8rem] sm:text-[12rem] lg:text-[16rem] ${position} ${className}`}
     >
       {value}
     </span>

@@ -19,6 +19,8 @@ export function Scene({
   numeral,
   numeralSide = "left",
   atmosphere = "none",
+  surface = "dark",
+  ground = 1,
   id,
   className = "",
   contentClassName = "",
@@ -28,6 +30,14 @@ export function Scene({
   numeralSide?: "left" | "right" | "center";
   /** Where the ambient glow sits, if any. */
   atmosphere?: "none" | "left" | "right" | "center";
+  /**
+   * Which token scope the section renders in. A light scene paints its own
+   * opaque ground rather than letting the page-wide tone show through, which
+   * is what allows sections to be converted one at a time.
+   */
+  surface?: "dark" | "light";
+  /** Step in the background rhythm: 1 paper, 2 lavender, 3 atmospheric. */
+  ground?: 1 | 2 | 3;
   id?: string;
   className?: string;
   contentClassName?: string;
@@ -40,16 +50,21 @@ export function Scene({
         ? "-right-32 top-1/4"
         : "left-1/2 top-1/3 -translate-x-1/2";
 
+  const isLight = surface === "light";
+
   return (
     <section
       id={id}
-      className={`relative overflow-x-clip px-4 py-24 sm:px-6 sm:py-32 lg:px-8 ${id ? "scroll-mt-24" : ""} ${className}`}
+      data-ground={isLight ? ground : undefined}
+      className={`relative overflow-x-clip px-4 py-24 sm:px-6 sm:py-32 lg:px-8 ${
+        isLight ? "kora-light bg-[var(--ks-ground)]" : ""
+      } ${id ? "scroll-mt-24" : ""} ${className}`}
     >
       {/* ── Layer 1: environment ─────────────────────────────────────── */}
       {atmosphere !== "none" && (
         <span
           aria-hidden="true"
-          className={`pointer-events-none absolute h-[460px] w-[460px] rounded-full bg-[#ff0a8a]/20 blur-[130px] ${orbPosition}`}
+          className={`pointer-events-none absolute h-[460px] w-[460px] rounded-full bg-[var(--ks-orb)] blur-[130px] ${orbPosition}`}
         />
       )}
 
