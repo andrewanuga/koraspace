@@ -1047,9 +1047,9 @@ export const enNG: TranslationDictionary = {
         { label: "Cookie Policy", href: "/privacy" },
       ],
       support: [
+        { label: "About Us", href: "/about" },
         { label: "Documentation", href: "#" },
         { label: "Help Center", href: "#" },
-        { label: "Community", href: "#" },
         { label: "System Status", href: "#" },
       ],
     },
