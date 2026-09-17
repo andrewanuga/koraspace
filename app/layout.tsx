@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { PreferencesProvider } from "@/components/preferences/PreferencesProvider";
 import { ToastProvider } from "@/components/ui/toast";
 import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
+
+import { LanguageProvider } from "@/components/i18n/LanguageProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,13 +18,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Inter (body) + JetBrains Mono (data) are loaded via a client-side <link> below
-// rather than next/font — next/font fetches font files at build time, which
-// hard-fails in offline/air-gapped environments. The <link> degrades gracefully
-// to Geist/system fallbacks (see --font-inter / --font-jetbrains in globals.css).
-
 export const metadata: Metadata = {
+<<<<<<< HEAD
   title: "Koraspace AI — Your Personal Social Agent",
+=======
+  title: "Koraspace — Your Personal Social Agent",
+>>>>>>> main
   description:
     "Social, understood. Deploy an AI agent that creates, engages, and converts around the clock — powered by Llama 3.3 70B.",
   keywords: [
@@ -34,13 +36,19 @@ export const metadata: Metadata = {
     "Nigeria",
     "Africa",
   ],
-   icons: {
+  icons: {
     icon: "/logo.png",
   },
   openGraph: {
+<<<<<<< HEAD
     title: "Koraspace AI — AI-Powered Social Media Manager",
     description:
       "Stop managing social media. Start delegating it. Koraspace AI deploys autonomous AI agents that create content, engage followers, and convert leads 24/7.",
+=======
+    title: "Koraspace — AI-Powered Social Media Manager",
+    description:
+      "Stop managing social media. Start delegating it. Koraspace deploys autonomous AI agents that create content, engage followers, and convert leads 24/7.",
+>>>>>>> main
     type: "website",
   },
 };
@@ -53,7 +61,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} dark sai-js h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} sai-js h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
@@ -63,7 +71,7 @@ export default function RootLayout({
         />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=IBM+Plex+Sans:ital,wght@0,300..700;1,300..700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@300..800&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@300..700&display=swap"
         />
       </head>
       <body className="min-h-full flex flex-col">
@@ -73,10 +81,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ToastProvider>
-            <ImpersonationBanner />
-            {children}
-          </ToastProvider>
+          <PreferencesProvider>
+            <LanguageProvider>
+              <ToastProvider>
+                <ImpersonationBanner />
+                {children}
+              </ToastProvider>
+            </LanguageProvider>
+          </PreferencesProvider>
         </ThemeProvider>
       </body>
     </html>

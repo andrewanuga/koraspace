@@ -62,15 +62,22 @@ export function CalendarClient({ posts }: { posts: ScheduledPostSlim[] }) {
         title="Scheduler"
         sub="Every scheduled post, at a glance. Drag your strategy across the month."
         actions={
-          <Link href="/dashboard/create" className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-semibold text-[var(--fg)]" style={{ background: "linear-gradient(135deg,#6366f1,#a855f7)", boxShadow: "0 0 26px -10px rgba(99,102,241,0.8)" }}>
+          <Link
+            href="/dashboard/create"
+            className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-[13px] font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+            style={{
+              background: "var(--brand-primary)",
+              boxShadow: "var(--brand-primary-shadow)",
+            }}
+          >
             <Plus className="h-4 w-4" /> Schedule post
           </Link>
         }
       />
 
       <div className="mb-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <StatTile label="Scheduled" value={String(posts.length)} icon={CalendarDays} tone="indigo" />
-        <StatTile label="This week" value={String(upcoming.length)} icon={Clock} tone="violet" />
+        <StatTile label="Scheduled" value={String(posts.length)} icon={CalendarDays} tone="primary" />
+        <StatTile label="This week" value={String(upcoming.length)} icon={Clock} tone="primary" />
         <StatTile label="Queued" value={String(posts.filter((p) => p.status === "queued").length)} icon={Clock} tone="gold" />
       </div>
 
@@ -93,13 +100,13 @@ export function CalendarClient({ posts }: { posts: ScheduledPostSlim[] }) {
                 key={i}
                 className="min-h-[76px] rounded-xl border p-1.5"
                 style={{
-                  borderColor: d && isToday(d) ? "rgba(99,102,241,0.5)" : "var(--panel-fill-2)",
-                  background: d ? (isToday(d) ? "rgba(99,102,241,0.08)" : "var(--panel-fill)") : "transparent",
+                  borderColor: d && isToday(d) ? "var(--brand-primary-border)" : "var(--panel-fill-2)",
+                  background: d ? (isToday(d) ? "var(--brand-primary-soft)" : "var(--panel-fill)") : "transparent",
                 }}
               >
                 {d && (
                   <>
-                    <span className={`text-[11px] ${isToday(d) ? "font-semibold text-[var(--sai-indigo)]" : "text-[var(--fg-4)]"}`}>{d}</span>
+                    <span className={`text-[11px] ${isToday(d) ? "font-semibold text-[var(--brand-primary)]" : "text-[var(--fg-4)]"}`}>{d}</span>
                     <div className="mt-1 space-y-1">
                       {(byDay[d] ?? []).slice(0, 2).map((p) => {
                         const meta = PLATFORM[p.platform] ?? { label: "?", color: "#9ca3af" };
@@ -126,7 +133,7 @@ export function CalendarClient({ posts }: { posts: ScheduledPostSlim[] }) {
             <div className="mt-5 text-center">
               <CalendarDays className="mx-auto h-7 w-7 text-[var(--fg-4)]" />
               <p className="mt-2 text-[13px] text-[var(--fg-3)]">Nothing scheduled yet.</p>
-              <Link href="/dashboard/create" className="mt-3 inline-block text-[13px] text-[var(--sai-indigo)] hover:underline">Create your first post →</Link>
+              <Link href="/dashboard/create" className="mt-3 inline-block text-[13px] text-[var(--brand-primary)] hover:underline">Create your first post →</Link>
             </div>
           ) : (
             <div className="mt-4 space-y-3">

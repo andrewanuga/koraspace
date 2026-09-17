@@ -1,9 +1,10 @@
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
-import { SupabaseClient } from "@supabase/supabase-js";
+﻿import { cookies } from "next/headers";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 
-export async function getActiveWorkspace(supabase: SupabaseClient) {
-  const { data: { user } } = await supabase.auth.getUser();
+export async function getActiveWorkspace(supabaseStub?: any) {
+  const session = await auth();
+  const user = session?.user;
   if (!user) return null;
 
   const cookieStore = await cookies();
@@ -13,19 +14,7 @@ export async function getActiveWorkspace(supabase: SupabaseClient) {
     return { workspaceId: user.id, role: "owner" };
   }
 
-  // Verify membership
-  const { data: member } = await supabase
-    .from("workspace_members")
-    .select("role")
-    .eq("workspace_id", activeWorkspaceId)
-    .eq("user_id", user.id)
-    .single();
-
-  if (member) {
-    return { workspaceId: activeWorkspaceId, role: member.role };
-  }
-
-  // Fallback to own workspace if not a member
+  // Fallback to own workspace since we don't have workspace_members in Prisma schema yet
   return { workspaceId: user.id, role: "owner" };
 }
 

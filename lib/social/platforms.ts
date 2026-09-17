@@ -36,11 +36,11 @@ export const PLATFORMS: Record<PlatformId, PlatformDef> = {
   instagram: {
     id: "instagram", name: "Instagram", category: "Publishing", color: "#E1306C",
     connectType: "oauth", env: ["INSTAGRAM_APP_ID", "INSTAGRAM_APP_SECRET"],
-    capabilities: ["post", "schedule", "inbox", "analytics", "campaigns", "bots"],
+    capabilities: ["post", "schedule", "analytics", "campaigns", "bots"],
     oauth: {
       authorizeUrl: "https://www.instagram.com/oauth/authorize",
       tokenUrl: "https://api.instagram.com/oauth/access_token",
-      scopes: ["instagram_business_basic", "instagram_business_manage_messages", "instagram_business_manage_comments", "instagram_business_content_publish", "instagram_business_manage_insights"],
+      scopes: ["instagram_business_basic", "instagram_business_content_publish", "instagram_business_manage_insights"],
       docs: "https://developers.facebook.com/docs/instagram-api",
       clientIdEnv: "INSTAGRAM_APP_ID", clientSecretEnv: "INSTAGRAM_APP_SECRET",
     },
@@ -48,7 +48,7 @@ export const PLATFORMS: Record<PlatformId, PlatformDef> = {
   youtube: {
     id: "youtube", name: "YouTube", category: "Publishing", color: "#FF0000",
     connectType: "oauth", env: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"],
-    capabilities: ["post", "schedule", "inbox", "analytics", "bots"],
+    capabilities: ["post", "schedule", "analytics", "bots"],
     oauth: {
       authorizeUrl: "https://accounts.google.com/o/oauth2/v2/auth",
       tokenUrl: "https://oauth2.googleapis.com/token",
@@ -61,11 +61,11 @@ export const PLATFORMS: Record<PlatformId, PlatformDef> = {
   x: {
     id: "x", name: "X (Twitter)", category: "Publishing", color: "#1DA1F2",
     connectType: "oauth", env: ["X_CLIENT_ID", "X_CLIENT_SECRET"],
-    capabilities: ["post", "schedule", "inbox", "analytics", "bots"],
+    capabilities: ["post", "schedule", "analytics", "bots"],
     oauth: {
       authorizeUrl: "https://twitter.com/i/oauth2/authorize",
       tokenUrl: "https://api.twitter.com/2/oauth2/token",
-      scopes: ["tweet.read", "tweet.write", "users.read", "dm.read", "dm.write", "offline.access"],
+      scopes: ["tweet.read", "tweet.write", "users.read", "offline.access"],
       docs: "https://developer.twitter.com/en/docs/authentication/oauth-2-0",
       clientIdEnv: "X_CLIENT_ID", clientSecretEnv: "X_CLIENT_SECRET",
     },
@@ -85,11 +85,11 @@ export const PLATFORMS: Record<PlatformId, PlatformDef> = {
   facebook: {
     id: "facebook", name: "Facebook", category: "Publishing", color: "#1877F2",
     connectType: "oauth", env: ["META_APP_ID", "META_APP_SECRET"],
-    capabilities: ["post", "schedule", "inbox", "analytics", "campaigns", "bots"],
+    capabilities: ["post", "schedule", "analytics", "campaigns", "bots"],
     oauth: {
       authorizeUrl: "https://www.facebook.com/v19.0/dialog/oauth",
       tokenUrl: "https://graph.facebook.com/v19.0/oauth/access_token",
-      scopes: ["pages_manage_posts", "pages_read_engagement", "pages_messaging", "read_insights", "ads_read"],
+      scopes: ["pages_manage_posts", "pages_read_engagement", "read_insights", "ads_read"],
       docs: "https://developers.facebook.com/docs/pages-api",
       clientIdEnv: "META_APP_ID", clientSecretEnv: "META_APP_SECRET",
     },

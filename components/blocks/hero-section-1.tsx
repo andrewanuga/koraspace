@@ -138,14 +138,22 @@ export function HeroSection() {
                   <img
                     className="bg-background aspect-[15/8] relative hidden rounded-2xl dark:block"
                     src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2715&auto=format&fit=crop"
+<<<<<<< HEAD
                     alt="Koraspace AI dashboard dark"
+=======
+                    alt="Koraspace dashboard dark"
+>>>>>>> main
                     width="2700"
                     height="1440"
                   />
                   <img
                     className="border-border/25 aspect-[15/8] relative rounded-2xl border dark:hidden"
                     src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2940&auto=format&fit=crop"
+<<<<<<< HEAD
                     alt="Koraspace AI dashboard light"
+=======
+                    alt="Koraspace dashboard light"
+>>>>>>> main
                     width="2700"
                     height="1440"
                   />
@@ -283,6 +291,10 @@ const KoraspaceLogo = ({ className }: { className?: string }) => (
     <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center shadow-md shadow-red-600/30">
       <span className="text-white text-xs font-black">K</span>
     </div>
+<<<<<<< HEAD
     <span className="font-bold text-base tracking-tight">Koraspace AI</span>
+=======
+    <span className="font-bold text-base tracking-tight">Koraspace</span>
+>>>>>>> main
   </div>
 );

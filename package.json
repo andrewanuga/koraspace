@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
   "name": "koraspace-ai",
   "version": "0.1.0",
+=======
+  "name": "koraspace",
+  "version": "1.5.1",
+>>>>>>> main
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,6 +13,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+<<<<<<< HEAD
     "test": "vitest run",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
@@ -19,8 +25,13 @@
     "test:all": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
+=======
+    "sync:backup": "node scripts/sync-to-neon.js",
+    "sync:backup:daemon": "node scripts/sync-to-neon.js --daemon"
+>>>>>>> main
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.11.3",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
@@ -32,8 +43,9 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "@supabase/ssr": "^0.10.3",
-    "@supabase/supabase-js": "^2.106.2",
+    "@xyflow/react": "^12.11.6",
+    "bcryptjs": "^3.0.3",
+    "browser-image-compression": "^2.0.2",
     "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -42,15 +54,25 @@
     "gsap": "^3.15.0",
     "lucide-react": "^1.17.0",
     "next": "16.2.6",
+    "next-auth": "^5.0.0-beta.32",
     "next-themes": "^0.4.6",
     "nodemailer": "^9.0.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+<<<<<<< HEAD
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3"
+=======
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "simple-icons": "^16.30.0",
+    "tailwind-merge": "^3.6.0"
+>>>>>>> main
   },
   "devDependencies": {
+    "@prisma/client": "^5.22.0",
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",
@@ -58,8 +80,14 @@
     "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "prisma": "^5.22.0",
     "tailwindcss": "^4",
+<<<<<<< HEAD
     "typescript": "^5",
     "vitest": "^4.1.11"
+=======
+    "ts-morph": "^28.0.0",
+    "typescript": "^5"
+>>>>>>> main
   }
 }

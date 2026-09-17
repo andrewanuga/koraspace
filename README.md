@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 # 🌌 Koraspace AI
+=======
+# Koraspace
+>>>>>>> main
 
 <div align="center">
 
+<<<<<<< HEAD
 [![Build & Typecheck](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=nextdotjs)](https://nextjs.org)
 [![Automated Tests](https://img.shields.io/badge/Tests-160%20Passing-success?style=for-the-badge&logo=vitest)](https://vitest.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict%205.x-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org)
@@ -17,12 +22,19 @@
 [Frontend Integration Guide](file:///docs/frontend-integration-guide.md) • [Features](#-core-capabilities) • [Architecture](#-platform-architecture) • [API Quick Reference](#-api-quick-reference-for-frontend) • [Test Pyramid (160 Tests)](#-automated-test-pyramid-160-tests) • [Security & RBAC](#-security--multi-tenant-isolation) • [Quickstart](#-quickstart--deployment)
 
 </div>
+=======
+**Koraspace** shifts social media from *automation* (doing what you tell it) to *delegation* (owning goals autonomously). Powered by self-hosted **Llama 3.3 70B** via vLLM, it avoids per-token API fees and gives creators, clients, and marketers a world-class tool priced for their market.
+>>>>>>> main
 
 ---
 
 ## 📖 Overview
 
+<<<<<<< HEAD
 **Koraspace AI** elevates social media operations from passive automation (scheduled broadcasts) to **true autonomous delegation** (goal-oriented multi-agent reasoning, closed-loop empirical memory learning, deterministic policy safety, live infrastructure validation, and versioned service contract governance). 
+=======
+Most tools tell you what happened. Koraspace tells you what will — and often handles it before you open the app.
+>>>>>>> main
 
 Built atop **Next.js 16**, **Supabase with `pgvector`**, and **Google Gemini**, Koraspace empowers teams to orchestrate social growth across LinkedIn, X, Instagram, YouTube, and Telegram with zero brand drift and complete auditability.
 
@@ -267,4 +279,68 @@ Navigate to [http://localhost:3000](http://localhost:3000) to view the applicati
 - [ADR 002: Persistent Memory & Consolidation Engine](file:///docs/adr/002-memory-architecture.md)
 - [Production Readiness Checklist](file:///docs/architecture/production-readiness.md)
 
+<<<<<<< HEAD
 Distributed under the MIT License. See `LICENSE` for more information.
+=======
+### Robust Sync & Scrape Engine
+Koraspace uses a dual-engine architecture to fetch metrics:
+1. **API Primary:** Attempts to fetch deep metrics directly from native APIs (Graph API for FB/IG, YouTube Data API, etc.)
+2. **Web Scraper Fallback:** If the API fails (e.g. personal profiles, missing scope, expired tokens), our custom-built Node scraping engine uses the user's `@handle` (collected securely via OAuth Modals) to parse public subscriber/follower counts seamlessly from the web!
+
+Once connected, a silent background sync triggers automatically when the user visits the Dashboard to ensure follower counts and recent posts are always perfectly up-to-date.
+
+---
+
+## AI model
+
+Koraspace uses **OpenRouter** to access 200+ AI models. Each agent
+(Create, Ghost Mode, Trends, Scoring) can use a different model,
+and users choose their preferred model in **Settings → AI**.
+
+### Setup
+
+1. Sign up at [openrouter.ai](https://openrouter.ai)
+2. Create an API key at [openrouter.ai/keys](https://openrouter.ai/keys)
+3. Add to your `.env`:
+
+```bash
+OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxx
+OPENROUTER_DEFAULT_MODEL=google/gemini-2.5-flash
+```
+
+### Recommended models
+
+| Tier | Model | Best for |
+|------|-------|----------|
+| Free | `google/gemini-2.0-flash-exp:free` | Testing, zero cost |
+| Budget | `deepseek/deepseek-chat-v3-0324` | Extremely cheap, solid quality |
+| Standard | `google/gemini-2.5-flash` | Fast + affordable (default) |
+| Premium | `anthropic/claude-sonnet-4` | Best writing quality |
+| Premium | `openai/gpt-4o` | Best multimodal/vision |
+
+### Per-agent personalization
+
+Each AI agent is tuned for its task:
+- **Create Agent** — higher creativity (temp 0.7), vision-capable
+- **Content Generator** — structured output (temp 0.8), framework-aware
+- **Ghost Mode** — conservative (temp 0.4), JSON output
+- **Content Scorer** — analytical (temp 0.3), JSON output
+- **Trend Analyst** — creative + contextual (temp 0.7)
+
+Leave `OPENROUTER_API_KEY` empty in dev to use built-in mock responses.
+
+---
+
+## Security & privacy
+
+- Supabase Auth (JWT); Row-Level Security on every user table.
+- OAuth tokens only — no social passwords stored.
+- Secure, HTTP-Only Cookie Session management during OAuth redirects.
+- [Privacy Policy](/privacy) and [Terms of Service](/terms) are shipped in-app (required for platform app review).
+
+---
+
+## License
+
+MIT · Built with care in Nigeria for the African creator economy.
+>>>>>>> main

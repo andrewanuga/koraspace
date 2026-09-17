@@ -2,19 +2,33 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, ArrowRight, Loader2, Check, MailCheck } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Eye,
+  EyeOff,
+  Loader2,
+  MailCheck,
+  Sparkles,
+  ShieldCheck,
+} from "lucide-react";
+
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
-import { createClient } from "@/lib/supabase/client";
+import { registerUser } from "./actions";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 const PASSWORD_REQUIREMENTS = [
   { label: "At least 8 characters", test: (p: string) => p.length >= 8 },
   { label: "Contains a number", test: (p: string) => /\d/.test(p) },
-  { label: "Contains a special character", test: (p: string) => /[!@#$%^&*]/.test(p) },
+  {
+    label: "Contains a special character (!@#$%^&*)",
+    test: (p: string) => /[!@#$%^&*]/.test(p),
+  },
 ];
 
 const inputCls =
-  "flex h-11 w-full rounded-xl border border-white/10 bg-white/[0.04] px-3.5 text-sm text-white placeholder:text-white/35 transition-colors focus:border-[var(--sai-indigo)]/60 focus:bg-white/[0.06] focus:outline-none focus:ring-2 focus:ring-[var(--sai-indigo)]/25";
+  "h-12 w-full rounded-xl border border-white/[0.10] bg-white/[0.035] px-4 text-sm text-white outline-none transition-all placeholder:text-white/25 focus:border-[#ff0a8a]/60 focus:bg-white/[0.055] focus:ring-4 focus:ring-[#ff0a8a]/10";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -23,106 +37,108 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
   const { error: toastError, success: toastSuccess } = useToast();
+  const { t } = useLanguage();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
-    const supabase = createClient();
-    const { error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: name },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-
-    if (authError) {
-      toastError("Couldn't create account", authError.message);
-      setLoading(false);
+    const isPasswordValid = PASSWORD_REQUIREMENTS.every((req) =>
+      req.test(password)
+    );
+    if (!isPasswordValid) {
+      toastError(
+        "Weak password",
+        "Please meet all password requirements before continuing."
+      );
       return;
     }
-    toastSuccess("Account created", "Check your email to confirm.");
-    setSuccess(true);
-    setLoading(false);
-  };
 
-  const handleGoogleSignup = async () => {
-    const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
-    if (authError) toastError("Google sign-in failed", authError.message);
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      const res = await registerUser(email, password, name);
+
+      if (res.error) {
+        toastError("Couldn't create account", res.error);
+        setLoading(false);
+        return;
+      }
+
+      toastSuccess("Account created", "You can now sign in.");
+      setSuccess(true);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      toastError("Signup failed", "An unexpected error occurred. Please try again.");
+      setLoading(false);
+    }
   };
 
   if (success) {
     return (
-      <div className="w-full max-w-md text-center">
-        <div className="glass-panel rounded-3xl p-8">
-          <div
-            className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl"
-            style={{ background: "color-mix(in srgb, var(--sai-indigo) 16%, transparent)" }}
-          >
-            <MailCheck className="h-8 w-8 text-[var(--sai-indigo)]" />
+      <div className="w-full max-w-[440px] text-center">
+        <div className="rounded-2xl border border-white/[0.09] bg-[#181818] p-8 shadow-[0_24px_80px_rgba(0,0,0,0.40)] sm:p-10">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#ff0a8a]/25 bg-[#ff0a8a]/[0.10]">
+            <MailCheck className="h-8 w-8 text-[#ff0a8a]" />
           </div>
-          <h2 className="font-display text-2xl font-semibold text-white">Check your email</h2>
-          <p className="mt-3 text-sm leading-relaxed text-white/60">
-            We sent a confirmation link to{" "}
-            <span className="font-medium text-white">{email}</span>. Click it to
-            activate your account and start your free trial.
+
+          <h2 className="font-display text-2xl font-semibold text-white">
+            Check your email
+          </h2>
+
+          <p className="mt-3 text-sm leading-relaxed text-white/55">
+            We sent a verification link to{" "}
+            <span className="font-semibold text-white">{email}</span>. Click the link in the email to activate your workspace.
           </p>
+
+          <div className="mt-8">
+            <Link
+              href="/login"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#ff0a8a] px-6 text-xs font-semibold text-white transition-all hover:bg-[#ff299b] hover:shadow-[0_8px_25px_rgba(255,10,138,0.20)]"
+            >
+              <span>Return to sign in</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-md">
-      <div className="mb-8">
-        <h1 className="font-display text-3xl font-semibold tracking-[-0.02em] text-white">
-          Start your free trial
+    <div className="w-full max-w-[440px]">
+      {/* Signup header */}
+      <div className="mb-7">
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#ff0a8a]/20 bg-[#ff0a8a]/[0.06] px-3 py-1 text-[11px] font-medium text-[#ff7fba]">
+          <Sparkles className="h-3.5 w-3.5 text-[#ff0a8a]" />
+          <span>{t.authPages.marketingSuite}</span>
+        </div>
+
+        <h1 className="font-display text-[30px] font-semibold tracking-[-0.035em] text-white sm:text-[34px]">
+          {t.authPages.signupTitle}
         </h1>
-        <p className="mt-2 text-sm text-white/50">
-          14 days free. No credit card required.
+
+        <p className="mt-2 text-[14px] leading-relaxed text-white/45">
+          {t.authPages.signupSubtitle}
         </p>
       </div>
 
-      <div className="glass-panel rounded-3xl p-8">
-        {/* <button
-          type="button"
-          onClick={handleGoogleSignup}
-          className="flex h-11 w-full items-center justify-center gap-3 rounded-xl border border-white/12 bg-white/[0.05] text-sm font-medium text-white transition-colors hover:bg-white/[0.09]"
-        >
-          <svg className="h-5 w-5" viewBox="0 0 24 24">
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-          </svg>
-          Continue with Google
-        </button>
-
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/10" />
-          </div>
-          <div className="relative flex justify-center">
-            <span className="font-data bg-[#121214] px-3 text-[11px] uppercase tracking-widest text-white/35">
-              or with email
-            </span>
-          </div>
-        </div> */}
-
-        <form onSubmit={handleSignup} className="space-y-5">
+      {/* Form card */}
+      <div className="rounded-2xl border border-white/[0.09] bg-[#181818] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.40)] sm:p-8">
+        <form onSubmit={handleSignup} className="space-y-4">
+          {/* Full Name */}
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-white/70">Full name</Label>
+            <Label htmlFor="name" className="text-[12px] font-medium text-white/70">
+              {t.authPages.nameLabel}
+            </Label>
             <input
               id="name"
               type="text"
-              placeholder="Your full name"
+              autoComplete="name"
+              placeholder="e.g. Alex Morgan"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -130,12 +146,16 @@ export default function SignupPage() {
             />
           </div>
 
+          {/* Email */}
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-white/70">Email address</Label>
+            <Label htmlFor="email" className="text-[12px] font-medium text-white/70">
+              {t.authPages.emailLabel}
+            </Label>
             <input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              autoComplete="email"
+              placeholder="alex@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -143,44 +163,58 @@ export default function SignupPage() {
             />
           </div>
 
+          {/* Password */}
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-white/70">Password</Label>
+            <Label htmlFor="password" className="text-[12px] font-medium text-white/70">
+              {t.authPages.passwordLabel}
+            </Label>
             <div className="relative">
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
                 placeholder="Create a strong password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className={`${inputCls} pr-10`}
+                className={`${inputCls} pr-12`}
               />
+
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 transition-colors hover:text-white"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword((curr) => !curr)}
+                className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-white/35 transition hover:bg-white/[0.06] hover:text-white/80"
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             </div>
 
-            {password && (
-              <div className="mt-2 space-y-1.5">
+            {/* Live checklist */}
+            {password.length > 0 && (
+              <div className="mt-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 space-y-1.5">
                 {PASSWORD_REQUIREMENTS.map((req, i) => {
-                  const ok = req.test(password);
+                  const passed = req.test(password);
                   return (
-                    <div key={i} className="flex items-center gap-2 text-xs">
+                    <div key={i} className="flex items-center gap-2 text-[11.5px]">
                       <div
-                        className="flex h-3.5 w-3.5 items-center justify-center rounded-full transition-colors"
-                        style={
-                          ok
-                            ? { background: "var(--sai-indigo)" }
-                            : { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)" }
+                        className={`flex h-4 w-4 items-center justify-center rounded-full transition-all ${
+                          passed
+                            ? "bg-[#34d399] text-black"
+                            : "bg-white/[0.08] text-white/30"
+                        }`}
+                      >
+                        {passed && <Check className="h-2.5 w-2.5 stroke-[3]" />}
+                      </div>
+                      <span
+                        className={
+                          passed ? "font-medium text-[#34d399]" : "text-white/40"
                         }
                       >
-                        {ok && <Check className="h-2.5 w-2.5 text-white" />}
-                      </div>
-                      <span className={ok ? "text-[var(--sai-indigo)]" : "text-white/45"}>
                         {req.label}
                       </span>
                     </div>
@@ -190,36 +224,49 @@ export default function SignupPage() {
             )}
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold text-white transition-transform duration-200 hover:scale-[1.02] disabled:opacity-60"
-            style={{
-              background: "linear-gradient(135deg,#6366f1 0%,#a855f7 70%,#f5c451 130%)",
-              boxShadow: "0 0 34px -8px rgba(99,102,241,0.7)",
-            }}
-          >
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <>
-                Create account <ArrowRight className="h-4 w-4" />
-              </>
-            )}
-          </button>
+          {/* Submit */}
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="group flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#ff0a8a] text-[13px] font-semibold text-white transition-all hover:bg-[#ff299b] hover:shadow-[0_12px_35px_rgba(255,10,138,0.22)] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Creating workspace...</span>
+                </>
+              ) : (
+                <>
+                  <span>{t.authPages.signupButton}</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </>
+              )}
+            </button>
+          </div>
         </form>
 
-        <p className="mt-4 text-center text-xs text-white/40">
-          By signing up, you agree to our{" "}
-          <Link href="/terms" className="text-[var(--sai-indigo)] hover:underline">Terms</Link> and{" "}
-          <Link href="/privacy" className="text-[var(--sai-indigo)] hover:underline">Privacy Policy</Link>.
+        {/* Terms notice */}
+        <p className="mt-5 text-center text-[11px] leading-relaxed text-white/35">
+          By continuing, you agree to KoraSpace&apos;s{" "}
+          <Link href="/terms" className="text-white/60 hover:text-white underline">
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="text-white/60 hover:text-white underline">
+            Privacy Policy
+          </Link>.
         </p>
       </div>
 
-      <p className="mt-6 text-center text-sm text-white/45">
-        Already have an account?{" "}
-        <Link href="/login" className="font-medium text-[var(--sai-indigo)] transition-colors hover:text-indigo-300">
-          Sign in
+      {/* Login link */}
+      <p className="mt-6 text-center text-[13px] text-white/40">
+        {t.authPages.haveAccount}{" "}
+        <Link
+          href="/login"
+          className="font-semibold text-[#ff4da6] transition-colors hover:text-[#ff7fba]"
+        >
+          {t.authPages.loginButton}
         </Link>
       </p>
     </div>

@@ -4,9 +4,11 @@
 // Real fetchers are implemented where the API is straightforward; the rest are
 // safe no-ops clearly marked to fill in as each platform app gets approved.
 // Every fetch is wrapped so one failing account never breaks a sync run.
-import { type SupabaseClient } from "@supabase/supabase-js";
+type SupabaseClient = any;
 import { type PlatformId } from "./platforms";
 import { scrapeFollowers } from "./scraper";
+import { decryptToken, encryptToken } from "@/lib/security/tokenCrypto";
+import { verifyExecutionGate } from "@/lib/security/enforcement";
 
 export interface NormalizedPost {
   external_id: string;
@@ -31,15 +33,16 @@ type Account = {
 
 /** Refresh an expired Google OAuth token using the refresh_token. */
 async function refreshGoogleToken(acc: Account, supabase: SupabaseClient): Promise<string | null> {
-  if (!acc.refresh_token) return acc.access_token;
+  if (!acc.refresh_token) return decryptToken(acc.access_token || "");
   try {
+    const plainRefreshToken = decryptToken(acc.refresh_token);
     const r = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         client_id: process.env.GOOGLE_CLIENT_ID!,
         client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-        refresh_token: acc.refresh_token,
+        refresh_token: plainRefreshToken,
         grant_type: "refresh_token",
       }),
     });
@@ -47,15 +50,15 @@ async function refreshGoogleToken(acc: Account, supabase: SupabaseClient): Promi
     if (d.access_token) {
       const expiresAt = new Date(Date.now() + (d.expires_in - 60) * 1000).toISOString();
       await supabase.from("social_accounts").update({
-        access_token: d.access_token,
+        access_token: encryptToken(d.access_token),
         token_expires_at: expiresAt,
-      }).eq("id", acc.id);
+      }).eq("id", acc.id).eq("user_id", acc.user_id);
       return d.access_token;
     }
   } catch (e) {
     console.error("[sync] Google token refresh failed:", e);
   }
-  return acc.access_token;
+  return decryptToken(acc.access_token || "");
 }
 
 /** Get a valid access token, refreshing if expired. */
@@ -72,7 +75,7 @@ async function getValidToken(acc: Account, supabase: SupabaseClient): Promise<st
       }
     }
   }
-  return acc.access_token;
+  return decryptToken(acc.access_token);
 }
 
 /** Fetch profile metadata (followers) for one account. */
@@ -380,6 +383,14 @@ async function fetchPosts(acc: Account, token: string | null): Promise<Normalize
 
 /** Sync a single account: upsert posts + metrics, stamp last_synced_at. */
 export async function syncAccount(acc: Account, supabase: SupabaseClient): Promise<number> {
+  // Zero-Trust Execution Gate: Verify tenant context, minimal read scope, and credential encryption
+  verifyExecutionGate({
+    workspaceId: acc.user_id,
+    action: "read",
+    targetScope: "analytics",
+    storedCredential: acc.access_token,
+  });
+
   // 0. Refresh token if expired
   const token = await getValidToken(acc, supabase);
 
@@ -402,9 +413,9 @@ export async function syncAccount(acc: Account, supabase: SupabaseClient): Promi
       ...(profile.handle && { handle: profile.handle }),
       ...(profile.display_name && { display_name: profile.display_name }),
       last_synced_at: new Date().toISOString()
-    }).eq("id", acc.id);
+    }).eq("id", acc.id).eq("user_id", acc.user_id);
   } else {
-    await supabase.from("social_accounts").update({ last_synced_at: new Date().toISOString() }).eq("id", acc.id);
+    await supabase.from("social_accounts").update({ last_synced_at: new Date().toISOString() }).eq("id", acc.id).eq("user_id", acc.user_id);
   }
 
   // 2. Fetch Posts

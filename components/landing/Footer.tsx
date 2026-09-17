@@ -83,7 +83,11 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+<<<<<<< HEAD
           <p>© 2026 Koraspace AI. All rights reserved.</p>
+=======
+          <p>© 2026 Koraspace. All rights reserved.</p>
+>>>>>>> main
           <div className="flex items-center gap-6">
             <span>🇳🇬 Built in Nigeria</span>
             <span>•</span>

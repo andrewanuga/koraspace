@@ -1,8 +1,10 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { evaluateIncomingMessage } from "@/lib/ai/engine";
 import { dispatchReply } from "@/lib/social/dispatch";
 import { startBotTask, finishBotTask } from "@/lib/ai/bot_tasks";
+import { decryptToken } from "@/lib/security/tokenCrypto";
 
 // Helper to handle Meta's verification challenge
 export async function GET(
@@ -29,8 +31,6 @@ export async function POST(
 ) {
   const { platform } = await params;
   const body = await req.json();
-
-  const supabase = createAdminClient();
   if (!supabase) return NextResponse.json({ error: "No DB" }, { status: 500 });
 
   try {
@@ -58,12 +58,13 @@ export async function POST(
       
       // Let's just pick the first one that has a ghost bot active for now.
       for (const account of accounts) {
-        const token = (account.auth_data as any)?.token;
-        if (!token) continue;
+        const rawToken = (account.auth_data as any)?.token || (account as any).access_token;
+        if (!rawToken) continue;
+        const token = decryptToken(rawToken);
 
         const { data: bot } = await supabase
           .from("social_bots")
-          .select("id, status, config")
+          .select("id, status, config, role")
           .eq("user_id", account.user_id)
           .eq("status", "active")
           .limit(1)
@@ -77,10 +78,10 @@ export async function POST(
             account.user_id,
             bot.id,
             `Ghost Mode: Processing Telegram DM from ${senderName}`,
-            `Applying ${rules.filter((r:any) => r.enabled).length} active rules`
+            `Applying ${rules.filter((r:any) => r.enabled).length} active rules with role: ${bot.role || "general"}`
           );
 
-          const evalRes = await evaluateIncomingMessage(text, "Telegram", senderName, rules, false);
+          const evalRes = await evaluateIncomingMessage(text, "Telegram", senderName, rules, false, bot.role || "general");
           
           if (evalRes.action === "auto_reply" && evalRes.reply) {
             await dispatchReply({
@@ -92,7 +93,7 @@ export async function POST(
           }
 
           // Log action
-          if (evalRes.action !== "ignore" || evalRes.is_lead) {
+          if (evalRes.action !== "ignore" || (evalRes.lead_score ?? 0) >= 70) {
             await supabase.from("agent_actions").insert({
               bot_id: bot.id,
               action: evalRes.action,
@@ -103,7 +104,7 @@ export async function POST(
             });
           }
 
-          if (evalRes.is_lead) {
+          if ((evalRes.lead_score ?? 0) >= 70) {
             await supabase.from("social_inbox").insert({
               account_id: account.id,
               user_id: account.user_id,
@@ -184,8 +185,9 @@ async function handleInstagramInteraction(
 
   if (!account) return;
 
-  const token = (account.auth_data as any)?.access_token;
-  if (!token) return;
+  const rawToken = (account.auth_data as any)?.access_token || (account as any).access_token;
+  if (!rawToken) return;
+  const token = decryptToken(rawToken);
 
   // Check if Ghost Mode / Bot is active
   const { data: bot } = await supabase
@@ -221,7 +223,7 @@ async function handleInstagramInteraction(
     });
   }
 
-  if (evalRes.action !== "ignore" || evalRes.is_lead) {
+  if (evalRes.action !== "ignore" || (evalRes.lead_score ?? 0) >= 70) {
     await supabase.from("agent_actions").insert({
       bot_id: bot.id,
       action: evalRes.action,
@@ -232,7 +234,7 @@ async function handleInstagramInteraction(
     });
   }
 
-  if (evalRes.is_lead) {
+  if ((evalRes.lead_score ?? 0) >= 70) {
     await supabase.from("social_inbox").insert({
       account_id: account.id,
       user_id: account.user_id,

@@ -78,13 +78,17 @@ function KoraspaceHeroShowcase() {
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center shadow-md shadow-red-600/30">
               <span className="text-white text-xs font-black">S</span>
             </div>
+<<<<<<< HEAD
             <span className="font-bold text-sm tracking-tight text-foreground">Koraspace AI</span>
+=======
+            <span className="font-bold text-sm tracking-tight text-foreground">Koraspace</span>
+>>>>>>> main
           </Link>
 
           <div className="flex items-center gap-2">
             <Link
               href="/signup"
-              className="bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              className="bg-red-500/10 border bg- border-red-500/20 text-red-400 hover:bg-red-500/20 px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Get Started
             </Link>

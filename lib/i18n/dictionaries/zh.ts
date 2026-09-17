@@ -1,0 +1,1064 @@
+import { TranslationDictionary } from "../types";
+
+export const zh: TranslationDictionary = {
+  onboarding: {
+  "topBarTitle": "工作区设置",
+  "secureBadge": "安全入驻流程",
+  "exit": "退出",
+  "stepIndicator": "步骤",
+  "personalizingBadge": "正在个性化 KoraSpace",
+  "stepTitles": [
+    "您的角色",
+    "您的目标",
+    "您的渠道",
+    "您的内容",
+    "您的受众",
+    "您的工作流",
+    "分析图表风格",
+    "排版与字体",
+    "界面外观"
+  ],
+  "step1": {
+    "eyebrow": "01",
+    "titleStart": "让我们为您量身",
+    "titleHighlight": "定制专属的 KoraSpace。",
+    "description": "告诉我们您如何使用社交媒体，以便我们正确配置您的工作区。",
+    "roles": {
+      "businessTitle": "企业 / 品牌",
+      "businessBlurb": "我经营一家企业，希望社交媒体能带来高意向客户线索。",
+      "businessDetail": "业务增长、线索转化、产品销售和品牌影响力。",
+      "creatorTitle": "创作者工作室",
+      "creatorBlurb": "我致力于建立受众群体、发布内容并扩大个人影响力。",
+      "creatorDetail": "受众增长、标志性品牌声音、高互动率与内容重用。",
+      "marketerTitle": "营销操作员",
+      "marketerBlurb": "我负责统筹市场营销、客户线索管道和多渠道运营。",
+      "marketerDetail": "营销活动、CRM线索分类、深度归因与自动化。"
+    }
+  },
+  "step2": {
+    "eyebrow": "02",
+    "titleStart": "KoraSpace 应该",
+    "titleHighlight": "帮助您实现什么目标？",
+    "description": "选择所有相关的目标。我们将据此优化您的仪表盘、内容建议和智能代理。",
+    "goals": {
+      "growth": {
+        "title": "扩大受众规模",
+        "description": "触达更多人群，显著提高品牌曝光度。"
+      },
+      "leads": {
+        "title": "获取销售线索",
+        "description": "将社交关注度转化为高意向潜在客户。"
+      },
+      "sales": {
+        "title": "提高销售业绩",
+        "description": "将内容和营销活动直接关联到实际收入。"
+      },
+      "content": {
+        "title": "创作优质内容",
+        "description": "生成更具吸引力且符合品牌语调的高质量文案。"
+      },
+      "brand": {
+        "title": "建立品牌权威",
+        "description": "树立专业、清晰且一致的行业影响力。"
+      },
+      "management": {
+        "title": "节省规划时间",
+        "description": "大幅精简发布排期与媒体素材管理流程。"
+      },
+      "repurpose": {
+        "title": "跨平台内容重用",
+        "description": "将单篇核心内容快速转化为多平台格式。"
+      },
+      "analytics": {
+        "title": "全链路数据归因",
+        "description": "全面洞察互动率、广告回报率与最终转化。"
+      }
+    },
+    "selectedCount": "个目标已选",
+    "selectAtLeastOne": "请至少选择一个目标"
+  },
+  "step3": {
+    "eyebrow": "03",
+    "titleStart": "您的受众主要",
+    "titleHighlight": "在哪些渠道关注您？",
+    "description": "选择您正在运营或计划拓展的社交平台。您可以稍后绑定账号。",
+    "platformsLabel": "您的平台与连接网络",
+    "usernameLabel": "您的工作区用户名",
+    "usernameHint": "这是您在 KoraSpace 的唯一用户名。仅限字母、数字和下划线。",
+    "usernamePlaceholder": "您的用户名",
+    "selectedCount": "个平台已选"
+  },
+  "step4": {
+    "eyebrow": "04",
+    "titleStart": "告诉我们您平时",
+    "titleHighlight": "创作哪些内容。",
+    "description": "这将在 AI 引擎开始提供智能建议前为其提供充分的内容背景。",
+    "nicheLabel": "您的垂直领域或行业主题",
+    "nichePlaceholder": "例如：人工智能、SaaS、时尚、健身、房地产、金融科技...",
+    "formatsLabel": "您主要使用哪些内容格式？",
+    "formats": {
+      "short_video": {
+        "title": "短视频",
+        "description": "Reels、TikTok、Shorts 等"
+      },
+      "text": {
+        "title": "图文与深度观点",
+        "description": "X 动态、LinkedIn 专业洞察"
+      },
+      "carousel": {
+        "title": "轮播图与幻灯片",
+        "description": "多页深度视觉拆解"
+      },
+      "image": {
+        "title": "单张图片与海报",
+        "description": "产品实拍、金句名言、宣传海报"
+      },
+      "long_form": {
+        "title": "长篇深度内容",
+        "description": "长文分析、电子周刊、YouTube 视频"
+      },
+      "mixed": {
+        "title": "全矩阵混合形式",
+        "description": "多元化跨平台全格式覆盖"
+      }
+    },
+    "cadenceLabel": "您期望的发布频率是？",
+    "cadences": {
+      "1": {
+        "title": "每周 1-2 篇",
+        "description": "低频发布，注重高品质与深度"
+      },
+      "3": {
+        "title": "每周 3-5 篇",
+        "description": "积极增长，保持受众互动势能"
+      },
+      "7": {
+        "title": "每日发布 (每周 7 篇)",
+        "description": "强劲的多渠道全天候曝光"
+      },
+      "14": {
+        "title": "每日多次高频发布",
+        "description": "全渠道海量内容密集覆盖"
+      }
+    }
+  },
+  "step5": {
+    "eyebrow": "05",
+    "titleStart": "补充一些",
+    "titleHighlight": "背景信息。",
+    "creatorDesc": "帮助我们深入了解您的目标受众，避免生成千篇一律的泛化内容。",
+    "clientDesc": "向我们介绍您正在发展的业务或品牌。",
+    "marketerDesc": "提供必要的市场背景，以获得更精准的商业智能分析。",
+    "audienceSizeLabel": "当前受众规模",
+    "targetAudienceLabel": "您希望触达的目标人群是谁？",
+    "targetAudiencePlaceholderCreator": "例如：正在构建 AI 初创企业的创始人",
+    "businessTypeLabel": "企业业务类型？",
+    "targetAudiencePlaceholderClient": "例如：一线城市的本地精品零售商家",
+    "industryLabel": "您所在的行业领域是？",
+    "industryPlaceholder": "例如：SaaS、金融科技、跨境电商...",
+    "primarilyMarketLabel": "您的主要推广对象是什么？"
+  },
+  "step6": {
+    "eyebrow": "06",
+    "titleStart": "您希望 KoraSpace",
+    "titleHighlight": "为您承担多少工作？",
+    "description": "掌控权始终在您手中。这仅用于设置工作区的自主能动性级别。",
+    "levels": {
+      "suggestions": {
+        "title": "智能建议与灵感",
+        "description": "为我提供灵感与策略建议，文案由我亲自撰写。"
+      },
+      "drafts": {
+        "title": "8步 AI 流水线草稿",
+        "description": "将策略建议一键转化为已符合品牌调性的初稿。"
+      },
+      "create_schedule": {
+        "title": "全自动生成并排期",
+        "description": "自动生成草稿并将其合理排入可视化日历。"
+      },
+      "automate": {
+        "title": "全自主营销操作员",
+        "description": "让 KoraSpace 全天候自动分类潜在客户并持续优化活动。"
+      }
+    },
+    "summaryConfigured": "您的工作区将完全根据上述回答进行量身配置。"
+  },
+  "step7": {
+    "eyebrow": "07",
+    "titleStart": "选择您的数据",
+    "titleHighlight": "分析图表风格。",
+    "description": "选择您偏好的默认图表呈现形式，这将决定仪表盘上增长与转化数据的展示方式。",
+    "bestForPrefix": "最适合：",
+    "styles": {
+      "auto": {
+        "title": "智能自适应",
+        "subtitle": "根据数据类型智能匹配",
+        "bestFor": "全自动根据指标类型选择最佳视图"
+      },
+      "area": {
+        "title": "面积堆叠图",
+        "subtitle": "体量与互动趋势",
+        "bestFor": "流量、曝光体量与累计受众规模"
+      },
+      "bar": {
+        "title": "柱状对比图",
+        "subtitle": "多维度对比拆解",
+        "bestFor": "多营销活动与不同渠道的效果横向对比"
+      },
+      "line": {
+        "title": "折线趋势图",
+        "subtitle": "增长轨迹与速率",
+        "bestFor": "长期增长趋势、速度与连续动态指标"
+      },
+      "donut": {
+        "title": "环形占比图",
+        "subtitle": "渠道分布构成",
+        "bestFor": "受众来源构成与各平台线索占比"
+      },
+      "funnel": {
+        "title": "漏斗转化图",
+        "subtitle": "全流程转化漏斗",
+        "bestFor": "从线索获取到资格审查及最终付费的流失分析"
+      },
+      "radar": {
+        "title": "雷达健康图",
+        "subtitle": "多维度综合评估",
+        "bestFor": "全方位多指标综合健康度雷达扫描"
+      }
+    }
+  },
+  "step8": {
+    "eyebrow": "08",
+    "titleStart": "选择您的系统",
+    "titleHighlight": "排版与字体风格。",
+    "description": "选择主字体，为您的整个操作界面、遥测数据及草稿文案奠定视觉基调。",
+    "fonts": {
+      "inter": {
+        "label": "Inter",
+        "category": "现代中性",
+        "preview": "天地玄黄 宇宙洪荒 日月盈昃 辰宿列张 · 1,234,567"
+      },
+      "geist": {
+        "label": "Geist",
+        "category": "极客精密",
+        "preview": "自主智能体全天候分析转化遥测数据 · 98.4%"
+      },
+      "dm-sans": {
+        "label": "DM Sans",
+        "category": "现代几何",
+        "preview": "已验证官方账号跨渠道受众增长速率 · +24.8%"
+      },
+      "manrope": {
+        "label": "Manrope",
+        "category": "典雅精炼",
+        "preview": "高绩效营销操作与全自主内容调度中枢"
+      },
+      "plus-jakarta": {
+        "label": "Plus Jakarta Sans",
+        "category": "高端行政",
+        "preview": "高管级商业营收信号与预测性智能决策 · ¥45,280"
+      },
+      "space-grotesk": {
+        "label": "Space Grotesk",
+        "category": "前沿科技",
+        "preview": "实时 AI 任务流执行与多渠道智能路由中枢"
+      },
+      "ibm-plex": {
+        "label": "IBM Plex Sans",
+        "category": "严谨工整",
+        "preview": "具备零信任凭证保护的全球分发网络"
+      }
+    }
+  },
+  "step9": {
+    "eyebrow": "09",
+    "titleStart": "界面外观与",
+    "titleHighlight": "仪表盘信息密度。",
+    "description": "在进入正式工作区前，定制您的主题配色方案与界面信息密度。",
+    "themeModeLabel": "主题外观模式",
+    "themes": {
+      "dark": {
+        "label": "暗黑模式",
+        "description": "深邃黑曜石"
+      },
+      "light": {
+        "label": "明亮模式",
+        "description": "清爽日间光感"
+      },
+      "system": {
+        "label": "跟随系统",
+        "description": "自动同步操作系统偏好"
+      }
+    },
+    "densityLabel": "仪表盘信息密度",
+    "densities": {
+      "minimal": {
+        "label": "极简舒适",
+        "badge": "清爽",
+        "description": "开阔留白与高层次核心指标概览"
+      },
+      "balanced": {
+        "label": "适中平衡",
+        "badge": "默认推荐",
+        "description": "卡片结构与丰富数据信息的完美平衡"
+      },
+      "detailed": {
+        "label": "专业密集",
+        "badge": "高级用户",
+        "description": "高密度遥测数据表与全景多指标网格"
+      }
+    },
+    "readyTitle": "您的专属工作区已准备就绪",
+    "readyDesc": "所有首选项将安全保存至您的 Supabase 个人档案中。"
+  },
+  "navigation": {
+    "back": "返回上一步",
+    "continue": "继续",
+    "enterWorkspace": "进入我的工作区",
+    "settingUp": "正在为您配置工作区...",
+    "getStartedBadge": "开始您的配置之旅",
+    "changeAnytimeReassurance": "您可以随时在工作区设置中修改这些个性化选项"
+  }
+},
+  dashboardShowcase: {
+  eyebrow: "实时交互式工作区预览",
+  title: "看看 KoraSpace 是如何工作的：",
+  subtitle: "在创作者模式和营销操作员之间切换，预览您的工作流。",
+  creatorMode: "创作者工作室",
+  marketerMode: "营销操作员",
+  composerTitle: "AI 写作流水线",
+  composerDesc: "8步品牌语调匹配、文案打分与反思。",
+  calendarTitle: "可视化日历",
+  calendarDesc: "跨 Instagram、TikTok、LinkedIn 等平台的拖放调度。",
+  crmTitle: "社交 CRM 与线索",
+  crmDesc: "在私信和评论中检测高意向购买信号。",
+  pipelineScore: "KoraScore 88/100",
+  engagementRate: "3.8% 互动率",
+  revenueAttributed: "¥85,450 归因收入",
+  previewMode: "模式",
+  aiStudio: "AI 工作室",
+  visualCalendar: "可视化日历",
+  viralTrends: "热门趋势",
+  repurpose: "内容重用",
+  audience: "受众",
+  brandKit: "品牌工具包",
+  realTimeSync: "实时同步",
+  totalReach: "总曝光",
+  engagement: "互动率",
+  scheduled: "已排期",
+  allSynced: "已全同步",
+  aiContentScore: "AI 内容评分",
+  optimalVoice: "最优语调",
+  activeAiGeneration: "活跃 AI 生成 • 标志性品牌声音",
+  hookPreview: "钩子：现代创作者在2026年用来扩大受众的3个AI策略。这就是我们用来使分发量增加10倍的4步框架...",
+  eightStepReflection: "已通过8步品牌反思",
+  scheduleToPlatforms: "排期至 5 个平台",
+  unifiedIntelligenceCloud: "统一智能云",
+  fasterContentSpeed: "10倍的内容生成速度",
+  fasterContentDesc: "从想法到 6 平台草稿只需几秒钟",
+  managedPipelineRevenue: "¥58.4M+ 管理流水收入",
+  managedPipelineDesc: "归因的社交销售和转化",
+  higherLeadIntent: "4.2倍更高的线索意向",
+  higherLeadDesc: "自动化的评论和 DM 线索分类",
+  connectedNetworks: "6+ 个连接网络",
+  connectedNetworksDesc: "Instagram, TikTok, LinkedIn, YouTube, X, Threads",
+  agentOperator: "代理操作员",
+  campaigns: "活动",
+  crmLeads: "CRM 与线索",
+  automations: "自动化",
+  attribution: "归因",
+  strategy: "策略"
+},
+  authLayout: {
+  commandCenter: "您的营销和创作者指挥中心",
+  titleStart: "将您的受众",
+  titleHighlight: "转化为动力。",
+  description: "管理多渠道活动，用您的标志性品牌声音起草文案，自动化 CRM 工作流，并跟踪真实收入增长。",
+  feature1: "多渠道工作流",
+  feature2: "AI 驱动的智能",
+  feature3: "实时归因",
+  secureCloud: "安全的云工作区",
+  workspaceCommand: "工作区指挥中心",
+  overview: "概览",
+  create: "创建",
+  campaignsNav: "活动",
+  analytics: "分析",
+  crmNav: "CRM 与线索",
+  brandKitNav: "品牌包",
+  settings: "设置",
+  revenue: "收入",
+  roas: "广告支出回报",
+  leads: "线索",
+  growth: "增长"
+},
+  authPages: {
+  loginTitle: "欢迎回来",
+  loginSubtitle: "登录以访问您的 KoraSpace 工作区和实时活动。",
+  signupTitle: "创建您的帐户",
+  signupSubtitle: "今天就开始您的自主增长之旅。",
+  emailLabel: "电子邮件地址",
+  passwordLabel: "密码",
+  nameLabel: "全名",
+  loginButton: "登录",
+  signupButton: "创建帐户",
+  googleButton: "使用 Google 继续",
+  noAccount: "没有帐户？",
+  haveAccount: "已有帐户？",
+  forgotPassword: "忘记密码？",
+  marketingSuite: "营销与创作者套件"
+},
+  nav: {
+    product: "产品",
+    audience: "适用人群",
+    integrations: "集成应用",
+    resources: "资源",
+    pricing: "价格方案",
+    signIn: "登录",
+    getStarted: "免费开始",
+    platform: "平台",
+    company: "公司",
+    languageAndCurrency: "语言与货币",
+  },
+  megaMenus: {
+    productEyebrow: "产品功能",
+    productLede: "一体化协作，驱动您的品牌增长与营收转化。",
+    productCta: "探索 KoraSpace 平台全部功能",
+    audienceEyebrow: "量身打造",
+    audienceLede: "专为您真实的工作流程与业务场景量身定制。",
+    audienceCta: "了解 KoraSpace 如何适配您的业务",
+    integrationsEyebrow: "生态集成",
+    integrationsLede: "无缝连接您日常使用的业务工具与社交媒体。",
+    integrationsMore: "更多集成平台",
+    integrationsCta: "探索所有集成渠道",
+    categories: {
+      createTitle: "内容创作",
+      createItems: ["AI 智能创作", "品牌音调库", "多格式内容改写"],
+      manageTitle: "运营管理",
+      manageItems: ["全渠道发布", "排期日历", "社媒账号矩阵"],
+      understandTitle: "数据洞察",
+      understandItems: ["深度分析", "爆款趋势", "竞品动态监测"],
+      growTitle: "增长策略",
+      growItems: ["增长规划", "营销活动", "效果实验"],
+      convertTitle: "销售转化",
+      convertItems: ["线索识别", "社媒 CRM", "营收归因"],
+      automateTitle: "自动运作",
+      automateItems: ["AI 智能助手", "统一消息收件箱", "自动化工作流"],
+    },
+    audiences: [
+      {
+        label: "初创企业与创始人",
+        desc: "无需庞大营销团队，即可打造高活跃度品牌私域流量。",
+      },
+      {
+        label: "内容创作者与网红",
+        desc: "轻松创作、定时排期并持续扩大个人品牌影响力。",
+      },
+      {
+        label: "成长型企业与品牌",
+        desc: "将社媒流量转化为可预测且持续增长的商业营收引擎。",
+      },
+      {
+        label: "营销代理机构",
+        desc: "在统一的安全工作台内高效管理多个客户与品牌矩阵。",
+      },
+      {
+        label: "市场营销团队",
+        desc: "团队协同制定排期日历、无缝审核并高效执行推广活动。",
+      },
+      {
+        label: "电商与独立站卖家",
+        desc: "将社交媒体上的评论与私信实时转化为高客单价成交客户。",
+      },
+    ],
+    resourceGroups: [
+      {
+        title: "学习中心",
+        items: [
+          { label: "官方博客" },
+          { label: "出海营销指南" },
+          { label: "KoraSpace 进阶学院" },
+        ],
+      },
+      {
+        title: "帮助与支持",
+        items: [
+          { label: "帮助中心" },
+          { label: "开发者文档" },
+          { label: "常见问题 FAQ", href: "#faq" },
+        ],
+      },
+      {
+        title: "开发者生态",
+        items: [
+          { label: "开放平台" },
+          { label: "API 接口" },
+          { label: "集成生态", href: "#integrations" },
+        ],
+      },
+    ],
+  },
+  hero: {
+    badge: "专为现代品牌打造的自主 AI 营销智能体",
+    title1: "将您的专属品牌风格转化为",
+    titleHighlight: "高转化爆款贴文与 CRM 客户线索",
+    title2: "实现全自动运行。",
+    subtitle:
+      "告别每周耗费 15+ 小时的灵感枯竭与重复劳动。KoraSpace 部署双核 AI 引擎：用于打造原生品牌风格内容的「创作者工作室」，以及自动化转化客户线索的「营销执行官」。",
+    startTrial: "开启 14 天免费试用",
+    compareModes: "对比双模式优势",
+    noCardRequired: "无需绑定信用卡",
+    instantSetup: "2 分钟即刻配置完成",
+    statCreators: "5,000+ 创作者与出海增长专家",
+    statPosts: "120 万+ 篇高质量贴文生成",
+    statRoas: "平均 4.2 倍投放转化 ROAS",
+    supportedPlatforms: "全面支持 Instagram、TikTok、X (Twitter)、LinkedIn 及 Threads 矩阵运营。",
+  },
+  heroLoop: {
+    badge: "KORASPACE 自主增长飞轮",
+    stages: [
+      {
+        label: "您的品牌",
+        kicker: "品牌大脑",
+        body: "KoraSpace 深度学习您的品牌音调、产品矩阵、市场定位与准则。",
+        action: "查看品牌音调档案",
+      },
+      {
+        label: "AI 引擎",
+        kicker: "智能决策",
+        body: "多核 AI 引擎将您的品牌资产转化为高转化率的营销执行方案。",
+        action: "查看 AI 引擎矩阵",
+      },
+      {
+        label: "内容创作",
+        kicker: "智能创作",
+        body: "为不同社交平台与目标客群量身生成精准契合的内容与文案。",
+        action: "打开 AI 创作器",
+      },
+      {
+        label: "全网受众",
+        kicker: "精准触达",
+        body: "在受众最活跃的黄金时段，全自动分发至各大主流社交网络。",
+        action: "查看排期看板",
+      },
+      {
+        label: "数据反馈",
+        kicker: "深度学习",
+        body: "您的受众对创始人深度分享类干货内容的互动率高出 34%。",
+        action: "发现增长机遇",
+      },
+      {
+        label: "下一步行动",
+        kicker: "Kora 智能决策",
+        body: "将表现最佳的爆款贴文一键扩展为 3 阶段整合营销推广战役。",
+        action: "一键生成营销活动",
+      },
+    ],
+    canvas: {
+      understandKicker: "品牌风格已掌握",
+      understandBody: "数据表明您的目标受众最偏好务实且具深度的创始人分享内容。",
+      createKicker: "发现 3 个高潜力创作切入点",
+      createPrompt: "撰写创始人创业心路故事",
+      createItems: ["创始人故事", "产品核心拆解", "解决客户痛点"],
+      createAction: "生成营销内容",
+      createPerformance: "基于您过往账号的真实表现数据分析",
+      publishKicker: "营销战役已就绪",
+      publishBody: "已排期在 Instagram、LinkedIn 和 TikTok 的用户活跃峰值时段发布。",
+      learnKicker: "互动表现",
+      learnBody: "当前内容格式的表现显著超越您频道的历史平均水准。",
+      learnSignalKicker: "检测到核心受众偏好信号",
+      learnSignalBody: "知识科普型内容的转化效果超出硬广推销型内容 42%",
+      nextMoveKicker: "下一步最优增长策略",
+      nextMoveBody: "将近期表现最好的爆款贴文裂变改写为 3 部曲系列推广。",
+      nextMoveAction: "立即生成",
+      stageLabels: ["深度洞察", "智能创作", "矩阵发布", "复盘学习", "决策建议"],
+    },
+  },
+  
+  problemSolver: {
+    eyebrow: "传统运营方式 vs KoraSpace 全自动模式",
+    heading:
+      "别再每周浪费 15+ 小时在灵感枯竭、多个软件来回复制文案，以及在混乱的私信中错失高价值意向客户。",
+    paragraph:
+      "传统的社媒排期工具仅仅是定时发送。KoraSpace 是一个具备双核引擎的自主增长操作系统：创作者工作室提供原生品牌内容，营销执行官将社媒互动直接转化为商业订单。",
+    pillar1Title: "AI 品牌大脑",
+    pillar1Desc:
+      "深度吸收您的品牌音调、爆款文案和严格规范，确保生成的每篇贴文都真实自然，毫无机械感。",
+    pillar2Title: "6 大平台可视化日历",
+    pillar2Desc:
+      "在一个直观的可视化日历中，拖拽式统筹管理 Instagram、TikTok、LinkedIn、YouTube、X 和 Threads。",
+    pillar3Title: "社媒 CRM 与真实营收",
+    pillar3Desc:
+      "智能捕捉评论与私信中的购买信号（例如“多少钱？”、“如何购买？”），自动建立商机并归因真实营收。",
+    ctaButton: "免费体验全部功能",
+    secondaryButton: "对比双模式细节",
+  },
+  dualModes: {
+    eyebrow: "两大独立专属操作模式",
+    titleLead: "专为",
+    titleCreators: "创作者",
+    titleAnd: "与",
+    titleMarketers: "市场增长团队",
+    subtitle:
+      "无论您是打造极具辨识度的个人 IP 内容，还是开展全自动的获客营销活动，都能在两大模式间一键无缝切换。",
+    creatorStudioTitle: "品牌音调与受众增长工作室",
+    creatorStudioDesc:
+      "专为独立创作者、意见领袖与个人 IP 打造，轻松在 6+ 主流平台持续输出高质量爆款内容，告别创作枯竭。",
+    marketerStudioTitle: "营销执行官与社媒 CRM",
+    marketerStudioDesc:
+      "专为营销团队、出海品牌与代理机构量身定制，实现线索自动分流、全渠道活动执行与全链路销售归因。",
+    launchCreator: "启动创作者工作室",
+    launchMarketer: "启动营销专家工作台",
+  },
+  growthLoop: {
+    eyebrow: "自主持续优化的闭环系统",
+    title: "能够自主学习、持续自我迭代的社交媒体营销体系。",
+    subtitle:
+      "Buffer 和 Hootsuite 依然需要您事事亲力亲为。KoraSpace 将深度洞察、内容创作、智能分发与销售归因无缝串联为一个全自动化闭环。",
+    stage1Title: "洞察调研与趋势扫描",
+    stage1Desc:
+      "实时扫描您的品牌规范、历史爆款内容及所属行业当下最火热的社交网络趋势。",
+    stage2Title: "策略制定与管线写作",
+    stage2Desc:
+      "执行包含音调匹配、打分评估与深度反思的 8 步 AI 创作流程，确保输出质量无可挑剔。",
+    stage3Title: "矩阵排期与线索捕获",
+    stage3Desc:
+      "在 6 大主流渠道精准排期发布，并实时监控评论与私信，自动标记高意向潜在客户。",
+    stage4Title: "效果归因与闭环迭代",
+    stage4Desc:
+      "将社交媒体点击精准归因至实际商机与订单，并将复盘成果自动反馈至后续策略中。",
+    feedsNext: "持续驱动下一阶段",
+  },
+  featureRows: {
+    composer: {
+      badge: "AI 8 步智能写作管线",
+      title: "将品牌独特音调一键转化为即刻发布的爆款贴文",
+      description:
+        "执行严谨的 8 步 AI 流程：深度解析行业赛道 -> 学习历史爆款 -> 抓取实时趋势 -> 撰写文案与标题 -> 智能匹配标签云 -> 全网双重反思验证。",
+    },
+    calendar: {
+      badge: "可视化排期日历 2.0",
+      title: "像拖拽积木一样运筹您的全球社媒增长矩阵",
+      description:
+        "在统一的可视化操作台上，流畅排期、组织与调整 Instagram、TikTok、LinkedIn、YouTube、X 和 Threads 的发布计划。",
+    },
+    crm: {
+      badge: "社媒收件箱与智能 CRM",
+      title: "全自动分类销售线索与高优先级消息处理",
+      description:
+        "统一收件箱能够自动侦测高购买意向信号（“价格多少？”、“能否批发？”），自动打标并将高价值商机录入 CRM 管道。",
+    },
+    agency: {
+      badge: "代理商多工作区与客户门户",
+      title: "多席位团队审批流与独立客户品牌门户",
+      description:
+        "支持严格的行级安全隔离（RLS）。团队成员可分权管理账号与审核草稿，您始终牢牢掌控计费与全局权限。",
+    },
+  },
+  features: {
+    composerTitle: "AI 8 步智能写作管线",
+    composerTagline: "多重反思验证引擎",
+    composerDesc:
+      "执行严谨的 8 步 AI 流程：核验品牌指南 -> 分析历史爆款 -> 扫描实时热点 -> 创作正文与标题 -> 配置标签群 -> 全网双重验证。",
+    calendarTitle: "可视化拖拽排期日历",
+    calendarTagline: "多平台跨矩阵调度",
+    calendarDesc:
+      "极速流畅的统一规划看板，轻松拖拽调整 Instagram、TikTok、LinkedIn、YouTube、X 和 Threads 的排期安排。",
+    repurposerTitle: "多格式内容裂变重构器",
+    repurposerTagline: "1 份素材裂变 6 种格式",
+    repurposerDesc:
+      "一键将 YouTube 视频、播客录音或长篇文章转换为 LinkedIn 图文轮播、X 深度推文串、Instagram 贴文、短视频脚本及新闻通讯。",
+    inboxTitle: "社媒 CRM 与意向客户分流",
+    inboxTagline: "高意向购买信号秒级捕捉",
+    inboxDesc:
+      "统一聚合多平台评论与私信，自动划分为销售线索、售后支持或商业咨询，并在 CRM 看板中自动创建商机卡片。",
+    agencyTitle: "代理商工作区与专属客户门户",
+    agencyTagline: "多席位协作与分权管理",
+    agencyDesc:
+      "专为营销代理与出海企业设计。以行级权限隔离管理多个客户品牌，提供免登录免安装的极简审核链接与白标报告。",
+    attributionTitle: "营收全链路归因与 ROAS 分析",
+    attributionTagline: "全漏斗转化漏斗追踪",
+    attributionDesc:
+      "精准追踪从社媒曝光、主页访问、独立站点击、CRM 合格线索到最终成交的全路径，提供无可争议的 ROI 数据支持。",
+  },
+  featureShowcase: [
+    {
+      id: "ai-composer",
+      title: "AI 8 步智能写作管线",
+      tagline: "多重反思验证引擎",
+      description:
+        "执行严谨的 8 步 AI 流程：核验品牌指南 -> 分析历史爆款 -> 扫描实时热点 -> 创作正文与标题 -> 配置标签群 -> 全网双重验证。",
+      tone: "pink",
+    },
+    {
+      id: "visual-calendar",
+      title: "可视化拖拽排期日历",
+      tagline: "多平台跨矩阵调度",
+      description:
+        "极速流畅的统一规划看板，轻松拖拽调整 Instagram、TikTok、LinkedIn、YouTube、X 和 Threads 的排期安排。",
+      tone: "pink",
+    },
+    {
+      id: "repurposer",
+      title: "多格式内容裂变重构器",
+      tagline: "1 份素材裂变 6 种格式",
+      description:
+        "一键将 YouTube 视频、播客录音或长篇文章转换为 LinkedIn 图文轮播、X 深度推文串、Instagram 贴文、短视频脚本及新闻通讯。",
+      tone: "pink",
+    },
+    {
+      id: "inbox-crm",
+      title: "社媒 CRM 与意向客户分流",
+      tagline: "高意向购买信号秒级捕捉",
+      description:
+        "统一聚合多平台评论与私信，自动划分为销售线索、售后支持或商业咨询，并在 CRM 看板中自动创建商机卡片。",
+      tone: "blue",
+    },
+    {
+      id: "agency-workspaces",
+      title: "代理商工作区与专属客户门户",
+      tagline: "多席位协作与分权管理",
+      description:
+        "专为营销代理与出海企业设计。以行级权限隔离管理多个客户品牌，提供免登录免安装的极简审核链接与白标报告。",
+      tone: "blue",
+    },
+    {
+      id: "growth-marketing",
+      title: "营收全链路归因与 ROAS 分析",
+      tagline: "全漏斗转化漏斗追踪",
+      description:
+        "精准追踪从社媒曝光、主页访问、独立站点击、CRM 合格线索到最终成交的全路径，提供无可争议的 ROI 数据支持。",
+      tone: "blue",
+    },
+  ],
+  brandBrain: {
+    eyebrow: "AI 多智能体协同架构",
+    title: "由 Kora 品牌大脑与 8 智能体协作集群强力驱动",
+    subtitle:
+      "告别千篇一律、生硬简陋的单次 Prompt 提问，KoraSpace 部署相互协同的专业智能体集群，时刻连接您的专属持久化知识库。",
+    brainTitle: "KoraSpace 专属品牌大脑",
+    brainDesc:
+      "上传您的官网网址、产品手册、品牌调性指南及过往爆款文案。品牌大脑构建专属记忆图谱，确保产出的每条内容都 100% 契合品牌格调。",
+    brainCheck1: "自主学习特色口吻、专有词汇与 Emoji 偏好",
+    brainCheck2: "严格执行安全护栏准则（如“绝不提及竞品名称”）",
+    brainCheck3: "以历史高转化内容为基准真值进行对照校准",
+    swarmTitle: "8 大自主专业智能体集群",
+    swarmAgents: [
+      { name: "行业调研智能体", role: "实时追踪赛道热点与全球网络情报" },
+      { name: "品牌调性守门人", role: "严格把控文案语气与视觉排版格式" },
+      { name: "创意工坊智能体", role: "撰写优质贴文、多图轮播及脚本" },
+      { name: "战略增长智能体", role: "制定 30/60/90 天系统化增长路线图" },
+      { name: "数据分析智能体", role: "监控转化漏斗表现与实际投入 ROAS" },
+      { name: "竞品监测智能体", role: "持续拆解竞对热门创意与高互动套路" },
+      { name: "客户意向分流智能体", role: "实时过滤私信并自动标记高价值潜客" },
+      { name: "效果调优智能体", role: "智能计算预测得分与 A/B 实验表现" },
+    ],
+  },
+  agentTools: {
+    eyebrow: "自主营销武器库",
+    title: "借助专属 AI 工具矩阵，全面释放您的社交媒体增长潜能",
+    subtitle:
+      "提供从创意构思、智能排期到销售归因所需的全流程自动化专业工具。",
+    list: [
+      {
+        title: "8 步 AI 智能写作管线",
+        desc: "自动校验行业背景、调取历史爆款、结合当下热点，生成文案并完成验证后发布。",
+        badge: "创作引擎",
+        tone: "pink",
+      },
+      {
+        title: "爆款互动预测器",
+        desc: "在发布前基于算法对文案吸引力及预估互动概率（1-100 分）进行前瞻评分。",
+        badge: "效果调优",
+        tone: "pink",
+      },
+      {
+        title: "社媒 CRM 与幽灵模式™",
+        desc: "具备真人拟态延迟的私信与评论自动化监控器，识别购买意向并录入 CRM。",
+        badge: "自动化",
+        tone: "blue",
+      },
+      {
+        title: "竞品爆款视频拆解器",
+        desc: "深入剖析行业热门短视频的黄金 3 秒开头、节奏编排与最终 CTA 引导话术。",
+        badge: "情报洞察",
+        tone: "blue",
+      },
+      {
+        title: "智能标签群与关键词聚类",
+        desc: "根据各平台最新推荐算法生成定制化标签组合，最大化内容自然推荐流量。",
+        badge: "流量扩容",
+        tone: "pink",
+      },
+      {
+        title: "全平台内容智能重构器",
+        desc: "数秒内将 1 个长视频、音频或文章一键改写为适合各大平台的特色内容格式。",
+        badge: "格式裂变",
+        tone: "pink",
+      },
+    ],
+  },
+  integrationsSection: {
+    eyebrow: "全渠道平台生态",
+    titleLead: "在您所有的营销渠道上",
+    titleHighlight: "实现统一发布与互动管理",
+    subtitle: "基于官方 OAuth 2.0 授权接口，确保稳定安全的即时发布与双向消息通信。",
+  },
+  revenueAttribution: {
+    eyebrow: "营收与全链路转化追踪",
+    titleLead: "从社交媒体曝光到",
+    titleHighlight: "真实可核验的商业营收流水",
+    subtitle:
+      "无需再盲目猜测营销回报。全面追踪从曝光、主页浏览、独立站点击、CRM 潜客到最终成单的完整转化链条。",
+    funnelTitle: "社媒至销售转化全景漏斗",
+    funnelSubtitle: "基于 UTM 参数的实时归因与订单数据看板",
+    liveSync: "实时数据同步中",
+    impressionsLabel: "50,000 次社媒全网曝光",
+    impressionsVal: "漏斗顶端流量",
+    visitsLabel: "1,420 次品牌主页访问",
+    visitsVal: "2.84% 点击转化率",
+    clicksLabel: "310 次独立站外链跳转",
+    clicksVal: "UTM 追踪验证",
+    leadsLabel: "48 位高意向合格商机",
+    leadsVal: "社媒 CRM 销售管道",
+    closedCustomers: "14 位最终成交付费客户",
+    revenueVal: "¥89,500 实际入账营收",
+    attributionModel: "归因模型：多触点归因 (Multi-Touch)",
+    roas: "综合 ROAS：4.2 倍",
+    koraScoreLabel: "账号健康度综合评分",
+    koraScoreTip: "本周发帖持续度位于全网前 5%。建议再安排 2 篇短视频即可迎来流量峰值。",
+    radarTitle: "高价值商机雷达",
+    radarHeading: "捕捉到 4 个高潜力赛道增长机遇",
+    radarDesc: "Instagram 私信中发现 3 条明确咨询购买的消息 + 同赛道 1 个快速崛起的爆款内容模板。",
+  },
+  collaboration: {
+    eyebrow: "团队与代理商工作区",
+    title: "多席位精细分权，赋能无缝团队协作",
+    subtitle:
+      "专为营销代理机构、跨国品牌团队及出海操盘手打造，支持在统一工作台内统筹管理多个客户与品牌。",
+    list: [
+      {
+        title: "独立客户品牌门户",
+        desc: "基于严格的行级安全隔离（RLS），为客户提供干净清爽的排期看板与成效报告展示界面。",
+      },
+      {
+        title: "一键式免登录极简审核链接",
+        desc: "直接向客户或决策层发送轻量审核链接，无需强制对方注册或反复登录账号。",
+      },
+      {
+        title: "基于角色权限的团队管理体系",
+        desc: "灵活配置管理员、编辑、审核员、客户等角色，精准控制发帖、账单与凭据操作权限。",
+      },
+      {
+        title: "完整操作审计轨迹与活动日志",
+        desc: "详尽记录每一次文案修改、审批通过、规则更新与贴文发布，精确追踪至操作人员与时间。",
+      },
+    ],
+  },
+  stories: {
+    eyebrow: "客户成功故事",
+    title: "深受全球创作者、出海企业与增长团队信赖",
+    subtitle: "看看领先品牌如何借助 KoraSpace 扩大社交影响力并实现营收指数级飞跃。",
+    list: [
+      {
+        name: "李若涵 (Sarah Li)",
+        role: "出海 SaaS 品牌创始人，深圳",
+        avatar: "SL",
+        text: "我用 KoraSpace 彻底替代了 Buffer 和外包团队。AI 智能体帮我自动回复海外客户评论并定时排期发布，让我能专注于敲定大额企业订单。",
+        highlight: "每周节省 15+ 小时",
+        tone: "pink",
+      },
+      {
+        name: "陈天宇 (David Chen)",
+        role: "跨境营销代理机构总监，上海",
+        avatar: "DC",
+        text: "以前管理 8 个海外品牌账号需要 3 名专职运营。现在凭借 KoraSpace 我一个人就能搞定，客户一键审批链接让交付变得极其轻松。",
+        highlight: "一人独立操盘 8 个品牌",
+        tone: "blue",
+      },
+      {
+        name: "张雅婷 (Elena Zhang)",
+        role: "DTC 出海电商创始人，杭州",
+        avatar: "EZ",
+        text: "社媒 CRM 自动捕捉到了 Instagram 评论区中大量询问价格的潜客，切换系统仅 2 周就直接带来了 3.5 万元的销售额。",
+        highlight: "直接转化 ¥35,000+ 销售",
+        tone: "blue",
+      },
+      {
+        name: "王绍峰 (Marcus Wang)",
+        role: "个人品牌出海顾问，北京",
+        avatar: "MW",
+        text: "热点转草稿功能就像一位永不疲倦的金牌写手。它能敏锐捕捉海外最新行业热点，在我醒来之前就已经准备好 3 篇深度文案。",
+        highlight: "永远紧跟全球热点",
+        tone: "pink",
+      },
+      {
+        name: "周晓梦 (Chloe Zhou)",
+        role: "时尚出海品牌主理人，广州",
+        avatar: "CZ",
+        text: "最初我担心 AI 无法准确表达我的品牌语气。但品牌大脑通过学习过去的爆款文章，完美再现了我的语调，粉丝完全看不出差别。",
+        highlight: "100% 原生品牌语气匹配",
+        tone: "pink",
+      },
+      {
+        name: "刘博洋 (Alex Liu)",
+        role: "B2B 科技营销负责人，成都",
+        avatar: "AL",
+        text: "清晰透明的价格体系与极速顺畅的上手体验让我们团队迅速完成部署。全渠道的数据归因分析能力更是业界顶尖水准。",
+        highlight: "ROI 转化清晰可查",
+        tone: "blue",
+      },
+    ],
+  },
+  pricing: {
+    eyebrow: "透明无套路的价格体系",
+    titleLead: "简单清晰的方案。",
+    titleHighlight: "稳定可预期的超额价值。",
+    subtitle:
+      "支持本地货币结算。随时升级、降级或取消方案。所有付费方案均享有 14 天全功能免费试用期。",
+    monthlyBilling: "按月订阅",
+    annualBilling: "按年订阅",
+    discountBadge: "立省 20%",
+    perMonth: "/月",
+    billedAnnually: "/月 (按年结算)",
+                                    enterpriseTitle: "企业级高并发定制工作区",
+    enterpriseDesc:
+      "需要专属微调大模型、独立出口 IP、SLA 履约保障或 20+ 席位以上的大型团队？",
+    enterpriseButton: "联系大客户顾问",
+    plans: [
+      {
+            planKey: "free",
+            name: "免费",
+            desc: "适合刚刚起步的个人。",
+            posts: "终身3次定时发布",
+            features: [
+                  "3个集成",
+                  "终身5万AI代币",
+                  "0个协作者",
+                  "数据分析与概览页面",
+                  "客户支持"
+            ],
+            cta: "免费开始"
+      },
+      {
+            planKey: "pro",
+            name: "专业版",
+            desc: "适合不断成长的创作者。",
+            posts: "每周5次定时发布",
+            features: [
+                  "7个集成",
+                  "每月160万AI代币",
+                  "3个协作者",
+                  "最多5个机器人",
+                  "所有页面 (无营销人员页面)"
+            ],
+            cta: "获取专业版",
+            highlight: true,
+            badge: "热门"
+      },
+      {
+            planKey: "advanced",
+            name: "高级版",
+            desc: "适合高级用户。",
+            posts: "终身15次定时发布",
+            features: [
+                  "10个集成",
+                  "每月350万AI代币",
+                  "话题标签管理器",
+                  "7个协作者",
+                  "15个托管机器人",
+                  "包含营销人员页面"
+            ],
+            cta: "获取高级版"
+      },
+      {
+            planKey: "team",
+            name: "团队版",
+            desc: "适合大型机构。",
+            posts: "无限制定时发布",
+            features: [
+                  "无限制集成",
+                  "每月720万AI代币",
+                  "无限制协作者",
+                  "无限制机器人",
+                  "包含所有功能"
+            ],
+            cta: "联系销售"
+      }
+],
+  },
+  faq: {
+    eyebrow: "常见问题答疑",
+    title: "还有疑问？我们为您一一解答。",
+    subtitle:
+      "关于 KoraSpace、双操作模式、AI 安全合规及计费方式的全部关键信息。",
+    q1: "「创作者模式」与「营销专家模式」的核心区别是什么？",
+    a1: "「创作者模式」专为个人创作者与创始人打造，聚焦于品牌调性学习、AI 智能写作、多格式裂变重构以及 6 大平台的拖拽排期发布；「营销专家模式」则专为营销团队与出海企业设计，侧重于全渠道活动执行、社媒评论与私信的线索捕获转化（社媒 CRM）、自主智能体协作及销售营收的全链路归因。",
+    q2: "品牌大脑如何确保生成的文案具有我独特的风格？",
+    a2: "您只需输入官网网址、品牌规范、产品手册或过往爆款文章。KoraSpace 品牌大脑将建立持久的专属记忆档案，沉淀您的语气习惯、常用词库与安全边界，确保产出的每一篇内容都如您亲笔撰写般自然真实。",
+    q3: "平台支持哪些主流社交媒体渠道？",
+    a3: "KoraSpace 通过官方正规授权的 OAuth 2.0 API 直接接入 Instagram、TikTok、LinkedIn、YouTube、X (Twitter)、Facebook、Threads、WhatsApp、Telegram 等全球主流社交网络。",
+    q4: "幽灵模式™ (Ghost Mode) 是如何进行意向客户识别的？",
+    a4: "幽灵模式实时监控各大平台的公开评论与私信。通过高精 NLP 自然语言处理配合拟真随机延迟，自动识别具有明确购买意向的咨询（例如“怎么买？”、“价格多少？”），并将合格商机自动同步至 CRM 看板。",
+    q5: "我可以将 KoraSpace 用于代理商管理多客户团队吗？",
+    a5: "完全可以！代理商版提供多客户品牌隔离门户、多席位分权管理、免登录极简审核链接以及完全支持白标定制的专业数据分析报告。",
+    q6: "支持哪些支付方式？",
+    a6: "我们支持全球主流信用卡与借记卡（Visa、Mastercard、American Express）、Apple Pay、Google Pay 以及各地区主流本地支付方式。",
+  },
+  cta: {
+    eyebrow: "14 天免费全功能试用 — 无需绑定信用卡",
+    titleLead: "您的专属自主 AI 营销团队",
+    titleHighlight: "今日即刻启程。",
+    subtitle:
+      "加入全球数千名创作者、创始人与营销操盘手的行列，实现内容创作、排期分发、社媒获客与营收增长的全流程自动化。",
+    startTrial: "免费开始体验",
+    signIn: "登录进入工作区",
+    feature1: "2 分钟极速开启配置",
+    feature2: "全面支持 6+ 主流社交网络",
+  },
+  footer: {
+    brandDesc:
+      "专为现代创作者、初创品牌与营销代理机构量身打造的自主 AI 营销操作系统。",
+    productHeading: "产品功能",
+    platformHeading: "生态平台",
+    legalHeading: "法律合规",
+    supportHeading: "支持与服务",
+    directContact: "直接联系我们",
+    rightsReserved: "KoraSpace by Techla. 保留所有权利。",
+    builtLocation: "全球 AI 智能营销引擎",
+    links: {
+      product: [
+        { label: "AI 8 步智能写作管线", href: "#engines" },
+        { label: "可视化排期日历 2.0", href: "#engines" },
+        { label: "专属品牌大脑", href: "#brain" },
+        { label: "自主增长飞轮", href: "#how" },
+        { label: "价格与方案", href: "#pricing" },
+      ],
+      platform: [
+        { label: "Instagram 官方集成", href: "#integrations" },
+        { label: "TikTok 矩阵自动化发布", href: "#integrations" },
+        { label: "LinkedIn & X 智能推文", href: "#integrations" },
+        { label: "YouTube 视频裂变工具", href: "#integrations" },
+        { label: "WhatsApp & Telegram CRM", href: "#integrations" },
+      ],
+      legal: [
+        { label: "隐私政策", href: "/privacy" },
+        { label: "服务条款", href: "/terms" },
+        { label: "数据安全与保护", href: "/privacy" },
+        { label: "Cookie 政策", href: "/privacy" },
+      ],
+      support: [
+        { label: "产品使用文档", href: "#" },
+        { label: "帮助与支持中心", href: "#" },
+        { label: "创作者交流社区", href: "#" },
+        { label: "系统运行状态", href: "#" },
+      ],
+    },
+  },
+  common: {
+    exploreFeature: "探索此功能",
+    launchStudio: "启动工作区",
+    viewPricing: "查看定价详情",
+    loading: "加载中...",
+    secureBadge: "安全加密接入",
+  },
+};

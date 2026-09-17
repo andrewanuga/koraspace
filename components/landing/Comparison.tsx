@@ -45,7 +45,11 @@ export function Comparison() {
         >
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">
             Why teams{" "}
+<<<<<<< HEAD
             <span className="gradient-text">switch to Koraspace AI</span>
+=======
+            <span className="gradient-text">switch to Koraspace</span>
+>>>>>>> main
           </h2>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
             We&apos;re not just another social media scheduler. We&apos;re a category upgrade.
@@ -67,7 +71,11 @@ export function Comparison() {
                 </th>
                 <th className="py-4 px-4 text-center">
                   <div className="flex flex-col items-center gap-1">
+<<<<<<< HEAD
                     <span className="text-sm font-bold gradient-text">Koraspace AI</span>
+=======
+                    <span className="text-sm font-bold gradient-text">Koraspace</span>
+>>>>>>> main
                     <span className="text-xs text-muted-foreground">You</span>
                   </div>
                 </th>

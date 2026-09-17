@@ -1,43 +1,26 @@
 "use client";
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import {
-  ArrowUp, Sparkles, Copy, Check, RotateCcw, Paperclip, X,
-  FileText, Film, Bot, Eye, ChevronDown, Loader2, Image as ImageIcon, Edit2, MessageSquare,
-} from "lucide-react";
 import { useToast } from "@/components/ui/toast";
-import { createClient } from "@/lib/supabase/client";
 
-/* ── Types ────────────────────────────────────────────────────── */
+import { CreateTypeTabs }    from "@/components/dashboard/create/CreateTypeTabs";
+import { AiPromptWorkspace } from "@/components/dashboard/create/AiPromptWorkspace";
+import { QuickPrompts }      from "@/components/dashboard/create/QuickPrompts";
+import { AiDraftCard }       from "@/components/dashboard/create/AiDraftCard";
+import { BrandIntelligence } from "@/components/dashboard/create/BrandIntelligence";
+import { ContentFormats }    from "@/components/dashboard/create/ContentFormats";
 
-type Attachment = {
-  id: number;
-  type: "image" | "video" | "file";
-  name: string;
-  mime: string;
-  preview?: string;
-  dataUrl?: string;
-  content?: string;
-};
-
-type Msg = {
-  id: string | number;
-  role: "user" | "assistant";
-  content: string;
-  model?: string;
-  attachments?: { type: Attachment["type"]; name: string; preview?: string }[];
-};
-
-interface ModelOption {
-  id: string;
-  name: string;
-  provider: string;
-  supportsVision: boolean;
-  tier?: string;
-}
+import type { CreateMode, Attachment, ModelOption } from "@/components/dashboard/create/types";
+import type { ScoreResponse } from "@/app/api/ai/score/route";
 
 const MAX_MB = 25;
 
+<<<<<<< HEAD
 const SUGGESTIONS = [
   "Draft an X thread about our launch",
   "Turn this blog into a LinkedIn post",
@@ -65,156 +48,81 @@ function modelDisplayName(id: string, models: ModelOption[]): string {
 
 /* ── Main component ───────────────────────────────────────────── */
 
+=======
+>>>>>>> main
 export default function CreatePage() {
-  const { error: toastError } = useToast();
-  const [messages, setMessages] = useState<Msg[]>([GREETING]);
-  const [input, setInput] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [copied, setCopied] = useState<string | number | null>(null);
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
-  const [streamText, setStreamText] = useState("");
+  const { error: toastError, success: toastSuccess } = useToast();
 
-  // Model selection
-  const [selectedModel, setSelectedModel] = useState<string>("");
+  /* ── Mode ── */
+  const [mode, setMode] = useState<CreateMode>("post");
+  const [prompt, setPrompt] = useState("");
+
+  /* ── Generation state ── */
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [draft, setDraft] = useState<string | null>(null);
+  const [draftHashtags, setDraftHashtags] = useState<string[]>([]);
+  const [scoreData, setScoreData] = useState<ScoreResponse | null>(null);
+
+  /* ── Models ── */
   const [models, setModels] = useState<ModelOption[]>([]);
+  const [selectedModel, setSelectedModel] = useState("");
   const [showModelPicker, setShowModelPicker] = useState(false);
-  const [userDefaultModel, setUserDefaultModel] = useState<string>("");
+  const [showToolPicker, setShowToolPicker] = useState(false);
 
-
-  const [chats, setChats] = useState<{ id: string; title: string }[]>([]);
-  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
-  const [renamingChatId, setRenamingChatId] = useState<string | null>(null);
-  const [renameInput, setRenameInput] = useState("");
-
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const modelPickerRef = useRef<HTMLDivElement>(null);
-  const idRef = useRef(1);
+  /* ── Attachments ── */
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const attIdRef = useRef(1);
+  const abortRef = useRef<AbortController | null>(null);
 
+  /* ── Picker refs (for outside-click close) ── */
+  const modelPickerRef = useRef<HTMLDivElement>(null);
+  const toolPickerRef = useRef<HTMLDivElement>(null);
 
-  const fetchChats = async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data } = await supabase.from("chats").select("id, title").order("updated_at", { ascending: false });
-    if (data) setChats(data);
-  };
-
-  useEffect(() => {
-    fetchChats();
-  }, []);
-
-  const loadChat = async (chatId: string) => {
-    setCurrentChatId(chatId);
-    setMessages([GREETING]);
-    setBusy(true);
-    try {
-      const supabase = createClient();
-      const { data } = await supabase.from("chat_messages").select("*").eq("chat_id", chatId).order("created_at", { ascending: true });
-      if (data && data.length > 0) {
-        setMessages([GREETING, ...data.map((msg: any) => ({
-          id: msg.id,
-          role: msg.role,
-          content: msg.content,
-          model: msg.model,
-          attachments: msg.attachments || []
-        }))]);
-      }
-    } catch {
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const saveRename = async (id: string, newTitle: string) => {
-    setRenamingChatId(null);
-    if (!newTitle.trim()) return;
-    setChats((prev) => prev.map((c) => c.id === id ? { ...c, title: newTitle } : c));
-    const supabase = createClient();
-    await supabase.from("chats").update({ title: newTitle }).eq("id", id);
-  };
-
-  /* ── Load user profile and models ───────────────────────────── */
+  /* ── Load user profile & models ── */
   useEffect(() => {
     (async () => {
       try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
+        const supabase = await createClient();
+  const session = await auth();
+          const user = session?.user;
         if (user) {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("ai_model")
-            .eq("id", user.id)
-            .single();
-          if (profile?.ai_model) {
-            setSelectedModel(profile.ai_model);
-            setUserDefaultModel(profile.ai_model);
-          }
+          const { data: profile } = await supabase.from("profiles").select("ai_model").eq("id", user.id).single();
+          if (profile?.ai_model) setSelectedModel(profile.ai_model);
         }
       } catch { /* offline */ }
 
-      // Load models
       try {
         const res = await fetch("/api/ai/models");
         const data = await res.json();
-        const recommended = (data.recommended || []).map((m: ModelOption & Record<string, unknown>) => ({
-          id: m.id,
-          name: m.name,
-          provider: m.provider,
-          supportsVision: m.supportsVision,
-          tier: m.tier,
-        }));
-        setModels(recommended);
+        setModels(
+          (data.recommended || []).map((m: ModelOption & Record<string, unknown>) => ({
+            id: m.id, name: m.name, provider: m.provider,
+            supportsVision: m.supportsVision, tier: m.tier,
+          }))
+        );
       } catch { /* offline */ }
     })();
   }, []);
 
-  /* ── Close model picker on outside click ────────────────────── */
+  /* ── Close pickers on outside click ── */
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (modelPickerRef.current && !modelPickerRef.current.contains(e.target as Node)) {
-        setShowModelPicker(false);
-      }
+    const handle = (e: MouseEvent) => {
+      if (modelPickerRef.current && !modelPickerRef.current.contains(e.target as Node)) setShowModelPicker(false);
+      if (toolPickerRef.current  && !toolPickerRef.current.contains(e.target as Node))  setShowToolPicker(false);
+    };
+    if (showModelPicker || showToolPicker) {
+      document.addEventListener("mousedown", handle);
+      return () => document.removeEventListener("mousedown", handle);
     }
-    if (showModelPicker) {
-      document.addEventListener("mousedown", handleClick);
-      return () => document.removeEventListener("mousedown", handleClick);
-    }
-  }, [showModelPicker]);
+  }, [showModelPicker, showToolPicker]);
 
-  /* ── Auto-scroll ────────────────────────────────────────────── */
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, busy, streamText]);
-
-  /* ── Auto-resize textarea ───────────────────────────────────── */
-  useEffect(() => {
-    const ta = textareaRef.current;
-    if (ta) {
-      ta.style.height = "auto";
-      ta.style.height = `${Math.min(ta.scrollHeight, 160)}px`;
-    }
-  }, [input]);
-
-  /* ── File handling ──────────────────────────────────────────── */
+  /* ── File helpers ── */
   const readFile = (file: File) =>
-    new Promise<string>((res, rej) => {
-      const r = new FileReader();
-      r.onload = () => res(r.result as string);
-      r.onerror = rej;
-      r.readAsDataURL(file);
-    });
+    new Promise<string>((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result as string); r.onerror = rej; r.readAsDataURL(file); });
   const readText = (file: File) =>
-    new Promise<string>((res, rej) => {
-      const r = new FileReader();
-      r.onload = () => res(r.result as string);
-      r.onerror = rej;
-      r.readAsText(file);
-    });
+    new Promise<string>((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result as string); r.onerror = rej; r.readAsText(file); });
 
-  const onFiles = async (files: FileList | null) => {
+  const onFilesAdded = async (files: FileList | null) => {
     if (!files) return;
     for (const file of Array.from(files)) {
       if (file.size > MAX_MB * 1024 * 1024) {
@@ -223,69 +131,74 @@ export default function CreatePage() {
       }
       const isImage = file.type.startsWith("image/");
       const isVideo = file.type.startsWith("video/");
-      const isText = file.type.startsWith("text/") || /\.(txt|md|csv|json)$/i.test(file.name);
-      const att: Attachment = {
-        id: attIdRef.current++,
-        type: isImage ? "image" : isVideo ? "video" : "file",
-        name: file.name,
-        mime: file.type || "application/octet-stream",
-      };
+      const isText  = file.type.startsWith("text/") || /\.(txt|md|csv|json)$/i.test(file.name);
+      const att: Attachment = { id: attIdRef.current++, type: isImage ? "image" : isVideo ? "video" : "file", name: file.name, mime: file.type || "application/octet-stream" };
       try {
-        if (isImage) {
-          att.preview = URL.createObjectURL(file);
-          att.dataUrl = await readFile(file);
-        } else if (isVideo) {
-          att.preview = URL.createObjectURL(file);
-        } else if (isText) {
-          att.content = await readText(file);
-        }
-      } catch { /* ignore read errors */ }
+        if (isImage)      { att.preview = URL.createObjectURL(file); att.dataUrl = await readFile(file); }
+        else if (isVideo) { att.preview = URL.createObjectURL(file); }
+        else if (isText)  { att.content = await readText(file); }
+      } catch { /* ignore */ }
       setAttachments((prev) => [...prev, att]);
     }
-    if (fileRef.current) fileRef.current.value = "";
   };
 
-  const removeAttachment = (id: number) =>
-    setAttachments((prev) => prev.filter((a) => a.id !== id));
-
-  /* ── Check if current model supports vision ─────────────────── */
   const currentModelInfo = models.find((m) => m.id === selectedModel);
   const hasVision = currentModelInfo?.supportsVision ?? true;
-  const hasImageAttachments = attachments.some((a) => a.type === "image");
 
-  /* ── Send message ───────────────────────────────────────────── */
-  const send = useCallback(async (text?: string) => {
-    const content = (text ?? input).trim();
-    if ((!content && attachments.length === 0) || busy) return;
-    const sending = [...attachments];
-    const userMsg: Msg = {
-      id: idRef.current++,
-      role: "user",
-      content: content || "(see attachment)",
-      attachments: sending.map((a) => ({ type: a.type, name: a.name, preview: a.preview })),
-    };
-    const history = [...messages, userMsg];
-    setMessages(history);
-    setInput("");
-    setAttachments([]);
-    setBusy(true);
-    setStreamText("");
+  /* ── Score content helper ── */
+  const evaluateDraftScore = async (text: string) => {
+    if (!text || text.length < 20) return;
+    try {
+      const res = await fetch("/api/ai/score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: text, platform: "x" }),
+      });
+      if (res.ok) {
+        const scored = await res.json();
+        setScoreData(scored);
+      }
+    } catch {
+      /* silent */
+    }
+  };
+
+  /* ── Generate / send ── */
+  const handleGenerate = useCallback(async () => {
+    if (!prompt.trim() || isGenerating) return;
+
+    setIsGenerating(true);
+    setDraft(null);
+    setDraftHashtags([]);
+    setScoreData(null);
+
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+
+    let promptModifier = prompt;
+    if (mode === "hashtags") {
+      promptModifier = `Generate an optimized hashtag strategy for: ${prompt}`;
+    } else if (mode === "caption") {
+      promptModifier = `Write an engaging, scroll-stopping social caption for: ${prompt}`;
+    } else if (mode === "repurpose") {
+      promptModifier = `Repurpose this content into a multi-platform bundle (X thread, LinkedIn, Reel script): ${prompt}`;
+    } else if (mode === "brand") {
+      promptModifier = `Draft a personalized brand voice profile and style guide for: ${prompt}`;
+    }
 
     try {
       const res = await fetch("/api/ai/chat", {
         method: "POST",
+        signal: ctrl.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: history
-            .filter((m) => m.id !== 0)
-            .map((m) => ({ role: m.role, content: m.content })),
-          attachments: sending.map((a) => ({
+          messages: [{ role: "user", content: promptModifier }],
+          attachments: attachments.map((a) => ({
             type: a.type, name: a.name, mime: a.mime,
             content: a.content, dataUrl: a.dataUrl,
           })),
           model: selectedModel || undefined,
           stream: true,
-          chatId: currentChatId || undefined,
         }),
       });
 
@@ -295,117 +208,96 @@ export default function CreatePage() {
       }
 
       const contentType = res.headers.get("content-type") || "";
-      const newChatId = res.headers.get("x-chat-id");
-      if (newChatId && newChatId !== currentChatId) {
-        setCurrentChatId(newChatId);
-        fetchChats();
-      }
+      let fullGeneratedText = "";
 
       if (contentType.includes("text/plain")) {
-        // Streaming response
         const reader = res.body?.getReader();
         const decoder = new TextDecoder();
-        let full = "";
-
         if (reader) {
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-            const chunk = decoder.decode(value, { stream: true });
-            full += chunk;
-            setStreamText(full);
+            fullGeneratedText += decoder.decode(value, { stream: true });
+            setDraft(fullGeneratedText);
           }
         }
-
-        setStreamText("");
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: idRef.current++,
-            role: "assistant",
-            content: full || "No response received.",
-            model: selectedModel || undefined,
-          },
-        ]);
       } else {
-        // JSON response
         const data = await res.json();
-        if (data.chatId && data.chatId !== currentChatId) {
-          setCurrentChatId(data.chatId);
-          fetchChats();
-        }
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: idRef.current++,
-            role: "assistant",
-            content: data.reply || data.error || "Something went wrong.",
-            model: data.model || selectedModel || undefined,
-          },
-        ]);
+        fullGeneratedText = data.reply || data.error || "Something went wrong.";
+        setDraft(fullGeneratedText);
       }
-    } catch (e) {
-      toastError("Agent unavailable", e instanceof Error ? e.message : "Try again.");
+
+      /* Extract hashtags from the final draft */
+      const tags = [...fullGeneratedText.matchAll(/#(\w+)/g)].map((m) => m[1]);
+      if (tags.length) setDraftHashtags(tags);
+
+      // Score the completed draft
+      if (fullGeneratedText) {
+        evaluateDraftScore(fullGeneratedText);
+      }
+    } catch (e: unknown) {
+      if (e instanceof Error && e.name === "AbortError") return;
+      toastError("Generation failed", e instanceof Error ? e.message : "Try again.");
     } finally {
-      setBusy(false);
-      setStreamText("");
+      setIsGenerating(false);
+      abortRef.current = null;
     }
-  }, [input, attachments, busy, messages, selectedModel, toastError]);
+  }, [prompt, attachments, selectedModel, isGenerating, mode, toastError]);
 
-  /* ── Copy and reset ─────────────────────────────────────────── */
-  const copy = (m: Msg) => {
-    navigator.clipboard?.writeText(m.content);
-    setCopied(m.id);
-    setTimeout(() => setCopied(null), 1400);
+  /* ── Generate A/B Variations ── */
+  const handleGenerateVariations = async () => {
+    if (!draft && !prompt.trim()) return;
+    setIsGenerating(true);
+    try {
+      const res = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: prompt || draft,
+          type: "variations",
+          platform: "x",
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to generate variations");
+      setDraft(data.content);
+      evaluateDraftScore(data.content);
+      toastSuccess("A/B Variations Generated", "Explore 3 distinct angles for your audience.");
+    } catch (err: unknown) {
+      toastError("Variations failed", err instanceof Error ? err.message : "Try again");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
-  const reset = () => {
-    setCurrentChatId(null);
-    setMessages([GREETING]);
-    idRef.current = 1;
-    setStreamText("");
+  /* ── Quick prompts ── */
+  const handleQuickPrompt = (selected: string) => setPrompt(selected);
+
+  /* ── Draft actions ── */
+  const handleImprove = () => {
+    if (!draft) return;
+    setPrompt(`Improve this content and make it more engaging with higher hook retention:\n\n${draft}`);
   };
 
-  /* ── Render ─────────────────────────────────────────────────── */
+  /* ── Format select ── */
+  const handleFormatSelect = (format: string) => {
+    setPrompt(`Create a high-converting ${format} tailored to my brand voice.`);
+  };
+
+  /* ── Tool select ── */
+  const handleToolSelect = (toolPrompt: string, needsInput: boolean) => {
+    if (needsInput) {
+      setPrompt((prev) => (prev ? `${prev}\n${toolPrompt}` : toolPrompt));
+    } else {
+      setPrompt(toolPrompt);
+    }
+    setShowToolPicker(false);
+  };
+
   return (
-    <div className="mx-auto flex h-[calc(100vh-8rem)] max-w-[1000px] gap-6">
-      {/* sidebar */}
-      <div className="hidden w-64 flex-col border-r border-[var(--stroke)] pr-6 md:flex">
-        <button
-          onClick={reset}
-          className="mb-6 flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3 text-[13px] font-medium text-[var(--fg)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--fg)] shadow-sm"
-        >
-          <RotateCcw className="h-4 w-4" /> New chat
-        </button>
-        <div className="mb-2 px-2 text-[11px] font-bold uppercase tracking-wider text-[var(--fg-4)]">Recent Chats</div>
-        <div className="flex-1 space-y-1 overflow-y-auto pr-2">
-          {chats.map(c => (
-            <div key={c.id} className={`group flex items-center justify-between rounded-xl px-3 py-2.5 text-[13px] transition-colors ${currentChatId === c.id ? "bg-[var(--panel-fill-2)] text-[var(--fg)] font-medium" : "text-[var(--fg-3)] hover:bg-[var(--hover)] hover:text-[var(--fg-2)]"}`}>
-              {renamingChatId === c.id ? (
-                <input
-                  autoFocus
-                  value={renameInput}
-                  onChange={(e) => setRenameInput(e.target.value)}
-                  onBlur={() => saveRename(c.id, renameInput)}
-                  onKeyDown={(e) => e.key === "Enter" && saveRename(c.id, renameInput)}
-                  className="w-full bg-transparent outline-none"
-                />
-              ) : (
-                <>
-                  <button onClick={() => loadChat(c.id)} className="flex-1 truncate text-left flex items-center gap-2">
-                    <MessageSquare className="h-3.5 w-3.5 opacity-70" />
-                    <span className="truncate">{c.title}</span>
-                  </button>
-                  <button onClick={() => { setRenamingChatId(c.id); setRenameInput(c.title); }} className="opacity-0 transition-opacity group-hover:opacity-100 p-1 -mr-1 hover:bg-black/20 rounded">
-                    <Edit2 className="h-3.5 w-3.5 text-[var(--fg-4)] hover:text-[var(--fg)]" />
-                  </button>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="mx-auto w-full max-w-[1600px] space-y-8 pb-10">
 
+<<<<<<< HEAD
       <div className="flex min-w-0 flex-1 flex-col">
         {/* header */}
       <div className="mb-4 flex items-center justify-between">
@@ -419,184 +311,81 @@ export default function CreatePage() {
           <div>
             <h1 className="font-display text-[17px] font-semibold text-[var(--fg)]">Create</h1>
             <p className="text-[12px] text-[var(--fg-3)]">Your personal Koraspace agent</p>
+=======
+      {/* ── Page header ── */}
+      <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="mb-2 flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand-primary)]" />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--brand-primary)]">
+              Workspace AI Studio
+            </span>
+>>>>>>> main
           </div>
+          <h1 className="text-[28px] font-semibold tracking-tight text-[var(--fg)] sm:text-[32px]">
+            Create content
+          </h1>
+          <p className="mt-2 text-[13px] text-[var(--fg-3)]">
+            Turn your ideas into high-converting content with autonomous Brand Brain intelligence.
+          </p>
         </div>
-        <button
-          onClick={reset}
-          className="flex items-center gap-1.5 rounded-full border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 py-1.5 text-[12px] text-[var(--fg-2)] hover:bg-[var(--hover)]"
-        >
-          <RotateCcw className="h-3.5 w-3.5" /> New chat
-        </button>
-      </div>
 
-      {/* messages */}
-      <div ref={scrollRef} className="glass-panel flex-1 overflow-y-auto rounded-2xl p-4 sm:p-5">
-        <div className="space-y-4">
-          {messages.map((m) => (
-            <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-              <div
-                className={`group relative max-w-[85%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed text-[var(--fg)]`}
-                style={
-                  m.role === "user"
-                    ? { background: "linear-gradient(135deg,#6366f1,#a855f7)" }
-                    : { background: "var(--panel-fill-2)", border: "1px solid var(--panel-fill-2)" }
-                }
-              >
-                {/* Attachments */}
-                {m.attachments && m.attachments.length > 0 && (
-                  <div className="mb-2 flex flex-wrap gap-2">
-                    {m.attachments.map((a, k) => (
-                      <div key={k} className="overflow-hidden rounded-lg border border-[var(--stroke)] bg-black/20">
-                        {a.type === "image" && a.preview ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={a.preview} alt={a.name} className="h-20 w-20 object-cover" />
-                        ) : (
-                          <div className="flex h-20 w-20 flex-col items-center justify-center gap-1 px-1 text-center">
-                            {a.type === "video" ? <Film className="h-5 w-5 text-[var(--fg-2)]" /> : <FileText className="h-5 w-5 text-[var(--fg-2)]" />}
-                            <span className="line-clamp-2 text-[9px] text-[var(--fg-2)]">{a.name}</span>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Content with basic markdown rendering */}
-                <div className="whitespace-pre-wrap">
-                  {m.content.split(/(\*\*.*?\*\*)/).map((part, i) =>
-                    part.startsWith("**") && part.endsWith("**") ? (
-                      <strong key={i}>{part.slice(2, -2)}</strong>
-                    ) : (
-                      <span key={i}>{part}</span>
-                    ),
-                  )}
-                </div>
-
-                {/* Model badge for AI responses */}
-                {m.role === "assistant" && m.id !== 0 && m.model && (
-                  <div className="mt-2 flex items-center gap-1 text-[10px] text-[var(--fg-4)]">
-                    <Bot className="h-2.5 w-2.5" />
-                    {modelDisplayName(m.model, models)}
-                  </div>
-                )}
-
-                {/* Copy button */}
-                {m.role === "assistant" && m.id !== 0 && (
-                  <button
-                    onClick={() => copy(m)}
-                    className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--stroke)] bg-[#181820] text-[var(--fg-3)] opacity-0 transition-opacity hover:text-[var(--fg)] group-hover:opacity-100"
-                    title="Copy"
-                  >
-                    {copied === m.id ? <Check className="h-3.5 w-3.5 text-[#34d399]" /> : <Copy className="h-3.5 w-3.5" />}
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-
-          {/* Streaming text */}
-          {busy && streamText && (
-            <div className="flex justify-start">
-              <div
-                className="relative max-w-[85%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed text-[var(--fg)]"
-                style={{ background: "var(--panel-fill-2)", border: "1px solid var(--panel-fill-2)" }}
-              >
-                <div className="whitespace-pre-wrap">{streamText}</div>
-                <span className="inline-block h-4 w-0.5 animate-pulse bg-[var(--sai-indigo)]" />
-              </div>
-            </div>
-          )}
-
-          {/* Typing indicator (no stream text yet) */}
-          {busy && !streamText && (
-            <div className="flex justify-start">
-              <div className="flex items-center gap-2 rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-4 py-3.5">
-                <div className="flex gap-1.5">
-                  {[0, 1, 2].map((i) => (
-                    <span
-                      key={i}
-                      className="h-1.5 w-1.5 animate-bounce rounded-full bg-white/50"
-                      style={{ animationDelay: `${i * 0.15}s` }}
-                    />
-                  ))}
-                </div>
-                <span className="text-[11px] text-[var(--fg-4)]">
-                  {selectedModel
-                    ? `${modelDisplayName(selectedModel, models)} is thinking…`
-                    : "Thinking…"}
-                </span>
-              </div>
-            </div>
-          )}
+        <div className="flex items-center gap-2 text-[11px] text-[var(--fg-4)]">
+          <span className="h-2 w-2 rounded-full bg-[var(--success)]" />
+          Kora Autonomous Engine ready
         </div>
-      </div>
+      </header>
 
-      {/* suggestions */}
-      {messages.length <= 1 && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {SUGGESTIONS.map((s) => (
-            <button
-              key={s}
-              onClick={() => send(s)}
-              className="rounded-full border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 py-1.5 text-[12.5px] text-[var(--fg-2)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--fg)]"
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* ── Create type tabs ── */}
+      <CreateTypeTabs value={mode} onChange={setMode} />
 
-      {/* composer */}
-      <div className="mt-3">
-        {/* attachment chips */}
-        {attachments.length > 0 && (
-          <div className="mb-2 flex flex-wrap gap-2">
-            {attachments.map((a) => (
-              <div
-                key={a.id}
-                className="group relative flex items-center gap-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] py-1.5 pl-1.5 pr-2.5"
-              >
-                {a.type === "image" && a.preview ? (
-                  <div className="relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={a.preview} alt="" className="h-8 w-8 rounded-lg object-cover" />
-                    {hasVision && (
-                      <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500" title="AI will analyze this image">
-                        <Eye className="h-2 w-2 text-white" />
-                      </span>
-                    )}
-                  </div>
-                ) : (
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--panel-fill-2)]">
-                    {a.type === "video" ? <Film className="h-4 w-4 text-[var(--sai-violet)]" /> : <FileText className="h-4 w-4 text-[var(--sai-indigo)]" />}
-                  </span>
-                )}
-                <span className="max-w-[120px] truncate text-[12px] text-[var(--fg-2)]">{a.name}</span>
-                <button onClick={() => removeAttachment(a.id)} className="text-[var(--fg-4)] hover:text-[var(--sai-red)]">
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            ))}
+      {/* ── Prompt workspace ── */}
+      <AiPromptWorkspace
+        mode={mode}
+        prompt={prompt}
+        onPromptChange={setPrompt}
+        onGenerate={handleGenerate}
+        isGenerating={isGenerating}
+        models={models}
+        selectedModel={selectedModel}
+        onModelChange={(id) => { setSelectedModel(id); setShowModelPicker(false); }}
+        showModelPicker={showModelPicker}
+        onToggleModelPicker={() => { setShowModelPicker((v) => !v); setShowToolPicker(false); }}
+        modelPickerRef={modelPickerRef}
+        showToolPicker={showToolPicker}
+        onToggleToolPicker={() => { setShowToolPicker((v) => !v); setShowModelPicker(false); }}
+        toolPickerRef={toolPickerRef}
+        onToolSelect={handleToolSelect}
+        attachments={attachments}
+        onFilesAdded={onFilesAdded}
+        onRemoveAttachment={(id) => setAttachments((prev) => prev.filter((a) => a.id !== id))}
+        hasVision={hasVision}
+      />
 
-            {/* Vision indicator */}
-            {hasImageAttachments && hasVision && (
-              <span className="flex items-center gap-1 self-center rounded-full bg-emerald-500/15 px-2 py-1 text-[10px] font-medium text-emerald-400">
-                <Eye className="h-3 w-3" /> AI will analyze images
-              </span>
-            )}
-          </div>
-        )}
+      {/* ── Quick prompts ── */}
+      <QuickPrompts onSelect={handleQuickPrompt} />
 
-        <div className="glass-panel flex items-end gap-2 rounded-2xl p-2">
-          {/* File attach */}
-          <input
-            ref={fileRef}
-            type="file"
-            multiple
-            accept="image/*,video/*,.txt,.md,.csv,.json,.pdf,.doc,.docx"
-            className="hidden"
-            onChange={(e) => onFiles(e.target.files)}
+      {/* ── Main content area ── */}
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_330px]">
+        <AiDraftCard
+          content={draft ?? undefined}
+          hashtags={draftHashtags}
+          isGenerating={isGenerating}
+          scoreData={scoreData}
+          onImprove={handleImprove}
+          onEdit={() => setPrompt(draft ?? "")}
+          onGenerateVariations={handleGenerateVariations}
+          onScheduleSuccess={() => {
+            toastSuccess("Scheduled", "Post scheduled directly into your content calendar.");
+          }}
+        />
+
+        <aside>
+          <BrandIntelligence
+            currentScore={scoreData?.score}
+            scoreBreakdown={scoreData}
           />
+<<<<<<< HEAD
           <button
             onClick={() => fileRef.current?.click()}
             title="Attach image, video, or file"
@@ -692,7 +481,14 @@ export default function CreatePage() {
           Koraspace can draft and refine — always review before you post.
         </p>
         </div>
+=======
+        </aside>
+>>>>>>> main
       </div>
+
+      {/* ── More formats ── */}
+      <ContentFormats onSelect={handleFormatSelect} />
     </div>
   );
 }
+

@@ -1,14 +1,17 @@
 "use client";
+import { createClient } from "@/lib/supabase/client";
+import type { Task, TaskPriority } from "@/lib/supabase/types";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useMemo, useState } from "react";
 import {
   Plus, ArrowUpFromLine, Check, Trash2, Undo2, Layers, CornerDownLeft, Bot
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
-import type { Task, TaskPriority } from "@/lib/supabase/types";
-
 const PRIORITIES: { id: TaskPriority; label: string; tone: "muted" | "indigo" | "red" }[] = [
   { id: "low", label: "Low", tone: "muted" },
   { id: "normal", label: "Normal", tone: "indigo" },
@@ -16,6 +19,7 @@ const PRIORITIES: { id: TaskPriority; label: string; tone: "muted" | "indigo" | 
 ];
 
 export default function TasksPage() {
+  const supabase = createClient();
   const { error: toastError } = useToast();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState("");
@@ -36,8 +40,9 @@ export default function TasksPage() {
   useEffect(() => {
     (async () => {
       try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
+        const supabase = await createClient();
+  const session = await auth();
+          const user = session?.user;
         if (user) {
           setUserId(user.id);
           const { data } = await supabase
@@ -62,7 +67,6 @@ export default function TasksPage() {
     setTasks((prev) => [optimistic, ...prev]); // push onto top
     setTitle("");
     if (userId) {
-      const supabase = createClient();
       const { data, error } = await supabase
         .from("tasks")
         .insert({ user_id: userId, title: t, priority })
@@ -78,7 +82,6 @@ export default function TasksPage() {
       prev.map((t) => (t.id === id ? { ...t, status: "finished", completed_at: new Date().toISOString() } : t))
     );
     if (userId && !id.startsWith("tmp-")) {
-      const supabase = createClient();
       const { error } = await supabase
         .from("tasks")
         .update({ status: "finished", completed_at: new Date().toISOString() })
@@ -90,7 +93,6 @@ export default function TasksPage() {
   const undo = async (id: string) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status: "ongoing", completed_at: null } : t)));
     if (userId && !id.startsWith("tmp-")) {
-      const supabase = createClient();
       await supabase.from("tasks").update({ status: "ongoing", completed_at: null }).eq("id", id);
     }
   };
@@ -98,7 +100,6 @@ export default function TasksPage() {
   const remove = async (id: string) => {
     setTasks((prev) => prev.filter((t) => t.id !== id));
     if (userId && !id.startsWith("tmp-")) {
-      const supabase = createClient();
       await supabase.from("tasks").delete().eq("id", id);
     }
   };

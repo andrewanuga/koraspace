@@ -1,21 +1,45 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { learnPersona, getPersonaTone } from "@/lib/social/persona";
+<<<<<<< HEAD
+=======
+import { callAI, callAIStream, isConfigured, buildMultimodalContent } from "@/lib/ai/gemini";
+>>>>>>> main
 import { getActiveWorkspace } from "@/lib/workspace";
 import { buildChatSystemPrompt } from "@/lib/ai/prompts";
+import { buildBrandContext } from "@/lib/brand/context";
 import { RECOMMENDED_MODELS } from "@/lib/ai/models";
+<<<<<<< HEAD
 import { ChatAgent, Attachment, InputMessage } from "@/lib/ai/agents/chat";
 import type { AgentContext } from "@/lib/ai/core/types";
+=======
+import type { ChatMessage } from "@/lib/ai/gemini";
+import { AI_TOOLS, executeTool } from "@/lib/ai/tools";
+import { checkRequest, requestKey } from "@/lib/security/ratelimit";
+import { scanForPromptInjection } from "@/lib/security/enforcement";
+
+/* ── Types ────────────────────────────────────────────────────── */
+
+type InputMessage = { role: "user" | "assistant" | "system"; content: string };
+type Attachment = {
+  type: "image" | "video" | "file";
+  name: string;
+  mime?: string;
+  content?: string;   // extracted text (for text-like files)
+  dataUrl?: string;   // base64 (images) — used with vision models
+};
+>>>>>>> main
 
 /* ── POST /api/ai/chat ────────────────────────────────────────── */
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) return new Response("Unauthorized", { status: 401 });
     const workspaceId = workspace.workspaceId;
 
+<<<<<<< HEAD
     const {
       messages,
       attachments,
@@ -23,6 +47,13 @@ export async function POST(req: NextRequest) {
       stream: wantsStream,
       chatId: inputChatId,
     } = (await req.json()) as {
+=======
+    // Rate limit: 30 requests/min per user.
+    const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
+    if (guard) return guard;
+
+    const { messages, attachments, model, stream: wantsStream, chatId: inputChatId } = (await req.json()) as {
+>>>>>>> main
       messages: InputMessage[];
       attachments?: Attachment[];
       model?: string;
@@ -32,6 +63,19 @@ export async function POST(req: NextRequest) {
 
     if (!messages?.length) {
       return NextResponse.json({ error: "messages required" }, { status: 400 });
+    }
+
+    // Zero-Trust Defense Against Prompt Injection & Evasion (Mandate 5)
+    for (const m of messages) {
+      if (m.role === "user" && m.content) {
+        const check = scanForPromptInjection(m.content, "Chat User Prompt");
+        if (!check.safe) {
+          return NextResponse.json(
+            { error: "Security Alert: Input flagged for prompt injection or policy evasion attempt.", reason: check.reason },
+            { status: 400 }
+          );
+        }
+      }
     }
 
     // ── Per-user AI preferences from profile ───────────────────
@@ -107,6 +151,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
+<<<<<<< HEAD
     const attachSummary = attachmentLines.length ? attachmentLines.join("\n") : null;
 
     const systemPrompt =
@@ -135,6 +180,75 @@ export async function POST(req: NextRequest) {
         messages,
         systemPrompt,
         attachments,
+=======
+    const brandContext = await buildBrandContext(workspaceId).catch(() => null);
+
+    const systemPrompt = buildChatSystemPrompt(
+      {
+        full_name: profile?.full_name,
+        persona: profile?.persona,
+        niche: profile?.niche,
+        brand_voice: profile?.brand_voice,
+        ai_unfiltered: unfiltered,
+      },
+      tone,
+      attachSummary,
+      brandContext,
+    ) + pastChatsContext;
+
+    // ── Build messages array for OpenRouter ─────────────────────
+    const aiMessages: ChatMessage[] = [
+      { role: "system", content: systemPrompt },
+    ];
+
+    for (const msg of messages) {
+      if (msg.role === "system") continue;
+      aiMessages.push({ role: msg.role, content: msg.content });
+    }
+
+    // ── Inject images into the last user message (vision) ───────
+    if (imageDataUrls.length > 0 && canDoVision) {
+      const lastUserMsg = [...aiMessages].reverse().find((m) => m.role === "user");
+      if (lastUserMsg) {
+        const textContent = typeof lastUserMsg.content === "string"
+          ? lastUserMsg.content
+          : lastUserMsg.content.map((p) => (p.type === "text" ? p.text : "")).join("");
+
+        // Add non-image attachment text to the user message
+        const nonImageAttachments = attachmentLines.filter((l) => !l.startsWith("Image:"));
+        const fullText = nonImageAttachments.length
+          ? `${textContent}\n\n--- Attached by the user ---\n${nonImageAttachments.join("\n")}`
+          : textContent;
+
+        lastUserMsg.content = buildMultimodalContent(fullText, imageDataUrls);
+      }
+    } else if (attachmentLines.length > 0) {
+      // No vision → fold attachments as text into the last user message
+      const lastUserMsg = [...aiMessages].reverse().find((m) => m.role === "user");
+      if (lastUserMsg && typeof lastUserMsg.content === "string") {
+        lastUserMsg.content = `${lastUserMsg.content}\n\n--- Attached by the user ---\n${attachmentLines.join("\n")}`;
+      }
+    }
+
+    // ── No API key configured → mock ────────────────────────────
+    if (!isConfigured()) {
+      await new Promise((r) => setTimeout(r, 700));
+      const reply = mockReply(lastUserText, unfiltered, attachments ?? []);
+      return NextResponse.json({ reply });
+    }
+
+    // ── Agentic Tool Calling Loop ───────────────────────────────
+    // ── Agentic Tool Calling Loop ───────────────────────────────
+    let loopCount = 0;
+    const MAX_LOOPS = 4;
+    let finalContent = "";
+    let finalModel = selectedModel;
+
+    while (loopCount < MAX_LOOPS) {
+      loopCount++;
+      const res = await callAI(aiMessages, {
+        agent: "chat",
+>>>>>>> main
         model: selectedModel,
         temperature,
         maxIterations: 4,

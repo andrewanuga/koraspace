@@ -1,25 +1,46 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { TrendsClient } from "./TrendsClient";
-import type { SocialTrend } from "@/lib/social/types";
-import type { SocialAccount } from "@/lib/social/types";
 
-export default async function TrendsPage() {
+export default async function IdeasPage() {
+  const session = await auth();
+    const user = session?.user;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
 
-  const now = new Date().toISOString();
-  const [{ data: trends }, { data: profile }, { data: accounts }] = await Promise.all([
-    supabase.from("social_trends").select("*").gt("expires_at", now).order("score", { ascending: false }).limit(12),
-    supabase.from("profiles").select("niche, persona").eq("id", user.id).single(),
-    supabase.from("social_accounts").select("id, platform, handle, display_name").eq("status", "connected"),
-  ]);
+  if (!user) return null;
+
+  const [{ data: profile }, { data: trends }, { data: accounts }] =
+    await Promise.all([
+      supabase
+        .from("profiles")
+        .select("niche, persona")
+        .eq("id", user.id)
+        .single(),
+
+      supabase
+        .from("social_trends")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("score", {
+          ascending: false,
+        }),
+
+      supabase
+        .from("social_accounts")
+        .select(`
+          id,
+          platform,
+          handle,
+          display_name
+        `)
+        .eq("user_id", user.id),
+    ]);
 
   return (
     <TrendsClient
-      trends={(trends ?? []) as SocialTrend[]}
-      accounts={(accounts ?? []) as Pick<SocialAccount, "id" | "platform" | "handle" | "display_name">[]}
+      trends={trends ?? []}
+      accounts={accounts ?? []}
       userNiche={profile?.niche ?? null}
       persona={profile?.persona ?? "creator"}
     />

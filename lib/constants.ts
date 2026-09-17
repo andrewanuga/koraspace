@@ -1,4 +1,5 @@
 // ============================================================
+<<<<<<< HEAD
 // Koraspace AI — App-wide constants
 // ============================================================
 
@@ -6,41 +7,66 @@ export const APP_NAME = "Koraspace AI";
 export const APP_TAGLINE = "Stop Managing Social Media. Start Delegating It.";
 export const APP_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://koraspace.ai";
+=======
+// Koraspace — App-wide constants
+// ============================================================
+
+export const APP_NAME = "Koraspace";
+export const APP_TAGLINE = "Stop Managing Social Media. Start Delegating It.";
+export const APP_URL =
+  process.env.NEXT_PUBLIC_APP_URL || "https://Koraspace.co";
+>>>>>>> main
 
 // ── Plan limits ──────────────────────────────────────────────
 export const PLAN_LIMITS = {
   free: {
-    accounts: 1,
-    generationsPerWeek: 7,
-    agents: 0,
-    teamSeats: 1,
-  },
-  basic: {
     accounts: 3,
-    generationsPerMonth: 100,
+    tokensPerLifetime: 50000,
+    schedulesPerLifetime: 3,
     agents: 0,
-    teamSeats: 1,
+    teamSeats: 0,
+    hasMarketerPage: false,
+    hasHashtagManager: false,
+    allowedPages: ["analytics", "overview", "support"],
   },
   pro: {
     accounts: 7,
-    generationsPerMonth: 500,
-    agents: 1,
-    teamSeats: 2,
+    tokensPerMonth: 1600000, // 400k/week
+    schedulesPerWeek: 5,
+    agents: 5,
+    teamSeats: 3,
+    hasMarketerPage: false,
+    hasHashtagManager: false,
+    allowedPages: ["all"], // All pages except marketer
   },
   advanced: {
-    accounts: 15,
-    generationsPerMonth: 1000,
-    agents: 3,
-    teamSeats: 5,
+    accounts: 10,
+    tokensPerMonth: 3500000, // 900k/week
+    schedulesPerLifetime: 15,
+    agents: 15,
+    teamSeats: 7,
+    hasMarketerPage: true,
+    hasHashtagManager: true,
+    allowedPages: ["all"],
+  },
+  team: {
+    accounts: 9999, // Unlimited
+    tokensPerMonth: 7200000, // 1.8M/week
+    schedulesPerWeek: 9999, // Unlimited
+    agents: 9999, // Unlimited
+    teamSeats: 9999, // Unlimited
+    hasMarketerPage: true,
+    hasHashtagManager: true,
+    allowedPages: ["all"],
   },
 } as const;
 
 // ── Plan prices (Naira) ──────────────────────────────────────
 export const PLAN_PRICES = {
   free: 0,
-  basic: 5000,
-  pro: 12000,
-  advanced: 25000,
+  pro: 13500,
+  advanced: 30000,
+  team: 130000,
 } as const;
 
 // ── Platforms ────────────────────────────────────────────────
