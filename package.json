@@ -29,6 +29,7 @@
     "browser-image-compression": "^2.0.2",
     "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.1",
+    "cloudinary": "^2.11.0",
     "clsx": "^2.1.1",
     "cookies-next": "^6.1.1",
     "framer-motion": "^12.40.0",

@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
         hostname: "**.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
@@ -38,10 +42,10 @@ const nextConfig: NextConfig = {
       `default-src 'self'`,
       `script-src 'self' 'unsafe-inline' https://js.paystack.co`,
       `style-src 'self' 'unsafe-inline'`,
-      `img-src 'self' blob: data: ${supabaseUrl} https://lh3.googleusercontent.com https://pbs.twimg.com https://media.licdn.com`,
+      `img-src 'self' blob: data: https://res.cloudinary.com ${supabaseUrl} https://lh3.googleusercontent.com https://pbs.twimg.com https://media.licdn.com`,
       `font-src 'self'`,
-      `connect-src 'self' ${supabaseUrl} https://openrouter.ai https://api.paystack.co wss://*.supabase.co`,
-      `media-src 'self' blob:`,
+      `connect-src 'self' https://res.cloudinary.com ${supabaseUrl} https://openrouter.ai https://api.paystack.co wss://*.supabase.co`,
+      `media-src 'self' blob: https://res.cloudinary.com`,
       `frame-ancestors 'none'`,
       `form-action 'self'`,
       `object-src 'none'`,
