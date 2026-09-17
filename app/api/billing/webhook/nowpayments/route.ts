@@ -20,7 +20,7 @@ function sortObject(obj: Record<string, any>): Record<string, any> {
 
 /**
  * NOWPayments IPN Webhook Handler
- * Reconciles crypto payments (USDT, BTC, ETH, SOL, BNB, etc.) for subscription plans.
+ * Reconciles crypto payments (BTC, ETH, SOL) for subscription plans.
  */
 export async function POST(req: NextRequest) {
   try {
