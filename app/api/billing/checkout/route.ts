@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // --- 3. CRYPTO (NOWPayments - USDT, BTC, ETH, SOL, BNB) ---
+  // --- 3. CRYPTO (NOWPayments - BTC, ETH, SOL) ---
   if (method === "crypto") {
     const apiKey = process.env.NOWPAYMENTS_API_KEY;
     if (!apiKey) return NextResponse.json({ error: "NOWPayments crypto gateway isn't configured yet." }, { status: 501 });

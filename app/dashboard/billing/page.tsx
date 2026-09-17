@@ -183,7 +183,7 @@ export default function BillingPage() {
             <h3 className="font-display mb-2 flex items-center gap-2 text-[15px] font-semibold text-[var(--fg)]"><CreditCard className="h-4 w-4 text-[var(--fg-3)]" /> Supported Payment Methods</h3>
             <div className="flex items-center gap-2"><AlertCircle className="h-3.5 w-3.5 text-[var(--fg-4)]" />
               <p className="text-[13px] text-[var(--fg-3)]">
-                <strong>Paystack / OPay</strong> for Nigerian users. <strong>Stripe</strong> for international cards. <strong>Crypto (USDT, BTC, ETH, SOL via NOWPayments)</strong> for global users. Securely handled at checkout.
+                <strong>Paystack / OPay</strong> for Nigerian users. <strong>Stripe</strong> for international cards. <strong>Crypto (BTC, ETH, SOL via NOWPayments)</strong> for global users. Securely handled at checkout.
               </p>
             </div>
           </div>
@@ -196,7 +196,7 @@ export default function BillingPage() {
               <option value="paystack">Paystack (Nigeria)</option>
               <option value="opay">OPay (Nigeria)</option>
               <option value="stripe">Stripe (International Cards)</option>
-              <option value="crypto">Crypto — USDT / BTC / ETH (NOWPayments)</option>
+              <option value="crypto">Crypto — BTC / ETH / SOL (NOWPayments)</option>
             </select>
           </div>
         </div>
