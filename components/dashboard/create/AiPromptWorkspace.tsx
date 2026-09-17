@@ -93,7 +93,7 @@ export function AiPromptWorkspace({
 
   return (
     <section className="overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)]">
-      {/* -- Header -- */}
+      {/* ── Header ── */}
       <div className="flex items-center justify-between border-b border-[var(--stroke)] px-5 py-4">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
@@ -154,7 +154,7 @@ export function AiPromptWorkspace({
         </div>
       </div>
 
-      {/* -- Editor -- */}
+      {/* ── Editor ── */}
       <div className="p-5">
         <label htmlFor="kora-prompt" className="mb-3 block text-[14px] font-semibold text-[var(--fg)]">
           What would you like to create?

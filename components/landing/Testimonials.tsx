@@ -9,11 +9,7 @@ const TESTIMONIALS = [
     role: "Fintech Founder, Lagos",
     avatar: "AO",
     rating: 5,
-<<<<<<< HEAD
-    text: "I replaced Buffer and a freelance social media manager with Koraspace AI. The Ghost Mode agent handles all the basic engagement while I focus on closing deals. ROI in week one.",
-=======
     text: "I replaced Buffer and a freelance social media manager with Koraspace. The Ghost Mode agent handles all the basic engagement while I focus on closing deals. ROI in week one.",
->>>>>>> main
     highlight: "Replaced a freelance SM manager",
   },
   {
@@ -74,11 +70,7 @@ export function Testimonials() {
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">
             Creators &amp; businesses
             <br />
-<<<<<<< HEAD
-            <span className="gradient-text">love Koraspace AI</span>
-=======
             <span className="gradient-text">love Koraspace</span>
->>>>>>> main
           </h2>
           <div className="flex items-center justify-center gap-1 mb-4">
             {[...Array(5)].map((_, i) => (

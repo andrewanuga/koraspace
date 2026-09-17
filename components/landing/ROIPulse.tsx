@@ -64,12 +64,8 @@ export function ROIPulse() {
             </h2>
 
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-              Every other tool shows you vanity metrics - likes, impressions,
-<<<<<<< HEAD
-              reach. Koraspace AI tracks the full funnel from post to payment.
-=======
+              Every other tool shows you vanity metrics — likes, impressions,
               reach. Koraspace tracks the full funnel from post to payment.
->>>>>>> main
             </p>
 
             <div className="space-y-5 mb-10">
@@ -77,16 +73,12 @@ export function ROIPulse() {
                 {
                   icon: Link,
                   title: "Auto-injected tracked links",
-<<<<<<< HEAD
-                  desc: "Every post Koraspace AI schedules gets a unique UTM link automatically. No manual setup.",
-=======
                   desc: "Every post Koraspace schedules gets a unique UTM link automatically. No manual setup.",
->>>>>>> main
                 },
                 {
                   icon: MousePointerClick,
                   title: "Click-to-conversion attribution",
-                  desc: "We track which clicks landed on your Gumroad, Shopify, or landing page - and whether they converted.",
+                  desc: "We track which clicks landed on your Gumroad, Shopify, or landing page — and whether they converted.",
                 },
                 {
                   icon: ShoppingCart,
@@ -107,21 +99,17 @@ export function ROIPulse() {
             </div>
 
             <p className="text-sm text-muted-foreground italic">
-<<<<<<< HEAD
-              &ldquo;ROI Pulse turned our Koraspace AI subscription from a cost into an
-=======
               &ldquo;ROI Pulse turned our Koraspace subscription from a cost into an
->>>>>>> main
               investment. We showed a client ₦2.4M in tracked revenue from 3
               posts.&rdquo;
               <br />
               <span className="not-italic font-medium text-foreground">
-                - Beta user, Lagos digital agency
+                — Beta user, Lagos digital agency
               </span>
             </p>
           </motion.div>
 
-          {/* Right - Attribution cards */}
+          {/* Right — Attribution cards */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}

@@ -75,12 +75,6 @@ export function AdminNav() {
       {/* Brand Header */}
       <div className="flex h-16 items-center gap-3 border-b border-white/[0.08] px-5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-<<<<<<< HEAD
-        <img src="/logo.png" alt="" width={24} height={21} className="h-[22px] w-auto" />
-        <div>
-          <span className="font-display text-[15px] font-semibold text-[var(--fg)]">Koraspace</span>
-          <span className="ml-1.5 rounded-md px-1.5 py-0.5 font-data text-[9px] uppercase tracking-wider" style={{ color: "var(--sai-red)", background: "color-mix(in srgb, var(--sai-red) 14%, transparent)" }}>Admin</span>
-=======
         <img src="/logo.png" alt="Koraspace" width={26} height={23} className="h-6 w-auto" />
         <div className="flex items-center gap-2">
           <span className="font-display text-[15px] font-bold tracking-tight text-white">
@@ -89,7 +83,6 @@ export function AdminNav() {
           <span className="rounded-md border border-rose-500/30 bg-rose-500/10 px-1.5 py-0.5 font-data text-[9px] font-bold uppercase tracking-wider text-rose-400">
             SOC
           </span>
->>>>>>> main
         </div>
       </div>
 

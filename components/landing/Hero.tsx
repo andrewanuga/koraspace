@@ -95,153 +95,9 @@ export function Hero() {
   const [focusedStage, setFocusedStage] = useState<CanvasStateKey | null>(null);
 
   return (
-<<<<<<< HEAD
-    <section className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-16 px-4 overflow-hidden">
-      <FloatingOrbs />
-
-      {/* Spotlight beam */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-80 opacity-25"
-        style={{ background: "linear-gradient(to bottom, transparent, #ef4444, transparent)" }}
-      />
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] opacity-10 blur-[80px]"
-        style={{ background: "radial-gradient(ellipse at top, #dc2626 0%, transparent 70%)" }}
-      />
-
-      <div className="relative z-10 max-w-5xl mx-auto text-center">
-        {/* Announcement badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8 flex justify-center"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-500/30 bg-red-500/10 text-red-400 text-sm">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Powered by Gemma AI - Zero per-token API fees</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-          </div>
-        </motion.div>
-
-        {/* Main heading */}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-6"
-        >
-          <span className="text-foreground">Stop Managing</span>
-          <br />
-          <span className="gradient-text">Social Media.</span>
-          <br />
-          <span className="text-foreground">Start Delegating It.</span>
-        </motion.h1>
-
-        {/* Subheading */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
-        >
-          Koraspace AI deploys autonomous AI agents that create content, engage
-          your followers, predict viral trends, and convert likes into real
-          revenue - 24/7, at a price built for the African market.
-        </motion.p>
-
-        {/* CTA buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
-        >
-          <Link href="/signup">
-            <Button variant="gradient" size="xl" className="group w-full sm:w-auto">
-              Start free - no credit card
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
-          <button className="flex items-center gap-2 px-6 py-3 text-muted-foreground hover:text-foreground transition-colors group">
-            <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center group-hover:border-red-500 group-hover:bg-red-500/10 transition-all">
-              <Play className="w-4 h-4 ml-0.5 fill-current" />
-            </div>
-            <span className="text-sm font-medium">Watch demo (2 min)</span>
-          </button>
-        </motion.div>
-
-        {/* Social proof */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16 text-sm text-muted-foreground"
-        >
-          <div className="flex items-center gap-1">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400 drop-shadow-[0_0_4px_rgba(234,179,8,0.5)]" />
-            ))}
-            <span className="ml-2">4.9/5 from 200+ creators</span>
-          </div>
-          <div className="hidden sm:block w-px h-4 bg-border" />
-          <div>
-            <span className="text-foreground font-medium">2,000+</span> accounts managed
-          </div>
-          <div className="hidden sm:block w-px h-4 bg-border" />
-          <div>
-            Accepts{" "}
-            <span className="text-foreground font-medium">Paystack &amp; Flutterwave</span>
-          </div>
-        </motion.div>
-
-        {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.5 }}
-          className="grid grid-cols-3 gap-8 max-w-xl mx-auto mb-16"
-        >
-          {STATS.map((stat, i) => (
-            <div key={i} className="text-center">
-              <div className={`text-3xl font-bold mb-1 ${i === 2 ? "text-emerald-400" : "gradient-text"}`}>{stat.value}</div>
-              <div className="text-xs text-muted-foreground">{stat.label}</div>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Platform pills */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.6 }}
-          className="flex flex-wrap items-center justify-center gap-3"
-        >
-          <span className="text-xs text-muted-foreground mr-2">Connects to:</span>
-          {PLATFORMS.map((p) => (
-            <div
-              key={p.name}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <span
-                className="text-xs font-bold"
-                style={{ color: p.color !== "#888888" ? p.color : undefined }}
-              >
-                {p.letter}
-              </span>
-              {p.name}
-            </div>
-          ))}
-          <Badge variant="red" className="text-xs">+ more coming</Badge>
-        </motion.div>
-      </div>
-
-      {/* Scroll indicator */}
-=======
     <section
       className={`${display.variable} ${body.variable} min-h-screen transition-colors duration-200 bg-slate-100 dark:bg-[#07050d] px-3 py-3 font-[family-name:var(--font-body)] sm:px-6 sm:py-6 lg:px-10 lg:py-8 overflow-hidden`}
     >
->>>>>>> main
       <motion.div
         initial="hidden"
         animate="visible"
@@ -378,7 +234,7 @@ export function Hero() {
             </div>
           </div>
 
-          {/* the intelligence rail - hero's interactive centerpiece */}
+          {/* the intelligence rail — hero's interactive centerpiece */}
           <motion.div variants={itemVariants} className="mt-2">
             <GrowthRail onFocusStage={setFocusedStage} />
           </motion.div>

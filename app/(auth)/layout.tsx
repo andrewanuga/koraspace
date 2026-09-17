@@ -24,7 +24,7 @@ export default function AuthLayout({
     <div className="min-h-screen bg-[#121212] text-white">
       <div className="min-h-screen lg:grid lg:grid-cols-[minmax(0,1.08fr)_minmax(460px,0.92fr)] xl:grid-cols-[minmax(0,1.15fr)_minmax(500px,0.85fr)]">
         {/* =========================================================
-            LEFT - PRODUCT / BRAND EXPERIENCE (Desktop)
+            LEFT — PRODUCT / BRAND EXPERIENCE (Desktop)
         ========================================================= */}
         <aside className="relative hidden min-h-screen overflow-hidden border-r border-white/[0.07] bg-[#0e0e10] lg:flex">
           {/* Animated Ambient Brand Blobs */}
@@ -211,7 +211,7 @@ export default function AuthLayout({
         </aside>
 
         {/* =========================================================
-            RIGHT - AUTH FORM CONTAINER
+            RIGHT — AUTH FORM CONTAINER
         ========================================================= */}
         <main className="relative flex min-h-screen flex-1 flex-col justify-between overflow-hidden bg-[#121212]">
           {/* Animated Background Blobs on Auth form side */}
@@ -491,79 +491,6 @@ function MiniStat({
       <div className={`mt-1 text-[12px] font-bold ${accentClass}`}>
         {value}
       </div>
-<<<<<<< HEAD
-
-      {/* -- Brand panel (desktop) -- */}
-      <aside className="relative hidden w-[46%] flex-col justify-between p-14 lg:flex">
-        <Link href="/" className="flex items-center gap-2.5">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="" width={26} height={23} className="h-[24px] w-auto" />
-          <span className="font-display text-lg font-semibold text-white">
-            Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
-          </span>
-        </Link>
-
-        <div>
-          <h2
-            className="font-display text-5xl font-semibold leading-[1.02] tracking-[-0.02em] text-white xl:text-6xl"
-            style={{ textShadow: "0 2px 40px rgba(0,0,0,0.5)" }}
-          >
-            Social,
-            <br />
-            <span className="sai-gradient-text">understood.</span>
-          </h2>
-          <p className="mt-5 max-w-sm text-white/55">
-            Deploy a personal agent that creates, engages, and converts - around
-            the clock.
-          </p>
-
-          <ul className="mt-10 space-y-3">
-            {HIGHLIGHTS.map((h) => (
-              <li key={h.text} className="flex items-start gap-3">
-                <span className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-white/[0.06]">
-                  <h.icon className="h-4 w-4 text-[var(--sai-indigo)]" />
-                </span>
-                <span className="text-sm leading-relaxed text-white/70">{h.text}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <p className="font-data text-[11px] uppercase tracking-[0.2em] text-white/30">
-          Powered by Llama 3.3 70B
-        </p>
-      </aside>
-
-      {/* -- Form panel -- */}
-      <main className="relative flex flex-1 flex-col">
-        {/* Mobile top bar */}
-        <div className="flex items-center justify-between px-5 pt-5 lg:hidden">
-          <Link href="/" className="flex items-center gap-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="" width={24} height={21} className="h-[22px] w-auto" />
-            <span className="font-display text-[15px] font-semibold text-white">
-              Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
-            </span>
-          </Link>
-          <Link href="/" className="flex items-center gap-1.5 text-[13px] text-white/50 hover:text-white">
-            <ArrowLeft className="h-3.5 w-3.5" /> Home
-          </Link>
-        </div>
-
-        {/* Desktop back link */}
-        <Link
-          href="/"
-          className="absolute right-8 top-8 hidden items-center gap-1.5 text-[13px] text-white/50 transition-colors hover:text-white lg:flex"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back to site
-        </Link>
-
-        <div className="flex flex-1 items-center justify-center px-5 py-12">
-          {children}
-        </div>
-      </main>
-=======
->>>>>>> main
     </div>
   );
 }

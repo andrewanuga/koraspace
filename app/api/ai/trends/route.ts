@@ -1,16 +1,50 @@
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-<<<<<<< HEAD
-import { createClient } from "@/lib/supabase/server";
-=======
 import { callAI, isConfigured } from "@/lib/ai/gemini";
->>>>>>> main
 import { getActiveWorkspace } from "@/lib/workspace";
-import { TrendAgent } from "@/lib/ai/agents/trend";
-import type { AgentContext } from "@/lib/ai/core/types";
+import { buildTrendsPrompt } from "@/lib/ai/prompts";
 
-/* -- GET /api/ai/trends ----------------------------------------- */
+/* ── Types ────────────────────────────────────────────────────── */
+
+interface TrendResult {
+  topic: string;
+  category: string;
+  score: number;
+  growth: string;
+  momentum: string;
+  why: string;
+  draft: string;
+}
+
+/* ── Web search (Tavily) ──────────────────────────────────────── */
+
+const TAVILY = process.env.TAVILY_API_KEY;
+
+async function webSearch(query: string): Promise<string> {
+  if (!TAVILY) return "";
+  try {
+    const res = await fetch("https://api.tavily.com/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        api_key: TAVILY,
+        query,
+        search_depth: "basic",
+        max_results: 5,
+      }),
+    });
+    if (!res.ok) return "";
+    const data = await res.json();
+    return (data.results ?? [])
+      .map((r: { title: string; content: string }) => `• ${r.title}: ${r.content}`)
+      .join("\n");
+  } catch {
+    return "";
+  }
+}
+
+/* ── GET /api/ai/trends ───────────────────────────────────────── */
 
 export async function GET(req: NextRequest) {
   try {
@@ -30,36 +64,17 @@ export async function GET(req: NextRequest) {
 
     const userNiche = niche !== "general" ? niche : profile?.niche || "general";
 
-<<<<<<< HEAD
-    const context: AgentContext = {
-      userId: workspaceId,
-      workspaceId,
-      autonomyMode: "assist",
-      supabase,
-    };
-
-    const res = await TrendAgent.discover({ niche: userNiche }, context);
-
-    if (res.success && res.data) {
-      return NextResponse.json({
-        trends: res.data.trends,
-        model: res.metadata?.model,
-      });
-=======
-    // -- No API key → mock ---------------------------------------
+    // ── No API key → mock ───────────────────────────────────────
     if (!isConfigured()) {
       return NextResponse.json({ trends: getMockTrends(userNiche, profile) });
->>>>>>> main
     }
 
-    return NextResponse.json(
-      { error: res.error?.message || "Failed to fetch trends." },
-      { status: 500 }
+    // ── Web search for context ──────────────────────────────────
+    const searchResults = await webSearch(
+      `trending ${userNiche} content social media ${new Date().toISOString().slice(0, 7)}`,
     );
-<<<<<<< HEAD
-=======
 
-    // -- Call OpenRouter -----------------------------------------
+    // ── Call OpenRouter ─────────────────────────────────────────
     const prompt = buildTrendsPrompt(profile, userNiche, searchResults || undefined);
 
     const result = await callAI(
@@ -84,19 +99,16 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ trends, model: result.model });
->>>>>>> main
   } catch (err) {
     console.error("[/api/ai/trends]", err);
     return NextResponse.json(
       { error: "Failed to fetch trends." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-<<<<<<< HEAD
-=======
 
-/* -- Mock trends ------------------------------------------------ */
+/* ── Mock trends ──────────────────────────────────────────────── */
 
 function getMockTrends(niche: string, profile?: any): TrendResult[] {
   const loc = profile?.location ? ` in ${profile.location}` : " in Africa";
@@ -110,7 +122,7 @@ function getMockTrends(niche: string, profile?: any): TrendResult[] {
       momentum: "Accelerating",
       why: `High relevance to ${niche}-focused accounts${loc} with strong policy discussion history`,
       draft:
-        "🚨 Nigeria's AI governance framework just dropped - here's what it means for every founder building AI products in Africa...\n\nThis changes everything about how we build, deploy, and monetize AI in 2026.\n\nThread 🧵",
+        "🚨 Nigeria's AI governance framework just dropped — here's what it means for every founder building AI products in Africa...\n\nThis changes everything about how we build, deploy, and monetize AI in 2026.\n\nThread 🧵",
     },
     {
       topic: "Naira Stabilization & SaaS Pricing",
@@ -154,4 +166,3 @@ function getMockTrends(niche: string, profile?: any): TrendResult[] {
     },
   ];
 }
->>>>>>> main

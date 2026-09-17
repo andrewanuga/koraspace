@@ -1005,7 +1005,7 @@ export const zh: TranslationDictionary = {
     a6: "我们支持全球主流信用卡与借记卡（Visa、Mastercard、American Express）、Apple Pay、Google Pay 以及各地区主流本地支付方式。",
   },
   cta: {
-    eyebrow: "14 天免费全功能试用 - 无需绑定信用卡",
+    eyebrow: "14 天免费全功能试用 — 无需绑定信用卡",
     titleLead: "您的专属自主 AI 营销团队",
     titleHighlight: "今日即刻启程。",
     subtitle:

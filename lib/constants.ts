@@ -1,23 +1,13 @@
 // ============================================================
-<<<<<<< HEAD
-// Koraspace AI - App-wide constants
-// ============================================================
-
-export const APP_NAME = "Koraspace AI";
-export const APP_TAGLINE = "Stop Managing Social Media. Start Delegating It.";
-export const APP_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "https://koraspace.ai";
-=======
-// Koraspace - App-wide constants
+// Koraspace — App-wide constants
 // ============================================================
 
 export const APP_NAME = "Koraspace";
 export const APP_TAGLINE = "Stop Managing Social Media. Start Delegating It.";
 export const APP_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://Koraspace.co";
->>>>>>> main
 
-// -- Plan limits ----------------------------------------------
+// ── Plan limits ──────────────────────────────────────────────
 export const PLAN_LIMITS = {
   free: {
     accounts: 3,
@@ -61,7 +51,7 @@ export const PLAN_LIMITS = {
   },
 } as const;
 
-// -- Plan prices (Naira) --------------------------------------
+// ── Plan prices (Naira) ──────────────────────────────────────
 export const PLAN_PRICES = {
   free: 0,
   pro: 13500,
@@ -69,7 +59,7 @@ export const PLAN_PRICES = {
   team: 130000,
 } as const;
 
-// -- Platforms ------------------------------------------------
+// ── Platforms ────────────────────────────────────────────────
 export const PLATFORMS = [
   { id: "x", label: "X (Twitter)", maxChars: 280, color: "#1DA1F2" },
   { id: "linkedin", label: "LinkedIn", maxChars: 3000, color: "#0077B5" },
@@ -82,7 +72,7 @@ export const PLATFORMS = [
 
 export type PlatformId = (typeof PLATFORMS)[number]["id"];
 
-// -- Ghost Mode action types ----------------------------------
+// ── Ghost Mode action types ──────────────────────────────────
 export const AGENT_ACTIONS = {
   AUTO_REPLY: "auto_reply",
   FLAG_LEAD: "flag_lead",
@@ -90,7 +80,7 @@ export const AGENT_ACTIONS = {
   IGNORE: "ignore",
 } as const;
 
-// -- Writing frameworks ---------------------------------------
+// ── Writing frameworks ───────────────────────────────────────
 export const FRAMEWORKS = [
   {
     id: "aida",
@@ -106,7 +96,7 @@ export const FRAMEWORKS = [
   { id: "story", label: "Story Arc", desc: "Narrative-driven, high-retention" },
 ] as const;
 
-// -- Brand tones ----------------------------------------------
+// ── Brand tones ──────────────────────────────────────────────
 export const TONES = [
   "Professional",
   "Casual",
@@ -118,13 +108,13 @@ export const TONES = [
   "Storyteller",
 ] as const;
 
-// -- Koraspace Score thresholds --------------------------------
+// ── Socially Score thresholds ────────────────────────────────
 export const SCORE_THRESHOLDS = {
   HIGH: 75,
   MEDIUM: 50,
 } as const;
 
-// -- Paystack plan codes (add real codes from Paystack dashboard) --
+// ── Paystack plan codes (add real codes from Paystack dashboard) ──
 export const PAYSTACK_PLANS = {
   basic: process.env.NEXT_PUBLIC_PAYSTACK_BASIC_PLAN || "PLN_xxxx",
   pro: process.env.NEXT_PUBLIC_PAYSTACK_PRO_PLAN || "PLN_xxxx",

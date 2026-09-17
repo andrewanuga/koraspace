@@ -41,7 +41,7 @@ import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { PlanKey } from "@/lib/i18n/pricing";
 
-/* -- Animation Physics & Variants ----------------------------------- */
+/* ── Animation Physics & Variants ─────────────────────────────────── */
 
 const springTransition = {
   type: "spring" as const,
@@ -87,7 +87,7 @@ const scaleIn: Variants = {
   },
 };
 
-/* -- Shared Action Button ------------------------------------------- */
+/* ── Shared Action Button ─────────────────────────────────────────── */
 
 function LandingButton({
   href,
@@ -115,7 +115,7 @@ function LandingButton({
   );
 }
 
-/* -- Section Eyebrow & Header --------------------------------------- */
+/* ── Section Eyebrow & Header ─────────────────────────────────────── */
 
 function Eyebrow({
   children,
@@ -185,34 +185,11 @@ function SectionHead({
   );
 }
 
-/* -- 1. Problem Solver Section -------------------------------------- */
+/* ── 1. Problem Solver Section ────────────────────────────────────── */
 
 export function ProblemSolverSection() {
   const { t } = useLanguage();
 
-<<<<<<< HEAD
-const GAME_CHANGERS = [
-  { icon: Brain, title: "Predictive Koraspace Score", desc: "Know a post's engagement odds before you schedule. No more guessing.", tone: "indigo", badge: "Pro" },
-  { icon: Ghost, title: "Ghost Mode™ Agent", desc: "Replies to the noise in your voice, escalates real leads to you.", tone: "violet", badge: "Pro" },
-  { icon: TrendingUp, title: "Trend-to-Draft", desc: "Three drafts waiting the moment something breaks in your niche.", tone: "indigo", badge: "Pro" },
-  { icon: DollarSign, title: "Auto-Plug Loop", desc: "Hits your threshold, drops the conversion comment automatically.", tone: "gold", badge: "Pro" },
-  { icon: Target, title: "Brand Voice", desc: "Paste a URL. It sounds like you in sixty seconds. Not a bot.", tone: "violet", badge: "Basic+" },
-  { icon: BarChart3, title: "Smart Inbox Triage", desc: "Leads, complaints, fluff - sorted. Spend minutes, not hours.", tone: "indigo", badge: "Advanced" },
-];
-
-const toneColor = (t?: string) =>
-  t === "violet" ? "var(--sai-violet)" : t === "gold" ? "var(--sai-gold)" : "var(--sai-indigo)";
-
-export function Features() {
-  const ref = useGsapReveal<HTMLElement>();
-  return (
-    <section id="features" ref={ref} className="sai-vignette relative px-5 py-28 sm:py-32">
-      <div className="mx-auto max-w-6xl">
-        <SectionHead
-          eyebrow="Full feature suite"
-          title={<>Everything you need.<br /><span className="sai-gradient-text">Then some.</span></>}
-          sub="Most tools tell you what happened. Koraspace AI tells you what will - and often handles it before you open the app."
-=======
   return (
     <section className="relative px-4 sm:px-6 lg:px-8 py-16">
       <motion.div
@@ -229,7 +206,6 @@ export function Features() {
           }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-[#ff0a8a] via-blue-500/50 to-[#3b82f6] rounded-full blur-[0.5px]"
->>>>>>> main
         />
 
         <div className="max-w-3xl mx-auto text-center">
@@ -323,7 +299,7 @@ export function Features() {
   );
 }
 
-/* -- 2. Dual-Mode Showcase Section (#dual-modes) ------------------- */
+/* ── 2. Dual-Mode Showcase Section (#dual-modes) ─────────────────── */
 
 export function DualModeShowcaseSection() {
   const { t } = useLanguage();
@@ -507,7 +483,7 @@ export function DualModeShowcaseSection() {
   );
 }
 
-/* -- 3. Growth Loop Section (#how) ---------------------------------- */
+/* ── 3. Growth Loop Section (#how) ────────────────────────────────── */
 
 export function GrowthLoopSection() {
   const { t } = useLanguage();
@@ -619,7 +595,7 @@ export function GrowthLoopSection() {
   );
 }
 
-/* -- 4. Alternating FeatureSection Layout --------------------------- */
+/* ── 4. Alternating FeatureSection Layout ─────────────────────────── */
 
 interface FeatureProps {
   id?: string;
@@ -706,7 +682,7 @@ export function FeatureSection({
   );
 }
 
-/* -- 5. Interactive FeatureShowcase (#engines) ---------------------- */
+/* ── 5. Interactive FeatureShowcase (#engines) ────────────────────── */
 
 const FEATURE_SCREEN_MAP: Record<string, { icon: React.ComponentType<{ className?: string }>; screenPath: string }> = {
   "ai-composer": { icon: Sparkles, screenPath: "/features/Kora-AI-Composer.jpg" },
@@ -824,7 +800,7 @@ export function FeatureShowcase() {
   );
 }
 
-/* -- 6. Brand Brain & 8-Agent Swarm (#brain) ------------------------ */
+/* ── 6. Brand Brain & 8-Agent Swarm (#brain) ──────────────────────── */
 
 const SWARM_ICONS = [
   Search,
@@ -943,7 +919,7 @@ export function BrainAndAgentsSection() {
   );
 }
 
-/* -- 7. Agent Tools Grid (#tools / #features) ----------------------- */
+/* ── 7. Agent Tools Grid (#tools / #features) ─────────────────────── */
 
 const AGENT_TOOL_ICONS = [
   Sparkles,
@@ -1019,7 +995,7 @@ export function AgentTools() {
   );
 }
 
-/* -- 8. Platform Integrations Section (#integrations) --------------- */
+/* ── 8. Platform Integrations Section (#integrations) ─────────────── */
 
 const PLATFORMS = [
   { name: "Instagram", iconPath: "/integrations/insta.png" },
@@ -1088,7 +1064,7 @@ export function Integrations() {
   );
 }
 
-/* -- 9. Revenue Attribution & Intelligence (#revenue) --------------- */
+/* ── 9. Revenue Attribution & Intelligence (#revenue) ─────────────── */
 
 export function RevenueAttributionSection() {
   const { t } = useLanguage();
@@ -1223,23 +1199,12 @@ export function RevenueAttributionSection() {
   );
 }
 
-/* -- 10. Collaboration & Agency Workspaces (#collaboration) --------- */
+/* ── 10. Collaboration & Agency Workspaces (#collaboration) ───────── */
 
-<<<<<<< HEAD
-const STORIES = [
-  { name: "Adaeze Okonkwo", role: "Fintech Founder, Lagos", avatar: "AO", text: "I replaced Buffer and a freelance manager with Koraspace AI. Ghost Mode handles engagement while I close deals. ROI in week one.", highlight: "Replaced a freelance manager" },
-  { name: "Chukwuemeka Dike", role: "Digital Agency, Abuja", avatar: "CD", text: "Eight client accounts used to need three people. Now it's me and the agent. Inbox Triage alone saves two hours a day.", highlight: "Manages 8 clients solo" },
-  { name: "Fatima Al-Hassan", role: "E-commerce, Kano", avatar: "FA", text: "ROI Pulse is wild. I can show 'this post made us ₦340,000 this week.' The marketing budget stopped being a question.", highlight: "₦340k from one post" },
-  { name: "Tunde Fashola", role: "Brand Coach, Lagos", avatar: "TF", text: "Trend-to-Draft is a ghostwriter that never sleeps. It caught the news cycle before I woke up - three drafts waiting.", highlight: "Trend content before it peaks" },
-  { name: "Ngozi Eze", role: "Fashion, Port Harcourt", avatar: "NE", text: "I was skeptical about AI sounding like me. My followers can't tell. Engagement went up three times.", highlight: "3× engagement" },
-  { name: "Biodun Afolabi", role: "SaaS Founder, Lagos", avatar: "BA", text: "They self-host Llama 3.3 70B, so my content data doesn't go to anyone else. And the pricing makes sense here.", highlight: "Privacy-first" },
-];
-=======
 const COLLAB_ICONS = [Briefcase, ShieldCheck, Users, Clock];
 
 export function Collaboration() {
   const { t } = useLanguage();
->>>>>>> main
 
   return (
     <section className="relative px-4 sm:px-6 lg:px-8 py-20">
@@ -1258,55 +1223,6 @@ export function Collaboration() {
           viewport={{ once: true, margin: "-60px" }}
           className="grid grid-cols-1 md:grid-cols-2 gap-5"
         >
-<<<<<<< HEAD
-          {t.avatar}
-        </div>
-        <div>
-          <p className="text-[13px] font-medium text-white">{t.name}</p>
-          <p className="text-[12px] text-white/45">{t.role}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MarqueeRow({ items, reverse }: { items: typeof STORIES; reverse?: boolean }) {
-  // Duplicate the set so the -50% translate loops seamlessly.
-  const doubled = [...items, ...items];
-  return (
-    <div className="sai-marquee py-2">
-      <div className={`sai-marquee-track${reverse ? " reverse" : ""}`}>
-        {doubled.map((t, i) => (
-          <StoryCard key={`${t.name}-${i}`} t={t} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function Stories() {
-  const ref = useGsapReveal<HTMLElement>();
-  const rowA = STORIES.slice(0, 3);
-  const rowB = STORIES.slice(3);
-  return (
-    <section id="stories" ref={ref} className="sai-vignette relative overflow-hidden py-28 sm:py-32">
-      <div className="mx-auto mb-14 max-w-2xl px-5 text-center">
-        <div data-reveal><Eyebrow tone="gold">Loved by operators</Eyebrow></div>
-        <h2 data-reveal className="font-display mt-4 text-4xl font-semibold tracking-[-0.02em] text-white sm:text-5xl">
-          Creators & businesses<br /><span className="sai-gradient-text">love Koraspace AI</span>
-        </h2>
-        <div data-reveal className="mt-4 flex items-center justify-center gap-1.5 text-white/60">
-          {[...Array(5)].map((_, i) => (
-            <Star key={i} className="h-4 w-4 fill-[var(--sai-gold)] text-[var(--sai-gold)]" />
-          ))}
-          <span className="ml-2 text-sm">4.9 / 5 average</span>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <MarqueeRow items={rowA} />
-        <MarqueeRow items={rowB} reverse />
-=======
           {t.collaboration.list.map((collab, idx) => {
             const Icon = COLLAB_ICONS[idx] || Briefcase;
             return (
@@ -1332,13 +1248,12 @@ export function Stories() {
             );
           })}
         </motion.div>
->>>>>>> main
       </div>
     </section>
   );
 }
 
-/* -- 11. Customer Stories (Testimonials) (#stories) ------------------ */
+/* ── 11. Customer Stories (Testimonials) (#stories) ────────────────── */
 
 export function Stories() {
   const { t } = useLanguage();
@@ -1410,7 +1325,7 @@ export function Stories() {
   );
 }
 
-/* -- 12. Transparent Pricing Section (#pricing) --------------------- */
+/* ── 12. Transparent Pricing Section (#pricing) ───────────────────── */
 
 export function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly");
@@ -1593,7 +1508,7 @@ export function Pricing() {
   );
 }
 
-/* -- 13. FAQ Accordion (#faq) --------------------------------------- */
+/* ── 13. FAQ Accordion (#faq) ─────────────────────────────────────── */
 
 export function FAQ() {
   const { t } = useLanguage();
@@ -1674,7 +1589,7 @@ export function FAQ() {
   );
 }
 
-/* -- 14. Final Call To Action --------------------------------------- */
+/* ── 14. Final Call To Action ─────────────────────────────────────── */
 
 export function FinalCTA() {
   const { t } = useLanguage();
@@ -1743,7 +1658,7 @@ export function FinalCTA() {
   );
 }
 
-/* -- 15. Upgraded Footer -------------------------------------------- */
+/* ── 15. Upgraded Footer ──────────────────────────────────────────── */
 
 export function SiteFooter() {
   const { t } = useLanguage();
@@ -1845,75 +1760,6 @@ export function SiteFooter() {
           </motion.div>
         </motion.div>
 
-<<<<<<< HEAD
-export function FinalCTA() {
-  const ref = useGsapReveal<HTMLElement>();
-  return (
-    <section ref={ref} className="relative px-5 py-32">
-      <div
-        className="glass-panel mx-auto max-w-4xl overflow-hidden rounded-[28px] px-6 py-20 text-center"
-        style={{ background: "rgba(20,20,26,0.6)" }}
-      >
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-64 opacity-40"
-          style={{ background: "radial-gradient(60% 100% at 50% 0%, rgba(99,102,241,0.35), transparent 70%)" }}
-        />
-        <div data-reveal><Eyebrow>Free for 14 days - no card required</Eyebrow></div>
-        <h2 data-reveal className="font-display mx-auto mt-5 max-w-2xl text-4xl font-semibold leading-[1.05] tracking-[-0.02em] text-white sm:text-6xl">
-          Your AI marketing team<br /><span className="sai-gradient-text">starts today.</span>
-        </h2>
-        <p data-reveal className="mx-auto mt-6 max-w-xl text-base text-white/60 sm:text-lg">
-          Join 2,000+ creators and businesses who stopped posting manually and started delegating to AI.
-        </p>
-        <div data-reveal className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link href="/signup">
-            <button
-              className="group flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold text-white transition-transform duration-200 hover:scale-[1.03]"
-              style={{ background: "linear-gradient(135deg,#6366f1 0%,#a855f7 60%,#f5c451 130%)", boxShadow: "0 0 44px -8px rgba(99,102,241,0.7)" }}
-            >
-              Get started free
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </button>
-          </Link>
-          <Link href="/login">
-            <button className="rounded-full border border-white/15 bg-white/[0.05] px-8 py-3.5 text-sm font-medium text-white transition-colors hover:bg-white/10">
-              Sign in to dashboard
-            </button>
-          </Link>
-        </div>
-        <p data-reveal className="mt-8 text-xs text-white/40">
-          Then from ₦5,000/month. Paystack, Flutterwave, and all Nigerian cards.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* -- Footer -------------------------------------------------------- */
-
-export function SiteFooter() {
-  return (
-    <footer className="border-t border-white/[0.06] px-5 py-14">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
-        <Link href="/" className="flex items-center gap-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="" width={24} height={21} className="h-[22px] w-auto" />
-          <span className="font-display text-[15px] font-semibold text-white">
-            Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
-          </span>
-        </Link>
-        <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2 text-[13px] text-white/50">
-          <a href="#features" className="transition-colors hover:text-white">Features</a>
-          <a href="#pricing" className="transition-colors hover:text-white">Pricing</a>
-          <Link href="/login" className="transition-colors hover:text-white">Sign in</Link>
-          <Link href="/privacy" className="transition-colors hover:text-white">Privacy</Link>
-          <Link href="/terms" className="transition-colors hover:text-white">Terms</Link>
-        </div>
-      </div>
-      <p className="mx-auto mt-8 max-w-6xl text-center text-xs text-white/30 sm:text-left">
-        © {new Date().getFullYear()} Koraspace AI - Personal Social Agent. Powered by Llama 3.3 70B.
-      </p>
-=======
         {/* Bottom Credits Bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/45">
           <p>© {new Date().getFullYear()} {t.footer.rightsReserved}</p>
@@ -1926,7 +1772,6 @@ export function SiteFooter() {
           </div>
         </div>
       </div>
->>>>>>> main
     </footer>
   );
 }

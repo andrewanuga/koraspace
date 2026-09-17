@@ -84,83 +84,6 @@ export function FloatingNav() {
   const capsuleSpring = { type: "spring" as const, stiffness: 350, damping: 28 };
 
   return (
-<<<<<<< HEAD
-    <header className="fixed inset-x-0 top-0 z-[90] flex justify-center px-4 pt-4">
-      <nav
-        className="glass-pill flex items-center gap-1 rounded-full pl-4 pr-1.5 py-1.5 transition-all duration-500"
-        style={{
-          maxWidth: 860,
-          width: "100%",
-          backdropFilter: scrolled
-            ? "blur(22px) saturate(1.6)"
-            : "blur(14px) saturate(1.4)",
-          background: scrolled
-            ? "rgba(18,18,22,0.72)"
-            : "rgba(18,18,22,0.42)",
-        }}
-      >
-        {/* Brand segment */}
-        <Link href="/" className="flex items-center gap-2 pr-1">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="" width={22} height={19} className="h-[20px] w-auto" />
-          <span className="font-display text-[15px] font-semibold tracking-tight text-white">
-            Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
-          </span>
-        </Link>
-
-        <div className="sai-sep mx-2 hidden h-6 md:block" />
-
-        {/* Links segment */}
-        <div className="hidden items-center gap-0.5 md:flex">
-          {LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="rounded-full px-3.5 py-1.5 text-[13.5px] text-white/70 transition-colors duration-200 hover:bg-white/[0.07] hover:text-white"
-            >
-              {l.label}
-            </a>
-          ))}
-        </div>
-
-        <div className="ml-auto flex items-center gap-2">
-          <div className="sai-sep mx-1 hidden h-6 md:block" />
-
-          {/* Actions segment */}
-          <Link
-            href="/login"
-            className="hidden rounded-full px-3.5 py-1.5 text-[13.5px] text-white/70 transition-colors hover:text-white sm:block"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
-            className="rounded-full px-4 py-1.5 text-[13.5px] font-medium text-white transition-transform duration-200 hover:scale-[1.03]"
-            style={{
-              background: "linear-gradient(135deg,#6366f1,#a855f7)",
-              boxShadow: "0 0 22px -6px rgba(99,102,241,0.7)",
-            }}
-          >
-            Get started
-          </Link>
-
-          {/* Mobile toggle */}
-          <button
-            onClick={() => setOpen((v) => !v)}
-            aria-label="Menu"
-            className="ml-0.5 flex h-9 w-9 items-center justify-center rounded-full text-white/80 hover:bg-white/[0.07] md:hidden"
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile sheet */}
-      {open && (
-        <div
-          className="glass-panel absolute left-4 right-4 top-[72px] rounded-2xl p-2 md:hidden"
-          style={{ background: "rgba(18,18,22,0.9)" }}
-=======
     <AnimatePresence>
       {isLoaded && (
         <motion.header
@@ -173,9 +96,8 @@ export function FloatingNav() {
               ? "top-3 justify-between"
               : "top-4 md:top-6 justify-center"
           }`}
->>>>>>> main
         >
-          {/* -- WHEN AT TOP: Unified Glass Bar -- */}
+          {/* ── WHEN AT TOP: Unified Glass Bar ── */}
           {!isScrolled ? (
             <motion.div
               layout
@@ -250,7 +172,7 @@ export function FloatingNav() {
               </div>
             </motion.div>
           ) : (
-            /* -- WHEN SCROLLED: Clean Glass Bar -- */
+            /* ── WHEN SCROLLED: Clean Glass Bar ── */
             <motion.div
               layout
               transition={capsuleSpring}
@@ -323,7 +245,7 @@ export function FloatingNav() {
             </motion.div>
           )}
 
-          {/* -- Mobile Menu Dropdown -- */}
+          {/* ── Mobile Menu Dropdown ── */}
           <AnimatePresence>
             {showMobileMenu && (
               <motion.div

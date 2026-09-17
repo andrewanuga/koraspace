@@ -30,8 +30,8 @@ export function fmtNaira(n: number): string {
 
 /** Percentage change between two periods, with sign and direction */
 export function pctChange(curr: number, prev: number): { change: string; positive: boolean } {
-  if (curr === 0 && prev === 0) return { change: "-", positive: true };
-  if (prev === 0)               return { change: curr > 0 ? "New" : "-", positive: curr > 0 };
+  if (curr === 0 && prev === 0) return { change: "—", positive: true };
+  if (prev === 0)               return { change: curr > 0 ? "New" : "—", positive: curr > 0 };
   const p = ((curr - prev) / prev) * 100;
   return { change: `${p >= 0 ? "+" : ""}${p.toFixed(1)}%`, positive: p >= 0 };
 }

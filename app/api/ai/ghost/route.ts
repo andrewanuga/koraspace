@@ -1,17 +1,10 @@
 ﻿import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-<<<<<<< HEAD
-import { createClient } from "@/lib/supabase/server";
-import { getActiveWorkspace } from "@/lib/workspace";
-import { GhostAgent } from "@/lib/ai/agents/ghost";
-import type { AgentContext } from "@/lib/ai/core/types";
-=======
 import { callAI, isConfigured } from "@/lib/ai/gemini";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { buildGhostSystemPrompt } from "@/lib/ai/prompts";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
->>>>>>> main
 
 /* â”€â”€ POST /api/ai/ghost â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
@@ -21,29 +14,22 @@ export async function POST(req: NextRequest) {
     if (!workspace) return new Response("Unauthorized", { status: 401 });
     const workspaceId = workspace.workspaceId;
 
-<<<<<<< HEAD
-    const { comment, brandVoice, platform } = await req.json();
-=======
     // Rate limit: 30 requests/min per user.
     const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
     if (guard) return guard;
 
     const { comment, brandVoice, platform, mode = "reply" } = await req.json();
->>>>>>> main
     if (!comment) {
       return NextResponse.json({ error: "Comment is required" }, { status: 400 });
     }
 
-    const context: AgentContext = {
-      userId: workspaceId,
-      workspaceId,
-      autonomyMode: "assist",
-      supabase,
-    };
+    // Get user's model preference
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("ai_model")
+      .eq("id", workspaceId)
+      .single();
 
-<<<<<<< HEAD
-    const res = await GhostAgent.evaluate(
-=======
     // â”€â”€ No API key â†’ mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (!isConfigured()) {
       const result = mockGhost(comment);
@@ -63,31 +49,13 @@ export async function POST(req: NextRequest) {
         { role: "system", content: systemPrompt },
         { role: "user", content: comment },
       ],
->>>>>>> main
       {
-        message: comment,
-        brandVoice,
-        platform,
-        isComment: true,
+        agent: "ghost",
+        model: profile?.ai_model || undefined,
+        jsonMode: true,
       },
-      context
     );
 
-<<<<<<< HEAD
-    if (res.success && res.data) {
-      return NextResponse.json({
-        action: res.data.action,
-        reply: res.data.reply,
-        reason: res.data.reasoning,
-        confidence: res.data.confidence / 100,
-        is_lead: res.data.isLead,
-        risk_level: res.data.riskLevel,
-        policy: res.data.policy,
-        dispatched: res.data.dispatched,
-        action_id: res.data.actionId,
-        model: res.metadata?.model,
-      });
-=======
     // Parse the JSON response
     let result: GhostResult;
     try {
@@ -97,20 +65,17 @@ export async function POST(req: NextRequest) {
       result = mode === "classify"
         ? { action: "auto_reply", reason: "Could not classify â€” defaulting to auto_reply", confidence: 0.5 }
         : { action: "auto_reply", reply: aiResult.content, reason: "Raw AI response", confidence: 0.7 };
->>>>>>> main
     }
 
-    return NextResponse.json(
-      { error: res.error?.message || "Ghost Mode error" },
-      { status: 500 }
-    );
+    // Log agent action
+    await logAction(supabase, workspaceId, comment, result, platform);
+
+    return NextResponse.json({ ...result, model: aiResult.model });
   } catch (err) {
     console.error("[/api/ai/ghost]", err);
     return NextResponse.json({ error: "Ghost Mode error" }, { status: 500 });
   }
 }
-<<<<<<< HEAD
-=======
 
 /* â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
@@ -188,4 +153,3 @@ function mockGhost(comment: string): GhostResult {
   };
 }
 
->>>>>>> main

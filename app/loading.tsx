@@ -26,43 +26,14 @@ export default function RootLoading() {
       className="fixed inset-0 z-[120] flex flex-col items-center justify-center overflow-hidden select-none"
       style={{ background: "#0b0c10" }}
     >
-<<<<<<< HEAD
-      {/* ambient bloom */}
-      <div
-        className="pointer-events-none absolute h-[320px] w-[320px] rounded-full"
-        style={{
-          background: "radial-gradient(circle, rgba(99,102,241,0.16), transparent 70%)",
-          filter: "blur(20px)",
-        }}
-      />
-
-      <div className="relative flex flex-col items-center gap-6">
-        {/* Logo monogram */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logo.png"
-          alt="Koraspace AI"
-          width={72}
-          height={62}
-          className="h-[58px] w-auto animate-pulse-glow"
-          style={{ filter: "drop-shadow(0 0 18px rgba(99,102,241,0.45))" }}
-        />
-
-        {/* Wordmark with water-flow light sweep */}
-=======
       {/* Ambient background glow */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
->>>>>>> main
         <div
           className="h-[420px] w-[420px] rounded-full opacity-25 blur-[120px] animate-pulse"
           style={{
             background: "radial-gradient(circle, #3b82f6 0%, #6366f1 50%, #a855f7 100%)",
             animationDuration: "3s",
           }}
-<<<<<<< HEAD
-        >
-          Koraspace AI
-=======
         />
       </div>
 
@@ -90,7 +61,6 @@ export default function RootLoading() {
               className="h-9 w-auto drop-shadow-[0_0_16px_rgba(59,130,246,0.65)]"
             />
           </div>
->>>>>>> main
         </div>
 
         {/* Brand Wordmark with water-flow shimmer */}

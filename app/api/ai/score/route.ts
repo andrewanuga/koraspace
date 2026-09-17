@@ -1,19 +1,13 @@
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-<<<<<<< HEAD
-import { createClient } from "@/lib/supabase/server";
-import { getActiveWorkspace } from "@/lib/workspace";
-import { ScoreAgent } from "@/lib/ai/agents/score";
-import type { AgentContext } from "@/lib/ai/core/types";
-=======
 import { callAI, isConfigured } from "@/lib/ai/gemini";
 import { getActiveWorkspace } from "@/lib/workspace";
 import { buildScorePrompt } from "@/lib/ai/prompts";
 import { buildBrandContext } from "@/lib/brand/context";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
-/* -- Types ------------------------------------------------------ */
+/* ── Types ────────────────────────────────────────────────────── */
 
 export interface ScoreResponse {
   score: number;
@@ -28,9 +22,8 @@ export interface ScoreResponse {
   reasoning: string;
   improvements: string[];
 }
->>>>>>> main
 
-/* -- POST /api/ai/score ------------------------------------------ */
+/* ── POST /api/ai/score ────────────────────────────────────────── */
 
 export async function POST(req: NextRequest) {
   try {
@@ -47,16 +40,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Content is required" }, { status: 400 });
     }
 
-<<<<<<< HEAD
-    const context: AgentContext = {
-      userId: workspaceId,
-      workspaceId,
-      autonomyMode: "assist",
-      supabase,
-    };
-
-    const res = await ScoreAgent.evaluate(
-=======
     // Get user's model preference and Brand Context
     const [{ data: profile }, brandContext] = await Promise.all([
       supabase
@@ -67,13 +50,13 @@ export async function POST(req: NextRequest) {
       buildBrandContext(workspaceId).catch(() => null),
     ]);
 
-    // -- No API key → mock ------------------------------------------
+    // ── No API key → mock ──────────────────────────────────────────
     if (!isConfigured()) {
       await new Promise((r) => setTimeout(r, 500));
       return NextResponse.json(mockScore(content));
     }
 
-    // -- Call OpenRouter / Gemini ----------------------------------
+    // ── Call OpenRouter / Gemini ──────────────────────────────────
     const prompt = buildScorePrompt(content, platform, brandContext);
 
     const result = await callAI(
@@ -81,25 +64,13 @@ export async function POST(req: NextRequest) {
         { role: "system", content: "You are KoraSpace's AI Post Scoring Engine. Always respond with valid JSON only." },
         { role: "user", content: prompt },
       ],
->>>>>>> main
       {
-        content,
-        platform,
+        agent: "score",
+        model: profile?.ai_model || undefined,
+        jsonMode: true,
       },
-      context
     );
 
-<<<<<<< HEAD
-    if (res.success && res.data) {
-      return NextResponse.json({
-        score: res.data.score,
-        prediction: res.data.prediction,
-        bestTime: res.data.bestTime,
-        reasoning: res.data.reasoning,
-        improvements: res.data.improvements,
-        model: res.metadata?.model,
-      });
-=======
     // Parse JSON response
     let scoreData: ScoreResponse;
     try {
@@ -119,25 +90,19 @@ export async function POST(req: NextRequest) {
       };
     } catch {
       scoreData = mockScore(content);
->>>>>>> main
     }
 
-    return NextResponse.json(
-      { error: res.error?.message || "Scoring failed. Please try again." },
-      { status: 500 }
-    );
+    return NextResponse.json({ ...scoreData, model: result.model });
   } catch (err) {
     console.error("[/api/ai/score]", err);
     return NextResponse.json(
       { error: "Scoring failed. Please try again." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-<<<<<<< HEAD
-=======
 
-/* -- Mock fallback ---------------------------------------------- */
+/* ── Mock fallback ────────────────────────────────────────────── */
 
 function mockScore(content: string): ScoreResponse {
   const length = content.length;
@@ -183,7 +148,7 @@ function mockScore(content: string): ScoreResponse {
     reasoning:
       weighted >= 75
         ? "Strong scroll-stopping hook, high niche relevance, and clear reader value."
-        : "Solid foundational idea - strengthen the opening hook and call-to-action to boost reach.",
+        : "Solid foundational idea — strengthen the opening hook and call-to-action to boost reach.",
     improvements: [
       "Add a concrete metric or result in the first sentence to increase stop-rate",
       "End with a direct conversion prompt or question to spark replies",
@@ -195,4 +160,3 @@ function mockScore(content: string): ScoreResponse {
 }
 
 
->>>>>>> main

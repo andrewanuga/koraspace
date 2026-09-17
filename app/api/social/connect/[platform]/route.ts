@@ -14,7 +14,7 @@ function backToIntegrations(origin: string, params: Record<string, string>) {
   return NextResponse.redirect(url);
 }
 
-/** OAuth start - redirect the user to the platform's consent screen. */
+/** OAuth start — redirect the user to the platform's consent screen. */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ platform: string }> }
@@ -62,7 +62,7 @@ export async function GET(
   return NextResponse.redirect(url);
 }
 
-/** Token connect - Telegram (BotFather) / WhatsApp (Cloud API). */
+/** Token connect — Telegram (BotFather) / WhatsApp (Cloud API). */
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ platform: string }> }

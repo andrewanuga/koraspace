@@ -1005,7 +1005,7 @@ export const nl: TranslationDictionary = {
     a6: "Wij accepteren alle gangbare creditcards en betaalpassen (Visa, Mastercard, American Express), Apple Pay, Google Pay en lokale betaalmethoden zoals iDEAL en Bancontact.",
   },
   cta: {
-    eyebrow: "14 Dagen Gratis Proefperiode - Geen Creditcard Nodig",
+    eyebrow: "14 Dagen Gratis Proefperiode — Geen Creditcard Nodig",
     titleLead: "Jouw autonome AI-marketingteam",
     titleHighlight: "begint vandaag.",
     subtitle:

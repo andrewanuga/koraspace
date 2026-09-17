@@ -1005,7 +1005,7 @@ export const enUS: TranslationDictionary = {
     a6: "We accept all major credit/debit cards (Visa, Mastercard, Amex), Apple Pay, Google Pay, and localized regional payment providers.",
   },
   cta: {
-    eyebrow: "14-Day Free Trial - No Credit Card Required",
+    eyebrow: "14-Day Free Trial — No Credit Card Required",
     titleLead: "Your autonomous AI marketing team",
     titleHighlight: "starts today.",
     subtitle:

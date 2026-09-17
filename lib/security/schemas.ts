@@ -1,7 +1,7 @@
 /**
  * Shared Zod-like validation schemas for KoraSpace API routes.
  *
- * We do NOT depend on the `zod` npm package (not in package.json) - this
+ * We do NOT depend on the `zod` npm package (not in package.json) — this
  * module ships its own lightweight schema builder that produces compatible
  * safeParse() output so routes can validate inputs without adding a new
  * dependency.
@@ -16,7 +16,7 @@ export type SafeParseSuccess<T> = { success: true; data: T };
 export type SafeParseFailure = { success: false; error: { issues: Issue[] } };
 export type SafeParseResult<T> = SafeParseSuccess<T> | SafeParseFailure;
 
-// -- Primitive validators ----------------------------------------------------
+// ── Primitive validators ────────────────────────────────────────────────────
 
 function isString(v: unknown): v is string { return typeof v === "string"; }
 function isStringArray(v: unknown): v is string[] {
@@ -49,7 +49,7 @@ function oneOf<T extends string>(v: unknown, allowed: readonly T[], field: strin
   return { path: field, message: `${field} must be one of: ${allowed.join(", ")}.` };
 }
 
-// -- Onboarding schema -------------------------------------------------------
+// ── Onboarding schema ───────────────────────────────────────────────────────
 
 export interface OnboardingPayload {
   persona: "creator" | "marketer";
@@ -116,7 +116,7 @@ export const onboardingSchema = {
   },
 };
 
-// -- Billing checkout schema -------------------------------------------------
+// ── Billing checkout schema ─────────────────────────────────────────────────
 
 const PLANS = ["free", "pro", "advanced", "team"] as const;
 export type PlanId = (typeof PLANS)[number];
@@ -134,7 +134,7 @@ export const checkoutSchema = {
   },
 };
 
-// -- Team invite schema ------------------------------------------------------
+// ── Team invite schema ──────────────────────────────────────────────────────
 
 const ROLES = ["admin", "manager", "member"] as const;
 export type TeamRole = (typeof ROLES)[number];
@@ -162,7 +162,7 @@ export const teamInviteSchema = {
   },
 };
 
-// -- AI generate schema ------------------------------------------------------
+// ── AI generate schema ──────────────────────────────────────────────────────
 
 export interface GeneratePayload {
   prompt: string;
@@ -195,7 +195,7 @@ export const generateSchema = {
   },
 };
 
-// -- Helper: format validation errors for API responses ---------------------
+// ── Helper: format validation errors for API responses ─────────────────────
 // Returns a plain object; callers pass it to NextResponse.json().
 export function validationErrorBody(issues: Issue[]) {
   return {

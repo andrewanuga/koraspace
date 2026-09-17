@@ -51,7 +51,7 @@ export default function TasksPage() {
             .order("created_at", { ascending: false });
           if (data) setTasks(data as Task[]);
         }
-      } catch { /* offline / no session - start empty */ }
+      } catch { /* offline / no session — start empty */ }
       setLoaded(true);
     })();
   }, []);
@@ -111,11 +111,11 @@ export default function TasksPage() {
       <PageHeader
         eyebrow="LIFO stack"
         title="Tasks"
-        sub="A last-in, first-out stack. Push what's on your mind - the newest task sits on top and pops first."
+        sub="A last-in, first-out stack. Push what's on your mind — the newest task sits on top and pops first."
       />
 
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
-        {/* -- The stack -- */}
+        {/* ── The stack ── */}
         <div>
           {/* Push box */}
           <GlassCard className="mb-5 p-4">
@@ -237,7 +237,7 @@ export default function TasksPage() {
           )}
         </div>
 
-        {/* -- Side: how it works + completed -- */}
+        {/* ── Side: how it works + completed ── */}
         <div className="space-y-5">
           <GlassCard className="p-5">
             <p className="font-data text-[11px] uppercase tracking-[0.18em] text-[var(--sai-violet)]">How the stack works</p>

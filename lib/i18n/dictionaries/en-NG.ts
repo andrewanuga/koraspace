@@ -1005,7 +1005,7 @@ export const enNG: TranslationDictionary = {
     a6: "All plans are billed directly in Nigerian Naira (NGN). We accept all Nigerian debit cards (Mastercard, Visa, Verve), bank transfers, USSD, Paystack, and Flutterwave.",
   },
   cta: {
-    eyebrow: "14-Day Free Trial - No Credit Card Required",
+    eyebrow: "14-Day Free Trial — No Credit Card Required",
     titleLead: "Your autonomous AI marketing team",
     titleHighlight: "starts today.",
     subtitle:

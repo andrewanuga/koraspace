@@ -2,13 +2,8 @@ import type { Metadata } from "next";
 import { LegalShell, Section, Bullets, type LegalSectionItem } from "@/components/legal/LegalShell";
 
 export const metadata: Metadata = {
-<<<<<<< HEAD
-  title: "Terms of Service - Koraspace AI",
-  description: "The terms for using Koraspace AI.",
-=======
-  title: "Terms of Service - KoraSpace",
+  title: "Terms of Service — KoraSpace",
   description: "The Terms of Service governing access to and use of KoraSpace.",
->>>>>>> main
 };
 
 const SECTIONS: LegalSectionItem[] = [
@@ -42,17 +37,6 @@ export default function TermsPage() {
   return (
     <LegalShell
       title="Terms of Service"
-<<<<<<< HEAD
-      updated="July 30, 2026"
-      intro="These terms are the agreement between you and Koraspace AI. We've kept them readable. By creating an account or using the service, you agree to them."
-      other={{ href: "/privacy", label: "Privacy Policy" }}
-    >
-      <Section title="1. The service">
-        <p>Koraspace AI is a workspace for creating, scheduling, publishing, and analyzing social media content, with AI assistance and optional automation (bots, Ghost Mode, auto-replies). Features vary by plan and by the platforms you connect.</p>
-      </Section>
-
-      <Section title="2. Your account">
-=======
       updated="September 14, 2026"
       badge="Terms of Agreement"
       intro='These Terms of Service ("Terms", "Agreement") govern your access to and use of KoraSpace, including our web applications, mobile interfaces, APIs, AI creative suite, social management tools, analytics engines, workflow automations, and related services (collectively, the "Services"). KoraSpace is owned and operated by Koraspace Technologies ("KoraSpace", "we", "us", or "our"). By registering an account, connecting a social media profile, or accessing our platform, you agree to be bound by these Terms.'
@@ -66,7 +50,6 @@ export default function TermsPage() {
     >
       <Section id="eligibility" title="1. Eligibility & Authority" takeaway="You must be legally authorized and of legal age to enter into binding agreements.">
         <p>To use KoraSpace, you represent and warrant that:</p>
->>>>>>> main
         <Bullets items={[
           "You are of legal age of majority in your jurisdiction and legally capable of entering into this binding contract;",
           "If using the Services on behalf of an agency, company, client, or organization, you possess full legal authority to bind that entity to these Terms; and",
@@ -74,38 +57,6 @@ export default function TermsPage() {
         ]} />
       </Section>
 
-<<<<<<< HEAD
-      <Section title="3. Acceptable use">
-        <p>You agree not to use Koraspace AI to:</p>
-        <Bullets items={[
-          "Break the law or the rules of any connected platform.",
-          "Send spam, run deceptive engagement, or manipulate metrics.",
-          "Post hateful, harassing, infringing, or otherwise harmful content.",
-          "Reverse-engineer, overload, or abuse the service or its APIs.",
-        ]} />
-        <p>We may suspend accounts that violate these terms.</p>
-      </Section>
-
-      <Section title="4. Third-party platforms">
-        <p>When you connect a platform (Meta, Google/YouTube, X, LinkedIn, Snap, Reddit, Telegram, WhatsApp, and others), you must also follow that platform’s terms. Those platforms can change or restrict their APIs at any time, which may affect features. We act on your behalf only within the permissions you grant, and you can disconnect at any time.</p>
-      </Section>
-
-      <Section title="5. AI-generated content">
-        <p>Koraspace AI helps you draft content, but you are responsible for what you publish. Review AI output before posting. AI can be wrong or produce content that needs editing. Subject to these terms, content you create with the tool is yours; you grant us the limited rights needed to store and process it to run the service.</p>
-      </Section>
-
-      <Section title="6. Plans & payments">
-        <Bullets items={[
-          "Paid plans are billed in advance (monthly or annually) via Paystack / Flutterwave.",
-          "Free trials convert to paid unless cancelled before they end.",
-          "You can cancel anytime; access continues until the end of the current billing period.",
-          "Fees are non-refundable except where required by law.",
-        ]} />
-      </Section>
-
-      <Section title="7. Availability & changes">
-        <p>We work to keep Koraspace AI available and improving, but we may modify, suspend, or discontinue features. We’ll give reasonable notice of material changes where we can.</p>
-=======
       <Section id="description" title="2. Description of KoraSpace Services" takeaway="KoraSpace provides AI-assisted social management, smart scheduling, automation workflows, and analytics.">
         <p>KoraSpace is an intelligent social media operating system and marketing workspace designed to empower creators, marketers, agencies, and businesses. Depending on your active subscription plan, the Services provide:</p>
         <Bullets items={[
@@ -125,21 +76,15 @@ export default function TermsPage() {
           "Your accounts on those networks remain governed by each platform's independent developer guidelines and community standards; and",
           "Third-party platforms may update, restrict, or modify their API capabilities at their sole discretion without prior notice.",
         ]} />
->>>>>>> main
       </Section>
 
       <Section id="authorization" title="4. Social Account Authorization">
         <p>When you authorize KoraSpace to connect to a social network via OAuth, you grant us permission to perform only the specific publishing, analytics reading, and media uploading actions you configure. We never request or store your platform passwords.</p>
       </Section>
 
-<<<<<<< HEAD
-      <Section title="9. Limitation of liability">
-        <p>To the maximum extent permitted by law, Koraspace AI is not liable for indirect, incidental, or consequential damages, or for lost profits or data. Our total liability is limited to the amount you paid us in the 3 months before the claim.</p>
-=======
       <Section id="ownership" title="5. User Content & IP Ownership" takeaway="You retain 100% full intellectual property ownership of all content, media, and copy you create or upload.">
         <p>All text, images, video assets, brand logos, audio clips, and materials uploaded or created by you (&quot;User Content&quot;) remain your exclusive intellectual property. KoraSpace acquires zero ownership rights over your creative assets.</p>
         <p className="mt-2">You grant KoraSpace solely a worldwide, non-exclusive, royalty-free license to host, format, and transmit your User Content as strictly necessary to deliver the publishing, scheduling, and analytics services you request.</p>
->>>>>>> main
       </Section>
 
       <Section id="responsibility" title="6. Responsibility for Published Content" takeaway="You are responsible for the legal compliance and accuracy of all posts published through your account.">
@@ -229,7 +174,7 @@ export default function TermsPage() {
       <Section id="contact" title="24. Contact & Legal Notices">
         <p>For questions regarding these Terms of Service or formal legal inquiries, please contact:</p>
         <div className="mt-3 rounded-xl border border-slate-200 bg-white p-4 text-[13.5px] text-slate-700 shadow-sm space-y-1 dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white/80">
-          <p><strong className="text-slate-900 dark:text-white">Koraspace Technologies - Legal Operations</strong></p>
+          <p><strong className="text-slate-900 dark:text-white">Koraspace Technologies — Legal Operations</strong></p>
           <p>Email: <a href="mailto:legal@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">legal@koraspace.com</a></p>
           <p>General Support: <a href="mailto:support@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">support@koraspace.com</a></p>
         </div>

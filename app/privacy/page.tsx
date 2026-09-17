@@ -2,13 +2,8 @@ import type { Metadata } from "next";
 import { LegalShell, Section, Bullets, type LegalSectionItem } from "@/components/legal/LegalShell";
 
 export const metadata: Metadata = {
-<<<<<<< HEAD
-  title: "Privacy Policy - Koraspace AI",
-  description: "How Koraspace AI collects, uses, and protects your data.",
-=======
-  title: "Privacy Policy - KoraSpace",
+  title: "Privacy Policy — KoraSpace",
   description: "How KoraSpace collects, uses, protects, and handles your personal data.",
->>>>>>> main
 };
 
 const SECTIONS: LegalSectionItem[] = [
@@ -38,14 +33,6 @@ export default function PrivacyPage() {
   return (
     <LegalShell
       title="Privacy Policy"
-<<<<<<< HEAD
-      updated="July 30, 2026"
-      intro="Koraspace AI helps you manage your social media accounts. This policy explains, in plain language, what we collect, why, and the control you have. We only ever access what you explicitly connect, and we never sell your data."
-      other={{ href: "/terms", label: "Terms of Service" }}
-    >
-      <Section title="Who we are">
-        <p>Koraspace AI (“Koraspace”, “we”, “us”) provides an AI-powered workspace for scheduling, publishing, engaging, and analyzing social media across connected platforms. This policy covers our website, app, and services.</p>
-=======
       updated="September 14, 2026"
       badge="Data Protection & Privacy"
       intro="KoraSpace (operated by Koraspace Technologies) is committed to protecting your privacy and handling personal data with absolute transparency, strict least-privilege scoping, and enterprise-grade security. This policy outlines our collection, processing, AI analysis, retention, and deletion practices in full compliance with the Nigeria Data Protection Act 2023 (NDPA) and global data protection standards."
@@ -102,7 +89,6 @@ export default function PrivacyPage() {
             ]} />
           </div>
         </div>
->>>>>>> main
       </Section>
 
       <Section id="info-use" title="2. How We Use Information" takeaway="Your data is used strictly to power social publishing, AI intelligence, and platform security. We never sell your personal data.">
@@ -166,13 +152,8 @@ export default function PrivacyPage() {
         <p>All third-party vendors handling data on our behalf are bound by strict Data Processing Agreements (DPAs) requiring equal or greater technical confidentiality, access controls, and encryption standards.</p>
       </Section>
 
-<<<<<<< HEAD
-      <Section title="Children">
-        <p>Koraspace AI is not intended for anyone under 16. We do not knowingly collect data from children.</p>
-=======
       <Section id="international" title="9. International Data Transfers">
         <p>Where personal data is transferred across international borders, KoraSpace ensures appropriate transfer mechanisms (such as standard contractual clauses and robust encryption) to uphold data protection standards equivalent to those required under the Nigeria Data Protection Act 2023.</p>
->>>>>>> main
       </Section>
 
       <Section id="security" title="10. Data Security & Storage" takeaway="Zero-Trust architecture with AES-256 at rest, TLS 1.3 in transit, and continuous threat monitoring.">
@@ -232,7 +213,7 @@ export default function PrivacyPage() {
       <Section id="complaints" title="20. Regulatory Inquiries & Contact">
         <p>For any privacy inquiries, data subject access requests, or regulatory questions, please contact our Data Protection Officer:</p>
         <div className="mt-3 rounded-xl border border-slate-200 bg-white p-4 text-[13.5px] text-slate-700 shadow-sm space-y-1 dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white/80">
-          <p><strong className="text-slate-900 dark:text-white">Koraspace Technologies - Privacy &amp; Data Protection Office</strong></p>
+          <p><strong className="text-slate-900 dark:text-white">Koraspace Technologies — Privacy &amp; Data Protection Office</strong></p>
           <p>Email: <a href="mailto:privacy@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">privacy@koraspace.com</a></p>
           <p>Support Desk: <a href="mailto:support@koraspace.com" className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400">support@koraspace.com</a></p>
         </div>

@@ -881,40 +881,6 @@ export function OnboardingFlow({
         </div>
       </div>
 
-<<<<<<< HEAD
-      <div className="glass-panel rounded-3xl p-7 sm:p-9">
-        <div key={step} className="sai-step-in">
-          {/* -- Step 0: persona -- */}
-          {step === 0 && (
-            <>
-              <span className="font-data text-[11px] uppercase tracking-[0.24em] text-[var(--sai-indigo)]">
-                Step 01
-              </span>
-              <h1 className="font-display mt-3 text-2xl font-semibold text-white sm:text-3xl">
-                What are you using Koraspace for?
-              </h1>
-              <p className="mt-2 text-sm text-white/55">
-                We&apos;ll tailor the agent, dashboard, and suggestions to you.
-              </p>
-              <div className="mt-7 grid gap-3">
-                {PERSONAS.map((p) => {
-                  const active = persona === p.id;
-                  return (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setPersona(p.id)}
-                      className="flex items-center gap-4 rounded-2xl border p-4 text-left transition-all duration-200"
-                      style={{
-                        borderColor: active ? "rgba(99,102,241,0.6)" : "rgba(255,255,255,0.10)",
-                        background: active ? "color-mix(in srgb, var(--sai-indigo) 12%, transparent)" : "rgba(255,255,255,0.03)",
-                        boxShadow: active ? "0 0 30px -12px rgba(99,102,241,0.9)" : "none",
-                      }}
-                    >
-                      <span
-                        className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl"
-                        style={{ background: `color-mix(in srgb, ${p.tone} 16%, transparent)` }}
-=======
       {/* Progress */}
       <div className="mb-6 flex gap-1.5">
         {Array.from({ length: TOTAL_STEPS }).map((_, index) => {
@@ -1004,7 +970,6 @@ export function OnboardingFlow({
                           borderColor: active ? `${itemAccent}80` : undefined,
                           background: active ? `${itemAccent}12` : undefined,
                         }}
->>>>>>> main
                       >
                         <div
                           className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border transition-colors ${
@@ -1442,9 +1407,9 @@ export function OnboardingFlow({
 
                         <div className="grid grid-cols-2 gap-2.5">
                           {[
-                            "0 - 1K",
-                            "1K - 10K",
-                            "10K - 100K",
+                            "0 – 1K",
+                            "1K – 10K",
+                            "10K – 100K",
                             "100K+",
                           ].map((range) => (
                             <ChoiceCard
@@ -2027,44 +1992,6 @@ export function OnboardingFlow({
         </div>
       </div>
 
-<<<<<<< HEAD
-        {/* nav */}
-        <div className="mt-8 flex items-center justify-between">
-          {step > 0 ? (
-            <button
-              type="button"
-              onClick={() => go(step - 1)}
-              className="flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm text-white/60 transition-colors hover:text-white"
-            >
-              <ArrowLeft className="h-4 w-4" /> Back
-            </button>
-          ) : (
-            <span className="text-[13px] text-white/35">{initialName ? `Hi ${initialName.split(" ")[0]} 👋` : ""}</span>
-          )}
-
-          {step < TOTAL - 1 ? (
-            <button
-              type="button"
-              disabled={!stepValid}
-              onClick={() => go(step + 1)}
-              className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-transform duration-200 hover:scale-[1.03] disabled:opacity-40 disabled:hover:scale-100"
-              style={{ background: "linear-gradient(135deg,#6366f1,#a855f7)", boxShadow: "0 0 30px -10px rgba(99,102,241,0.8)" }}
-            >
-              Continue <ArrowRight className="h-4 w-4" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              disabled={!stepValid || loading}
-              onClick={finish}
-              className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-transform duration-200 hover:scale-[1.03] disabled:opacity-40 disabled:hover:scale-100"
-              style={{ background: "linear-gradient(135deg,#6366f1 0%,#a855f7 70%,#f5c451 130%)", boxShadow: "0 0 34px -8px rgba(99,102,241,0.8)" }}
-            >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Enter Koraspace <ArrowRight className="h-4 w-4" /></>}
-            </button>
-          )}
-        </div>
-=======
       {/* Bottom reassurance */}
       <div className="mt-5 flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.13em] text-slate-400 dark:text-white/20">
         <CheckCircle2
@@ -2072,7 +1999,6 @@ export function OnboardingFlow({
           style={{ color: `${accentColor}80` }}
         />
         {t.onboarding.navigation.changeAnytimeReassurance}
->>>>>>> main
       </div>
     </div>
   );

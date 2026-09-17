@@ -147,7 +147,7 @@ const SelectItem = React.forwardRef<
       "focus:bg-[var(--hover)] focus:text-[var(--fg)]",
       // Transition
       "transition-colors duration-100",
-      // Selected state - the check indicator
+      // Selected state — the check indicator
       "data-[state=checked]:text-[var(--fg)]",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-40",
       className

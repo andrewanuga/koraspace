@@ -1005,7 +1005,7 @@ export const fr: TranslationDictionary = {
     a6: "Nous acceptons toutes les cartes de crédit/débit majeures (Visa, Mastercard, American Express), Apple Pay, Google Pay ainsi que les moyens de paiement régionaux les plus courants.",
   },
   cta: {
-    eyebrow: "14 Jours d'Essai Gratuit - Sans Carte Bancaire",
+    eyebrow: "14 Jours d'Essai Gratuit — Sans Carte Bancaire",
     titleLead: "Votre équipe marketing autonome par IA",
     titleHighlight: "démarre aujourd'hui.",
     subtitle:

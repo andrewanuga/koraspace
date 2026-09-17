@@ -1,4 +1,4 @@
-// Billing plans - single source of truth for pricing + Paystack plan codes.
+// Billing plans — single source of truth for pricing + Paystack plan codes.
 export type PlanId = "free" | "pro" | "advanced" | "team";
 
 export interface PlanConfig {

@@ -100,7 +100,7 @@ export function IdeasClient({
   const [generatingIdeas, setGeneratingIdeas] = useState(false);
   const [generatedIdeas, setGeneratedIdeas]   = useState<string[]>([]);
 
-  /* -- Refresh trends -- */
+  /* ── Refresh trends ── */
   const refresh = async () => {
     setBusy(true);
     try {
@@ -121,7 +121,7 @@ export function IdeasClient({
     }
   };
 
-  /* -- AI Idea Generator -- */
+  /* ── AI Idea Generator ── */
   const generateIdeas = async () => {
     if (!ideaPrompt.trim()) {
       toastError("Tell Kora what you're thinking about", "Enter a topic or content direction first.");
@@ -145,13 +145,13 @@ export function IdeasClient({
     }
   };
 
-  /* -- Save/unsave -- */
+  /* ── Save/unsave ── */
   const toggleSaved = (id: string) =>
     setSavedIds((cur) =>
       cur.includes(id) ? cur.filter((i) => i !== id) : [...cur, id]
     );
 
-  /* -- Filtered trends -- */
+  /* ── Filtered trends ── */
   const filteredTrends = useMemo(() => {
     let result = [...trends];
     if (activeTab === "saved") result = result.filter((t) => savedIds.includes(t.id));
@@ -178,7 +178,7 @@ export function IdeasClient({
   return (
     <div className="mx-auto max-w-[1500px] pb-10">
 
-      {/* -- Page header -- */}
+      {/* ── Page header ── */}
       <PageHeader
         eyebrow="Idea Intelligence"
         title="Find what's next"
@@ -205,7 +205,7 @@ export function IdeasClient({
         }
       />
 
-      {/* -- Search + tabs -- */}
+      {/* ── Search + tabs ── */}
       <div className="mb-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <div className="relative max-w-xl flex-1">
@@ -260,10 +260,10 @@ export function IdeasClient({
         </div>
       </div>
 
-      {/* -- Main grid -- */}
+      {/* ── Main grid ── */}
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_330px]">
 
-        {/* -- LEFT - Discovery -- */}
+        {/* ── LEFT — Discovery ── */}
         <div className="space-y-6">
 
           {/* Section header */}
@@ -361,7 +361,7 @@ export function IdeasClient({
                         {trend.topic}
                       </h3>
                       <div className="shrink-0 rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-2 py-1 text-[12px] font-bold text-[var(--brand-primary)]">
-                        {trend.score ?? "-"}
+                        {trend.score ?? "—"}
                       </div>
                     </div>
 
@@ -441,7 +441,7 @@ export function IdeasClient({
           )}
         </div>
 
-        {/* -- RIGHT SIDEBAR -- */}
+        {/* ── RIGHT SIDEBAR ── */}
         <aside className="space-y-5 xl:sticky xl:top-6 xl:self-start">
 
           {/* AI Idea Generator */}
@@ -574,7 +574,7 @@ export function IdeasClient({
         </aside>
       </div>
 
-      {/* -- Trend detail drawer -- */}
+      {/* ── Trend detail drawer ── */}
       {selectedTrend && (
         <div
           className="fixed inset-0 z-[100] flex justify-end bg-black/60 backdrop-blur-sm"
@@ -610,7 +610,7 @@ export function IdeasClient({
                 <p className="mt-2 text-sm leading-relaxed text-[var(--fg-3)]">{selectedTrend.summary}</p>
               </div>
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-lg font-bold text-[var(--brand-primary)]">
-                {selectedTrend.score ?? "-"}
+                {selectedTrend.score ?? "—"}
               </div>
             </div>
 
@@ -624,7 +624,7 @@ export function IdeasClient({
               <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3">
                 <Eye className="mb-2 h-4 w-4 text-[var(--kora-blue)]" />
                 <p className="text-[10px] text-[var(--fg-4)]">Trend score</p>
-                <p className="mt-1 text-[12px] font-medium text-[var(--fg)]">{selectedTrend.score ?? "-"}</p>
+                <p className="mt-1 text-[12px] font-medium text-[var(--fg)]">{selectedTrend.score ?? "—"}</p>
               </div>
               <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3">
                 <MessageCircle className="mb-2 h-4 w-4 text-[var(--brand-primary)]" />

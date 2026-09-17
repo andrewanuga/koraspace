@@ -1,41 +1,14 @@
-<<<<<<< HEAD
-/**
- * Koraspace AI Tool Registry Compatibility Facade
- *
- * Re-exports the canonical modular ToolRegistry and provides backward-compatible
- * accessors for legacy callers. All tools are registered and managed via `lib/ai/tools/index.ts`.
- */
-=======
 import * as cheerio from "cheerio";
 import {
   verifyExecutionGate,
   sanitizeRetrievedContext,
   scanForPromptInjection,
 } from "@/lib/security/enforcement";
->>>>>>> main
 
-import { defaultToolRegistry } from "./tools/index";
-import type { AgentContext } from "./core/types";
+/* ── Tool Definitions ─────────────────────────────────────────── */
 
-<<<<<<< HEAD
-// Canonical tool registry definitions
-export const AI_TOOLS = defaultToolRegistry.getDefinitions();
-
-/**
- * Backward-compatible tool execution facade that routes through defaultToolRegistry.
- */
-export async function executeTool(
-  name: string,
-  args: Record<string, unknown>,
-  context: AgentContext
-): Promise<unknown> {
-  const result = await defaultToolRegistry.execute(name, args, context);
-  if (!result.success) {
-    const msg = typeof result.error === "string" ? result.error : result.error?.message || `Tool execution failed: ${name}`;
-    throw new Error(msg);
-=======
 export const AI_TOOLS = [
-  // -- Existing --
+  // ── Existing ──
   {
     type: "function",
     function: {
@@ -112,7 +85,7 @@ export const AI_TOOLS = [
       },
     },
   },
-  // -- New Premium Content & Strategy Tools --
+  // ── New Premium Content & Strategy Tools ──
   {
     type: "function",
     function: {
@@ -177,7 +150,7 @@ export const AI_TOOLS = [
       parameters: { type: "object", properties: {}, required: [] },
     },
   },
-  // -- Database & Action Tools --
+  // ── Database & Action Tools ──
   {
     type: "function",
     function: {
@@ -244,7 +217,7 @@ export const AI_TOOLS = [
   },
 ];
 
-/* -- Tool Executors --------------------------------------------- */
+/* ── Tool Executors ───────────────────────────────────────────── */
 
 interface ToolContext {
   supabase?: any;
@@ -343,7 +316,7 @@ export async function executeTool(name: string, args: Record<string, any>, ctx: 
         return `Security/Query error: ${e.message}`;
       }
 
-    // -- New Premium Content & Strategy Tools --
+    // ── New Premium Content & Strategy Tools ──
     case "analyze_competitor":
       return `Competitor Analysis for ${args.competitor_handle_or_url}: 
 1. They post heavily about basic concepts but miss advanced insights.
@@ -384,7 +357,7 @@ Suggestion: Tweak claim to specify "For B2B enterprises...".`;
         "Stop doing [Common Mistake]. It's costing you [Metric]. Do this instead:"
       ]);
 
-    // -- Database & Action Tools --
+    // ── Database & Action Tools ──
     case "schedule_post":
       if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
       try {
@@ -493,10 +466,5 @@ Suggestion: Tweak claim to specify "For B2B enterprises...".`;
 
     default:
       return `Unknown tool: ${name}`;
->>>>>>> main
   }
-  return result.data;
 }
-
-export { defaultToolRegistry };
-export * from "./tools/index";

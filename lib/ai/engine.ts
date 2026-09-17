@@ -1,18 +1,7 @@
-<<<<<<< HEAD
-/**
- * AI Engine Adapter (Ghost Mode)
- *
- * Provides backward-compatible bridge to the Unified GhostAgent.
- */
-=======
 import { callAI, type ChatMessage } from "./gemini";
 import { buildGhostSystemPrompt } from "./prompts";
->>>>>>> main
 
-import { GhostAgent, type GhostActionType } from "./agents/ghost";
-import type { AgentContext } from "./core/types";
-
-export type AgentActionType = GhostActionType;
+export type AgentActionType = "auto_reply" | "flag_lead" | "escalate_complaint" | "ignore";
 
 export interface EvaluationResult {
   action: AgentActionType;
@@ -22,12 +11,7 @@ export interface EvaluationResult {
 }
 
 /**
-<<<<<<< HEAD
- * Evaluates an incoming message based on the user's Ghost Mode rules.
- * Delegates to Unified GhostAgent.
-=======
  * Evaluates an incoming message based on the user's Ghost Mode rules and Bot Role.
->>>>>>> main
  */
 export async function evaluateIncomingMessage(
   incomingText: string,
@@ -35,41 +19,6 @@ export async function evaluateIncomingMessage(
   senderName: string,
   rules: { label: string; enabled: boolean }[],
   isComment: boolean = false,
-<<<<<<< HEAD
-  context?: Partial<AgentContext>
-): Promise<EvaluationResult> {
-  const agentCtx: AgentContext = {
-    userId: context?.userId || "system",
-    workspaceId: context?.workspaceId || "system",
-    autonomyMode: context?.autonomyMode || "assist",
-    supabase: context?.supabase,
-  };
-
-  const res = await GhostAgent.evaluate(
-    {
-      message: incomingText,
-      platform,
-      senderName,
-      rules,
-      isComment,
-    },
-    agentCtx
-  );
-
-  if (res.success && res.data) {
-    return {
-      action: res.data.action,
-      comment: res.data.reasoning,
-      reply: res.data.reply,
-      is_lead: res.data.isLead,
-    };
-  }
-
-  return {
-    action: "ignore",
-    comment: res.error?.message || "AI evaluation error.",
-  };
-=======
   botRole: string = "general"
 ): Promise<EvaluationResult> {
   const activeRules = rules.filter(r => r.enabled).map(r => r.label);
@@ -115,7 +64,4 @@ ${activeRules.length > 0 ? activeRules.map((r, i) => `${i + 1}. ${r}`).join("\n"
     console.error("[GhostEngine] Evaluation failed:", err);
     return { action: "ignore", comment: "AI evaluation error." };
   }
->>>>>>> main
 }
-
-export { GhostAgent };

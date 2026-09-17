@@ -85,13 +85,13 @@ export default function BotsPage() {
     await supabase.from("social_bots").delete().eq("id", b.id);
   };
 
-  const acctLabel = (id: string | null) => { const a = accounts.find((x) => x.id === id); return a ? `${a.platform}/${a.handle || a.display_name || "account"}` : "-"; };
+  const acctLabel = (id: string | null) => { const a = accounts.find((x) => x.id === id); return a ? `${a.platform}/${a.handle || a.display_name || "account"}` : "—"; };
   const activeCount = bots.filter((b) => b.status === "active").length;
   const totalActions = bots.reduce((a, b) => a + b.actions_count, 0);
 
   return (
     <div className="mx-auto max-w-6xl">
-      <PageHeader eyebrow="Automation" title="Bots" sub="Deploy agents to connected accounts. A bot needs an account - connection is enforced." />
+      <PageHeader eyebrow="Automation" title="Bots" sub="Deploy agents to connected accounts. A bot needs an account — connection is enforced." />
 
       {accounts.length === 0 && (
         <div className="glass-panel mb-5 flex flex-col items-center rounded-2xl p-10 text-center">

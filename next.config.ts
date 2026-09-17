@@ -32,7 +32,7 @@ const nextConfig: NextConfig = {
   async headers() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 
-    // Static CSP (no nonce) - used for API routes and static assets.
+    // Static CSP (no nonce) — used for API routes and static assets.
     // The middleware injects a stricter nonce-based CSP for all HTML pages.
     const staticCsp = [
       `default-src 'self'`,

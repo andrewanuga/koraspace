@@ -2884,7 +2884,7 @@ ${aiTaskPrompt}
                             }
                             className="capitalize"
                           >
-                            {account.platform} -{" "}
+                            {account.platform} —{" "}
                             {account.handle ||
                               account.display_name ||
                               "Account"}

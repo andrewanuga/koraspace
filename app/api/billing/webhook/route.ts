@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { isPlan, type PlanId } from "@/lib/billing/plans";
 
-/** Paystack webhook - verify signature, then reconcile subscription state. */
+/** Paystack webhook — verify signature, then reconcile subscription state. */
 export async function POST(req: NextRequest) {
   const secret = process.env.PAYSTACK_SECRET_KEY;
   const raw = await req.text();

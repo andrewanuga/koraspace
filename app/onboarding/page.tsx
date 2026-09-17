@@ -5,13 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { OnboardingFlow } from "./OnboardingFlow";
 import { OnboardingBackground } from "./OnboardingBackground";
 
-<<<<<<< HEAD
-export const metadata = { title: "Set up your workspace - Koraspace AI" };
-=======
 export const metadata = {
-  title: "Set up your workspace - Koraspace",
+  title: "Set up your workspace — Koraspace",
 };
->>>>>>> main
 
 export default async function OnboardingPage() {
   const supabase = await createClient();
@@ -41,15 +37,6 @@ export default async function OnboardingPage() {
       {/* Animated Ambient Background Blobs & Grid */}
       <OnboardingBackground />
 
-<<<<<<< HEAD
-      <Link href="/" className="relative mb-10 flex items-center gap-2.5">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="" width={26} height={23} className="h-[24px] w-auto" />
-        <span className="font-display text-lg font-semibold text-white">
-          Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
-        </span>
-      </Link>
-=======
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1500px] flex-col px-5 py-6 sm:px-8 lg:px-10">
         {/* Top bar */}
         <header className="flex items-center justify-between">
@@ -64,7 +51,6 @@ export default async function OnboardingPage() {
                 className="h-full w-full object-contain"
               />
             </div>
->>>>>>> main
 
             <div>
               <div className="font-display text-[16px] font-bold tracking-tight text-slate-900 dark:text-white">

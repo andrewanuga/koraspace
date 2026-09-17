@@ -36,16 +36,12 @@ export default async function InboxPage() {
     ]);
 
   const allAccounts = [
-<<<<<<< HEAD
-    { id: "system", platform: "system" as any, handle: "Koraspace AI", display_name: "System Notifications" },
-=======
     {
       id: "system",
       platform: "system" as any,
       handle: "Koraspace",
       display_name: "System Notifications",
     },
->>>>>>> main
     ...(accounts ?? []),
   ] as SocialAccount[];
 

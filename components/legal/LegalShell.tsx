@@ -138,18 +138,6 @@ export function LegalShell({
         />
       </div>
 
-<<<<<<< HEAD
-      {/* top bar */}
-      <header className="relative mx-auto flex max-w-3xl items-center justify-between px-5 py-6">
-        <Link href="/" className="flex items-center gap-2.5">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="" width={24} height={21} className="h-[22px] w-auto" />
-          <span className="font-display text-[15px] font-semibold">Koraspace<span className="text-[var(--sai-indigo)]"> AI</span></span>
-        </Link>
-        <Link href="/" className="flex items-center gap-1.5 text-[13px] text-white/50 transition-colors hover:text-white">
-          <ArrowLeft className="h-3.5 w-3.5" /> Home
-        </Link>
-=======
       {/* Ambient background bloom */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div
@@ -220,7 +208,6 @@ export function LegalShell({
             )}
           </div>
         </div>
->>>>>>> main
       </header>
 
       {/* Main Container */}
@@ -236,13 +223,6 @@ export function LegalShell({
             {title}
           </h1>
 
-<<<<<<< HEAD
-        {/* footer cross-links */}
-        <div className="mt-16 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-white/[0.08] pt-8 text-[13px] text-white/50">
-          <Link href={other.href} className="transition-colors hover:text-white">{other.label} →</Link>
-          <Link href="/" className="transition-colors hover:text-white">Back to Koraspace AI</Link>
-          <span className="ml-auto text-white/30">© {new Date().getFullYear()} Koraspace AI</span>
-=======
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-slate-500 dark:text-white/50">
             <span>Last reviewed: <strong className="font-medium text-slate-700 dark:text-white/80">{updated}</strong></span>
             <span>•</span>
@@ -280,7 +260,6 @@ export function LegalShell({
               })}
             </div>
           )}
->>>>>>> main
         </div>
 
         {/* Two-column Layout: TOC + Content */}

@@ -593,13 +593,8 @@ export function Sidebar({
           {/* BRAND */}
 
           {!collapsed && (
-<<<<<<< HEAD
-            <span className="font-display text-[16px] font-semibold text-[var(--fg)]">
-              Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
-=======
             <span className="font-display whitespace-nowrap text-[16px] font-semibold tracking-[-0.02em] text-[var(--fg)]">
               KoraSpace
->>>>>>> main
             </span>
           )}
 

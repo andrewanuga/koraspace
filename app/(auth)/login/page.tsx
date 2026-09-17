@@ -95,15 +95,6 @@ function LoginForm() {
   };
 
   return (
-<<<<<<< HEAD
-    <div className="w-full max-w-md">
-      <div className="mb-8">
-        <h1 className="font-display text-3xl font-semibold tracking-[-0.02em] text-white">
-          Welcome back
-        </h1>
-        <p className="mt-2 text-sm text-white/50">
-          Sign in to your Koraspace AI workspace.
-=======
     <div className="w-full max-w-[440px]">
       {/* Login header */}
       <div className="mb-7">
@@ -118,7 +109,6 @@ function LoginForm() {
 
         <p className="mt-2 text-[14px] leading-relaxed text-white/45">
           {t.authPages.loginSubtitle}
->>>>>>> main
         </p>
       </div>
 

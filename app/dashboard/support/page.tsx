@@ -346,28 +346,6 @@ export default function SupportPage() {
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#ff2d8d]/20 bg-[#ff2d8d]/[0.08]">
               <Sparkles className="h-5 w-5 text-[#ff2d8d]" />
             </div>
-<<<<<<< HEAD
-          ) : messages.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center text-center text-[var(--fg-3)]">
-              <Sparkles className="h-10 w-10 mb-3 opacity-50" style={{ color: "var(--sai-indigo)" }} />
-              <p className="text-sm font-medium">Hello! I'm the Koraspace AI support agent.</p>
-              <p className="text-xs mt-1">How can I help you today?</p>
-            </div>
-          ) : (
-            messages.map((m) => (
-              <div key={m.id} className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${m.role === 'user' ? 'bg-[var(--panel-fill-2)]' : 'bg-indigo-500/20'}`}>
-                  {m.role === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4 text-indigo-400" />}
-                </div>
-                <div className={`max-w-[75%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed ${m.role === 'user' ? 'bg-[var(--panel-fill-2)] text-[var(--fg)]' : 'bg-transparent border border-[var(--stroke)] text-[var(--fg-2)]'}`}>
-                  {m.content.split('\\n').map((line, i) => (
-                    <span key={i}>
-                      {line}
-                      <br />
-                    </span>
-                  ))}
-                </div>
-=======
 
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
@@ -378,7 +356,6 @@ export default function SupportPage() {
                 <span className="rounded-full bg-[#ff2d8d]/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-[#ff5fa5]">
                   Instant
                 </span>
->>>>>>> main
               </div>
 
               <p className="mt-1 text-[12.5px] leading-relaxed text-[var(--fg-3)]">

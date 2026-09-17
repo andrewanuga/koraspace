@@ -33,11 +33,6 @@ export default function NotFound() {
         {/* Brand */}
         <Link href="/" className="group mb-8 flex items-center gap-2.5 transition">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-<<<<<<< HEAD
-          <img src="/logo.png" alt="" width={26} height={23} className="h-[24px] w-auto" style={{ filter: "drop-shadow(0 0 12px rgba(99,102,241,0.45))" }} />
-          <span className="font-display text-lg font-semibold text-white">
-            Koraspace<span className="text-[var(--sai-indigo)]"> AI</span>
-=======
           <img
             src="/logo.png"
             alt="Koraspace"
@@ -47,7 +42,6 @@ export default function NotFound() {
           />
           <span className="font-display text-lg font-bold tracking-tight text-white">
             Kora<span className="text-blue-500">space</span>
->>>>>>> main
           </span>
         </Link>
 

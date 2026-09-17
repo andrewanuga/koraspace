@@ -129,10 +129,6 @@ export default function AdminOverview() {
   const maxPlan = Math.max(...Object.values(plans), 1);
 
   return (
-<<<<<<< HEAD
-    <div className="mx-auto max-w-6xl">
-      <PageHeader eyebrow="Security operations" title="SOC Overview" sub="Live view of users, revenue, and security across Koraspace AI." />
-=======
     <div className="mx-auto max-w-6xl space-y-6">
       {/* Top Header */}
       <PageHeader
@@ -156,7 +152,6 @@ export default function AdminOverview() {
                 <option value={0} className="bg-[#12131a]">Paused</option>
               </select>
             </div>
->>>>>>> main
 
             <button
               onClick={() => {
@@ -355,7 +350,7 @@ export default function AdminOverview() {
                   />
                   <Pill tone={sevTone(e.severity)}>{e.type.replace(/_/g, " ")}</Pill>
                   <p className="truncate text-white/80 font-medium">
-                    {e.detail || e.email || e.ip || "-"}
+                    {e.detail || e.email || e.ip || "—"}
                   </p>
                 </div>
 

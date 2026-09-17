@@ -3,11 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
-<<<<<<< HEAD
- * Full-screen #121212 preloader. The "Koraspace AI" wordmark has a bright lead
-=======
  * Full-screen #121212 preloader. The "Koraspace" wordmark has a bright lead
->>>>>>> main
  * sweeping through it like water flow (CSS .sai-flow-text). Warms the first
  * frames + fonts so the hero paints instantly, then fades away.
  */
@@ -69,7 +65,7 @@ export function Preloader() {
     }
 
     warm();
-    // Safety valve - never trap the user behind the loader.
+    // Safety valve — never trap the user behind the loader.
     const failsafe = window.setTimeout(() => !cancelled && setDone(true), 6000);
 
     return () => {
@@ -116,11 +112,7 @@ export function Preloader() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo.png"
-<<<<<<< HEAD
-          alt="Koraspace AI"
-=======
           alt="Koraspace"
->>>>>>> main
           width={78}
           height={67}
           className="h-[64px] w-auto animate-pulse-glow"
@@ -136,11 +128,7 @@ export function Preloader() {
             letterSpacing: "-0.03em",
           }}
         >
-<<<<<<< HEAD
-          Koraspace AI
-=======
           KoraSpace
->>>>>>> main
         </div>
 
         {/* thin progress track */}

@@ -8,9 +8,9 @@
 
 import { AGENT_DEFAULTS, RECOMMENDED_MODELS, type AgentId } from "./models";
 
-/* -- Types ------------------------------------------------------ */
+/* ── Types ────────────────────────────────────────────────────── */
 
-/** OpenRouter chat message - supports text and multimodal (vision) */
+/** OpenRouter chat message — supports text and multimodal (vision) */
 export type ContentPart =
   | { type: "text"; text: string }
   | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } };
@@ -21,7 +21,7 @@ export interface ChatMessage {
 }
 
 export interface AICallOptions {
-  /** Which agent is calling - determines the default model & temperature */
+  /** Which agent is calling — determines the default model & temperature */
   agent: AgentId;
   /** Override model (e.g. user selected a specific model in settings) */
   model?: string;
@@ -44,7 +44,7 @@ export interface AIResponse {
   tool_calls?: any[];
 }
 
-/* -- Constants -------------------------------------------------- */
+/* ── Constants ────────────────────────────────────────────────── */
 
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/openai";
 
@@ -60,7 +60,7 @@ function getDefaultModel(): string {
   return process.env.GEMINI_DEFAULT_MODEL || "gemini-1.5-flash";
 }
 
-/* -- Main call function ----------------------------------------- */
+/* ── Main call function ───────────────────────────────────────── */
 
 /**
  * Send a chat completion request to OpenRouter.
@@ -96,7 +96,7 @@ export async function callAI(
     body.tools = options.tools;
   }
 
-  // JSON mode - only if the model supports it
+  // JSON mode — only if the model supports it
   if (options.jsonMode) {
     body.response_format = { type: "json_object" };
   }
@@ -105,11 +105,7 @@ export async function callAI(
     "Content-Type": "application/json",
     Authorization: `Bearer ${apiKey}`,
     "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-<<<<<<< HEAD:lib/ai/openrouter.ts
-    "X-Title": "Koraspace AI",
-=======
     "X-Title": "Koraspace",
->>>>>>> main:lib/ai/gemini.ts
   };
 
   const res = await fetch(`${GEMINI_BASE}/chat/completions`, {
@@ -142,7 +138,7 @@ export async function callAI(
   };
 }
 
-/* -- Streaming call --------------------------------------------- */
+/* ── Streaming call ───────────────────────────────────────────── */
 
 /**
  * Stream a chat completion from OpenRouter via SSE.
@@ -167,11 +163,7 @@ export async function callAIStream(
     "Content-Type": "application/json",
     Authorization: `Bearer ${apiKey}`,
     "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-<<<<<<< HEAD:lib/ai/openrouter.ts
-    "X-Title": "Koraspace AI",
-=======
     "X-Title": "Koraspace",
->>>>>>> main:lib/ai/gemini.ts
   };
 
   const res = await fetch(`${GEMINI_BASE}/chat/completions`, {
@@ -247,7 +239,7 @@ export async function callAIStream(
   });
 }
 
-/* -- Model list fetcher ----------------------------------------- */
+/* ── Model list fetcher ───────────────────────────────────────── */
 
 let cachedModels: OpenRouterModel[] | null = null;
 let cacheTimestamp = 0;
@@ -295,7 +287,7 @@ export async function fetchAvailableModels(): Promise<OpenRouterModel[]> {
   }
 }
 
-/* -- Utility: check if a model supports vision ------------------ */
+/* ── Utility: check if a model supports vision ────────────────── */
 
 export function modelSupportsVision(model: OpenRouterModel): boolean {
   const modality = model.architecture?.modality || "";
@@ -307,7 +299,7 @@ export function modelSupportsVision(model: OpenRouterModel): boolean {
   );
 }
 
-/* -- Utility: build multimodal message with images -------------- */
+/* ── Utility: build multimodal message with images ────────────── */
 
 export function buildMultimodalContent(
   text: string,

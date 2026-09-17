@@ -19,13 +19,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-<<<<<<< HEAD
-  title: "Koraspace AI - Your Personal Social Agent",
-=======
-  title: "Koraspace - Your Personal Social Agent",
->>>>>>> main
+  title: "Koraspace — Your Personal Social Agent",
   description:
-    "Social, understood. Deploy an AI agent that creates, engages, and converts around the clock - powered by Llama 3.3 70B.",
+    "Social, understood. Deploy an AI agent that creates, engages, and converts around the clock — powered by Llama 3.3 70B.",
   keywords: [
     "social media management",
     "AI content creation",
@@ -40,15 +36,9 @@ export const metadata: Metadata = {
     icon: "/logo.png",
   },
   openGraph: {
-<<<<<<< HEAD
-    title: "Koraspace AI - AI-Powered Social Media Manager",
-    description:
-      "Stop managing social media. Start delegating it. Koraspace AI deploys autonomous AI agents that create content, engage followers, and convert leads 24/7.",
-=======
-    title: "Koraspace - AI-Powered Social Media Manager",
+    title: "Koraspace — AI-Powered Social Media Manager",
     description:
       "Stop managing social media. Start delegating it. Koraspace deploys autonomous AI agents that create content, engage followers, and convert leads 24/7.",
->>>>>>> main
     type: "website",
   },
 };

@@ -51,7 +51,7 @@ const blocksDesign = [
   },
 ];
 
-function KoraspaceHeroShowcase() {
+function SociallyHeroShowcase() {
   const timelineRef = useRef<HTMLDivElement>(null);
 
   const revealVariants = {
@@ -78,11 +78,7 @@ function KoraspaceHeroShowcase() {
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center shadow-md shadow-red-600/30">
               <span className="text-white text-xs font-black">S</span>
             </div>
-<<<<<<< HEAD
-            <span className="font-bold text-sm tracking-tight text-foreground">Koraspace AI</span>
-=======
             <span className="font-bold text-sm tracking-tight text-foreground">Koraspace</span>
->>>>>>> main
           </Link>
 
           <div className="flex items-center gap-2">
@@ -144,7 +140,7 @@ function KoraspaceHeroShowcase() {
             customVariants={revealVariants}
             className="lg:text-xl text-muted-foreground sm:text-lg text-sm max-w-2xl mx-auto"
           >
-            Schedule posts, discover trends, and let AI engage your audience - all from one powerful dashboard.
+            Schedule posts, discover trends, and let AI engage your audience — all from one powerful dashboard.
           </TimelineContent>
         </article>
 
@@ -183,9 +179,9 @@ function KoraspaceHeroShowcase() {
   );
 }
 
-export default KoraspaceHeroShowcase;
+export default SociallyHeroShowcase;
 
-/* -- Feature Showcase Grid -- exported for use in landing page -- */
+/* ── Feature Showcase Grid ── exported for use in landing page ── */
 export function FeatureShowcaseGrid() {
   const ref = useRef<HTMLDivElement>(null);
 
