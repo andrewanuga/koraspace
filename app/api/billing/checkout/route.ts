@@ -114,34 +114,45 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // --- 3. CRYPTO (Coinbase Commerce) ---
+  // --- 3. CRYPTO (NOWPayments - USDT, BTC, ETH, SOL, BNB) ---
   if (method === "crypto") {
-    const secret = process.env.COINBASE_API_KEY;
-    if (!secret) return NextResponse.json({ error: "Crypto payments aren't configured yet." }, { status: 501 });
+    const apiKey = process.env.NOWPAYMENTS_API_KEY;
+    if (!apiKey) return NextResponse.json({ error: "NOWPayments crypto gateway isn't configured yet." }, { status: 501 });
+
+    const orderId = `kora_${workspaceId.slice(0, 8)}_${plan}_${Date.now()}`;
 
     try {
-      const res = await fetch("https://api.commerce.coinbase.com/charges", {
+      const res = await fetch("https://api.nowpayments.io/v1/invoice", {
         method: "POST",
         headers: {
-          "X-CC-Api-Key": secret,
-          "X-CC-Version": "2018-03-22",
-          "Content-Type": "application/json"
+          "x-api-key": apiKey,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: `${cfg.name} Plan`,
-          description: `Koraspace ${cfg.name} Subscription`,
-          pricing_type: "fixed_price",
-          local_price: { amount: String(cfg.priceUsd), currency: "USD" },
-          metadata: { user_id: workspaceId, plan },
-          redirect_url: `${origin}/dashboard/billing?paid=1&plan=${plan}`,
-          cancel_url: `${origin}/dashboard/billing?paid=0`
-        })
+          price_amount: cfg.priceUsd,
+          price_currency: "usd",
+          order_id: orderId,
+          order_description: `Koraspace ${cfg.name} Subscription (${workspaceId})`,
+          ipn_callback_url: `${origin}/api/billing/webhook/nowpayments`,
+          success_url: `${origin}/dashboard/billing?paid=1&plan=${plan}`,
+          cancel_url: `${origin}/dashboard/billing?paid=0`,
+        }),
       });
+
       const data = await res.json();
-      if (data.error) return NextResponse.json({ error: data.error.message }, { status: 502 });
-      return NextResponse.json({ authorization_url: data.data.hosted_url, reference: data.data.code });
+      if (!res.ok || data.statusCode >= 400 || !data.invoice_url) {
+        return NextResponse.json(
+          { error: data.message || "Failed to create NOWPayments crypto invoice." },
+          { status: 502 }
+        );
+      }
+
+      return NextResponse.json({
+        authorization_url: data.invoice_url,
+        reference: data.id || orderId,
+      });
     } catch {
-      return NextResponse.json({ error: "Couldn't reach Crypto gateway." }, { status: 502 });
+      return NextResponse.json({ error: "Couldn't reach NOWPayments gateway." }, { status: 502 });
     }
   }
 
