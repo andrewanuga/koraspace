@@ -1,11 +1,6 @@
-{
-<<<<<<< HEAD
-  "name": "koraspace-ai",
-  "version": "0.1.0",
-=======
+﻿{
   "name": "koraspace",
   "version": "1.5.1",
->>>>>>> main
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,22 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-<<<<<<< HEAD
-    "test": "vitest run",
-    "test:unit": "vitest run tests/unit",
-    "test:integration": "vitest run tests/integration",
-    "test:contracts": "vitest run tests/contracts",
-    "test:security": "vitest run tests/security",
-    "test:e2e": "vitest run tests/e2e",
-    "test:eval": "vitest run tests/evaluations",
-    "test:live": "vitest run tests/live",
-    "test:all": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
-=======
     "sync:backup": "node scripts/sync-to-neon.js",
     "sync:backup:daemon": "node scripts/sync-to-neon.js --daemon"
->>>>>>> main
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
@@ -59,15 +40,10 @@
     "nodemailer": "^9.0.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-<<<<<<< HEAD
-    "tailwind-merge": "^3.6.0",
-    "zod": "^4.4.3"
-=======
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "simple-icons": "^16.30.0",
     "tailwind-merge": "^3.6.0"
->>>>>>> main
   },
   "devDependencies": {
     "@prisma/client": "^5.22.0",
@@ -77,17 +53,11 @@
     "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "prisma": "^5.22.0",
     "tailwindcss": "^4",
-<<<<<<< HEAD
-    "typescript": "^5",
-    "vitest": "^4.1.11"
-=======
     "ts-morph": "^28.0.0",
     "typescript": "^5"
->>>>>>> main
   }
 }
