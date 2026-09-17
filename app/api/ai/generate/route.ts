@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { callAI, isConfigured } from "@/lib/ai/openrouter";
-import { getActiveWorkspace } from "@/lib/workspace";
 import { buildGeneratePrompt } from "@/lib/ai/prompts";
+import { authorizeAIRoute, toAuthErrorResponse } from "@/lib/ai/core/route-auth";
 
 /* ── Types ────────────────────────────────────────────────────── */
 
@@ -20,11 +19,12 @@ interface GenerateBody {
 
 export async function POST(req: NextRequest) {
   try {
-    // Auth guard
-    const supabase = await createClient();
-    const workspace = await getActiveWorkspace(supabase);
-    if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const workspaceId = workspace.workspaceId;
+    // Auth & Capability guard
+    const auth = await authorizeAIRoute("content:generate");
+    if (!auth.authorized) {
+      return toAuthErrorResponse(auth);
+    }
+    const { workspaceId, userId, supabase } = auth;
 
     const body: GenerateBody = await req.json();
     const { prompt, platform, framework, tone, context, type = "caption", useTrends } = body;
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       const { data: trends } = await supabase
         .from("social_trends")
         .select("topic, summary")
-        .eq("user_id", workspaceId)
+        .eq("user_id", userId)
         .order("score", { ascending: false })
         .limit(1);
       
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
     );
 
     // Deduct from user's generation quota
-    const { error: dbError } = await supabase.rpc("decrement_generations", { user_id: workspaceId });
+    const { error: dbError } = await supabase.rpc("decrement_generations", { user_id: userId });
 
     return NextResponse.json({ content: result.content, model: result.model, trendUsed });
   } catch (err) {

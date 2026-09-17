@@ -1,29 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { getActiveWorkspace } from "@/lib/workspace";
 import { GhostAgent } from "@/lib/ai/agents/ghost";
-import type { AgentContext } from "@/lib/ai/core/types";
+import { authorizeAIRoute, toAuthErrorResponse } from "@/lib/ai/core/route-auth";
 
 /* ── POST /api/ai/ghost ───────────────────────────────────────── */
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const workspace = await getActiveWorkspace(supabase);
-    if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const workspaceId = workspace.workspaceId;
+    const auth = await authorizeAIRoute("inbox:read");
+    if (!auth.authorized) {
+      return toAuthErrorResponse(auth);
+    }
+    const { context } = auth;
 
     const { comment, brandVoice, platform } = await req.json();
     if (!comment) {
       return NextResponse.json({ error: "Comment is required" }, { status: 400 });
     }
-
-    const context: AgentContext = {
-      userId: workspaceId,
-      workspaceId,
-      autonomyMode: "assist",
-      supabase,
-    };
 
     const res = await GhostAgent.evaluate(
       {

@@ -1,29 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { getActiveWorkspace } from "@/lib/workspace";
 import { ScoreAgent } from "@/lib/ai/agents/score";
-import type { AgentContext } from "@/lib/ai/core/types";
+import { authorizeAIRoute, toAuthErrorResponse } from "@/lib/ai/core/route-auth";
 
 /* ── POST /api/ai/score ───────────────────────────────────────── */
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const workspace = await getActiveWorkspace(supabase);
-    if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const workspaceId = workspace.workspaceId;
+    const auth = await authorizeAIRoute("content:score");
+    if (!auth.authorized) {
+      return toAuthErrorResponse(auth);
+    }
+    const { context } = auth;
 
     const { content, platform } = await req.json();
     if (!content) {
       return NextResponse.json({ error: "Content is required" }, { status: 400 });
     }
-
-    const context: AgentContext = {
-      userId: workspaceId,
-      workspaceId,
-      autonomyMode: "assist",
-      supabase,
-    };
 
     const res = await ScoreAgent.evaluate(
       {

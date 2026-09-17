@@ -76,7 +76,20 @@ export class GhostPolicyEngine {
       };
     }
 
-    // 4. Auto-Reply in Assist Mode: Draft ready, waiting for human click
+    // 4. Capability check: Reply operation requires "inbox:reply" capability
+    if (context.capabilities && !context.capabilities.includes("inbox:reply")) {
+      if (decision.action === "auto_reply" || decision.reply) {
+        reasons.push('Role lacks "inbox:reply" capability: reply draft and autonomous dispatch suppressed. Human review required.');
+        return {
+          decision: "REQUIRE_APPROVAL",
+          canDispatchImmediately: false,
+          requiresHumanApproval: true,
+          reasons,
+        };
+      }
+    }
+
+    // 5. Auto-Reply in Assist Mode: Draft ready, waiting for human click
     if (autonomy === "assist") {
       reasons.push("Assist Mode active: Reply drafted for human approval.");
       return {
@@ -87,7 +100,7 @@ export class GhostPolicyEngine {
       };
     }
 
-    // 5. Auto-Reply in Auto Mode: Check confidence and safety thresholds
+    // 6. Auto-Reply in Auto Mode: Check confidence and safety thresholds
     if (autonomy === "auto") {
       if (decision.confidence < config.minAutoConfidence) {
         reasons.push(

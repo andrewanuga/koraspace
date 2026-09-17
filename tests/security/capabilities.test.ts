@@ -34,15 +34,17 @@ describe("Canonical Authorization & Capability Model", () => {
       expect(adminCaps).toEqual(ownerCaps);
     });
 
-    it("should restrict member capabilities to content generation, social read, and web search", () => {
+    it("should restrict member capabilities to content generation, scoring, social read, and web search", () => {
       const memberCaps = capabilitiesForRole("member");
 
       expect(memberCaps).toContain("content:generate");
+      expect(memberCaps).toContain("content:score");
       expect(memberCaps).toContain("social:read");
       expect(memberCaps).toContain("web:search");
 
       expect(memberCaps).not.toContain("social:publish");
       expect(memberCaps).not.toContain("social:schedule");
+      expect(memberCaps).not.toContain("inbox:read");
       expect(memberCaps).not.toContain("inbox:reply");
     });
 

@@ -223,7 +223,12 @@ JSON SCHEMA:
       }
     }
 
-    // 3. Brand Compliance Verification on Auto-Reply
+    // 3. Capability Guard: Strip reply draft if caller lacks "inbox:reply"
+    if (context.capabilities && !context.capabilities.includes("inbox:reply")) {
+      decision.reply = undefined;
+    }
+
+    // 4. Brand Compliance Verification on Auto-Reply
     if (decision.reply) {
       const compliance = BrandIntelligenceLoader.checkCompliance(decision.reply, memoryBundle.brand);
       if (!compliance.compliant) {
@@ -232,7 +237,7 @@ JSON SCHEMA:
       }
     }
 
-    // 4. Deterministic Policy Evaluation (Assist vs Auto, safety gating)
+    // 5. Deterministic Policy Evaluation (Assist vs Auto, safety gating)
     const policy = GhostPolicyEngine.evaluate(decision, input, context);
 
     // 5. Execution / Dispatch if permitted by policy

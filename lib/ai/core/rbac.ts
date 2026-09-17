@@ -33,7 +33,7 @@ export const ROLE_CAPABILITIES: Record<WorkspaceRole, readonly Capability[]> = {
     "inbox:reply",
     "web:search",
   ],
-  member: ["content:generate", "social:read", "web:search"],
+  member: ["content:generate", "content:score", "social:read", "web:search"],
   viewer: ["social:read", "inbox:read"],
 };
 

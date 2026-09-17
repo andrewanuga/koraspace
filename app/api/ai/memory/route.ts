@@ -9,6 +9,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveWorkspace } from "@/lib/workspace";
+import { WorkspaceRBAC } from "@/lib/ai/core/rbac";
 import {
   MemoryService,
   StoreMemoryInputSchema,
@@ -21,6 +22,13 @@ export async function GET(req: NextRequest) {
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!WorkspaceRBAC.hasPermission(workspace.role, "memory:read")) {
+      return NextResponse.json(
+        { error: `Forbidden: Role "${workspace.role}" lacks permission "memory:read".`, code: "FORBIDDEN" },
+        { status: 403 }
+      );
     }
 
     const { searchParams } = new URL(req.url);
@@ -60,6 +68,13 @@ export async function POST(req: NextRequest) {
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!WorkspaceRBAC.hasPermission(workspace.role, "memory:write")) {
+      return NextResponse.json(
+        { error: `Forbidden: Role "${workspace.role}" lacks permission "memory:write".`, code: "FORBIDDEN" },
+        { status: 403 }
+      );
     }
 
     const body = await req.json();

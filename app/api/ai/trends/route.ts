@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { getActiveWorkspace } from "@/lib/workspace";
 import { TrendAgent } from "@/lib/ai/agents/trend";
-import type { AgentContext } from "@/lib/ai/core/types";
+import { authorizeAIRoute, toAuthErrorResponse } from "@/lib/ai/core/route-auth";
 
 /* ── GET /api/ai/trends ───────────────────────────────────────── */
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const workspace = await getActiveWorkspace(supabase);
-    if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const workspaceId = workspace.workspaceId;
+    const auth = await authorizeAIRoute("social:read");
+    if (!auth.authorized) {
+      return toAuthErrorResponse(auth);
+    }
+    const { context, workspaceId, supabase } = auth;
 
     const { searchParams } = new URL(req.url);
     const niche = searchParams.get("niche") || "general";
@@ -24,13 +23,6 @@ export async function GET(req: NextRequest) {
       .single();
 
     const userNiche = niche !== "general" ? niche : profile?.niche || "general";
-
-    const context: AgentContext = {
-      userId: workspaceId,
-      workspaceId,
-      autonomyMode: "assist",
-      supabase,
-    };
 
     const res = await TrendAgent.discover({ niche: userNiche }, context);
 
