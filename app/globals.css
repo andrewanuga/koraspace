@@ -898,6 +898,15 @@ html.sai-js [data-reveal] { opacity: 0; }
   --ks-orb: rgba(255, 10, 138, 0.2);
   --ks-numeral: rgba(255, 255, 255, 0.045);
 
+  /* Skeleton bars standing in for drafted copy, and the faint chip fill. */
+  --ks-skeleton: rgba(255, 255, 255, 0.13);
+  --ks-skeleton-2: rgba(255, 255, 255, 0.1);
+  --ks-chip: rgba(255, 255, 255, 0.03);
+
+  --ks-eyebrow-glow-neutral: 0 0 15px rgba(255, 255, 255, 0.05);
+  --ks-eyebrow-glow-accent: 0 0 15px rgba(255, 10, 138, 0.15);
+  --ks-eyebrow-dot: #ffffff;
+
   /* Hairline from a floating card to the thing it annotates. */
   --ks-connector: rgba(255, 159, 201, 0.35);
   /* Chart furniture: a dashed baseline marker, and a neutral data bar. Kept
@@ -951,6 +960,16 @@ html.sai-js [data-reveal] { opacity: 0; }
 
   --ks-orb: rgba(214, 0, 111, 0.07);
   --ks-numeral: rgba(14, 10, 28, 0.05);
+
+  --ks-skeleton: rgba(14, 10, 28, 0.14);
+  --ks-skeleton-2: rgba(14, 10, 28, 0.1);
+  --ks-chip: rgba(14, 10, 28, 0.035);
+
+  /* No glow on paper: a soft halo behind a pill reads as a printing fault
+     rather than as light. */
+  --ks-eyebrow-glow-neutral: none;
+  --ks-eyebrow-glow-accent: none;
+  --ks-eyebrow-dot: var(--ks-ink-2);
 
   --ks-connector: rgba(214, 0, 111, 0.4);
   --ks-marker: rgba(14, 10, 28, 0.3);
@@ -1013,3 +1032,18 @@ html.sai-js [data-reveal] { opacity: 0; }
 
 .ks-shadow-panel { box-shadow: var(--ks-panel-shadow); }
 .ks-shadow-card { box-shadow: var(--ks-card-shadow); }
+
+/* Eyebrow pills, as classes for the same cascade reason as .ks-line above. */
+.ks-eyebrow-neutral {
+  color: var(--ks-ink-2);
+  background: var(--ks-chip);
+  border-color: var(--ks-line);
+  box-shadow: var(--ks-eyebrow-glow-neutral);
+}
+
+.ks-eyebrow-accent {
+  color: var(--ks-accent);
+  background: var(--ks-accent-soft);
+  border-color: var(--ks-accent-line);
+  box-shadow: var(--ks-eyebrow-glow-accent);
+}

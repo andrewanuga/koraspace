@@ -17,12 +17,15 @@ export function Eyebrow({
   children: React.ReactNode;
   tone?: SectionTone;
 }) {
+  // The white and pink tones are token-driven so the pill follows whichever
+  // surface it lands on. Blue keeps its literal values: it is not used on any
+  // converted section, so giving it a light twin would be guesswork.
   const toneClass =
     tone === "blue"
       ? "text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/25 shadow-[0_0_15px_rgba(59,130,246,0.15)]"
       : tone === "white"
-      ? "text-white/80 bg-white/5 border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-      : "text-[#ff0a8a] bg-[#ff0a8a]/10 border-[#ff0a8a]/25 shadow-[0_0_15px_rgba(255,10,138,0.15)]";
+        ? "ks-eyebrow-neutral"
+        : "ks-eyebrow-accent";
 
   return (
     <motion.span
@@ -36,7 +39,11 @@ export function Eyebrow({
         className="h-1.5 w-1.5 rounded-full motion-safe:animate-pulse"
         style={{
           background:
-            tone === "blue" ? "#3b82f6" : tone === "white" ? "#ffffff" : "#ff0a8a",
+            tone === "blue"
+              ? "#3b82f6"
+              : tone === "white"
+                ? "var(--ks-eyebrow-dot)"
+                : "var(--ks-accent)",
         }}
       />
       {children}

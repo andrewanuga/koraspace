@@ -49,13 +49,13 @@ function SceneCopy({
       transition={springTransition}
       className={className}
     >
-      <span className="font-mono text-[11px] font-bold tracking-[0.2em] text-[#ff9fc9]">
+      <span className="font-mono text-[11px] font-bold tracking-[0.2em] text-[var(--ks-accent-ink)]">
         {index}
       </span>
-      <h3 className="font-display mt-3 text-3xl font-bold leading-[1.12] tracking-tight text-white sm:text-4xl lg:text-[2.75rem]">
+      <h3 className="font-display mt-3 text-3xl font-bold leading-[1.12] tracking-tight text-[var(--ks-ink)] sm:text-4xl lg:text-[2.75rem]">
         {title}
       </h3>
-      <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/60">
+      <p className="mt-4 max-w-md text-[15px] leading-relaxed text-[var(--ks-ink-2)]">
         {body}
       </p>
     </motion.div>
@@ -68,7 +68,7 @@ const chipKicker = "text-[10px] font-bold uppercase tracking-[0.18em]";
 
 export function OutcomesSection() {
   return (
-    <div className="relative">
+    <div className="kora-light relative bg-[var(--ks-ground)]" data-ground={2}>
       {/* section statement — deliberately large, and the only centred thing
           here, so the scenes below can be asymmetric without feeling loose */}
       <div className="relative px-4 pt-24 sm:px-6 sm:pt-32 lg:px-8">
@@ -80,10 +80,10 @@ export function OutcomesSection() {
           className="mx-auto max-w-3xl text-center"
         >
           <Eyebrow tone="white">What you get back</Eyebrow>
-          <h2 className="font-display mt-5 text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h2 className="font-display mt-5 text-4xl font-bold leading-[1.08] tracking-tight text-[var(--ks-ink)] sm:text-5xl lg:text-6xl">
             Less marketing busywork.
             <br />
-            <span className="text-[#ff9fc9]">
+            <span className="text-[var(--ks-accent-ink)]">
               More knowing what to do next.
             </span>
           </h2>
@@ -107,8 +107,8 @@ export function OutcomesSection() {
               drift="lift"
               className="sm:-bottom-10 sm:-left-4 sm:w-[200px] lg:-left-6 xl:-left-12"
             >
-              <span className={`${chipKicker} text-white/40`}>Learned</span>
-              <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/80">
+              <span className={`${chipKicker} text-[var(--ks-ink-3)]`}>Learned</span>
+              <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--ks-ink-2)]">
                 From your last 128 posts — not a template.
               </p>
             </FloatingCard>
@@ -127,12 +127,12 @@ export function OutcomesSection() {
             className="sm:-right-4 sm:-top-16 sm:w-[210px] lg:-right-6 xl:-right-12"
           >
             <div className="flex items-center gap-1.5">
-              <Sparkles className="h-3 w-3 text-[#ff9fc9]" />
-              <span className={`${chipKicker} text-[#ff9fc9]`}>
+              <Sparkles className="h-3 w-3 text-[var(--ks-accent-ink)]" />
+              <span className={`${chipKicker} text-[var(--ks-accent-ink)]`}>
                 Opportunity
               </span>
             </div>
-            <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/80">
+            <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--ks-ink-2)]">
               That thread is still being shared. Worth a follow-up.
             </p>
           </FloatingCard>
@@ -142,8 +142,8 @@ export function OutcomesSection() {
             drift="lift"
             className="sm:-bottom-12 sm:-left-4 sm:w-[185px] lg:-left-6 xl:-left-12"
           >
-            <span className={`${chipKicker} text-white/40`}>Tone check</span>
-            <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/80">
+            <span className={`${chipKicker} text-[var(--ks-ink-3)]`}>Tone check</span>
+            <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--ks-ink-2)]">
               Reads like you. No hype words.
             </p>
           </FloatingCard>
@@ -180,8 +180,8 @@ export function OutcomesSection() {
               drift="hover"
               className="sm:-right-4 sm:-bottom-14 sm:w-[195px] lg:-right-6 xl:-right-12"
             >
-              <span className={`${chipKicker} text-[#ff9fc9]`}>Signal</span>
-              <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/80">
+              <span className={`${chipKicker} text-[var(--ks-accent-ink)]`}>Signal</span>
+              <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--ks-ink-2)]">
                 Third week running. That is a pattern.
               </p>
             </FloatingCard>

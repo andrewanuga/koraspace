@@ -23,21 +23,21 @@ export function BrandBrainPanel() {
         {ROWS.map(({ label, value }) => (
           <div
             key={label}
-            className="flex items-center justify-between gap-4 rounded-xl border border-white/[0.07] bg-[#141414] px-3.5 py-3"
+            className="flex items-center justify-between gap-4 rounded-xl border ks-line bg-[var(--ks-panel-chrome)] px-3.5 py-3"
           >
-            <span className="text-[11px] uppercase tracking-[0.14em] text-white/35">
+            <span className="text-[11px] uppercase tracking-[0.14em] text-[var(--ks-ink-3)]">
               {label}
             </span>
-            <span className="text-right text-[13px] text-white/80">{value}</span>
+            <span className="text-right text-[13px] text-[var(--ks-ink-2)]">{value}</span>
           </div>
         ))}
       </div>
 
-      <div className="mt-3 rounded-xl border border-[#ff0a8a]/25 bg-[#ff0a8a]/[0.06] px-3.5 py-3">
-        <span className="text-[11px] uppercase tracking-[0.14em] text-[#ff9fc9]">
+      <div className="mt-3 rounded-xl border ks-line-accent bg-[var(--ks-accent-soft)] px-3.5 py-3">
+        <span className="text-[11px] uppercase tracking-[0.14em] text-[var(--ks-accent-ink)]">
           Context ready
         </span>
-        <p className="mt-1 text-[13px] leading-relaxed text-white/75">
+        <p className="mt-1 text-[13px] leading-relaxed text-[var(--ks-ink-2)]">
           Every draft starts from this, not from an empty box.
         </p>
       </div>
