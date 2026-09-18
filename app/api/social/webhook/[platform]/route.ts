@@ -1,23 +1,24 @@
 import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { evaluateIncomingMessage } from "@/lib/ai/engine";
 import { dispatchReply } from "@/lib/social/dispatch";
 import { startBotTask, finishBotTask } from "@/lib/ai/bot_tasks";
 import { decryptToken } from "@/lib/security/tokenCrypto";
 
-// Helper to handle Meta's verification challenge
+/**
+ * GET /api/social/webhook/[platform]
+ * Handles Meta & WhatsApp webhook verification challenges (hub.challenge)
+ */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ platform: string }> }
 ) {
   const { platform } = await params;
-  if (platform === "instagram" || platform === "facebook") {
+  if (platform === "instagram" || platform === "facebook" || platform === "whatsapp") {
     const mode = req.nextUrl.searchParams.get("hub.mode");
     const token = req.nextUrl.searchParams.get("hub.verify_token");
     const challenge = req.nextUrl.searchParams.get("hub.challenge");
 
-    // We can accept any verify token as long as it exists, or validate against an env var.
     if (mode === "subscribe" && challenge) {
       return new NextResponse(challenge, { status: 200 });
     }
@@ -25,133 +26,159 @@ export async function GET(
   return NextResponse.json({ ok: true });
 }
 
+/**
+ * POST /api/social/webhook/[platform]
+ * Ingests incoming social events (DMs, comments, WhatsApp messages) and triggers Ghost Mode AI agents.
+ */
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ platform: string }> }
 ) {
   const { platform } = await params;
   const body = await req.json();
-  if (!supabase) return NextResponse.json({ error: "No DB" }, { status: 500 });
 
   try {
+    // ── 1. Telegram Webhooks ────────────────────────────────────────────────
     if (platform === "telegram") {
-      // Telegram webhook format
       if (!body.message || !body.message.text) return NextResponse.json({ ok: true });
-      
-      const botId = req.nextUrl.searchParams.get("bot_id"); // Ideally passed in the webhook URL
+
       const text = body.message.text;
       const senderId = body.message.from.id.toString();
       const senderName = body.message.from.first_name || "User";
 
-      // Since Telegram webhook doesn't inherently say which bot received it unless we embed it in the URL,
-      // we'll try to find a bot token if the user passes ?bot_id=user_id or we just search by the telegram id.
-      // For this MVP, we assume the bot is registered in social_accounts.
-      
-      // We need the token to reply. We'll find the telegram account.
-      const { data: accounts } = await supabase
-        .from("social_accounts")
-        .select("id, user_id, auth_data")
-        .eq("platform", "telegram")
-        .limit(10);
-        
-      if (!accounts || accounts.length === 0) return NextResponse.json({ ok: true });
-      
-      // Let's just pick the first one that has a ghost bot active for now.
-      for (const account of accounts) {
-        const rawToken = (account.auth_data as any)?.token || (account as any).access_token;
-        if (!rawToken) continue;
-        const token = decryptToken(rawToken);
+      const accounts = await prisma.socialAccount.findMany({
+        where: { platform: "telegram", status: "connected" },
+        take: 10,
+      });
 
-        const { data: bot } = await supabase
-          .from("social_bots")
-          .select("id, status, config, role")
-          .eq("user_id", account.user_id)
-          .eq("status", "active")
-          .limit(1)
-          .single();
+      for (const account of accounts) {
+        if (!account.accessToken) continue;
+        const token = decryptToken(account.accessToken);
+
+        const bot = await prisma.socialBot.findFirst({
+          where: { userId: account.userId, status: "active" },
+        });
 
         if (bot) {
           const rules = (bot.config as any)?.rules || [];
-          
-          // Log that the bot is starting work
           const taskId = await startBotTask(
-            account.user_id,
+            account.userId,
             bot.id,
             `Ghost Mode: Processing Telegram DM from ${senderName}`,
-            `Applying ${rules.filter((r:any) => r.enabled).length} active rules with role: ${bot.role || "general"}`
+            `Applying ${rules.filter((r: any) => r.enabled).length} active rules with role: ${bot.role || "general"}`
           );
 
-          const evalRes = await evaluateIncomingMessage(text, "Telegram", senderName, rules, false, bot.role || "general");
-          
+          const evalRes = await evaluateIncomingMessage(
+            text,
+            "Telegram",
+            senderName,
+            rules,
+            false,
+            bot.role || "general"
+          );
+
           if (evalRes.action === "auto_reply" && evalRes.reply) {
             await dispatchReply({
               platform: "telegram",
               recipientId: senderId,
               token,
-              message: evalRes.reply
+              message: evalRes.reply,
             });
           }
 
-          // Log action
           if (evalRes.action !== "ignore" || (evalRes.lead_score ?? 0) >= 70) {
-            await supabase.from("agent_actions").insert({
-              bot_id: bot.id,
-              action: evalRes.action,
-              comment: evalRes.comment,
-              reply: evalRes.reply || null,
-              platform: "Telegram",
-              reason: "Incoming message rule match"
+            await prisma.agentAction.create({
+              data: {
+                botId: bot.id,
+                action: evalRes.action,
+                comment: evalRes.comment,
+                reply: evalRes.reply || null,
+                platform: "Telegram",
+                reason: "Incoming message rule match",
+              },
             });
           }
 
           if ((evalRes.lead_score ?? 0) >= 70) {
-            await supabase.from("social_inbox").insert({
-              account_id: account.id,
-              user_id: account.user_id,
-              platform: "telegram",
-              external_msg_id: `telegram_${senderId}_${Date.now()}`,
-              sender_id: senderId,
-              sender_name: senderName,
-              content: text,
-              category: "lead",
-              status: "unread",
-              is_comment: false
+            await prisma.socialInbox.create({
+              data: {
+                accountId: account.id,
+                userId: account.userId,
+                platform: "telegram",
+                externalMsgId: `telegram_${senderId}_${Date.now()}`,
+                senderId,
+                senderName,
+                content: text,
+                category: "lead",
+                status: "unread",
+                isComment: false,
+              },
             });
           }
 
           if (taskId) await finishBotTask(taskId);
-          break; // processed
+          break;
         }
       }
     }
 
-    if (platform === "instagram") {
-      // Meta webhook format
-      if (body.object === "instagram") {
-        for (const entry of body.entry) {
-          const accountId = entry.id; // The Instagram Professional Account ID
-          
-          // Is this a DM?
-          if (entry.messaging) {
-            for (const msg of entry.messaging) {
-              if (msg.message && msg.message.text && !msg.message.is_echo) {
-                await handleInstagramInteraction(supabase, accountId, msg.sender.id, "User", msg.message.text, false);
+    // ── 2. WhatsApp Cloud API Webhooks ──────────────────────────────────────
+    if (platform === "whatsapp") {
+      if (body.object === "whatsapp_business_account") {
+        for (const entry of body.entry || []) {
+          for (const change of entry.changes || []) {
+            if (change.field === "messages" && change.value?.messages) {
+              for (const msg of change.value.messages) {
+                if (msg.type === "text" && msg.text?.body) {
+                  const senderPhone = msg.from;
+                  const text = msg.text.body;
+                  const contact = change.value.contacts?.find((c: any) => c.wa_id === senderPhone);
+                  const senderName = contact?.profile?.name || senderPhone;
+                  const phoneId = change.value.metadata?.phone_number_id;
+
+                  await handleWhatsAppInteraction(phoneId, senderPhone, senderName, text, msg.id);
+                }
               }
             }
           }
-          
-          // Is this a comment?
+        }
+      }
+    }
+
+    // ── 3. Instagram & Facebook Meta Webhooks ──────────────────────────────
+    if (platform === "instagram" || platform === "facebook") {
+      if (body.object === "instagram" || body.object === "page") {
+        for (const entry of body.entry || []) {
+          const accountId = entry.id;
+
+          // Direct Messages
+          if (entry.messaging) {
+            for (const msg of entry.messaging) {
+              if (msg.message && msg.message.text && !msg.message.is_echo) {
+                await handleMetaInteraction(accountId, msg.sender.id, "User", msg.message.text, false, platform);
+              }
+            }
+          }
+
+          // Feed Comments
           if (entry.changes) {
             for (const change of entry.changes) {
               if (change.field === "comments" && change.value) {
                 const text = change.value.text;
                 const commentId = change.value.id;
-                const senderName = change.value.from?.username || "User";
-                
-                // Do not reply to our own comments
+                const senderName = change.value.from?.username || change.value.from?.name || "User";
+
                 if (change.value.from?.id === accountId) continue;
 
-                await handleInstagramInteraction(supabase, accountId, change.value.from.id, senderName, text, true, commentId);
+                await handleMetaInteraction(
+                  accountId,
+                  change.value.from?.id,
+                  senderName,
+                  text,
+                  true,
+                  platform,
+                  commentId
+                );
               }
             }
           }
@@ -166,86 +193,160 @@ export async function POST(
   }
 }
 
-async function handleInstagramInteraction(
-  supabase: any,
+async function handleWhatsAppInteraction(
+  phoneId: string | undefined,
+  senderPhone: string,
+  senderName: string,
+  text: string,
+  msgId: string
+) {
+  // Find connected WhatsApp account
+  const account = await prisma.socialAccount.findFirst({
+    where: {
+      platform: "whatsapp",
+      status: "connected",
+      ...(phoneId ? { externalId: phoneId } : {}),
+    },
+  });
+
+  if (!account || !account.accessToken) return;
+  const token = decryptToken(account.accessToken);
+
+  const bot = await prisma.socialBot.findFirst({
+    where: { userId: account.userId, status: "active" },
+  });
+
+  if (!bot) return;
+
+  const rules = (bot.config as any)?.rules || [];
+  const taskId = await startBotTask(
+    account.userId,
+    bot.id,
+    `Ghost Mode: Processing WhatsApp message from ${senderName}`,
+    `Applying ${rules.filter((r: any) => r.enabled).length} active rules with role: ${bot.role || "general"}`
+  );
+
+  const evalRes = await evaluateIncomingMessage(
+    text,
+    "WhatsApp",
+    senderName,
+    rules,
+    false,
+    bot.role || "general"
+  );
+
+  if (evalRes.action === "auto_reply" && evalRes.reply) {
+    await dispatchReply({
+      platform: "whatsapp",
+      recipientId: senderPhone,
+      token,
+      message: evalRes.reply,
+    });
+  }
+
+  if (evalRes.action !== "ignore" || (evalRes.lead_score ?? 0) >= 70) {
+    await prisma.agentAction.create({
+      data: {
+        botId: bot.id,
+        action: evalRes.action,
+        comment: evalRes.comment,
+        reply: evalRes.reply || null,
+        platform: "WhatsApp",
+        reason: "Incoming WhatsApp message rule match",
+      },
+    });
+  }
+
+  if ((evalRes.lead_score ?? 0) >= 70) {
+    await prisma.socialInbox.create({
+      data: {
+        accountId: account.id,
+        userId: account.userId,
+        platform: "whatsapp",
+        externalMsgId: msgId || `wa_${senderPhone}_${Date.now()}`,
+        senderId: senderPhone,
+        senderName,
+        content: text,
+        category: "lead",
+        status: "unread",
+        isComment: false,
+      },
+    });
+  }
+
+  if (taskId) await finishBotTask(taskId);
+}
+
+async function handleMetaInteraction(
   accountId: string,
   senderId: string,
   senderName: string,
   text: string,
   isComment: boolean,
+  platform: string,
   commentId?: string
 ) {
-  // Find the associated user and token
-  const { data: account } = await supabase
-    .from("social_accounts")
-    .select("user_id, auth_data")
-    .eq("external_id", accountId)
-    .limit(1)
-    .single();
+  const account = await prisma.socialAccount.findFirst({
+    where: { externalId: accountId },
+  });
 
-  if (!account) return;
+  if (!account || !account.accessToken) return;
+  const token = decryptToken(account.accessToken);
 
-  const rawToken = (account.auth_data as any)?.access_token || (account as any).access_token;
-  if (!rawToken) return;
-  const token = decryptToken(rawToken);
-
-  // Check if Ghost Mode / Bot is active
-  const { data: bot } = await supabase
-    .from("social_bots")
-    .select("id, status, config")
-    .eq("user_id", account.user_id)
-    .eq("status", "active")
-    .limit(1)
-    .single();
+  const bot = await prisma.socialBot.findFirst({
+    where: { userId: account.userId, status: "active" },
+  });
 
   if (!bot) return;
 
   const rules = (bot.config as any)?.rules || [];
-  
-  // Log that the bot is starting work
   const taskId = await startBotTask(
-    account.user_id,
+    account.userId,
     bot.id,
-    `Ghost Mode: Processing Instagram ${isComment ? "comment" : "DM"} from ${senderName}`,
-    `Applying ${rules.filter((r:any) => r.enabled).length} active rules`
+    `Ghost Mode: Processing ${platform} ${isComment ? "comment" : "DM"} from ${senderName}`,
+    `Applying ${rules.filter((r: any) => r.enabled).length} active rules`
   );
 
-  const evalRes = await evaluateIncomingMessage(text, "Instagram", senderName, rules, isComment);
+  const evalRes = await evaluateIncomingMessage(text, platform, senderName, rules, isComment);
 
   if (evalRes.action === "auto_reply" && evalRes.reply) {
     await dispatchReply({
-      platform: "instagram",
+      platform,
       recipientId: senderId,
       token,
       message: evalRes.reply,
       isComment,
-      commentId
+      commentId,
     });
   }
 
   if (evalRes.action !== "ignore" || (evalRes.lead_score ?? 0) >= 70) {
-    await supabase.from("agent_actions").insert({
-      bot_id: bot.id,
-      action: evalRes.action,
-      comment: evalRes.comment,
-      reply: evalRes.reply || null,
-      platform: "Instagram",
-      reason: `Incoming ${isComment ? "comment" : "DM"} rule match`
+    await prisma.agentAction.create({
+      data: {
+        botId: bot.id,
+        action: evalRes.action,
+        comment: evalRes.comment,
+        reply: evalRes.reply || null,
+        platform: platform.charAt(0).toUpperCase() + platform.slice(1),
+        reason: `Incoming ${isComment ? "comment" : "DM"} rule match`,
+      },
     });
   }
 
   if ((evalRes.lead_score ?? 0) >= 70) {
-    await supabase.from("social_inbox").insert({
-      account_id: account.id,
-      user_id: account.user_id,
-      platform: "instagram",
-      external_msg_id: commentId || `ig_${senderId}_${Date.now()}`,
-      sender_id: senderId,
-      sender_name: senderName,
-      content: text,
-      category: "lead",
-      status: "unread",
-      is_comment: isComment
+    await prisma.socialInbox.create({
+      data: {
+        accountId: account.id,
+        userId: account.userId,
+        platform,
+        externalMsgId: commentId || `${platform}_${senderId}_${Date.now()}`,
+        senderId,
+        senderName,
+        content: text,
+        category: "lead",
+        status: "unread",
+        isComment,
+      },
     });
   }
 

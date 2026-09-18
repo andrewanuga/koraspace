@@ -45,6 +45,28 @@ export async function dispatchReply(params: DispatchReplyParams): Promise<boolea
       return true;
     }
 
+    // ── 2. WhatsApp Cloud API Dispatch ─────────────────────────────────────
+    if (platform === "whatsapp") {
+      if (!message) return false;
+      const phoneId = process.env.WHATSAPP_PHONE_ID || "me";
+      const res = await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          recipient_type: "individual",
+          to: recipientId,
+          type: "text",
+          text: { preview_url: false, body: message },
+        }),
+      });
+      if (!res.ok) throw new Error(`WhatsApp Error: ${await res.text()}`);
+      return true;
+    }
+
     // ── 2. Instagram & Facebook Meta Graph API Dispatch ────────────────────
     if (platform === "instagram" || platform === "facebook") {
       const apiVersion = "v21.0";
