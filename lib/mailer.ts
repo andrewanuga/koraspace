@@ -25,34 +25,40 @@ export function getTransporter(): Transporter | null {
 }
 
 export const MAIL_FROM =
-  process.env.SMTP_FROM || process.env.SMTP_USER || "socially.ai.io@gmail.com";
+  process.env.SMTP_FROM ||
+  (process.env.SMTP_USER ? `"Koraspace" <${process.env.SMTP_USER}>` : '"Koraspace" <support@koraspace.site>');
 
 export async function sendBroadcastEmail(emails: string[], message: string, type: string) {
   const transporter = getTransporter();
   if (!transporter) return;
 
-  const subject = type === "critical" ? "Critical Update from Koraspace" : 
-                  type === "warning" ? "Action Required: Koraspace Warning" : 
-                  "Koraspace Announcement";
+  const subject =
+    type === "critical"
+      ? "Critical Update from Koraspace"
+      : type === "warning"
+      ? "Action Required: Koraspace Warning"
+      : "Koraspace Announcement";
 
   const html = `
-    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px;">
-      <h2 style="color: #333;">${subject}</h2>
-      <p style="color: #555; line-height: 1.6; font-size: 16px;">
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #eaeaea; border-radius: 12px; background-color: #ffffff;">
+      <div style="margin-bottom: 20px;">
+        <h2 style="color: #111827; font-size: 20px; font-weight: 700; margin: 0 0 8px 0;">${subject}</h2>
+      </div>
+      <p style="color: #374151; line-height: 1.6; font-size: 15px; margin: 0 0 24px 0;">
         ${message}
       </p>
-      <hr style="border: 0; border-top: 1px solid #eaeaea; margin: 30px 0;" />
-      <p style="color: #999; font-size: 12px; text-align: center;">
-        You're receiving this because you are registered on Koraspace.
+      <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 24px 0;" />
+      <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0;">
+        You're receiving this because you have an active workspace on <a href="https://koraspace.site" style="color: #3b82f6; text-decoration: none;">Koraspace</a>.
       </p>
     </div>
   `;
 
   // Send individually using Promise.allSettled to prevent one failure from blocking others
   await Promise.allSettled(
-    emails.map(email => 
+    emails.map((email) =>
       transporter.sendMail({
-        from: `"Koraspace" <${MAIL_FROM}>`,
+        from: MAIL_FROM,
         to: email,
         subject,
         html,
