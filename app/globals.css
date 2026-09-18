@@ -898,6 +898,16 @@ html.sai-js [data-reveal] { opacity: 0; }
   --ks-orb: rgba(255, 10, 138, 0.2);
   --ks-numeral: rgba(255, 255, 255, 0.045);
 
+  /* Hairline from a floating card to the thing it annotates. */
+  --ks-connector: rgba(255, 159, 201, 0.35);
+  /* Chart furniture: a dashed baseline marker, and a neutral data bar. Kept
+     apart from --ks-line because a border can be nearly invisible and still
+     do its job, where a bar that cannot be seen is a bug. */
+  --ks-marker: rgba(255, 255, 255, 0.35);
+  --ks-bar: rgba(255, 255, 255, 0.3);
+  --ks-bar-from: #5a3cff;
+  --ks-bar-to: #ff9fc9;
+
   /* product-panel surface ladder */
   --ks-panel-frame: #171717;
   --ks-panel-chrome: #141414;
@@ -942,6 +952,15 @@ html.sai-js [data-reveal] { opacity: 0; }
   --ks-orb: rgba(214, 0, 111, 0.07);
   --ks-numeral: rgba(14, 10, 28, 0.05);
 
+  --ks-connector: rgba(214, 0, 111, 0.4);
+  --ks-marker: rgba(14, 10, 28, 0.3);
+  --ks-bar: rgba(14, 10, 28, 0.22);
+  /* The gradient ends on the accent rather than the pale #ff9fc9: that pink
+     carries a filled bar on a dark ground, but on paper the bar fades out
+     exactly where it is meant to read as strongest. */
+  --ks-bar-from: #5a3cff;
+  --ks-bar-to: #d6006f;
+
   --ks-panel-frame: #ffffff;
   --ks-panel-chrome: #f7f5fa;
   --ks-panel-canvas: #ffffff;
@@ -964,3 +983,33 @@ html.sai-js [data-reveal] { opacity: 0; }
 .kora-light[data-ground="3"] {
   --ks-ground: #ebe5f5;
 }
+
+/* Border and shadow helpers for the marketing scopes.
+ *
+ * These exist because of a pre-existing rule near the top of this file:
+ *
+ *   * { border-color: hsl(var(--border)); }
+ *
+ * It sits outside any @layer, and unlayered CSS beats layered CSS in the
+ * cascade — so it overrides every Tailwind border-color utility in the app.
+ * `border-white/[0.07]` has never actually produced white; it has been
+ * resolving to hsl(240 4% 16%) everywhere. On dark surfaces that reads as a
+ * plausible hairline, which is why it went unnoticed; on a light ground the
+ * same colour is a hard near-black line, which is how it surfaced.
+ *
+ * Moving that rule into @layer base would fix it site-wide and is the real
+ * repair, but it would also restyle every border in the dashboard, so it wants
+ * its own change rather than riding along inside a landing-page stage. These
+ * classes are unlayered too, and a class beats `*` on specificity.
+ *
+ * Same story for box-shadow: shadow-[var(--token)] generates nothing, because
+ * Tailwind's shadow utilities compose through their own custom properties.
+ */
+.ks-line { border-color: var(--ks-line); }
+.ks-line-panel { border-color: var(--ks-panel-line); }
+.ks-line-accent { border-color: var(--ks-accent-line); }
+.ks-line-card { border-color: var(--ks-card-line); }
+.ks-line-marker { border-color: var(--ks-marker); }
+
+.ks-shadow-panel { box-shadow: var(--ks-panel-shadow); }
+.ks-shadow-card { box-shadow: var(--ks-card-shadow); }

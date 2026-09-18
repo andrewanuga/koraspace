@@ -32,10 +32,10 @@ export function PanelFrame({
 }) {
   return (
     <div
-      className={`overflow-hidden rounded-3xl border border-[var(--ks-panel-line)] bg-[var(--ks-panel-frame)] shadow-[var(--ks-panel-shadow)] ${className}`}
+      className={`overflow-hidden rounded-3xl border ks-line-panel bg-[var(--ks-panel-frame)] ks-shadow-panel ${className}`}
     >
       {/* chrome */}
-      <div className="flex items-center justify-between border-b border-[var(--ks-line)] bg-[var(--ks-panel-chrome)] px-4 py-3">
+      <div className="flex items-center justify-between border-b ks-line bg-[var(--ks-panel-chrome)] px-4 py-3">
         <div className="flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--ks-accent)]" />
           <span className="text-[11px] font-semibold tracking-wide text-[var(--ks-ink-2)]">

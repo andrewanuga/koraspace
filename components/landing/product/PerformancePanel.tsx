@@ -32,11 +32,11 @@ export function PerformancePanel() {
   return (
     <PanelFrame title="Performance">
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-[11px] uppercase tracking-[0.14em] text-white/35">
+        <span className="text-[11px] uppercase tracking-[0.14em] text-[var(--ks-ink-3)]">
           Last 4 posts vs your average
         </span>
-        <span className="flex items-center gap-1.5 text-[10px] text-white/35">
-          <span className="h-px w-3 border-t border-dashed border-white/40" />
+        <span className="flex items-center gap-1.5 text-[10px] text-[var(--ks-ink-3)]">
+          <span className="h-px w-3 border-t border-dashed ks-line-marker" />
           average
         </span>
       </div>
@@ -49,20 +49,20 @@ export function PerformancePanel() {
               key={title}
               className={`rounded-xl border px-3.5 py-3 ${
                 top
-                  ? "border-[#ff0a8a]/30 bg-[#ff0a8a]/[0.06]"
-                  : "border-white/[0.07] bg-[#141414]"
+                  ? "ks-line-accent bg-[var(--ks-accent-soft)]"
+                  : "ks-line bg-[var(--ks-panel-chrome)]"
               }`}
             >
               <div className="flex items-center justify-between gap-3">
-                <span className="truncate text-[12.5px] text-white/85">{title}</span>
-                <span className="shrink-0 text-[11px] text-white/40">{kind}</span>
+                <span className="truncate text-[12.5px] text-[var(--ks-ink-2)]">{title}</span>
+                <span className="shrink-0 text-[11px] text-[var(--ks-ink-3)]">{kind}</span>
               </div>
 
-              <div className="relative mt-2 h-[3px] rounded-full bg-white/[0.07]">
+              <div className="relative mt-2 h-[3px] rounded-full bg-[var(--ks-panel-inset)]">
                 {/* the 1× baseline */}
                 <span
                   aria-hidden="true"
-                  className="absolute -top-1 h-[11px] border-l border-dashed border-white/35"
+                  className="absolute -top-1 h-[11px] border-l border-dashed ks-line-marker"
                   style={{ left: `${(1 / SCALE) * 100}%` }}
                 />
                 <motion.span
@@ -72,7 +72,9 @@ export function PerformancePanel() {
                   transition={{ duration: 0.9, delay: 0.1 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   style={{ width: `${(score / SCALE) * 100}%` }}
                   className={`block h-full rounded-full ${
-                    top ? "bg-gradient-to-r from-[#5a3cff] to-[#ff9fc9]" : "bg-white/30"
+                    top
+                      ? "bg-[linear-gradient(to_right,var(--ks-bar-from),var(--ks-bar-to))]"
+                      : "bg-[var(--ks-bar)]"
                   }`}
                 />
               </div>

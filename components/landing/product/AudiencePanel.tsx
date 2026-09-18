@@ -24,7 +24,7 @@ export function AudiencePanel() {
 
   return (
     <PanelFrame title="Audience">
-      <div className="rounded-xl border border-[var(--ks-line)] bg-[var(--ks-panel-raised)] p-4">
+      <div className="rounded-xl border ks-line bg-[var(--ks-panel-raised)] p-4">
         <span className="text-[11px] uppercase tracking-[0.14em] text-[var(--ks-ink-3)]">
           Responds most to
         </span>
@@ -47,7 +47,7 @@ export function AudiencePanel() {
                     ease: [0.16, 1, 0.3, 1],
                   }}
                   style={{ width: `${share}%` }}
-                  className="block h-full rounded-full bg-gradient-to-r from-[#5a3cff] to-[#ff9fc9]"
+                  className="block h-full rounded-full bg-[linear-gradient(to_right,var(--ks-bar-from),var(--ks-bar-to))]"
                 />
               </div>
             </div>
@@ -56,13 +56,13 @@ export function AudiencePanel() {
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-2">
-        <div className="rounded-xl border border-[var(--ks-line)] bg-[var(--ks-panel-chrome)] px-3.5 py-3">
+        <div className="rounded-xl border ks-line bg-[var(--ks-panel-chrome)] px-3.5 py-3">
           <span className="text-[10px] uppercase tracking-[0.14em] text-[var(--ks-ink-3)]">
             Most active
           </span>
           <p className="mt-1 text-[13px] text-[var(--ks-ink-2)]">Thu, 7–9pm</p>
         </div>
-        <div className="rounded-xl border border-[var(--ks-line)] bg-[var(--ks-panel-chrome)] px-3.5 py-3">
+        <div className="rounded-xl border ks-line bg-[var(--ks-panel-chrome)] px-3.5 py-3">
           <span className="text-[10px] uppercase tracking-[0.14em] text-[var(--ks-ink-3)]">
             Prefers
           </span>

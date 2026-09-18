@@ -20,6 +20,8 @@ export function LearnFromResults() {
   return (
     <EditorialScene
       index="06"
+      surface="light"
+      ground={1}
       title="Learn from what happened."
       body="Every post comes back as a signal. KoraSpace reads your results against your own baseline, spots what the winners have in common, and keeps that for the next thing you make."
       visual={
@@ -38,12 +40,12 @@ export function LearnFromResults() {
             className="sm:-bottom-12 sm:-right-4 sm:w-[215px] lg:-right-6 xl:-right-12"
           >
             <div className="flex items-center gap-1.5">
-              <Sparkles className="h-3 w-3 text-[#ff9fc9]" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ff9fc9]">
+              <Sparkles className="h-3 w-3 text-[var(--ks-accent-ink)]" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--ks-accent-ink)]">
                 Pattern found
               </span>
             </div>
-            <p className="mt-1.5 text-[12.5px] leading-relaxed text-white/80">
+            <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--ks-ink-2)]">
               Your two strongest posts both explain how you did something.
             </p>
           </FloatingCard>

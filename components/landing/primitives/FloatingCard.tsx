@@ -75,7 +75,7 @@ export function FloatingCard({
         whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="rounded-2xl border border-[var(--ks-card-line)] bg-[var(--ks-card)] p-4 shadow-[var(--ks-card-shadow)] backdrop-blur-xl"
+        className="rounded-2xl border ks-line-card bg-[var(--ks-card)] p-4 ks-shadow-card backdrop-blur-xl"
       >
         {children}
       </motion.div>

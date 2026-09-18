@@ -35,9 +35,8 @@ export function ConnectorLine({
       <motion.path
         d={d}
         fill="none"
-        stroke="#ff9fc9"
+        stroke="var(--ks-connector)"
         strokeWidth="1"
-        strokeOpacity="0.35"
         strokeLinecap="round"
         vectorEffect="non-scaling-stroke"
         initial={reduce ? { pathLength: 1 } : { pathLength: 0 }}
