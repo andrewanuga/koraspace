@@ -135,9 +135,26 @@ async function fetchProfile(platform: PlatformId, accessToken: string): Promise<
       return { id: d.id, handle: d.name ? `u/${d.name}` : undefined, name: d.name };
     }
     if (platform === "facebook" || platform === "instagram") {
-      const r = await fetch(`https://graph.facebook.com/v19.0/me?fields=id,name&access_token=${accessToken}`);
+      const r = await fetch(
+        `https://graph.facebook.com/v21.0/me?fields=id,name,email,picture{url},ids_for_business,accounts{id,name,access_token,instagram_business_account{id,username,name,profile_picture_url}}&access_token=${accessToken}`
+      );
       const d = await r.json();
-      return { id: d.id, name: d.name, type: platform === "instagram" ? "business" : "page" };
+      const igAccount = d.accounts?.data?.[0]?.instagram_business_account;
+      if (platform === "instagram" && igAccount) {
+        return {
+          id: igAccount.id,
+          handle: igAccount.username ? `@${igAccount.username}` : undefined,
+          name: igAccount.name || d.name,
+          avatar: igAccount.profile_picture_url || d.picture?.data?.url,
+          type: "business",
+        };
+      }
+      return {
+        id: d.id,
+        name: d.name,
+        avatar: d.picture?.data?.url,
+        type: platform === "instagram" ? "business" : "page",
+      };
     }
     if (platform === "threads") {
       const r = await fetch(`https://graph.threads.net/v1.0/me?fields=id,username,name,threads_profile_picture_url&access_token=${accessToken}`);

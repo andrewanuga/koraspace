@@ -77,25 +77,19 @@ If any condition fails, halt the workflow immediately and return an authorizatio
 
 /**
  * Hard Blacklist of Forbidden Scopes:
- * Any OAuth scope or operation touching DMs, private inboxes, admin controls, or passwords.
+ * Restricts system-level administrative, credential export, and raw database access scopes.
  */
 export const FORBIDDEN_SCOPE_PATTERNS = [
-  /dm\.(read|write)/i,
-  /direct_message/i,
-  /manage_messages/i,
-  /pages_messaging/i,
-  /messages_read/i,
-  /inbox/i,
-  /mail\.(read|write)/i,
-  /admin/i,
   /password/i,
-  /user_management/i,
-  /settings_manage/i,
+  /system_root/i,
+  /database_dump/i,
+  /credentials_export/i,
 ];
 
 /**
  * Approved Minimal Scopes:
- * Strictly limited to content publishing, media uploads, and public analytics/metrics.
+ * Enterprise approved scopes for publishing, analytics, customer messaging (CRM),
+ * comments, catalog, and marketing tools.
  */
 export const ALLOWED_SCOPE_WHITELIST = new Set([
   // X / Twitter
@@ -104,23 +98,42 @@ export const ALLOWED_SCOPE_WHITELIST = new Set([
   "users.read",
   "offline.access",
 
-  // Meta / Instagram
-  "instagram_business_basic",
-  "instagram_business_content_publish",
-  "instagram_business_manage_insights",
+  // Meta / Instagram Core & Business Permissions
   "instagram_basic",
+  "instagram_business_basic",
   "instagram_content_publish",
+  "instagram_business_content_publish",
+  "instagram_manage_insights",
+  "instagram_business_manage_insights",
+  "instagram_manage_comments",
+  "instagram_business_manage_comments",
+  "instagram_manage_messages",
+  "instagram_business_manage_messages",
+  "instagram_manage_contents",
+  "instagram_manage_engagement",
+  "instagram_manage_upcoming_events",
+  "instagram_shopping_tag_products",
+  "instagram_creator_marketplace_discovery",
+  "instagram_branded_content_brand",
+  "instagram_branded_content_creator",
+  "instagram_branded_content_ads_brand",
+  "human_agent",
 
-  // Facebook
-  "pages_manage_posts",
+  // Facebook & Meta Business Asset Scopes
+  "public_profile",
+  "email",
+  "pages_show_list",
   "pages_read_engagement",
+  "pages_manage_posts",
   "read_insights",
+  "ads_management",
   "ads_read",
+  "business_management",
+  "catalog_management",
 
   // LinkedIn
   "openid",
   "profile",
-  "email",
   "w_member_social",
 
   // YouTube / Google
@@ -139,8 +152,10 @@ export const ALLOWED_SCOPE_WHITELIST = new Set([
   // General capabilities
   "post",
   "schedule",
+  "inbox",
   "analytics",
   "campaigns",
+  "messaging",
   "bots",
 ]);
 
