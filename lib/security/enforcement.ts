@@ -149,6 +149,13 @@ export const ALLOWED_SCOPE_WHITELIST = new Set([
   "submit",
   "read",
 
+  // Pinterest
+  "boards:read",
+  "boards:write",
+  "pins:read",
+  "pins:write",
+  "user_accounts:read",
+
   // Slack Bot & User Scopes
   "app_mentions:read",
   "assistant:write",

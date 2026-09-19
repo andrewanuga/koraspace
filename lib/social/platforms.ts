@@ -3,7 +3,7 @@
 
 export type PlatformId =
   | "instagram" | "youtube" | "x" | "linkedin" | "facebook"
-  | "threads" | "snapchat" | "reddit" | "telegram" | "whatsapp";
+  | "threads" | "snapchat" | "reddit" | "telegram" | "whatsapp" | "pinterest";
 
 export type Capability =
   | "post" | "schedule" | "inbox" | "analytics" | "campaigns"
@@ -175,6 +175,19 @@ export const PLATFORMS: Record<PlatformId, PlatformDef> = {
     capabilities: ["messaging", "schedule", "bots", "inbox"],
     tokenSetup: { label: "WhatsApp Cloud API token + phone number ID", docs: "https://developers.facebook.com/docs/whatsapp/cloud-api" },
     note: "Manage bots, reply/message when away, schedule messages, and summarize flagged groups.",
+  },
+  pinterest: {
+    id: "pinterest", name: "Pinterest", category: "Publishing", color: "#BD081C",
+    connectType: "oauth", env: ["PINTEREST_APP_ID", "PINTEREST_APP_SECRET"],
+    capabilities: ["post", "schedule", "analytics", "campaigns", "bots"],
+    oauth: {
+      authorizeUrl: "https://www.pinterest.com/oauth/",
+      tokenUrl: "https://api.pinterest.com/v5/oauth/token",
+      scopes: ["boards:read", "boards:write", "pins:read", "pins:write", "user_accounts:read"],
+      docs: "https://developers.pinterest.com/docs/api/v5/",
+      clientIdEnv: "PINTEREST_APP_ID", clientSecretEnv: "PINTEREST_APP_SECRET",
+    },
+    note: "Publish pins, create boards, schedule visual campaigns, and sync analytics.",
   },
 };
 

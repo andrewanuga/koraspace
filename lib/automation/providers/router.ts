@@ -27,6 +27,9 @@ import { klaviyoProvider } from "./email/klaviyo";
 import { hubspotProvider } from "./crm/hubspot";
 import { salesforceProvider } from "./crm/salesforce";
 
+// Booking
+import { calProvider, calendlyProvider } from "./booking/cal";
+
 // Commerce
 import { shopifyProvider } from "./commerce/shopify";
 import { stripeProvider } from "./commerce/stripe";
@@ -56,6 +59,8 @@ const adapters: Record<string, any> = {
   salesforce: salesforceProvider,
   shopify: shopifyProvider,
   stripe: stripeProvider,
+  cal_com: calProvider,
+  calendly: calendlyProvider,
   google_sheets: googleSheetsProvider,
   airtable: airtableProvider,
   webhook: genericProvider,

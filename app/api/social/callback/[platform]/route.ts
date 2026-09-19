@@ -59,8 +59,8 @@ export async function GET(
     });
     const headers: Record<string, string> = { "Content-Type": "application/x-www-form-urlencoded" };
 
-    // x + reddit authenticate the token request with HTTP Basic.
-    if (platform === "x" || platform === "reddit") {
+    // x + reddit + pinterest authenticate the token request with HTTP Basic.
+    if (platform === "x" || platform === "reddit" || platform === "pinterest") {
       headers.Authorization = "Basic " + Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
       if (platform === "x") body.set("code_verifier", state); // PKCE (plain)
     } else {
@@ -133,6 +133,17 @@ async function fetchProfile(platform: PlatformId, accessToken: string): Promise<
       const r = await fetch("https://oauth.reddit.com/api/v1/me", { headers: { ...auth, "User-Agent": "koraspace/1.0" } });
       const d = await r.json();
       return { id: d.id, handle: d.name ? `u/${d.name}` : undefined, name: d.name };
+    }
+    if (platform === "pinterest") {
+      const r = await fetch("https://api.pinterest.com/v5/user_account", { headers: auth });
+      const d = await r.json();
+      return {
+        id: d.id || d.username,
+        handle: d.username ? `@${d.username}` : undefined,
+        name: d.business_name || d.username,
+        avatar: d.profile_image,
+        type: "business",
+      };
     }
     if (platform === "facebook" || platform === "instagram") {
       const r = await fetch(

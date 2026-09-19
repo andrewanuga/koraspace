@@ -3,12 +3,13 @@
 
 export type ToolId =
   | "google_calendar" | "google_analytics" | "google_sheets"
-  | "slack" | "notion" | "discord" | "mailchimp" | "zapier" | "webhook";
+  | "slack" | "notion" | "discord" | "mailchimp" | "zapier" | "webhook"
+  | "cal_com" | "calendly" | "shopify" | "elevenlabs";
 
 export interface ToolDef {
   id: ToolId;
   name: string;
-  category: "Calendar" | "Analytics" | "Productivity" | "Automation" | "Email";
+  category: "Calendar" | "Analytics" | "Productivity" | "Automation" | "Email" | "Commerce" | "AI & Media";
   color: string;
   desc: string;
   connectType: "oauth" | "api_key" | "webhook";
@@ -136,6 +137,30 @@ export const TOOLS: Record<ToolId, ToolDef> = {
     desc: "Push events to your own HTTPS endpoint.",
     connectType: "webhook", env: [],
     keySetup: { label: "Your webhook URL", docs: "https://en.wikipedia.org/wiki/Webhook" },
+  },
+  cal_com: {
+    id: "cal_com", name: "Cal.com", category: "Calendar", color: "#292929",
+    desc: "Book calls directly from social DMs & comments into your calendar.",
+    connectType: "api_key", env: ["CAL_COM_API_KEY"],
+    keySetup: { label: "Cal.com API key (cal_live_...)", docs: "https://cal.com/docs/api-reference/v2/introduction" },
+  },
+  calendly: {
+    id: "calendly", name: "Calendly", category: "Calendar", color: "#006BFF",
+    desc: "Convert high-intent social conversations into booked demo calls.",
+    connectType: "api_key", env: ["CALENDLY_API_KEY"],
+    keySetup: { label: "Calendly Personal Access Token", docs: "https://developer.calendly.com/api-docs" },
+  },
+  shopify: {
+    id: "shopify", name: "Shopify", category: "Commerce", color: "#95BF47",
+    desc: "Sync product catalog, inventory, and generate cart checkout links for DM-to-Sale.",
+    connectType: "api_key", env: ["SHOPIFY_ADMIN_ACCESS_TOKEN", "SHOPIFY_STORE_DOMAIN"],
+    keySetup: { label: "Shopify Admin API Token (shpat_...)", docs: "https://shopify.dev/docs/apps/auth/admin-app-access-tokens" },
+  },
+  elevenlabs: {
+    id: "elevenlabs", name: "ElevenLabs AI Audio", category: "AI & Media", color: "#6366F1",
+    desc: "Instant ultra-realistic voiceover generation for video reels and audio repurposing.",
+    connectType: "api_key", env: ["ELEVENLABS_API_KEY"],
+    keySetup: { label: "ElevenLabs API Key", docs: "https://elevenlabs.io/docs/api-reference/quick-start" },
   },
 };
 
