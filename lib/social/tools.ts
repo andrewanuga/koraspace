@@ -15,6 +15,7 @@ export interface ToolDef {
   env: string[];
   oauth?: {
     authorizeUrl: string; tokenUrl: string; scopes: string[];
+    userScopes?: string[];
     clientIdEnv: string; clientSecretEnv: string; docs: string;
     extra?: Record<string, string>;
   };
@@ -51,12 +52,51 @@ export const TOOLS: Record<ToolId, ToolDef> = {
   },
   slack: {
     id: "slack", name: "Slack", category: "Productivity", color: "#4A154B",
-    desc: "Get lead + agent alerts in a channel.",
+    desc: "Autonomous AI Agent, lead alerts, channel triage, and canvas collaboration in Slack.",
     connectType: "oauth", env: ["SLACK_CLIENT_ID", "SLACK_CLIENT_SECRET"],
     oauth: {
-      authorizeUrl: "https://slack.com/oauth/v2/authorize", tokenUrl: "https://slack.com/api/oauth.v2.access",
-      scopes: ["chat:write", "channels:read", "incoming-webhook"],
-      clientIdEnv: "SLACK_CLIENT_ID", clientSecretEnv: "SLACK_CLIENT_SECRET", docs: "https://api.slack.com/apps",
+      authorizeUrl: "https://slack.com/oauth/v2/authorize",
+      tokenUrl: "https://slack.com/api/oauth.v2.access",
+      scopes: [
+        "app_mentions:read",
+        "assistant:write",
+        "bookmarks:read",
+        "bookmarks:write",
+        "calls:read",
+        "calls:write",
+        "canvases:read",
+        "canvases:write",
+        "channels:history",
+        "channels:join",
+        "channels:manage",
+        "channels:read",
+        "channels:write.invites",
+        "channels:write.topic",
+        "chat:write",
+        "chat:write.customize",
+        "commands",
+        "incoming-webhook",
+        "users:write",
+      ],
+      userScopes: [
+        "bookmarks:read",
+        "bookmarks:write",
+        "calls:read",
+        "channels:history",
+        "channels:read",
+        "channels:write",
+        "chat:write",
+        "email",
+        "identity.avatar",
+        "im:history",
+        "profile",
+        "users:read",
+        "users:read.email",
+        "users:write",
+      ],
+      clientIdEnv: "SLACK_CLIENT_ID",
+      clientSecretEnv: "SLACK_CLIENT_SECRET",
+      docs: "https://api.slack.com/apps",
     },
   },
   notion: {
