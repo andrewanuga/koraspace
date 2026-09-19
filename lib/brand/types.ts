@@ -71,4 +71,10 @@ export interface BrandContext {
   styles: string[];
   memories: Array<{ title: string; content: string | null }>;
   knowledge: Array<{ title: string; content: string | null; type: string }>;
+  siteAnalytics?: {
+    connected_sites: number;
+    top_pages?: Array<{ path: string; views: number }>;
+    total_events?: number;
+    summary?: string;
+  } | null;
 }

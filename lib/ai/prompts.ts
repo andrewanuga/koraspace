@@ -79,6 +79,9 @@ export function buildChatSystemPrompt(
         .join("\n");
       brandBits.push(`Persistent Brand Directives & Rules (Always enforce):\n${memoryRules}`);
     }
+    if (brandContext.siteAnalytics?.summary) {
+      brandBits.push(`Live Connected Website Telemetry & Visitor Behavior:\n${brandContext.siteAnalytics.summary}\nUse this live data to craft topical posts that promote high-interest pages or address customer dropoff points.`);
+    }
     if (brandBits.length > 0) {
       sections.push(`## KoraSpace Brand Brain Context\n${brandBits.join("\n\n")}`);
     }

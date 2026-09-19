@@ -492,3 +492,47 @@ model ClientCampaign {
 
   @@map("client_campaigns")
 }
+
+model Integration {
+  id            String   @id @default(uuid())
+  user_id       String
+  provider      String
+  status        String   @default("connected")
+  account_label String?
+  config        Json     @default("{}")
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@unique([user_id, provider])
+  @@map("integrations")
+}
+
+model SiteConnection {
+  id          String      @id @default(uuid())
+  user_id     String
+  site_name   String
+  site_url    String
+  api_key     String      @unique
+  verified    Boolean     @default(false)
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+  events      SiteEvent[]
+
+  @@map("site_connections")
+}
+
+model SiteEvent {
+  id          String         @id @default(uuid())
+  site_id     String
+  event_type  String         // pageview, click, lead, checkout, custom
+  path        String?
+  referrer    String?
+  user_agent  String?
+  metadata    Json           @default("{}")
+  created_at  DateTime       @default(now())
+
+  site        SiteConnection @relation(fields: [site_id], references: [id], onDelete: Cascade)
+
+  @@map("site_events")
+}
+
