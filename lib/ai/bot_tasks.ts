@@ -1,8 +1,7 @@
-import { createAdminClient } from "@/lib/supabase/admin";
-import type { TaskPriority } from "@/lib/supabase/types";
+import { prisma } from "@/lib/db";
 
 /**
- * Registers an ongoing task for an autonomous bot.
+ * Registers an ongoing task for an autonomous bot in PostgreSQL via Prisma.
  * Returns the task ID so it can be finished later.
  */
 export async function startBotTask(
@@ -10,30 +9,20 @@ export async function startBotTask(
   botId: string,
   title: string,
   notes: string = "",
-  priority: TaskPriority = "normal"
+  priority: string = "normal"
 ): Promise<string | null> {
-  const supabase = createAdminClient();
-  if (!supabase) return null;
-
   try {
-    const { data, error } = await supabase
-      .from("tasks")
-      .insert({
+    const task = await prisma.task.create({
+      data: {
         user_id: userId,
         bot_id: botId,
         title,
         notes,
         priority,
-        status: "ongoing"
-      })
-      .select("id")
-      .single();
-
-    if (error) {
-      console.error("[BotTasks] Error starting task:", error.message);
-      return null;
-    }
-    return data?.id || null;
+        status: "ongoing",
+      },
+    });
+    return task.id;
   } catch (err) {
     console.error("[BotTasks] Exception starting task:", err);
     return null;
@@ -44,17 +33,14 @@ export async function startBotTask(
  * Marks a bot task as finished.
  */
 export async function finishBotTask(taskId: string): Promise<void> {
-  const supabase = createAdminClient();
-  if (!supabase) return;
-
   try {
-    await supabase
-      .from("tasks")
-      .update({
+    await prisma.task.update({
+      where: { id: taskId },
+      data: {
         status: "finished",
-        completed_at: new Date().toISOString()
-      })
-      .eq("id", taskId);
+        completed_at: new Date(),
+      },
+    });
   } catch (err) {
     console.error("[BotTasks] Exception finishing task:", err);
   }

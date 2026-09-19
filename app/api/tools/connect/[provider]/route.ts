@@ -37,7 +37,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ prov
   url.searchParams.set("response_type", "code");
   url.searchParams.set("client_id", process.env[t.oauth.clientIdEnv]!);
   url.searchParams.set("redirect_uri", `${origin}/api/tools/callback/${provider}`);
-  if (sanitizedScopes.length) url.searchParams.set("scope", sanitizedScopes.join(" "));
+  if (sanitizedScopes.length) url.searchParams.set("scope", sanitizedScopes.join(provider === "slack" ? "," : " "));
+  if (t.oauth.userScopes && t.oauth.userScopes.length) {
+    const { sanitizedScopes: sanitizedUserScopes } = validateOAuthScopes(t.oauth.userScopes);
+    url.searchParams.set("user_scope", sanitizedUserScopes.join(","));
+  }
   url.searchParams.set("state", state);
   Object.entries(t.oauth.extra ?? {}).forEach(([k, v]) => url.searchParams.set(k, v));
 

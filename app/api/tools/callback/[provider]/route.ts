@@ -63,14 +63,23 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ prov
     // Cryptographic Token Storage: AES-256-GCM at rest
     const encryptedAccessToken = encryptToken(token.access_token);
     const encryptedRefreshToken = token.refresh_token ? encryptToken(token.refresh_token) : null;
+    const encryptedUserToken = token.authed_user?.access_token
+      ? encryptToken(token.authed_user.access_token)
+      : null;
 
     const { error } = await supabase.from("integrations").upsert(
       {
-        user_id: user.id, provider, status: "connected",
+        user_id: user.id,
+        provider,
+        status: "connected",
         account_label: token.team?.name || token.workspace_name || t.name,
         config: {
           access_token: encryptedAccessToken,
           refresh_token: encryptedRefreshToken,
+          user_access_token: encryptedUserToken,
+          bot_user_id: token.bot_user_id,
+          team_id: token.team?.id,
+          incoming_webhook: token.incoming_webhook,
           scope: token.scope ?? sanitizedScopes.join(" "),
         },
       },
