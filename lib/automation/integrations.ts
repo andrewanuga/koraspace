@@ -401,13 +401,17 @@ export const INTEGRATIONS: IntegrationDefinition[] = [
     actions: [
       "create_contact",
       "update_contact",
+      "get_contacts",
       "create_deal",
       "update_deal",
+      "sync_lead",
     ],
     capabilities: ["trigger", "crm", "webhook"],
     requiredScopes: {
       create_contact: ["crm.objects.contacts.write"],
+      get_contacts: ["crm.objects.contacts.read"],
       create_deal: ["crm.objects.deals.write"],
+      sync_lead: ["crm.objects.contacts.write", "crm.objects.deals.write"],
     },
     rateLimits: { requestsPerMinute: 100 },
   },
