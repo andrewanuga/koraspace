@@ -156,6 +156,16 @@ export const ALLOWED_SCOPE_WHITELIST = new Set([
   "pins:write",
   "user_accounts:read",
 
+  // HubSpot CRM Scopes
+  "crm.objects.contacts.read",
+  "crm.objects.contacts.write",
+  "crm.objects.deals.read",
+  "crm.objects.deals.write",
+  "crm.schemas.contacts.read",
+  "crm.schemas.deals.read",
+  "crm.objects.companies.read",
+  "crm.objects.companies.write",
+
   // Slack Bot & User Scopes
   "app_mentions:read",
   "assistant:write",

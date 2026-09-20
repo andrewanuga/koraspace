@@ -4,12 +4,12 @@
 export type ToolId =
   | "google_calendar" | "google_analytics" | "google_sheets"
   | "slack" | "notion" | "discord" | "mailchimp" | "zapier" | "webhook"
-  | "cal_com" | "calendly" | "shopify" | "elevenlabs";
+  | "cal_com" | "calendly" | "shopify" | "elevenlabs" | "hubspot";
 
 export interface ToolDef {
   id: ToolId;
   name: string;
-  category: "Calendar" | "Analytics" | "Productivity" | "Automation" | "Email" | "Commerce" | "AI & Media";
+  category: "Calendar" | "Analytics" | "Productivity" | "Automation" | "Email" | "Commerce" | "AI & Media" | "CRM";
   color: string;
   desc: string;
   connectType: "oauth" | "api_key" | "webhook";
@@ -161,6 +161,12 @@ export const TOOLS: Record<ToolId, ToolDef> = {
     desc: "Instant ultra-realistic voiceover generation for video reels and audio repurposing.",
     connectType: "api_key", env: ["ELEVENLABS_API_KEY"],
     keySetup: { label: "ElevenLabs API Key", docs: "https://elevenlabs.io/docs/api-reference/quick-start" },
+  },
+  hubspot: {
+    id: "hubspot", name: "HubSpot", category: "CRM", color: "#FF7A59",
+    desc: "Sync contacts, inbound leads, customer lifecycle, and deals with HubSpot CRM.",
+    connectType: "api_key", env: ["HUBSPOT_ACCESS_TOKEN"],
+    keySetup: { label: "HubSpot Private App Access Token (pat-na1-...)", docs: "https://developers.hubspot.com/docs/api/private-apps" },
   },
 };
 
