@@ -35,6 +35,14 @@ export const metadata: Metadata = {
   icons: {
     icon: "/logo.png",
   },
+  verification: {
+    other: {
+      "p:domain_verify": "7d4ec113260e901df3aea8b58f7e61f3",
+    },
+  },
+  other: {
+    "p:domain_verify": "7d4ec113260e901df3aea8b58f7e61f3",
+  },
   openGraph: {
     title: "Koraspace — AI-Powered Social Media Manager",
     description:
@@ -55,6 +63,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <meta name="p:domain_verify" content="7d4ec113260e901df3aea8b58f7e61f3" />
         <link
           rel="stylesheet"
           href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
