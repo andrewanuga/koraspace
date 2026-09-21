@@ -52,29 +52,31 @@ function oneOf<T extends string>(v: unknown, allowed: readonly T[], field: strin
 // ── Onboarding schema ───────────────────────────────────────────────────────
 
 export interface OnboardingPayload {
-  persona: "creator" | "marketer";
+  persona: "client" | "creator" | "marketer" | string;
   username: string;
-  full_name: string;
+  full_name?: string;
   goals?: string[];
   platforms?: string[];
   contentFormats?: string[];
   niche?: string;
   industry?: string;
   audienceRange?: string;
-  postingCadence?: string;
+  postingCadence?: number | string;
   automationLevel?: string;
+  targetAudience?: string;
+  businessType?: string;
 }
 
-const PERSONAS = ["creator", "marketer"] as const;
+const PERSONAS = ["client", "creator", "marketer"] as const;
 
 export const onboardingSchema = {
   safeParse(raw: unknown): SafeParseResult<OnboardingPayload> {
     const data = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
     const issues: Issue[] = [];
 
-    const persona = trimStr(data.persona);
+    const persona = trimStr(data.persona) || "creator";
     const usernameRaw = trimStr(data.username, 50);
-    const full_name = trimStr(data.full_name, 120);
+    const fullNameRaw = isString(data.full_name) ? trimStr(data.full_name, 120) : undefined;
 
     const r1 = oneOf(persona, PERSONAS, "persona");
     if (r1) issues.push(r1);
@@ -82,35 +84,42 @@ export const onboardingSchema = {
     const r2 = required(usernameRaw, "username");
     if (r2) issues.push(r2);
     else {
-      const r3 = minLen(usernameRaw, 3, "username");
+      const r3 = minLen(usernameRaw, 2, "username");
       if (r3) issues.push(r3);
-      const r4 = pattern(usernameRaw, /^[a-z0-9_]+$/i, "username", "Username may only contain letters, numbers, and underscores.");
+      const r4 = pattern(usernameRaw, /^[a-zA-Z0-9_.-]+$/, "username", "Username may only contain letters, numbers, hyphens, and underscores.");
       if (r4) issues.push(r4);
     }
 
-    const r5 = required(full_name, "full_name");
-    if (r5) issues.push(r5);
-    else {
-      const r6 = minLen(full_name, 2, "full_name");
-      if (r6) issues.push(r6);
+    if (fullNameRaw && fullNameRaw.length > 120) {
+      issues.push({ path: "full_name", message: "full_name must be at most 120 characters." });
     }
 
     if (issues.length > 0) return { success: false, error: { issues } };
 
+    let postingCadence: number | string | undefined = undefined;
+    if (typeof data.postingCadence === "number") {
+      postingCadence = data.postingCadence;
+    } else if (isString(data.postingCadence)) {
+      const num = parseInt(data.postingCadence, 10);
+      postingCadence = isNaN(num) ? data.postingCadence.trim().slice(0, 50) : num;
+    }
+
     return {
       success: true,
       data: {
-        persona: persona as "creator" | "marketer",
+        persona,
         username: usernameRaw.toLowerCase(),
-        full_name,
-        goals: isStringArray(data.goals) ? data.goals.slice(0, 10) : undefined,
-        platforms: isStringArray(data.platforms) ? data.platforms.slice(0, 10) : undefined,
-        contentFormats: isStringArray(data.contentFormats) ? data.contentFormats.slice(0, 10) : undefined,
+        full_name: fullNameRaw,
+        goals: isStringArray(data.goals) ? data.goals.slice(0, 20) : undefined,
+        platforms: isStringArray(data.platforms) ? data.platforms.slice(0, 20) : undefined,
+        contentFormats: isStringArray(data.contentFormats) ? data.contentFormats.slice(0, 20) : undefined,
         niche: isString(data.niche) ? data.niche.trim().slice(0, 200) : undefined,
         industry: isString(data.industry) ? data.industry.trim().slice(0, 100) : undefined,
         audienceRange: isString(data.audienceRange) ? data.audienceRange.trim().slice(0, 50) : undefined,
-        postingCadence: isString(data.postingCadence) ? data.postingCadence.trim().slice(0, 50) : undefined,
+        postingCadence,
         automationLevel: isString(data.automationLevel) ? data.automationLevel.trim().slice(0, 50) : undefined,
+        targetAudience: isString(data.targetAudience) ? data.targetAudience.trim().slice(0, 200) : undefined,
+        businessType: isString(data.businessType) ? data.businessType.trim().slice(0, 100) : undefined,
       },
     };
   },

@@ -807,9 +807,12 @@ export function OnboardingFlow({
       const data = await res.json();
 
       if (!res.ok || !data.ok) {
+        const errorMsg = Array.isArray(data?.issues) && data.issues.length > 0
+          ? data.issues.join(". ")
+          : (data?.error || "Please check your details and try again.");
         toastError(
           "Couldn't finish setup",
-          data?.error || "Please check your details and try again."
+          errorMsg
         );
         return;
       }

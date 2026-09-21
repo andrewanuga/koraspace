@@ -43,10 +43,9 @@ export async function POST(req: NextRequest) {
       audienceRange,
       postingCadence,
       automationLevel,
+      targetAudience,
+      businessType,
     } = parsed.data;
-
-    // Preserve extra unvalidated fields from body for DB upsert.
-    const { targetAudience, businessType } = (body as Record<string, unknown>);
 
     const cleanUsername = username;
 

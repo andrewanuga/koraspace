@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-
-import { createClient } from "@/lib/supabase/server";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/db";
 import { OnboardingFlow } from "./OnboardingFlow";
 import { OnboardingBackground } from "./OnboardingBackground";
 
@@ -10,23 +10,22 @@ export const metadata = {
 };
 
 export default async function OnboardingPage() {
-  const supabase = await createClient();
+  const session = await auth();
+  const user = session?.user;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  if (!user?.id) {
     redirect("/login");
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select(
-      "full_name, username, onboarded, persona"
-    )
-    .eq("id", user.id)
-    .single();
+  const profile = await prisma.profile.findUnique({
+    where: { id: user.id },
+    select: {
+      full_name: true,
+      username: true,
+      onboarded: true,
+      persona: true,
+    },
+  });
 
   if (profile?.onboarded) {
     redirect("/dashboard");
