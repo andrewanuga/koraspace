@@ -535,4 +535,3 @@ model SiteEvent {
 
   @@map("site_events")
 }
-

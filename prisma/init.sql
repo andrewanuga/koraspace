@@ -1,4 +1,4 @@
--- ==============================================================================
+﻿-- ==============================================================================
 -- KORASPACE COMPLETE DATABASE INITIALIZATION SCHEMA (SUPABASE POSTGRESQL)
 -- ==============================================================================
 -- Idempotent schema initialization: Safe to run multiple times without data loss.
@@ -943,4 +943,3 @@ DO $$
 BEGIN
     EXECUTE 'CREATE POLICY "Service Role Full Access" ON "site_connections" FOR ALL TO service_role USING (true) WITH CHECK (true)';
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-

@@ -86,12 +86,12 @@ export default function SignupPage() {
           </div>
 
           <h2 className="font-display text-2xl font-semibold text-white">
-            Check your email
+            Workspace Created!
           </h2>
 
           <p className="mt-3 text-sm leading-relaxed text-white/55">
-            We sent a verification link to{" "}
-            <span className="font-semibold text-white">{email}</span>. Click the link in the email to activate your workspace.
+            Your Koraspace account is ready and an activation email was sent to{" "}
+            <span className="font-semibold text-white">{email}</span>. You can now sign in immediately to launch your workspace.
           </p>
 
           <div className="mt-8">
@@ -99,7 +99,7 @@ export default function SignupPage() {
               href="/login"
               className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#ff0a8a] px-6 text-xs font-semibold text-white transition-all hover:bg-[#ff299b] hover:shadow-[0_8px_25px_rgba(255,10,138,0.20)]"
             >
-              <span>Return to sign in</span>
+              <span>Sign in to your workspace</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>

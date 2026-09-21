@@ -28,41 +28,88 @@ export const MAIL_FROM =
   process.env.SMTP_FROM ||
   (process.env.SMTP_USER ? `"Koraspace" <${process.env.SMTP_USER}>` : '"Koraspace" <support@koraspace.site>');
 
-export async function sendBroadcastEmail(emails: string[], message: string, type: string) {
+export async function sendWelcomeVerificationEmail(email: string, name: string) {
   const transporter = getTransporter();
   if (!transporter) return;
 
-  const subject =
-    type === "critical"
-      ? "Critical Update from Koraspace"
-      : type === "warning"
-      ? "Action Required: Koraspace Warning"
-      : "Koraspace Announcement";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://koraspace.site";
+  const loginUrl = `${appUrl}/login`;
+  const subject = "Welcome to Koraspace — Your Workspace is Ready!";
 
   const html = `
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #eaeaea; border-radius: 12px; background-color: #ffffff;">
-      <div style="margin-bottom: 20px;">
-        <h2 style="color: #111827; font-size: 20px; font-weight: 700; margin: 0 0 8px 0;">${subject}</h2>
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 24px; border: 1px solid #1f2937; border-radius: 16px; background-color: #111827; color: #f3f4f6;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h1 style="color: #ffffff; font-size: 24px; font-weight: 800; margin: 0;">Kora<span style="color: #ff0a8a;">Space</span></h1>
+        <p style="color: #9ca3af; font-size: 13px; margin-top: 4px;">Your AI Social Media Operating System</p>
       </div>
-      <p style="color: #374151; line-height: 1.6; font-size: 15px; margin: 0 0 24px 0;">
-        ${message}
-      </p>
-      <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 24px 0;" />
-      <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0;">
-        You're receiving this because you have an active workspace on <a href="https://koraspace.site" style="color: #3b82f6; text-decoration: none;">Koraspace</a>.
+      
+      <div style="background-color: #1f2937; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+        <h2 style="color: #ffffff; font-size: 18px; margin: 0 0 12px 0;">Welcome aboard, ${name || "Creator"}! 🎉</h2>
+        <p style="color: #d1d5db; line-height: 1.6; font-size: 14px; margin: 0 0 16px 0;">
+          Your Koraspace workspace has been successfully created. You're now equipped with multi-platform publishing, autonomous AI bot engines, and brand memory across 11 social networks.
+        </p>
+        <div style="text-align: center; margin: 28px 0 16px 0;">
+          <a href="${loginUrl}" style="background-color: #ff0a8a; color: #ffffff; padding: 14px 32px; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 10px; display: inline-block;">
+            Sign In & Launch Workspace →
+          </a>
+        </div>
+      </div>
+
+      <p style="color: #6b7280; font-size: 12px; text-align: center; margin: 0;">
+        Need help? Reply directly to this email or reach us at <a href="mailto:support@koraspace.site" style="color: #ff0a8a; text-decoration: none;">support@koraspace.site</a>.
       </p>
     </div>
   `;
 
-  // Send individually using Promise.allSettled to prevent one failure from blocking others
-  await Promise.allSettled(
-    emails.map((email) =>
-      transporter.sendMail({
-        from: MAIL_FROM,
-        to: email,
-        subject,
-        html,
-      })
-    )
-  );
+  try {
+    await transporter.sendMail({
+      from: MAIL_FROM,
+      to: email,
+      subject,
+      html,
+    });
+  } catch (err) {
+    console.error("[Mailer] Failed to send welcome verification email:", err);
+  }
 }
+
+export async function sendPasswordResetEmail(email: string, resetUrl: string) {
+  const transporter = getTransporter();
+  if (!transporter) return;
+
+  const subject = "Reset your Koraspace password";
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 24px; border: 1px solid #1f2937; border-radius: 16px; background-color: #111827; color: #f3f4f6;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h1 style="color: #ffffff; font-size: 24px; font-weight: 800; margin: 0;">Kora<span style="color: #ff0a8a;">Space</span></h1>
+      </div>
+      
+      <div style="background-color: #1f2937; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+        <h2 style="color: #ffffff; font-size: 18px; margin: 0 0 12px 0;">Password Reset Request</h2>
+        <p style="color: #d1d5db; line-height: 1.6; font-size: 14px; margin: 0 0 16px 0;">
+          We received a request to reset the password for your Koraspace account. Click the button below to choose a new password:
+        </p>
+        <div style="text-align: center; margin: 28px 0 16px 0;">
+          <a href="${resetUrl}" style="background-color: #ff0a8a; color: #ffffff; padding: 14px 32px; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 10px; display: inline-block;">
+            Reset Password →
+          </a>
+        </div>
+        <p style="color: #9ca3af; font-size: 12px; margin: 16px 0 0 0;">
+          If you didn't request a password reset, you can safely ignore this email.
+        </p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: MAIL_FROM,
+      to: email,
+      subject,
+      html,
+    });
+  } catch (err) {
+    console.error("[Mailer] Failed to send password reset email:", err);
+  }
+}
+
