@@ -72,6 +72,23 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=IBM+Plex+Sans:ital,wght@0,300..700;1,300..700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@300..800&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@300..700&display=swap"
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var p = localStorage.getItem('koraspace_user_preferences');
+                  if (p) {
+                    var parsed = JSON.parse(p);
+                    if (parsed.font_family) document.documentElement.dataset.font = parsed.font_family;
+                    if (parsed.dashboard_density) document.documentElement.dataset.density = parsed.dashboard_density;
+                    if (parsed.analytics_style) document.documentElement.dataset.analyticsStyle = parsed.analytics_style;
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider

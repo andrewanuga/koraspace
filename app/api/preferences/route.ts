@@ -33,9 +33,9 @@ const VALID_DENSITIES: DashboardDensity[] = ["minimal", "balanced", "detailed"];
 export async function GET(req: NextRequest) {
   try {
     const session = await auth();
-      const user = session?.user;
+    const user = session?.user;
 
-    if (authError || !user) {
+    if (!user?.id) {
       return NextResponse.json(
         { error: "Unauthorized. Please sign in." },
         { status: 401 }
@@ -63,9 +63,9 @@ export async function GET(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   try {
     const session = await auth();
-      const user = session?.user;
+    const user = session?.user;
 
-    if (authError || !user) {
+    if (!user?.id) {
       return NextResponse.json(
         { error: "Unauthorized. Please sign in." },
         { status: 401 }

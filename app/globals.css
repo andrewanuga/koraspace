@@ -305,8 +305,25 @@ html[data-font="ibm-plex"] {
   --font-sans: "IBM Plex Sans", var(--font-geist-sans), system-ui, sans-serif;
 }
 
-body, button, input, select, textarea {
+body, button, input, select, textarea, p, h1, h2, h3, h4, h5, h6, table, label, a {
   font-family: var(--font-sans);
+}
+
+html[data-font] body,
+html[data-font] button,
+html[data-font] input,
+html[data-font] select,
+html[data-font] textarea,
+html[data-font] p,
+html[data-font] h1,
+html[data-font] h2,
+html[data-font] h3,
+html[data-font] h4,
+html[data-font] h5,
+html[data-font] h6,
+html[data-font] table,
+html[data-font] label {
+  font-family: var(--font-sans) !important;
 }
 
 /* ── Dashboard Density ── */

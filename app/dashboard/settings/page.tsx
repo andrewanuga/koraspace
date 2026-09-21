@@ -1,7 +1,4 @@
 "use client";
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
 
 
 
@@ -303,27 +300,18 @@ export default function SettingsPage() {
 
   useEffect(() => {
     async function load() {
-      const supabase = await createClient();
-  const session = await auth();
-        const user = session?.user;
-
-      if (!user) return;
-
-      setUserId(user.id || null);
-      setEmail(user.email ?? "");
-
-      // Pull whatever is available from auth metadata.
-      setName(
-        (user as any).user_metadata?.full_name ??
-          (user as any).user_metadata?.name ??
-          "Alex Carter"
-      );
-
-      setUsername((user as any).user_metadata?.username ?? "alexcarter");
-
-      if ((user as any).user_metadata?.bio) {
-        setBio((user as any).user_metadata.bio);
-      }
+      try {
+        const res = await fetch("/api/brand/profile");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.profile) {
+            setUserId(json.profile.user_id || null);
+            setName(json.profile.display_name || "Alex Carter");
+            setUsername(json.profile.username || "alexcarter");
+            if (json.profile.bio) setBio(json.profile.bio);
+          }
+        }
+      } catch {}
     }
 
     load();
@@ -333,15 +321,20 @@ export default function SettingsPage() {
     setSaving(true);
 
     try {
-      const { error } = await supabase.auth.updateUser({
-        data: {
-          full_name: name,
+      const res = await fetch("/api/brand/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          display_name: name,
           username,
           bio,
-        },
+        }),
       });
 
-      if (error) throw error;
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to update profile");
+      }
 
       success("Account settings saved");
     } catch (error) {
