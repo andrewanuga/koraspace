@@ -1,7 +1,12 @@
-﻿-- CreateTable
-CREATE TABLE "profiles" (
-    "id" TEXT NOT NULL,
-    "email" TEXT,
+﻿-- ==============================================================================
+-- KORASPACE COMPLETE DATABASE INITIALIZATION SCHEMA (SUPABASE POSTGRESQL)
+-- ==============================================================================
+-- Idempotent schema initialization: Safe to run multiple times without data loss.
+
+-- 1. Core Auth & User Profiles
+CREATE TABLE IF NOT EXISTS "profiles" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "email" TEXT UNIQUE,
     "password_hash" TEXT,
     "emailVerified" TIMESTAMP(3),
     "image" TEXT,
@@ -14,7 +19,7 @@ CREATE TABLE "profiles" (
     "generations_used" INTEGER NOT NULL DEFAULT 0,
     "generations_reset_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "is_admin" BOOLEAN NOT NULL DEFAULT false,
     "suspended" BOOLEAN NOT NULL DEFAULT false,
     "suspended_at" TIMESTAMP(3),
@@ -38,14 +43,12 @@ CREATE TABLE "profiles" (
     "industry" TEXT,
     "automation_level" TEXT,
     "ai_model" TEXT,
-    "ai_temperature" DOUBLE PRECISION,
-
-    CONSTRAINT "profiles_pkey" PRIMARY KEY ("id")
+    "ai_temperature" DOUBLE PRECISION
 );
 
--- CreateTable
-CREATE TABLE "accounts" (
-    "id" TEXT NOT NULL,
+-- NextAuth AuthJS Tables
+CREATE TABLE IF NOT EXISTS "accounts" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "userId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "provider" TEXT NOT NULL,
@@ -57,33 +60,40 @@ CREATE TABLE "accounts" (
     "scope" TEXT,
     "id_token" TEXT,
     "session_state" TEXT,
-
-    CONSTRAINT "accounts_pkey" PRIMARY KEY ("id")
+    UNIQUE ("provider", "providerAccountId")
 );
 
--- CreateTable
-CREATE TABLE "sessions" (
-    "id" TEXT NOT NULL,
-    "sessionToken" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "sessions" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "sessionToken" TEXT NOT NULL UNIQUE,
     "userId" TEXT NOT NULL,
-    "expires" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "sessions_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "verification_tokens" (
-    "identifier" TEXT NOT NULL,
-    "token" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL
 );
 
--- CreateTable
-CREATE TABLE "social_accounts" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "verification_tokens" (
+    "identifier" TEXT NOT NULL,
+    "token" TEXT NOT NULL UNIQUE,
+    "expires" TIMESTAMP(3) NOT NULL,
+    UNIQUE ("identifier", "token")
+);
+
+CREATE TABLE IF NOT EXISTS "user_preferences" (
+    "user_id" TEXT NOT NULL PRIMARY KEY,
+    "analytics_style" TEXT DEFAULT 'modern',
+    "font_family" TEXT DEFAULT 'inter',
+    "theme_mode" TEXT DEFAULT 'dark',
+    "dashboard_density" TEXT DEFAULT 'normal',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Social Media & Accounts Management
+CREATE TABLE IF NOT EXISTS "social_accounts" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
     "platform" TEXT NOT NULL,
     "platform_user_id" TEXT NOT NULL,
+    "external_id" TEXT,
     "handle" TEXT,
     "display_name" TEXT,
     "avatar_url" TEXT,
@@ -91,34 +101,32 @@ CREATE TABLE "social_accounts" (
     "access_token" TEXT,
     "refresh_token" TEXT,
     "token_expires_at" TIMESTAMP(3),
+    "scopes" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "account_type" TEXT DEFAULT 'personal',
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
     "status" TEXT NOT NULL DEFAULT 'connected',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "last_synced_at" TIMESTAMP(3),
-
-    CONSTRAINT "social_accounts_pkey" PRIMARY KEY ("id")
+    "last_synced_at" TIMESTAMP(3)
 );
 
--- CreateTable
-CREATE TABLE "scheduled_posts" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "scheduled_posts" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "platform" TEXT NOT NULL,
     "scheduled_at" TIMESTAMP(3) NOT NULL,
-    "status" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'scheduled',
     "socially_score" DOUBLE PRECISION,
     "framework" TEXT,
     "tone" TEXT,
     "post_url" TEXT,
     "error_message" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "scheduled_posts_pkey" PRIMARY KEY ("id")
+    "media_urls" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "social_posts" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "social_posts" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
     "platform" TEXT NOT NULL,
     "platform_post_id" TEXT,
@@ -135,14 +143,58 @@ CREATE TABLE "social_posts" (
     "account_id" TEXT,
     "tracked_link" TEXT,
     "socially_score" DOUBLE PRECISION,
-    "posted_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "social_posts_pkey" PRIMARY KEY ("id")
+    "posted_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "agent_actions" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "post_history" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "platform" TEXT NOT NULL,
+    "platform_post_id" TEXT,
+    "content" TEXT,
+    "impressions" INTEGER NOT NULL DEFAULT 0,
+    "engagements" INTEGER NOT NULL DEFAULT 0,
+    "likes" INTEGER NOT NULL DEFAULT 0,
+    "shares" INTEGER NOT NULL DEFAULT 0,
+    "comments" INTEGER NOT NULL DEFAULT 0,
+    "followers_gained" INTEGER NOT NULL DEFAULT 0,
+    "link_clicks" INTEGER NOT NULL DEFAULT 0,
+    "revenue_attributed" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    "tracked_link" TEXT,
+    "socially_score" DOUBLE PRECISION,
+    "posted_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "social_inbox" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "platform" TEXT NOT NULL,
+    "author_name" TEXT,
+    "author_handle" TEXT,
+    "author_avatar" TEXT,
+    "message" TEXT NOT NULL,
+    "category" TEXT NOT NULL DEFAULT 'leads',
+    "is_read" BOOLEAN NOT NULL DEFAULT false,
+    "replied" BOOLEAN NOT NULL DEFAULT false,
+    "reply_content" TEXT,
+    "platform_message_id" TEXT,
+    "received_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "social_bots" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "kind" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'active',
+    "autonomy" TEXT NOT NULL DEFAULT 'assist',
+    "actions_count" INTEGER NOT NULL DEFAULT 0,
+    "config" JSONB NOT NULL DEFAULT '{}',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "agent_actions" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
     "comment" TEXT NOT NULL,
     "action" TEXT NOT NULL,
@@ -151,63 +203,11 @@ CREATE TABLE "agent_actions" (
     "reason" TEXT,
     "approved" BOOLEAN,
     "approved_at" TIMESTAMP(3),
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "agent_actions_pkey" PRIMARY KEY ("id")
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "social_inbox" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "platform" TEXT NOT NULL,
-    "author_name" TEXT,
-    "author_handle" TEXT,
-    "author_avatar" TEXT,
-    "message" TEXT NOT NULL,
-    "category" TEXT NOT NULL,
-    "is_read" BOOLEAN NOT NULL DEFAULT false,
-    "replied" BOOLEAN NOT NULL DEFAULT false,
-    "reply_content" TEXT,
-    "platform_message_id" TEXT,
-    "received_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "social_inbox_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "tasks" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "bot_id" TEXT,
-    "title" TEXT NOT NULL,
-    "notes" TEXT,
-    "priority" TEXT NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'pending',
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "completed_at" TIMESTAMP(3),
-
-    CONSTRAINT "tasks_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "social_bots" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "kind" TEXT NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'active',
-    "autonomy" TEXT NOT NULL DEFAULT 'assist',
-    "actions_count" INTEGER NOT NULL DEFAULT 0,
-    "config" JSONB,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "social_bots_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "social_trends" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "social_trends" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT,
     "niche" TEXT NOT NULL,
     "topic" TEXT NOT NULL,
@@ -219,14 +219,11 @@ CREATE TABLE "social_trends" (
     "why" TEXT,
     "draft" TEXT,
     "fetched_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "expires_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "social_trends_pkey" PRIMARY KEY ("id")
+    "expires_at" TIMESTAMP(3) NOT NULL
 );
 
--- CreateTable
-CREATE TABLE "social_account_metrics" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "social_account_metrics" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "account_id" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
     "followers" INTEGER NOT NULL DEFAULT 0,
@@ -234,113 +231,13 @@ CREATE TABLE "social_account_metrics" (
     "engagements" INTEGER NOT NULL DEFAULT 0,
     "ai_suggestions" JSONB,
     "ai_generated_at" TIMESTAMP(3),
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "social_account_metrics_pkey" PRIMARY KEY ("id")
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "security_events" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT,
-    "type" TEXT NOT NULL,
-    "ip" TEXT,
-    "email" TEXT,
-    "severity" TEXT NOT NULL,
-    "detail" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "security_events_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "support_tickets" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "category" TEXT NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'open',
-    "admin_reply" TEXT,
-    "admin_id" TEXT,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "support_tickets_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "user_notifications" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
-    "body" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
-    "is_read" BOOLEAN NOT NULL DEFAULT false,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "user_notifications_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "system_broadcasts" (
-    "id" TEXT NOT NULL,
-    "message" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
-    "is_active" BOOLEAN NOT NULL DEFAULT true,
-    "created_by" TEXT NOT NULL,
-    "target_plan" TEXT,
-    "style" TEXT NOT NULL DEFAULT 'banner',
-    "link_url" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "system_broadcasts_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "feature_flags" (
-    "id" TEXT NOT NULL,
-    "key" TEXT NOT NULL,
-    "is_enabled" BOOLEAN NOT NULL DEFAULT false,
-    "updated_by" TEXT,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "feature_flags_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "blocked_ips" (
-    "id" TEXT NOT NULL,
-    "ip" TEXT NOT NULL,
-    "reason" TEXT,
-    "auto" BOOLEAN NOT NULL DEFAULT false,
-    "blocked_by" TEXT,
-    "expires_at" TIMESTAMP(3),
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "blocked_ips_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "payments" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "reference" TEXT NOT NULL,
-    "plan" TEXT,
-    "amount" DOUBLE PRECISION NOT NULL,
-    "currency" TEXT NOT NULL DEFAULT 'NGN',
-    "provider" TEXT NOT NULL DEFAULT 'paystack',
-    "status" TEXT NOT NULL,
-    "channel" TEXT,
-    "paid_at" TIMESTAMP(3),
-    "raw" JSONB,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "payments_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "brand_profiles" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
+-- 3. Brand Brain & AI Memory Engine
+CREATE TABLE IF NOT EXISTS "brand_profiles" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL UNIQUE,
     "display_name" TEXT,
     "username" TEXT,
     "avatar_url" TEXT,
@@ -352,14 +249,11 @@ CREATE TABLE "brand_profiles" (
     "mission" TEXT,
     "voice_summary" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "brand_profiles_pkey" PRIMARY KEY ("id")
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "brand_memories" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "brand_memories" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "content" TEXT,
@@ -368,111 +262,254 @@ CREATE TABLE "brand_memories" (
     "importance" INTEGER NOT NULL DEFAULT 5,
     "source" TEXT NOT NULL DEFAULT 'manual',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "brand_memories_pkey" PRIMARY KEY ("id")
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "workspaces" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "owner_id" TEXT NOT NULL,
-    "plan" TEXT NOT NULL DEFAULT 'free',
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "workspaces_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "workspace_members" (
-    "id" TEXT NOT NULL,
-    "workspace_id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "brand_content_preferences" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
-    "role" TEXT NOT NULL DEFAULT 'member',
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "workspace_members_pkey" PRIMARY KEY ("id")
+    "label" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "workspace_invites" (
-    "id" TEXT NOT NULL,
-    "workspace_id" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "role" TEXT NOT NULL DEFAULT 'member',
-    "token" TEXT NOT NULL,
-    "expires_at" TIMESTAMP(3) NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "workspace_invites_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "scheduled_ai_tasks" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "brand_writing_styles" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
-    "platform" TEXT NOT NULL,
-    "prompt" TEXT NOT NULL,
-    "media_urls" TEXT[] DEFAULT ARRAY[]::TEXT[],
-    "status" TEXT NOT NULL DEFAULT 'pending',
-    "trigger_at" TIMESTAMP(3) NOT NULL,
-    "result_text" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "scheduled_ai_tasks_pkey" PRIMARY KEY ("id")
+    "label" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "repurpose_projects" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "brand_knowledge_items" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "source_type" TEXT NOT NULL,
+    "content" TEXT,
+    "type" TEXT NOT NULL DEFAULT 'note',
     "source_url" TEXT,
-    "transcript" TEXT,
-    "status" TEXT NOT NULL DEFAULT 'processing',
+    "metadata" JSONB NOT NULL DEFAULT '{}',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "repurpose_projects_pkey" PRIMARY KEY ("id")
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "repurpose_outputs" (
-    "id" TEXT NOT NULL,
-    "project_id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "brand_ai_insights" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
-    "platform" TEXT NOT NULL,
-    "content" TEXT NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'draft',
-    "scheduled_at" TIMESTAMP(3),
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "repurpose_outputs_pkey" PRIMARY KEY ("id")
+    "insight_type" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT,
+    "priority" TEXT NOT NULL DEFAULT 'medium',
+    "metadata" JSONB NOT NULL DEFAULT '{}',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "crm_leads" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "ai_persona" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL UNIQUE,
+    "tone" TEXT,
+    "keywords" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "style_rules" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "sample_posts" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "ai_message_memory" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "role" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "metadata" JSONB NOT NULL DEFAULT '{}',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "ai_evaluation_history" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "prompt" TEXT NOT NULL,
+    "output" TEXT NOT NULL,
+    "score" DOUBLE PRECISION,
+    "feedback" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "ai_telemetry_traces" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT,
+    "model" TEXT NOT NULL,
+    "prompt_tokens" INTEGER NOT NULL DEFAULT 0,
+    "completion_tokens" INTEGER NOT NULL DEFAULT 0,
+    "latency_ms" INTEGER NOT NULL DEFAULT 0,
+    "cost" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. Workflow Automations & Integrations
+CREATE TABLE IF NOT EXISTS "automations" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "email" TEXT,
-    "handle" TEXT,
-    "platform" TEXT,
-    "status" TEXT NOT NULL DEFAULT 'new',
-    "value" DOUBLE PRECISION DEFAULT 0.0,
-    "notes" TEXT,
+    "description" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'draft',
+    "nodes" JSONB NOT NULL DEFAULT '[]',
+    "edges" JSONB NOT NULL DEFAULT '[]',
+    "settings" JSONB NOT NULL DEFAULT '{}',
+    "total_runs" INTEGER NOT NULL DEFAULT 0,
+    "successful_runs" INTEGER NOT NULL DEFAULT 0,
+    "failed_runs" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "crm_leads_pkey" PRIMARY KEY ("id")
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "client_campaigns" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "marketing_automations" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'draft',
+    "steps" JSONB NOT NULL DEFAULT '[]',
+    "nodes" JSONB NOT NULL DEFAULT '[]',
+    "edges" JSONB NOT NULL DEFAULT '[]',
+    "contacts_count" INTEGER NOT NULL DEFAULT 0,
+    "conversions" INTEGER NOT NULL DEFAULT 0,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "automation_runs" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "automation_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'running',
+    "trigger_payload" JSONB NOT NULL DEFAULT '{}',
+    "context" JSONB NOT NULL DEFAULT '{}',
+    "results" JSONB NOT NULL DEFAULT '{}',
+    "error" TEXT,
+    "started_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "completed_at" TIMESTAMP(3)
+);
+
+CREATE TABLE IF NOT EXISTS "automation_node_runs" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "run_id" TEXT NOT NULL,
+    "node_id" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'success',
+    "input_data" JSONB NOT NULL DEFAULT '{}',
+    "output_data" JSONB NOT NULL DEFAULT '{}',
+    "error" TEXT,
+    "duration_ms" INTEGER NOT NULL DEFAULT 0,
+    "executed_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "automation_events" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "event_name" TEXT NOT NULL,
+    "payload" JSONB NOT NULL DEFAULT '{}',
+    "processed" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "automation_webhooks" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "automation_id" TEXT NOT NULL,
+    "webhook_url" TEXT NOT NULL,
+    "secret" TEXT,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "automation_credentials" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "provider" TEXT NOT NULL,
+    "label" TEXT NOT NULL,
+    "credentials" JSONB NOT NULL DEFAULT '{}',
+    "status" TEXT NOT NULL DEFAULT 'valid',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "integrations" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "provider" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'connected',
+    "account_label" TEXT,
+    "config" JSONB NOT NULL DEFAULT '{}',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE ("user_id", "provider")
+);
+
+-- 5. External Site Connection & Developer SDK
+CREATE TABLE IF NOT EXISTS "site_connections" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "site_name" TEXT NOT NULL,
+    "site_url" TEXT NOT NULL,
+    "api_key" TEXT NOT NULL UNIQUE,
+    "verified" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "site_events" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "site_id" TEXT NOT NULL,
+    "event_type" TEXT NOT NULL,
+    "path" TEXT,
+    "referrer" TEXT,
+    "user_agent" TEXT,
+    "metadata" JSONB NOT NULL DEFAULT '{}',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 6. Marketing, Campaigns & CRM
+CREATE TABLE IF NOT EXISTS "marketing_strategies" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "pillars" JSONB NOT NULL DEFAULT '[]',
+    "recommendations" JSONB NOT NULL DEFAULT '[]',
+    "status" TEXT NOT NULL DEFAULT 'active',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "marketing_opportunities" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "impact" TEXT NOT NULL DEFAULT 'medium',
+    "action" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'new',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "marketing_tasks" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'todo',
+    "priority" TEXT NOT NULL DEFAULT 'medium',
+    "due_date" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "social_campaigns" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "goal" TEXT,
+    "budget" DOUBLE PRECISION DEFAULT 0.0,
+    "spend" DOUBLE PRECISION DEFAULT 0.0,
+    "status" TEXT NOT NULL DEFAULT 'active',
+    "platforms" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "client_campaigns" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
     "workspace_id" TEXT,
     "title" TEXT NOT NULL,
@@ -487,107 +524,305 @@ CREATE TABLE "client_campaigns" (
     "start_date" TIMESTAMP(3),
     "end_date" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "client_campaigns_pkey" PRIMARY KEY ("id")
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "integrations" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "campaign_daily_metrics" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "campaign_id" TEXT NOT NULL,
+    "date" DATE NOT NULL,
+    "impressions" INTEGER NOT NULL DEFAULT 0,
+    "clicks" INTEGER NOT NULL DEFAULT 0,
+    "spend" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    "conversions" INTEGER NOT NULL DEFAULT 0,
+    "revenue" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "campaign_period_snapshots" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "campaign_id" TEXT NOT NULL,
+    "period" TEXT NOT NULL,
+    "data" JSONB NOT NULL DEFAULT '{}',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "dm_campaigns" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
-    "provider" TEXT NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'connected',
-    "account_label" TEXT,
-    "config" JSONB NOT NULL DEFAULT '{}',
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "integrations_pkey" PRIMARY KEY ("id")
+    "name" TEXT NOT NULL,
+    "platform" TEXT NOT NULL,
+    "template" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'draft',
+    "sent_count" INTEGER NOT NULL DEFAULT 0,
+    "reply_count" INTEGER NOT NULL DEFAULT 0,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "site_connections" (
-    "id" TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS "dm_campaign_leads" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "campaign_id" TEXT NOT NULL,
+    "handle" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'pending',
+    "sent_at" TIMESTAMP(3),
+    "replied_at" TIMESTAMP(3)
+);
+
+CREATE TABLE IF NOT EXISTS "crm_leads" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
-    "site_name" TEXT NOT NULL,
-    "site_url" TEXT NOT NULL,
-    "api_key" TEXT NOT NULL,
-    "verified" BOOLEAN NOT NULL DEFAULT false,
+    "name" TEXT NOT NULL,
+    "email" TEXT,
+    "handle" TEXT,
+    "platform" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'new',
+    "value" DOUBLE PRECISION DEFAULT 0.0,
+    "notes" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "site_connections_pkey" PRIMARY KEY ("id")
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateTable
-CREATE TABLE "site_events" (
-    "id" TEXT NOT NULL,
-    "site_id" TEXT NOT NULL,
-    "event_type" TEXT NOT NULL,
-    "path" TEXT,
-    "referrer" TEXT,
-    "user_agent" TEXT,
+-- 7. Tasks, Repurposing & Content Studio
+CREATE TABLE IF NOT EXISTS "tasks" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "bot_id" TEXT,
+    "title" TEXT NOT NULL,
+    "notes" TEXT,
+    "priority" TEXT NOT NULL DEFAULT 'normal',
+    "status" TEXT NOT NULL DEFAULT 'pending',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "completed_at" TIMESTAMP(3)
+);
+
+CREATE TABLE IF NOT EXISTS "scheduled_ai_tasks" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "platform" TEXT NOT NULL,
+    "prompt" TEXT NOT NULL,
+    "media_urls" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "status" TEXT NOT NULL DEFAULT 'pending',
+    "trigger_at" TIMESTAMP(3) NOT NULL,
+    "result_text" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "repurpose_projects" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "source_type" TEXT NOT NULL,
+    "source_url" TEXT,
+    "transcript" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'processing',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "repurpose_outputs" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "project_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "platform" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'draft',
+    "scheduled_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "media" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "file_url" TEXT NOT NULL,
+    "file_type" TEXT NOT NULL,
+    "file_name" TEXT,
+    "file_size" INTEGER,
+    "public_id" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 8. Team Collaboration & Agency Workspaces
+CREATE TABLE IF NOT EXISTS "workspaces" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "owner_id" TEXT NOT NULL,
+    "plan" TEXT NOT NULL DEFAULT 'free',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "workspace_members" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "workspace_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "role" TEXT NOT NULL DEFAULT 'member',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE ("workspace_id", "user_id")
+);
+
+CREATE TABLE IF NOT EXISTS "workspace_invites" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "workspace_id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "role" TEXT NOT NULL DEFAULT 'member',
+    "token" TEXT NOT NULL UNIQUE,
+    "expires_at" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "team_invitations" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "workspace_id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "role" TEXT NOT NULL DEFAULT 'member',
+    "token" TEXT NOT NULL UNIQUE,
+    "expires_at" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "workspace_activity" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "workspace_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "action" TEXT NOT NULL,
+    "details" JSONB NOT NULL DEFAULT '{}',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "team_activity_logs" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "workspace_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "action" TEXT NOT NULL,
     "metadata" JSONB NOT NULL DEFAULT '{}',
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "site_events_pkey" PRIMARY KEY ("id")
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "profiles_email_key" ON "profiles"("email");
+-- 9. Chat, Support & Messaging
+CREATE TABLE IF NOT EXISTS "chats" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "title" TEXT NOT NULL DEFAULT 'New Conversation',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
--- CreateIndex
-CREATE UNIQUE INDEX "accounts_provider_providerAccountId_key" ON "accounts"("provider", "providerAccountId");
+CREATE TABLE IF NOT EXISTS "chat_messages" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "chat_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "role" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "metadata" JSONB NOT NULL DEFAULT '{}',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
--- CreateIndex
-CREATE UNIQUE INDEX "sessions_sessionToken_key" ON "sessions"("sessionToken");
+CREATE TABLE IF NOT EXISTS "support_tickets" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "category" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'open',
+    "admin_reply" TEXT,
+    "admin_id" TEXT,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
--- CreateIndex
-CREATE UNIQUE INDEX "verification_tokens_token_key" ON "verification_tokens"("token");
+CREATE TABLE IF NOT EXISTS "support_chats" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'active',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
--- CreateIndex
-CREATE UNIQUE INDEX "verification_tokens_identifier_token_key" ON "verification_tokens"("identifier", "token");
+CREATE TABLE IF NOT EXISTS "support_messages" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "chat_id" TEXT NOT NULL,
+    "sender_type" TEXT NOT NULL,
+    "message" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
--- CreateIndex
-CREATE UNIQUE INDEX "feature_flags_key_key" ON "feature_flags"("key");
+-- 10. Billing, Security & System Observability
+CREATE TABLE IF NOT EXISTS "payments" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "reference" TEXT NOT NULL UNIQUE,
+    "plan" TEXT,
+    "amount" DOUBLE PRECISION NOT NULL,
+    "currency" TEXT NOT NULL DEFAULT 'NGN',
+    "provider" TEXT NOT NULL DEFAULT 'paystack',
+    "status" TEXT NOT NULL,
+    "channel" TEXT,
+    "paid_at" TIMESTAMP(3),
+    "raw" JSONB,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
--- CreateIndex
-CREATE UNIQUE INDEX "blocked_ips_ip_key" ON "blocked_ips"("ip");
+CREATE TABLE IF NOT EXISTS "feature_flags" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "key" TEXT NOT NULL UNIQUE,
+    "is_enabled" BOOLEAN NOT NULL DEFAULT false,
+    "updated_by" TEXT,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
--- CreateIndex
-CREATE UNIQUE INDEX "payments_reference_key" ON "payments"("reference");
+CREATE TABLE IF NOT EXISTS "blocked_ips" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "ip" TEXT NOT NULL UNIQUE,
+    "reason" TEXT,
+    "auto" BOOLEAN NOT NULL DEFAULT false,
+    "blocked_by" TEXT,
+    "expires_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
--- CreateIndex
-CREATE UNIQUE INDEX "brand_profiles_user_id_key" ON "brand_profiles"("user_id");
+CREATE TABLE IF NOT EXISTS "security_events" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT,
+    "type" TEXT NOT NULL,
+    "ip" TEXT,
+    "email" TEXT,
+    "severity" TEXT NOT NULL,
+    "detail" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
--- CreateIndex
-CREATE UNIQUE INDEX "workspace_members_workspace_id_user_id_key" ON "workspace_members"("workspace_id", "user_id");
+CREATE TABLE IF NOT EXISTS "user_notifications" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "user_id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "body" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "is_read" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
--- CreateIndex
-CREATE UNIQUE INDEX "workspace_invites_token_key" ON "workspace_invites"("token");
+CREATE TABLE IF NOT EXISTS "system_broadcasts" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "message" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+    "created_by" TEXT NOT NULL,
+    "target_plan" TEXT,
+    "style" TEXT NOT NULL DEFAULT 'banner',
+    "link_url" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
--- CreateIndex
-CREATE UNIQUE INDEX "integrations_user_id_provider_key" ON "integrations"("user_id", "provider");
-
--- CreateIndex
-CREATE UNIQUE INDEX "site_connections_api_key_key" ON "site_connections"("api_key");
-
--- AddForeignKey
-ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "workspace_members" ADD CONSTRAINT "workspace_members_workspace_id_fkey" FOREIGN KEY ("workspace_id") REFERENCES "workspaces"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "workspace_invites" ADD CONSTRAINT "workspace_invites_workspace_id_fkey" FOREIGN KEY ("workspace_id") REFERENCES "workspaces"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "repurpose_outputs" ADD CONSTRAINT "repurpose_outputs_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "repurpose_projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "site_events" ADD CONSTRAINT "site_events_site_id_fkey" FOREIGN KEY ("site_id") REFERENCES "site_connections"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
+-- ==============================================================================
+-- INDEXES FOR MAXIMUM QUERY PERFORMANCE
+-- ==============================================================================
+CREATE INDEX IF NOT EXISTS "idx_accounts_user_id" ON "accounts"("userId");
+CREATE INDEX IF NOT EXISTS "idx_sessions_user_id" ON "sessions"("userId");
+CREATE INDEX IF NOT EXISTS "idx_social_accounts_user_platform" ON "social_accounts"("user_id", "platform");
+CREATE INDEX IF NOT EXISTS "idx_scheduled_posts_user_status" ON "scheduled_posts"("user_id", "status");
+CREATE INDEX IF NOT EXISTS "idx_social_posts_user_posted" ON "social_posts"("user_id", "posted_at");
+CREATE INDEX IF NOT EXISTS "idx_social_inbox_user_read" ON "social_inbox"("user_id", "is_read");
+CREATE INDEX IF NOT EXISTS "idx_brand_memories_user" ON "brand_memories"("user_id");
+CREATE INDEX IF NOT EXISTS "idx_automations_user_status" ON "automations"("user_id", "status");
+CREATE INDEX IF NOT EXISTS "idx_automation_runs_automation" ON "automation_runs"("automation_id");
+CREATE INDEX IF NOT EXISTS "idx_site_events_site" ON "site_events"("site_id");
+CREATE INDEX IF NOT EXISTS "idx_chat_messages_chat" ON "chat_messages"("chat_id");
+CREATE INDEX IF NOT EXISTS "idx_payments_user" ON "payments"("user_id");
