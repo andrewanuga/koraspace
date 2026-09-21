@@ -1,11 +1,6 @@
 "use client";
 import { createClient } from "@/lib/supabase/client";
 import type { Task, TaskPriority } from "@/lib/supabase/types";
-import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
-
-
-
 import { useEffect, useMemo, useState } from "react";
 import {
   Plus, ArrowUpFromLine, Check, Trash2, Undo2, Layers, CornerDownLeft, Bot
@@ -40,21 +35,15 @@ export default function TasksPage() {
   useEffect(() => {
     (async () => {
       try {
-        const supabase = await createClient();
-  const session = await auth();
-          const user = session?.user;
-        if (user) {
-          setUserId(user.id);
-          const { data } = await supabase
-            .from("tasks")
-            .select("*")
-            .order("created_at", { ascending: false });
-          if (data) setTasks(data as Task[]);
-        }
+        const { data } = await supabase
+          .from("tasks")
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (data) setTasks(data as Task[]);
       } catch { /* offline / no session — start empty */ }
       setLoaded(true);
     })();
-  }, []);
+  }, [supabase]);
 
   const push = async () => {
     const t = title.trim();

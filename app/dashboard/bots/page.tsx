@@ -1,10 +1,5 @@
 "use client";
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
-
-
-
+import { createClient } from "@/lib/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
@@ -37,18 +32,13 @@ export default function BotsPage() {
 
   const load = async () => {
     try {
-      const supabase = await createClient();
-  const session = await auth();
-        const user = session?.user;
-      if (!user) return;
-      setUserId(user.id);
+      const supabase = createClient();
       const [{ data: acc }, { data: b }] = await Promise.all([
         supabase
           .from("social_accounts")
           .select("id, user_id, platform, account_type, external_id, handle, display_name, avatar_url, scopes, status, followers, following, runs_ads, connected_at, last_synced_at, meta")
-          .eq("user_id", user.id)
           .eq("status", "connected"),
-        supabase.from("social_bots").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+        supabase.from("social_bots").select("*").order("created_at", { ascending: false }),
       ]);
       if (acc) setAccounts(acc as SocialAccount[]);
       if (b) setBots(b as SocialBot[]);

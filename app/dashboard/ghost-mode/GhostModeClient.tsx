@@ -1,7 +1,5 @@
 "use client";
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
+import { createClient } from "@/lib/supabase/client";
 
 
 
@@ -191,7 +189,7 @@ function DMModal({ action, onClose }: DMModalProps) {
 
 interface Props {
   initialActions: AgentActionRow[];
-  statsToday: { autoReplies: number; leads: number; hoursSaved: number };
+  statsToday: { autoReplies?: number; replied?: number; leads: number; hoursSaved?: number; escalated?: number };
   initiallyActive: boolean;
   botId?: string | null;
   savedRules?: { label: string; enabled: boolean }[] | null;
@@ -206,17 +204,14 @@ export function GhostModeClient({ initialActions, statsToday, initiallyActive, b
 
   const persist = async (patch: { status?: "active" | "paused"; rules?: typeof rules }) => {
     try {
-      const supabase = await createClient();
-  const session = await auth();
-        const user = session?.user;
-      if (!user) return;
+      const supabase = createClient();
       const nextStatus = patch.status ?? (agentActive ? "active" : "paused");
       const nextRules = patch.rules ?? rules;
       if (idRef.current) {
         await supabase.from("social_bots").update({ status: nextStatus, config: { rules: nextRules } }).eq("id", idRef.current);
       } else {
         const { data } = await supabase.from("social_bots").insert({
-          user_id: user.id, name: "Ghost Mode", kind: "ghost", status: nextStatus, config: { rules: nextRules },
+          name: "Ghost Mode", kind: "ghost", status: nextStatus, config: { rules: nextRules },
         }).select("id").single();
         if (data) idRef.current = data.id;
       }

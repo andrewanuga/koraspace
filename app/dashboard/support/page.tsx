@@ -1,9 +1,6 @@
 "use client";
 import { createClient } from "@/lib/supabase/client";
 
-import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
-
 
 
 import { useState, useEffect, useRef } from "react";
@@ -99,15 +96,9 @@ export default function SupportPage() {
   useEffect(() => {
     async function loadChat() {
       try {
-        const session = await auth();
-          const user = session?.user;
-
-        if (!user) return;
-
         const { data: chats } = await supabase
           .from("support_chats")
           .select("id")
-          .eq("user_id", user.id)
           .eq("status", "open")
           .order("created_at", { ascending: false })
           .limit(1);

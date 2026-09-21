@@ -1,7 +1,5 @@
 "use client";
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
+import { createClient } from "@/lib/supabase/client";
 
 
 
@@ -1048,11 +1046,7 @@ export default function CalendarPage() {
   /* ---------------------------------------------------------------------- */
 
   const loadData = async () => {
-    const supabase = await createClient();
-  const session = await auth();
-      const user = session?.user;
-
-    if (!user) return;
+    const supabase = createClient();
 
     const { data: accountsData } =
       await supabase
@@ -1288,13 +1282,7 @@ export default function CalendarPage() {
     setIsSaving(true);
 
     try {
-      const supabase = await createClient();
-  const session = await auth();
-        const user = session?.user;
-
-      if (!user) {
-        throw new Error("Not authenticated");
-      }
+      const supabase = createClient();
 
       const uploadedUrls: string[] = [];
 

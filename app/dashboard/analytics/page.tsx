@@ -7,41 +7,48 @@ import type { SocialPost, Campaign } from "@/lib/social/types";
 
 export default async function AnalyticsPage() {
   const session = await auth();
-    const user = session?.user;
+  const user = session?.user;
 
-  if (!user) {
+  if (!user?.id) {
     redirect("/login");
   }
 
   const d30 = daysAgoISO(30);
 
-  const [
-    { data: profile },
-    { data: posts },
-    { data: campaigns },
-    { data: accounts },
-  ] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("persona")
-      .eq("id", user.id)
-      .single(),
+  let profile: any = null;
+  let posts: any[] = [];
+  let campaigns: any[] = [];
+  let accounts: any[] = [];
 
-    supabase
-      .from("social_posts")
-      .select("*")
-      .gte("posted_at", d30)
-      .order("posted_at", { ascending: true }),
+  try {
+    const [profileRes, postsRes, campaignsRes, accountsRes] = await Promise.allSettled([
+      prisma.profile.findUnique({
+        where: { id: user.id },
+        select: { persona: true }
+      }),
+      prisma.$queryRaw<any[]>`
+        SELECT * FROM "social_posts"
+        WHERE "user_id"::text = ${user.id} AND "posted_at" >= ${new Date(d30)}
+        ORDER BY "posted_at" ASC
+      `,
+      prisma.$queryRaw<any[]>`
+        SELECT * FROM "social_campaigns"
+        WHERE "user_id"::text = ${user.id}
+        ORDER BY "spend" DESC
+      `,
+      prisma.$queryRaw<any[]>`
+        SELECT "platform", "status" FROM "social_accounts"
+        WHERE "user_id"::text = ${user.id}
+      `
+    ]);
 
-    supabase
-      .from("social_campaigns")
-      .select("*")
-      .order("spend", { ascending: false }),
-
-    supabase
-      .from("social_accounts")
-      .select("platform, status"),
-  ]);
+    if (profileRes.status === "fulfilled") profile = profileRes.value;
+    if (postsRes.status === "fulfilled") posts = postsRes.value ?? [];
+    if (campaignsRes.status === "fulfilled") campaigns = campaignsRes.value ?? [];
+    if (accountsRes.status === "fulfilled") accounts = accountsRes.value ?? [];
+  } catch (err) {
+    console.error("Error loading analytics data:", err);
+  }
 
   return (
     <AnalyticsClient

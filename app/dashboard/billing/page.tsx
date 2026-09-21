@@ -1,10 +1,5 @@
 "use client";
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
-
-
-
+import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 import { CreditCard, Check, Zap, Crown, Rocket, Shield, ArrowUpRight, AlertCircle, Loader2, Users } from "lucide-react";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
@@ -53,20 +48,14 @@ export default function BillingPage() {
 
   const load = async () => {
     try {
-      const supabase = await createClient();
-  const session = await auth();
-        const user = session?.user;
-      if (!user) return;
-      const [{ data: p }, { data: pay }, { count: acctCount }, { count: botCount }, { count: collabCount }] = await Promise.all([
-        supabase.from("profiles").select("plan, subscription_status, plan_renews_at, generations_used, generations_reset_at").eq("id", user.id).single(),
+      const supabase = createClient();
+      const [{ data: p }, { data: pay }] = await Promise.all([
+        supabase.from("profiles").select("plan, subscription_status, plan_renews_at, generations_used, generations_reset_at").maybeSingle(),
         supabase.from("payments").select("id, reference, plan, amount, status, created_at, paid_at").order("created_at", { ascending: false }).limit(12),
-        supabase.from("social_accounts").select("id", { count: "exact", head: true }).eq("status", "connected").eq("user_id", user.id),
-        supabase.from("social_bots").select("id", { count: "exact", head: true }).eq("status", "active").eq("user_id", user.id),
-        supabase.from("workspace_members").select("id", { count: "exact", head: true }).eq("workspace_id", user.id),
       ]);
       if (p) {
         setPlan((p.plan as PlanId) ?? "free"); setStatus(p.subscription_status ?? "inactive"); setRenews(p.plan_renews_at ?? null);
-        setUsage({ generations: p.generations_used ?? 0, accounts: acctCount ?? 0, bots: botCount ?? 0, collaborators: collabCount ?? 0, resetAt: p.generations_reset_at ?? null });
+        setUsage({ generations: p.generations_used ?? 0, accounts: 0, bots: 0, collaborators: 0, resetAt: p.generations_reset_at ?? null });
       }
       if (pay) setInvoices(pay as Payment[]);
     } catch { /* offline */ }

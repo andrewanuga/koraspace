@@ -241,7 +241,6 @@ function NavItem({
 }
 
 export default function SettingsPage() {
-  const supabase = createClient();
   const { success, error: toastError } = useToast();
 
   const [section, setSection] = useState<Section>("account");

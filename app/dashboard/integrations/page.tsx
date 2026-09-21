@@ -1,9 +1,6 @@
 "use client";
 import { createClient } from "@/lib/supabase/client";
 
-import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
-
 
 
 import { useEffect, useMemo, useState } from "react";
@@ -221,18 +218,10 @@ export default function IntegrationsPage() {
     setLoading(true);
 
     try {
-      const session = await auth();
-        const user = session?.user;
-
-      if (!user) return;
-
-      setUserId(user.id);
-
       const [{ data: accts }, { data: ints }] = await Promise.all([
         supabase
           .from("social_accounts")
           .select("id, user_id, platform, account_type, external_id, handle, display_name, avatar_url, scopes, status, followers, following, runs_ads, connected_at, last_synced_at, meta")
-          .eq("user_id", user.id)
           .order("connected_at", { ascending: false }),
 
         supabase

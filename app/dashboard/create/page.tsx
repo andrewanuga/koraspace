@@ -1,10 +1,4 @@
 "use client";
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
-
-
-
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useToast } from "@/components/ui/toast";
 
@@ -52,16 +46,6 @@ export default function CreatePage() {
   useEffect(() => {
     (async () => {
       try {
-        const supabase = await createClient();
-  const session = await auth();
-          const user = session?.user;
-        if (user) {
-          const { data: profile } = await supabase.from("profiles").select("ai_model").eq("id", user.id).single();
-          if (profile?.ai_model) setSelectedModel(profile.ai_model);
-        }
-      } catch { /* offline */ }
-
-      try {
         const res = await fetch("/api/ai/models");
         const data = await res.json();
         setModels(
@@ -70,6 +54,9 @@ export default function CreatePage() {
             supportsVision: m.supportsVision, tier: m.tier,
           }))
         );
+        if (data.recommended && data.recommended.length > 0) {
+          setSelectedModel(data.recommended[0].id);
+        }
       } catch { /* offline */ }
     })();
   }, []);
