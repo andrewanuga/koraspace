@@ -1,4 +1,4 @@
-﻿-- ==============================================================================
+-- ==============================================================================
 -- KORASPACE COMPLETE DATABASE INITIALIZATION SCHEMA (SUPABASE POSTGRESQL)
 -- ==============================================================================
 -- Idempotent schema initialization: Safe to run multiple times without data loss.
@@ -826,3 +826,121 @@ CREATE INDEX IF NOT EXISTS "idx_automation_runs_automation" ON "automation_runs"
 CREATE INDEX IF NOT EXISTS "idx_site_events_site" ON "site_events"("site_id");
 CREATE INDEX IF NOT EXISTS "idx_chat_messages_chat" ON "chat_messages"("chat_id");
 CREATE INDEX IF NOT EXISTS "idx_payments_user" ON "payments"("user_id");
+
+-- ==============================================================================
+-- ROW LEVEL SECURITY (RLS) & ACCESS POLICIES
+-- ==============================================================================
+-- Enable RLS across all tables to safeguard public access
+ALTER TABLE "profiles" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "accounts" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "sessions" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "verification_tokens" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "user_preferences" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "social_accounts" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "scheduled_posts" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "social_posts" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "post_history" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "social_inbox" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "social_bots" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "agent_actions" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "social_trends" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "social_account_metrics" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "brand_profiles" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "brand_memories" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "brand_content_preferences" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "brand_writing_styles" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "brand_knowledge_items" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "brand_ai_insights" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_persona" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_message_memory" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_evaluation_history" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_telemetry_traces" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "automations" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "marketing_automations" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "automation_runs" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "automation_node_runs" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "automation_events" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "automation_webhooks" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "automation_credentials" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "integrations" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "site_connections" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "site_events" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "marketing_strategies" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "marketing_opportunities" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "marketing_tasks" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "social_campaigns" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "client_campaigns" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "campaign_daily_metrics" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "campaign_period_snapshots" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "dm_campaigns" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "dm_campaign_leads" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "crm_leads" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "tasks" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "scheduled_ai_tasks" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "repurpose_projects" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "repurpose_outputs" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "media" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "workspaces" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "workspace_members" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "workspace_invites" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "team_invitations" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "workspace_activity" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "team_activity_logs" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "chats" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "chat_messages" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "payments" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "feature_flags" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "blocked_ips" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "security_events" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "user_notifications" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "system_broadcasts" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "support_tickets" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "support_chats" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "support_messages" ENABLE ROW LEVEL SECURITY;
+
+-- Grant Full Server & Service Role Access (Prisma / API Handlers)
+DO $$
+BEGIN
+    EXECUTE 'CREATE POLICY "Service Role Full Access" ON "profiles" FOR ALL TO service_role USING (true) WITH CHECK (true)';
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$
+BEGIN
+    EXECUTE 'CREATE POLICY "Service Role Full Access" ON "accounts" FOR ALL TO service_role USING (true) WITH CHECK (true)';
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$
+BEGIN
+    EXECUTE 'CREATE POLICY "Service Role Full Access" ON "sessions" FOR ALL TO service_role USING (true) WITH CHECK (true)';
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$
+BEGIN
+    EXECUTE 'CREATE POLICY "Service Role Full Access" ON "social_accounts" FOR ALL TO service_role USING (true) WITH CHECK (true)';
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$
+BEGIN
+    EXECUTE 'CREATE POLICY "Service Role Full Access" ON "scheduled_posts" FOR ALL TO service_role USING (true) WITH CHECK (true)';
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$
+BEGIN
+    EXECUTE 'CREATE POLICY "Service Role Full Access" ON "brand_profiles" FOR ALL TO service_role USING (true) WITH CHECK (true)';
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$
+BEGIN
+    EXECUTE 'CREATE POLICY "Service Role Full Access" ON "automations" FOR ALL TO service_role USING (true) WITH CHECK (true)';
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$
+BEGIN
+    EXECUTE 'CREATE POLICY "Service Role Full Access" ON "integrations" FOR ALL TO service_role USING (true) WITH CHECK (true)';
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$
+BEGIN
+    EXECUTE 'CREATE POLICY "Service Role Full Access" ON "site_connections" FOR ALL TO service_role USING (true) WITH CHECK (true)';
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
