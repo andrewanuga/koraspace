@@ -104,54 +104,6 @@ export function AiPromptWorkspace({
             <p className="text-[11px] text-[var(--fg-4)]">Powered by your brand intelligence</p>
           </div>
         </div>
-
-        {/* Model picker */}
-        <div className="relative" ref={modelPickerRef}>
-          <button
-            onClick={onToggleModelPicker}
-            className="flex items-center gap-2 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 py-2 text-[11px] text-[var(--fg-3)] transition-colors hover:text-[var(--fg)]"
-          >
-            <Bot className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
-            <span className="max-w-[100px] truncate">
-              {selectedModel ? modelDisplayName(selectedModel, models) : "Model"}
-            </span>
-            <ChevronDown className="h-3.5 w-3.5" />
-          </button>
-
-          {showModelPicker && (
-            <div className="absolute right-0 top-full z-50 mt-2 w-[280px] overflow-hidden rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] shadow-2xl" style={{ backdropFilter: "blur(20px)" }}>
-              <div className="border-b border-[var(--stroke)] p-3">
-                <p className="text-[12px] font-semibold text-[var(--fg)]">Select Model</p>
-                <p className="mt-0.5 text-[10px] text-[var(--fg-4)]">Powered by OpenRouter</p>
-              </div>
-              <div className="max-h-[300px] overflow-y-auto p-1.5">
-                {models.length === 0 ? (
-                  <div className="flex items-center justify-center gap-2 py-6 text-[12px] text-[var(--fg-3)]">
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading…
-                  </div>
-                ) : (
-                  models.map((model) => (
-                    <button
-                      key={model.id}
-                      onClick={() => { onModelChange(model.id); }}
-                      className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition-colors hover:bg-[var(--hover)]"
-                      style={selectedModel === model.id ? { background: "var(--brand-primary-soft)" } : undefined}
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[12px] font-medium text-[var(--fg)]">{model.name}</span>
-                          {model.supportsVision && <Eye className="h-2.5 w-2.5 text-[var(--success)]" />}
-                        </div>
-                        <span className="text-[10px] text-[var(--fg-4)]">{model.provider}</span>
-                      </div>
-                      {selectedModel === model.id && <Check className="h-3.5 w-3.5 shrink-0 text-[var(--brand-primary)]" />}
-                    </button>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-        </div>
       </div>
 
       {/* ── Editor ── */}
