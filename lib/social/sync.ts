@@ -4,7 +4,7 @@
 // Real fetchers are implemented where the API is straightforward; the rest are
 // safe no-ops clearly marked to fill in as each platform app gets approved.
 // Every fetch is wrapped so one failing account never breaks a sync run.
-import { type SupabaseClient } from "@supabase/supabase-js";
+type SupabaseClient = any;
 import { type PlatformId } from "./platforms";
 import { scrapeFollowers } from "./scraper";
 import { decryptToken, encryptToken } from "@/lib/security/tokenCrypto";

@@ -31,7 +31,8 @@ import {
   BarChart3,
 } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 
 import {
   fmtNum,
@@ -253,11 +254,8 @@ function buildRecommendations(
 /* -------------------------------------------------------------------------- */
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth();
+  const user = session?.user;
 
   if (!user) {
     redirect("/login");
@@ -267,11 +265,10 @@ export default async function DashboardPage() {
   /*                               PROFILE                                  */
   /* ---------------------------------------------------------------------- */
 
-  const { data: onboardProfile } = await supabase
-    .from("profiles")
-    .select("onboarded, full_name, avatar_url")
-    .eq("id", user.id)
-    .single();
+  const onboardProfile = await prisma.profile.findUnique({
+    where: { id: user.id },
+    select: { onboarded: true, full_name: true, avatar_url: true }
+  });
 
   if (onboardProfile && !onboardProfile.onboarded) {
     redirect("/onboarding");
@@ -290,70 +287,48 @@ export default async function DashboardPage() {
   /* ---------------------------------------------------------------------- */
 
   const [
-    { data: accounts },
-    { data: curr },
-    { data: prev },
-    { data: topPosts },
-    { data: leads },
-    { data: upcoming },
-    { data: dailyRaw },
+    accounts,
+    curr,
+    prev,
+    topPosts,
+    leads,
+    upcoming,
+    dailyRaw,
   ] = await Promise.all([
-    supabase
-      .from("social_accounts")
-      .select(
-        "id, platform, handle, display_name, avatar_url, followers, status, last_synced_at"
-      )
-      .eq("user_id", user.id),
-
-    supabase
-      .from("social_posts")
-      .select(
-        "platform, impressions, likes, comments, shares, followers_gained, revenue, account_id, video_views"
-      )
-      .gte("posted_at", d7),
-
-    supabase
-      .from("social_posts")
-      .select(
-        "impressions, likes, comments, shares, followers_gained, revenue"
-      )
-      .gte("posted_at", d14)
-      .lt("posted_at", d7),
-
-    supabase
-      .from("social_posts")
-      .select(
-        "content, platform, impressions, likes, comments, revenue, video_views, posted_at"
-      )
-      .order("impressions", { ascending: false })
-      .limit(5),
-
-    supabase
-      .from("social_inbox")
-      .select(
-        "author_name, body, platform, received_at"
-      )
-      .eq("category", "lead")
-      .order("received_at", {
-        ascending: false,
-      })
-      .limit(4),
-
-    supabase
-      .from("social_posts")
-      .select("content, platform, posted_at")
-      .gte("posted_at", nowISO)
-      .order("posted_at", {
-        ascending: true,
-      })
-      .limit(4),
-
-    supabase
-      .from("social_posts")
-      .select(
-        "posted_at, impressions, video_views, likes, comments, shares, followers_gained"
-      )
-      .gte("posted_at", d7),
+    prisma.connectedAccount.findMany({
+      where: { user_id: user.id },
+      select: { id: true, platform: true, handle: true, display_name: true, avatar_url: true, followers: true, status: true, last_synced_at: true }
+    }),
+    prisma.postHistory.findMany({
+      where: { user_id: user.id, posted_at: { gte: new Date(d7) } },
+      select: { platform: true, impressions: true, likes: true, comments: true, shares: true, followers_gained: true, revenue: true, account_id: true, video_views: true }
+    }),
+    prisma.postHistory.findMany({
+      where: { user_id: user.id, posted_at: { gte: new Date(d14), lt: new Date(d7) } },
+      select: { impressions: true, likes: true, comments: true, shares: true, followers_gained: true, revenue: true }
+    }),
+    prisma.postHistory.findMany({
+      where: { user_id: user.id },
+      orderBy: { impressions: 'desc' },
+      take: 5,
+      select: { content: true, platform: true, impressions: true, likes: true, comments: true, revenue: true, video_views: true, posted_at: true }
+    }),
+    prisma.inboxMessage.findMany({
+      where: { user_id: user.id, category: "lead" },
+      orderBy: { received_at: 'desc' },
+      take: 4,
+      select: { author_name: true, message: true, platform: true, received_at: true }
+    }),
+    prisma.postHistory.findMany({
+      where: { user_id: user.id, posted_at: { gte: new Date(nowISO) } },
+      orderBy: { posted_at: 'asc' },
+      take: 4,
+      select: { content: true, platform: true, posted_at: true }
+    }),
+    prisma.postHistory.findMany({
+      where: { user_id: user.id, posted_at: { gte: new Date(d7) } },
+      select: { posted_at: true, impressions: true, video_views: true, likes: true, comments: true, shares: true, followers_gained: true }
+    }),
   ]);
 
   /* ---------------------------------------------------------------------- */
@@ -559,9 +534,9 @@ export default async function DashboardPage() {
   }
 
   for (const row of dailyRaw ?? []) {
-    const key = (
-      row.posted_at as string
-    )?.slice(0, 10);
+    const key = row.posted_at
+      ? (row.posted_at as Date).toISOString().slice(0, 10)
+      : null;
 
     if (!key || !dayBuckets[key]) {
       continue;

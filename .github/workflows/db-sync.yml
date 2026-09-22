@@ -1,0 +1,27 @@
+﻿name: Neon DB Backup Sync
+
+on:
+  schedule:
+    # Run every 3 hours
+    - cron: '0 */3 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync PostgreSQL to Neon
+        env:
+          SOURCE_DATABASE_URL: $\{{ secrets.MAIN_DATABASE_URL }}
+          TARGET_DATABASE_URL: $\{{ secrets.NEON_BACKUP_DATABASE_URL }}
+        run: |
+          echo "Starting Database Sync from Main DB to Neon Backup DB"
+          # We use standard postgresql-client
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          
+          # Dump the source database schema and data, and pipe it directly to the target database
+          # The --clean flag drops objects in the target before recreating them
+          # The --if-exists flag avoids errors if objects don't exist yet
+          pg_dump --clean --if-exists -O -x \ | psql \
+          
+          echo "Database Sync Completed Successfully!"

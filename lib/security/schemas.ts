@@ -118,10 +118,10 @@ export const onboardingSchema = {
 
 // ── Billing checkout schema ─────────────────────────────────────────────────
 
-const PLANS = ["free", "basic", "pro", "advanced", "team"] as const;
+const PLANS = ["free", "pro", "advanced", "team"] as const;
 export type PlanId = (typeof PLANS)[number];
 
-export interface CheckoutPayload { plan: PlanId }
+export interface CheckoutPayload { plan: PlanId; method?: "paystack" | "opay" | "stripe" | "crypto" }
 
 export const checkoutSchema = {
   safeParse(raw: unknown): SafeParseResult<CheckoutPayload> {
@@ -130,7 +130,7 @@ export const checkoutSchema = {
     const r = oneOf(data.plan, PLANS, "plan");
     if (r) issues.push(r);
     if (issues.length > 0) return { success: false, error: { issues } };
-    return { success: true, data: { plan: data.plan as PlanId } };
+    return { success: true, data: { plan: data.plan as PlanId, method: (data.method as any) || "paystack" } };
   },
 };
 

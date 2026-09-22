@@ -1,14 +1,15 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { TeamClient } from "./TeamClient";
 
 export default async function TeamPage() {
+  const session = await auth();
+    const user = session?.user;
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const admin = createAdminClient();
 
   if (!user) {
     redirect("/login");
@@ -19,9 +20,6 @@ export default async function TeamPage() {
     .select("plan, persona, full_name, role, department, avatar_url, username")
     .eq("id", user.id)
     .single();
-
-  const admin = createAdminClient();
-
   // Touch current user presence
   try {
     await admin.rpc("touch_team_presence", { p_user_id: user.id });

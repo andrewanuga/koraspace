@@ -1,13 +1,12 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { getDiscoveryData } from "@/lib/marketer/discovery";
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const session = await auth();
+      const user = session?.user;
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

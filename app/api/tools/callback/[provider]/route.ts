@@ -1,6 +1,8 @@
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { createClient } from "@/lib/supabase/server";
 import { TOOLS, type ToolId } from "@/lib/social/tools";
 import { validateOAuthScopes } from "@/lib/security/enforcement";
 import { encryptToken } from "@/lib/security/tokenCrypto";
@@ -26,9 +28,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ prov
   const expected = jar.get(`sai_tool_${provider}`)?.value;
   jar.delete(`sai_tool_${provider}`);
   if (!code || !state || state !== expected) return back(origin, { error: "bad_state", tool: provider });
-
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) return NextResponse.redirect(new URL("/login", origin));
 
   const clientId = process.env[t.oauth.clientIdEnv]!;

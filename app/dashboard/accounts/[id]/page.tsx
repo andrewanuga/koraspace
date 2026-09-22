@@ -1,11 +1,12 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { daysAgoISO } from "@/lib/dashboard/helpers";
 import { AccountClient } from "./AccountClient";
 
 export default async function AccountPage({ params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) redirect("/login");
 
   const { id: accountId } = await params;

@@ -13,6 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import { getCookie, setCookie } from "cookies-next";
 
+import { getUserWorkspaces, updateUserPersona } from "@/app/dashboard/actions";
 import { createClient } from "@/lib/supabase/client";
 
 /* -------------------------------------------------------------------------- */
@@ -214,7 +215,8 @@ export function WorkspaceProvider({
 
           setWorkspaces([]);
           setActiveWorkspaceId(null);
-
+          setIsLoading(false);
+          router.replace("/login");
           return;
         }
 
@@ -516,13 +518,7 @@ export function WorkspaceProvider({
           );
         }
 
-        const { error: updateError } =
-          await supabase
-            .from("profiles")
-            .update({
-              persona: newPersona,
-            })
-            .eq("id", user.id);
+        const updateError = !(await updateUserPersona(newPersona));
 
         if (updateError) {
           throw updateError;

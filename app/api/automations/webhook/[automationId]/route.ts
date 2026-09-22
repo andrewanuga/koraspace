@@ -1,6 +1,7 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
-import { createClient } from "@/lib/supabase/server";
 import { executeWorkflow } from "@/lib/automation/engine";
 import { registerIntegrationExecutors } from "@/lib/automation/providers";
 import type { AutomationWorkflow, AutomationContext } from "@/lib/automation/types";
@@ -14,8 +15,6 @@ interface RouteContext {
 export async function POST(request: NextRequest, context: RouteContext) {
   try {
     const { automationId } = await context.params;
-    const supabase = await createClient();
-
     // 1. Fetch webhook config
     const { data: webhook } = await (supabase as any)
       .from("automation_webhooks")

@@ -1,16 +1,15 @@
 /**
- * Centralized OpenRouter API client.
+ * Centralized OpenRouter API client with Gemini fallback support.
  *
- * Every AI route imports `callAI` instead of managing its own fetch.
- * One shared API key from OPENROUTER_API_KEY env var.
- * Falls back to mock responses when the key is absent (dev mode).
+ * Every AI route and agent imports `callAI` instead of managing its own fetch.
+ * Uses OPENROUTER_API_KEY if configured, or falls back to GEMINI_API_KEY.
  */
 
-import { AGENT_DEFAULTS, type AgentId } from "./models";
+import { AGENT_DEFAULTS, RECOMMENDED_MODELS, type AgentId } from "./models";
 
-/* ── Types ────────────────────────────────────────────────────── */
+/* -- Types ------------------------------------------------------ */
 
-/** OpenRouter chat message — supports text and multimodal (vision) */
+/** OpenRouter / Gemini chat message -- supports text and multimodal (vision) */
 export type ContentPart =
   | { type: "text"; text: string }
   | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } };
@@ -21,7 +20,7 @@ export interface ChatMessage {
 }
 
 export interface AICallOptions {
-  /** Which agent is calling — determines the default model & temperature */
+  /** Which agent is calling -- determines the default model & temperature */
   agent: AgentId;
   /** Override model (e.g. user selected a specific model in settings) */
   model?: string;
@@ -44,22 +43,50 @@ export interface AIResponse {
   tool_calls?: any[];
 }
 
-/* ── Constants ────────────────────────────────────────────────── */
+export interface OpenRouterModel {
+  id: string;
+  name: string;
+  description?: string;
+  context_length: number;
+  pricing: { prompt: string; completion: string };
+  top_provider?: { max_completion_tokens?: number };
+  architecture?: { modality?: string; input_modalities?: string[] };
+}
+
+/* -- Configuration Helpers -------------------------------------- */
 
 const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
+const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/openai";
 
 function getApiKey(): string | undefined {
-  return process.env.OPENROUTER_API_KEY;
+  return process.env.OPENROUTER_API_KEY || process.env.GEMINI_API_KEY;
+}
+
+function getApiBase(): string {
+  if (process.env.OPENROUTER_API_KEY) {
+    return OPENROUTER_BASE;
+  }
+  return GEMINI_BASE;
 }
 
 function getDefaultModel(): string {
-  return process.env.OPENROUTER_DEFAULT_MODEL || "google/gemma-4-26b-a4b-it:free";
+  if (process.env.OPENROUTER_API_KEY) {
+    return process.env.OPENROUTER_DEFAULT_MODEL || "google/gemma-4-26b-a4b-it:free";
+  }
+  return process.env.GEMINI_DEFAULT_MODEL || "gemini-1.5-flash";
 }
 
-/* ── Main call function ───────────────────────────────────────── */
+/**
+ * Check if the AI provider API key is configured.
+ */
+export function isConfigured(): boolean {
+  return !!getApiKey();
+}
+
+/* -- Main call function ----------------------------------------- */
 
 /**
- * Send a chat completion request to OpenRouter.
+ * Send a chat completion request to the configured AI provider.
  *
  * @param messages  - Array of chat messages (supports multimodal content)
  * @param options   - Agent ID, model override, temperature, etc.
@@ -72,13 +99,13 @@ export async function callAI(
   const apiKey = getApiKey();
 
   if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY is not configured");
+    throw new Error("OPENROUTER_API_KEY or GEMINI_API_KEY is not configured");
   }
 
   const agentConfig = AGENT_DEFAULTS[options.agent];
-  const model = options.model || agentConfig.defaultModel || getDefaultModel();
-  const temperature = options.temperature ?? agentConfig.temperature;
-  const maxTokens = options.maxTokens ?? agentConfig.maxTokens;
+  const model = options.model || agentConfig?.defaultModel || getDefaultModel();
+  const temperature = options.temperature ?? agentConfig?.temperature;
+  const maxTokens = options.maxTokens ?? agentConfig?.maxTokens;
 
   const body: Record<string, unknown> = {
     model,
@@ -92,7 +119,7 @@ export async function callAI(
     body.tools = options.tools;
   }
 
-  // JSON mode — only if the model supports it
+  // JSON mode -- only if the model supports it
   if (options.jsonMode) {
     body.response_format = { type: "json_object" };
   }
@@ -101,10 +128,10 @@ export async function callAI(
     "Content-Type": "application/json",
     Authorization: `Bearer ${apiKey}`,
     "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-    "X-Title": "Koraspace",
+    "X-Title": "Koraspace AI",
   };
 
-  const res = await fetch(`${OPENROUTER_BASE}/chat/completions`, {
+  const res = await fetch(`${getApiBase()}/chat/completions`, {
     method: "POST",
     headers,
     body: JSON.stringify(body),
@@ -112,14 +139,14 @@ export async function callAI(
 
   if (!res.ok) {
     const errText = await res.text();
-    let errorMsg = `OpenRouter error ${res.status}: ${errText}`;
+    let errorMsg = `AI API error ${res.status}: ${errText}`;
     try {
       const parsed = JSON.parse(errText);
       if (parsed.error && parsed.error.message) {
         errorMsg = parsed.error.message;
       }
     } catch {}
-    console.error(`[OpenRouter] ${options.agent} error ${res.status}:`, errText);
+    console.error(`[AI Provider] ${options.agent} error ${res.status}:`, errText);
     throw new Error(errorMsg);
   }
 
@@ -134,10 +161,10 @@ export async function callAI(
   };
 }
 
-/* ── Streaming call ───────────────────────────────────────────── */
+/* -- Streaming call --------------------------------------------- */
 
 /**
- * Stream a chat completion from OpenRouter via SSE.
+ * Stream a chat completion from the AI provider via SSE.
  * Returns a ReadableStream of text chunks.
  */
 export async function callAIStream(
@@ -147,22 +174,22 @@ export async function callAIStream(
   const apiKey = getApiKey();
 
   if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY is not configured");
+    throw new Error("OPENROUTER_API_KEY or GEMINI_API_KEY is not configured");
   }
 
   const agentConfig = AGENT_DEFAULTS[options.agent];
-  const model = options.model || agentConfig.defaultModel || getDefaultModel();
-  const temperature = options.temperature ?? agentConfig.temperature;
-  const maxTokens = options.maxTokens ?? agentConfig.maxTokens;
+  const model = options.model || agentConfig?.defaultModel || getDefaultModel();
+  const temperature = options.temperature ?? agentConfig?.temperature;
+  const maxTokens = options.maxTokens ?? agentConfig?.maxTokens;
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${apiKey}`,
     "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-    "X-Title": "Koraspace",
+    "X-Title": "Koraspace AI",
   };
 
-  const res = await fetch(`${OPENROUTER_BASE}/chat/completions`, {
+  const res = await fetch(`${getApiBase()}/chat/completions`, {
     method: "POST",
     headers,
     body: JSON.stringify({
@@ -176,7 +203,7 @@ export async function callAIStream(
 
   if (!res.ok) {
     const errText = await res.text();
-    let errorMsg = `OpenRouter stream error ${res.status}: ${errText}`;
+    let errorMsg = `AI stream error ${res.status}: ${errText}`;
     try {
       const parsed = JSON.parse(errText);
       if (parsed.error && parsed.error.message) {
@@ -235,24 +262,14 @@ export async function callAIStream(
   });
 }
 
-/* ── Model list fetcher ───────────────────────────────────────── */
+/* -- Model list fetcher ----------------------------------------- */
 
 let cachedModels: OpenRouterModel[] | null = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
-export interface OpenRouterModel {
-  id: string;
-  name: string;
-  description?: string;
-  context_length: number;
-  pricing: { prompt: string; completion: string };
-  top_provider?: { max_completion_tokens?: number };
-  architecture?: { modality?: string; input_modalities?: string[] };
-}
-
 /**
- * Fetch available models from OpenRouter.
+ * Fetch available models from AI Provider.
  * Cached for 1 hour.
  */
 export async function fetchAvailableModels(): Promise<OpenRouterModel[]> {
@@ -261,29 +278,29 @@ export async function fetchAvailableModels(): Promise<OpenRouterModel[]> {
   }
 
   const apiKey = getApiKey();
-  if (!apiKey) return [];
+  if (!apiKey) return (RECOMMENDED_MODELS as any as OpenRouterModel[]) || [];
 
   try {
-    const res = await fetch(`${OPENROUTER_BASE}/models`, {
+    const res = await fetch(`${getApiBase()}/models`, {
       headers: { Authorization: `Bearer ${apiKey}` },
     });
 
     if (!res.ok) {
-      console.error("[OpenRouter] Failed to fetch models:", res.status);
-      return cachedModels || [];
+      console.error("[AI Provider] Failed to fetch models:", res.status);
+      return cachedModels || ((RECOMMENDED_MODELS as any as OpenRouterModel[]) || []);
     }
 
     const data = await res.json();
-    cachedModels = (data.data || []) as OpenRouterModel[];
+    cachedModels = (data.data || RECOMMENDED_MODELS) as any as OpenRouterModel[];
     cacheTimestamp = Date.now();
     return cachedModels;
   } catch (err) {
-    console.error("[OpenRouter] Model fetch error:", err);
-    return cachedModels || [];
+    console.error("[AI Provider] Model fetch error:", err);
+    return cachedModels || ((RECOMMENDED_MODELS as any as OpenRouterModel[]) || []);
   }
 }
 
-/* ── Utility: check if a model supports vision ────────────────── */
+/* -- Utility: check if a model supports vision ------------------ */
 
 export function modelSupportsVision(model: OpenRouterModel): boolean {
   const modality = model.architecture?.modality || "";
@@ -295,7 +312,7 @@ export function modelSupportsVision(model: OpenRouterModel): boolean {
   );
 }
 
-/* ── Utility: build multimodal message with images ────────────── */
+/* -- Utility: build multimodal message with images -------------- */
 
 export function buildMultimodalContent(
   text: string,
@@ -315,11 +332,4 @@ export function buildMultimodalContent(
   parts.push({ type: "text", text });
 
   return parts;
-}
-
-/**
- * Check if the API key is configured.
- */
-export function isConfigured(): boolean {
-  return !!getApiKey();
 }

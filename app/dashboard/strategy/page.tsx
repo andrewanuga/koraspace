@@ -1,14 +1,14 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { getStrategyContext } from "@/lib/marketer/strategy";
 import { StrategyClient } from "./StrategyClient";
 
 export default async function StrategyPage() {
+  const session = await auth();
+    const user = session?.user;
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   if (!user) {
     redirect("/login");

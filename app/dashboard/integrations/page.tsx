@@ -1,4 +1,10 @@
 "use client";
+import { createClient } from "@/lib/supabase/client";
+
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -35,8 +41,6 @@ import {
   CircleAlert,
   Lock,
 } from "lucide-react";
-
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 
 import {
@@ -186,6 +190,7 @@ function CapabilityTag({ children }: { children: React.ReactNode }) {
 /* -------------------------------------------------------------------------- */
 
 export default function IntegrationsPage() {
+  const supabase = createClient();
   const { success, error: toastError } = useToast();
 
   const [accounts, setAccounts] = useState<SocialAccount[]>([]);
@@ -216,11 +221,8 @@ export default function IntegrationsPage() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const session = await auth();
+        const user = session?.user;
 
       if (!user) return;
 
@@ -413,8 +415,6 @@ export default function IntegrationsPage() {
     if (!userId) return;
 
     try {
-      const supabase = createClient();
-
       const { error } = await supabase
         .from("social_accounts")
         .delete()

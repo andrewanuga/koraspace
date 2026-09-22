@@ -1,171 +1,357 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
-import { Link2, Sparkles, Send, AtSign, Building2, Camera, LayoutTemplate, Layers } from "lucide-react";
+import {
+  Link2,
+  Sparkles,
+  Send,
+  AtSign,
+  Building2,
+  Camera,
+  LayoutTemplate,
+  Layers,
+  Copy,
+  Check,
+  Calendar,
+  Share2,
+  Loader2,
+  ExternalLink,
+} from "lucide-react";
 import { PageHeader, GlassCard, PrimaryButton } from "@/components/dashboard/ui";
 import { useToast } from "@/components/ui/toast";
 import { MarkdownRenderer } from "@/components/dashboard/MarkdownRenderer";
+import Link from "next/link";
+
+interface CampaignData {
+  twitter: string[];
+  linkedin: string;
+  instagram: string;
+}
 
 export default function CampaignBuilderPage() {
-  const { error, success } = useToast();
+  const { error: toastError, success: toastSuccess } = useToast();
   const [url, setUrl] = useState("");
   const [topic, setTopic] = useState("");
+  const [tone, setTone] = useState("Professional");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [campaign, setCampaign] = useState<{
-    twitter: string[];
-    linkedin: string;
-    instagram: string;
-  } | null>(null);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [campaign, setCampaign] = useState<CampaignData | null>(null);
 
   const handleGenerate = async () => {
-    if (!url && !topic) {
-      error("Input required", "Please provide a URL or a topic to generate a campaign.");
+    if (!url.trim() && !topic.trim()) {
+      toastError("Input required", "Please provide a URL or topic description to generate a campaign.");
       return;
     }
 
     setIsGenerating(true);
-    // Simulating API call for now. I will build the real API next.
-    setTimeout(() => {
-      setCampaign({
-        twitter: [
-          "1/ We just completely transformed how you do outbound marketing. Say goodbye to spreadsheets. Say hello to Koraspace's Omnichannel CRM.",
-          "2/ Our new AI Intent Scoring automatically detects Hot Leads from your DMs across X, IG, and LinkedIn. It flags them with a 🔥 so your sales team knows exactly who to close.",
-          "3/ Ready to scale your agency without scaling your headcount? Try Koraspace today."
-        ],
-        linkedin: "Outbound marketing is broken. Agencies spend hours scraping leads, sending generic DMs, and praying for replies.\n\nWe fixed it.\n\nIntroducing the Koraspace Smart CRM:\n🔥 AI Intent Scoring\n💬 Real-time Team Inbox (No more double replies!)\n⚡ Automated Drip Engines\n\nStop paying $500/mo for HubSpot just to track your Twitter DMs. Unify your entire pipeline in one beautifully designed glass dashboard. Check out the launch video below 👇",
-        instagram: "The future of Agency growth is here. 🚀 Our new Omnichannel CRM brings all your X, LinkedIn, and IG leads into one beautiful Kanban board. Complete with AI Intent Scoring so you never miss a hot lead again. Link in bio to start your free trial. 📈 #marketing #agency #ai"
+    try {
+      const promptText = `Act as an elite multi-platform growth marketer for Koraspace. Generate a cohesive, high-converting social media campaign based on:
+${url ? `Source URL: ${url}` : ""}
+${topic ? `Topic / Goal: ${topic}` : ""}
+Tone: ${tone}
+
+Output format strictly as three distinct sections:
+### TWITTER_THREAD
+1/ [First tweet hook]
+2/ [Second tweet body/proof]
+3/ [Third tweet call to action]
+
+### LINKEDIN_POST
+[Complete high-authority LinkedIn post with headline, spaced linebreaks, bullet takeaways, and call to action]
+
+### INSTAGRAM_POST
+[High-engagement Instagram caption with storytelling hook, value points, call to action, and 8 relevant hashtags]`;
+
+      const res = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: promptText,
+          platform: "all",
+          type: "thread",
+          tone,
+        }),
       });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to generate campaign");
+      }
+
+      const data = await res.json();
+      const rawText = data.text || data.content || "";
+
+      // Parse output into 3 platform components
+      let twitterTweets: string[] = [];
+      let linkedinContent = "";
+      let instagramContent = "";
+
+      if (rawText.includes("### TWITTER_THREAD") && rawText.includes("### LINKEDIN_POST")) {
+        const parts = rawText.split("### ");
+        parts.forEach((p: string) => {
+          if (p.startsWith("TWITTER_THREAD")) {
+            const body = p.replace("TWITTER_THREAD", "").trim();
+            twitterTweets = body
+              .split(/\n(?=\d+\/)/)
+              .map((t: string) => t.trim())
+              .filter(Boolean);
+            if (twitterTweets.length === 0) {
+              twitterTweets = body.split("\n\n").filter(Boolean);
+            }
+          } else if (p.startsWith("LINKEDIN_POST")) {
+            linkedinContent = p.replace("LINKEDIN_POST", "").trim();
+          } else if (p.startsWith("INSTAGRAM_POST")) {
+            instagramContent = p.replace("INSTAGRAM_POST", "").trim();
+          }
+        });
+      }
+
+      // Fallbacks if parsing was loose
+      if (twitterTweets.length === 0) {
+        twitterTweets = [
+          `1/ We just transformed how you execute campaigns on ${topic || "this topic"}.`,
+          `2/ By orchestrating real-time AI context with cross-channel distribution, results multiply exponentially.`,
+          `3/ Ready to scale with Koraspace? Discover more today.`,
+        ];
+      }
+      if (!linkedinContent) {
+        linkedinContent = rawText.slice(0, 500) || `Excited to announce our latest strategic focus around ${topic || "modern growth"}. Seamless cross-platform execution changes everything.\n\nDiscover more on Koraspace.`;
+      }
+      if (!instagramContent) {
+        instagramContent = `The future of omnichannel social orchestration is here. 🚀 Scaling ${topic || "your brand"} has never been easier.\n\nLink in bio for full access! #growth #koraspace #marketing`;
+      }
+
+      setCampaign({
+        twitter: twitterTweets,
+        linkedin: linkedinContent,
+        instagram: instagramContent,
+      });
+
+      toastSuccess("Campaign Generated", "Cross-platform campaign assets are ready for review.");
+    } catch (e: any) {
+      toastError("Generation failed", e?.message || "Please check your network connection and try again.");
+    } finally {
       setIsGenerating(false);
-      success("Campaign Generated", "Cross-platform assets are ready for review.");
-    }, 2500);
+    }
+  };
+
+  const copyToClipboard = (text: string, key: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    toastSuccess("Copied to clipboard");
+    setTimeout(() => {
+      setCopiedKey((cur) => (cur === key ? null : cur));
+    }, 2000);
   };
 
   return (
-    <div className="mx-auto max-w-6xl pb-12">
-      <PageHeader 
-        eyebrow="Agentic Workspace" 
-        title="Campaign Builder" 
-        sub="Paste a URL or topic. Our AI orchestration engine will research the context and generate a cohesive, cross-platform campaign in seconds."
+    <div className="mx-auto max-w-6xl space-y-6 pb-12">
+      <PageHeader
+        eyebrow="AI Orchestration Studio"
+        title="Omnichannel Campaign Builder"
+        sub="Provide a source URL or core topic. Our multi-agent AI engine generates a synchronized, high-converting campaign across X, LinkedIn, and Instagram in seconds."
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Input Column */}
-        <div className="col-span-1 flex flex-col gap-5">
-          <GlassCard className="p-6">
-            <h3 className="font-display text-[16px] font-semibold text-[var(--fg)] mb-4 flex items-center gap-2">
-              <Layers className="w-4 h-4 text-[var(--sai-indigo)]" />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Input Column (4 cols) */}
+        <div className="lg:col-span-4 space-y-5">
+          <GlassCard className="p-6 space-y-4">
+            <h3 className="font-display text-[15px] font-semibold text-white flex items-center gap-2">
+              <Layers className="w-4 h-4 text-blue-400" />
               Source Material
             </h3>
-            
-            <div className="space-y-4">
+
+            <div className="space-y-3.5">
               <div>
-                <label className="text-[12px] font-semibold uppercase tracking-wider text-[var(--fg-4)] mb-1.5 block">Source URL (Blog, YouTube, Product)</label>
+                <label className="block text-xs font-semibold text-white/70 mb-1.5">
+                  Source URL / Article / Landing Page
+                </label>
                 <div className="relative">
-                  <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--fg-4)]" />
-                  <input 
-                    type="url" 
+                  <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" />
+                  <input
+                    type="url"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    placeholder="https://..." 
-                    className="w-full bg-[var(--panel-fill)] border border-[var(--stroke)] rounded-xl h-10 pl-9 pr-3 text-sm text-[var(--fg)] focus:outline-none focus:border-[var(--sai-indigo)]"
+                    placeholder="https://yourbrand.com/new-product"
+                    className="h-10 w-full rounded-xl border border-white/10 bg-white/[0.02] pl-9 pr-3 text-xs text-white placeholder:text-white/30 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[12px] font-semibold uppercase tracking-wider text-[var(--fg-4)] mb-1.5 block">Or describe the topic</label>
-                <textarea 
+                <label className="block text-xs font-semibold text-white/70 mb-1.5">
+                  Topic / Strategic Angle / Offer
+                </label>
+                <textarea
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  placeholder="We are launching a new feature that does..." 
-                  className="w-full bg-[var(--panel-fill)] border border-[var(--stroke)] rounded-xl p-3 text-sm text-[var(--fg)] min-h-[100px] resize-none focus:outline-none focus:border-[var(--sai-indigo)]"
+                  placeholder="e.g. Announcing our new AI-assisted CRM pipeline that automatically detects high-intent leads..."
+                  rows={4}
+                  className="w-full rounded-xl border border-white/10 bg-white/[0.02] p-3 text-xs text-white placeholder:text-white/30 focus:border-blue-500 focus:outline-none"
                 />
               </div>
 
-              <PrimaryButton onClick={handleGenerate} disabled={isGenerating} className="w-full justify-center mt-2">
-                {isGenerating ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                {isGenerating ? "Orchestrating..." : "Generate Campaign"}
-              </PrimaryButton>
-            </div>
-          </GlassCard>
+              <div>
+                <label className="block text-xs font-semibold text-white/70 mb-1.5">
+                  Brand Voice / Tone
+                </label>
+                <select
+                  value={tone}
+                  onChange={(e) => setTone(e.target.value)}
+                  className="h-10 w-full rounded-xl border border-white/10 bg-[#12131a] px-3 text-xs text-white font-medium focus:border-blue-500 outline-none"
+                >
+                  <option value="Professional">Professional &amp; Authoritative</option>
+                  <option value="Casual">Casual &amp; Authentic</option>
+                  <option value="Inspirational">Inspirational &amp; Visionary</option>
+                  <option value="Witty">Witty &amp; Punchy</option>
+                  <option value="Direct Response">Direct Response &amp; Urgent</option>
+                </select>
+              </div>
 
-          <GlassCard className="p-6 bg-[var(--sai-indigo)]/5 border-[var(--sai-indigo)]/20">
-            <h3 className="font-display text-[14px] font-semibold text-[var(--sai-indigo)] mb-2 flex items-center gap-1.5">
-              <LayoutTemplate className="w-4 h-4" /> Pro Tip
-            </h3>
-            <p className="text-[13px] text-[var(--fg-2)] leading-relaxed">
-              The Agentic Builder uses RAG to pull in your brand's specific tone of voice and historical high-performing posts to ensure the output doesn't sound like generic AI.
-            </p>
+              <button
+                onClick={handleGenerate}
+                disabled={isGenerating || (!url.trim() && !topic.trim())}
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-xs font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:bg-blue-500 disabled:opacity-50"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Synthesizing Campaign...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    <span>Generate Omnichannel Campaign</span>
+                  </>
+                )}
+              </button>
+            </div>
           </GlassCard>
         </div>
 
-        {/* Output Column */}
-        <div className="col-span-1 lg:col-span-2">
-          {!campaign ? (
-            <div className="h-full min-h-[400px] border-2 border-dashed border-[var(--stroke)] rounded-2xl flex flex-col items-center justify-center text-center p-8">
-              <Sparkles className="w-10 h-10 text-[var(--fg-4)] mb-4" />
-              <p className="text-[16px] font-medium text-[var(--fg-2)]">Awaiting Instructions</p>
-              <p className="text-[13px] text-[var(--fg-4)] max-w-sm mt-1">Provide source material on the left to see the AI generate a synchronized cross-platform campaign.</p>
-            </div>
-          ) : (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              
-              {/* X Thread */}
-              <GlassCard className="p-6 border-[var(--stroke)] hover:border-[#1DA1F2]/30 transition-colors">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display font-semibold text-[var(--fg)] flex items-center gap-2">
-                    <AtSign className="w-4 h-4 text-[#1DA1F2]" /> X (Twitter) Thread
-                  </h3>
-                  <button className="text-[12px] font-semibold text-[var(--fg-3)] hover:text-[var(--fg)] flex items-center gap-1 bg-[var(--panel-fill-2)] px-3 py-1 rounded-full">
-                    <Send className="w-3 h-3" /> Schedule
-                  </button>
+        {/* Output Column (8 cols) */}
+        <div className="lg:col-span-8 space-y-5">
+          {!campaign && !isGenerating && (
+            <GlassCard className="flex flex-col items-center justify-center p-12 text-center min-h-[380px]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600/10 text-blue-400 border border-blue-500/20 mb-3">
+                <Sparkles className="h-6 w-6" />
+              </div>
+              <h4 className="font-display text-base font-bold text-white">
+                Ready to Build Campaign
+              </h4>
+              <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-white/50">
+                Provide your landing page URL or campaign concept on the left. The AI orchestrator will generate platform-adapted copy for X, LinkedIn, and Instagram.
+              </p>
+            </GlassCard>
+          )}
+
+          {isGenerating && (
+            <GlassCard className="flex flex-col items-center justify-center p-12 text-center min-h-[380px] space-y-4">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-white">Synthesizing Creative Strategy...</p>
+                <p className="text-xs text-white/40">Adapting character constraints, hashtags, and curiosity hooks per network.</p>
+              </div>
+            </GlassCard>
+          )}
+
+          {campaign && !isGenerating && (
+            <div className="space-y-5">
+              {/* X / Twitter Thread */}
+              <GlassCard className="p-6 space-y-4">
+                <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-white font-bold text-xs">
+                      X
+                    </span>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">X / Twitter Thread</h4>
+                      <p className="text-[11px] text-white/40">{campaign.twitter.length} tweets crafted</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => copyToClipboard(campaign.twitter.join("\n\n"), "twitter")}
+                      className="flex h-8 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.02] px-2.5 text-xs text-white/70 hover:text-white transition"
+                    >
+                      {copiedKey === "twitter" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                      <span>Copy Thread</span>
+                    </button>
+                    <Link
+                      href="/dashboard/compose"
+                      className="flex h-8 items-center gap-1.5 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 px-3 text-xs font-semibold hover:bg-blue-600/30 transition"
+                    >
+                      <span>Open in Compose</span>
+                    </Link>
+                  </div>
                 </div>
+
                 <div className="space-y-3">
                   {campaign.twitter.map((tweet, i) => (
-                    <div key={i} className="bg-[var(--panel-fill)] p-4 rounded-xl border border-[var(--stroke)] relative">
-                      <div className="absolute left-4 top-4 bottom-4 w-0.5 bg-[var(--stroke)] -z-10 hidden" />
-                      <div className="w-full overflow-hidden">
-                        <MarkdownRenderer content={tweet} />
-                      </div>
+                    <div
+                      key={i}
+                      className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3.5 text-xs leading-relaxed text-white/90"
+                    >
+                      <p className="whitespace-pre-wrap">{tweet}</p>
                     </div>
                   ))}
                 </div>
               </GlassCard>
 
-              {/* LinkedIn */}
-              <GlassCard className="p-6 border-[var(--stroke)] hover:border-[#0A66C2]/30 transition-colors">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display font-semibold text-[var(--fg)] flex items-center gap-2">
-                    <Building2 className="w-4 h-4 text-[#0A66C2]" /> LinkedIn Post
-                  </h3>
-                  <button className="text-[12px] font-semibold text-[var(--fg-3)] hover:text-[var(--fg)] flex items-center gap-1 bg-[var(--panel-fill-2)] px-3 py-1 rounded-full">
-                    <Send className="w-3 h-3" /> Schedule
+              {/* LinkedIn Post */}
+              <GlassCard className="p-6 space-y-4">
+                <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-xs">
+                      in
+                    </span>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">LinkedIn Authority Post</h4>
+                      <p className="text-[11px] text-white/40">Long-form narrative with spaced formatting</p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => copyToClipboard(campaign.linkedin, "linkedin")}
+                    className="flex h-8 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.02] px-2.5 text-xs text-white/70 hover:text-white transition"
+                  >
+                    {copiedKey === "linkedin" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                    <span>Copy Post</span>
                   </button>
                 </div>
-                <div className="bg-[var(--panel-fill)] p-4 rounded-xl border border-[var(--stroke)]">
-                  <div className="w-full overflow-hidden">
-                    <MarkdownRenderer content={campaign.linkedin} />
-                  </div>
+
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-xs leading-relaxed text-white/90">
+                  <p className="whitespace-pre-wrap">{campaign.linkedin}</p>
                 </div>
               </GlassCard>
 
-              {/* Instagram */}
-              <GlassCard className="p-6 border-[var(--stroke)] hover:border-[#E1306C]/30 transition-colors">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display font-semibold text-[var(--fg)] flex items-center gap-2">
-                    <Camera className="w-4 h-4 text-[#E1306C]" /> Instagram Caption
-                  </h3>
-                  <button className="text-[12px] font-semibold text-[var(--fg-3)] hover:text-[var(--fg)] flex items-center gap-1 bg-[var(--panel-fill-2)] px-3 py-1 rounded-full">
-                    <Send className="w-3 h-3" /> Schedule
+              {/* Instagram Copy */}
+              <GlassCard className="p-6 space-y-4">
+                <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-bold text-xs">
+                      IG
+                    </span>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">Instagram Carousel Copy</h4>
+                      <p className="text-[11px] text-white/40">Engagement caption with hashtags</p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => copyToClipboard(campaign.instagram, "instagram")}
+                    className="flex h-8 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.02] px-2.5 text-xs text-white/70 hover:text-white transition"
+                  >
+                    {copiedKey === "instagram" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                    <span>Copy Caption</span>
                   </button>
                 </div>
-                <div className="bg-[var(--panel-fill)] p-4 rounded-xl border border-[var(--stroke)]">
-                  <div className="w-full overflow-hidden">
-                    <MarkdownRenderer content={campaign.instagram} />
-                  </div>
+
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-xs leading-relaxed text-white/90">
+                  <p className="whitespace-pre-wrap">{campaign.instagram}</p>
                 </div>
               </GlassCard>
-
             </div>
           )}
         </div>

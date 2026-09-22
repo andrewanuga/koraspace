@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
-import Link from "next/link";
+import type { ReactNode } from "react";
+
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowRight,
   BarChart3,
   Bot,
   Calendar,
   Check,
-  ChevronRight,
   Layers3,
   RefreshCw,
   Sparkles,
@@ -18,6 +17,7 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 /**
  * The homepage's product preview: one real environment rather than a wall of
@@ -36,6 +36,7 @@ export function DashboardShowcase({
   /** Content below the frame, e.g. links into the product pages. */
   after?: ReactNode;
 } = {}) {
+  const { t } = useLanguage();
   const [persona, setPersona] = useState<"creator" | "marketer">("creator");
 
   const isCreator = persona === "creator";
@@ -44,7 +45,7 @@ export function DashboardShowcase({
   const brandBorder = isCreator ? "rgba(255,10,138,0.28)" : "rgba(59,130,246,0.28)";
 
   return (
-    <section id="how-it-works" className="relative px-4 sm:px-6 lg:px-8 pt-24 pb-20 sm:pt-32 sm:pb-28 scroll-mt-24">
+    <section id="how-it-works" className="relative px-4 sm:px-6 lg:px-8 pt-6 pb-20 sm:pb-28 scroll-mt-24">
       {/* Background ambient lighting */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
@@ -69,32 +70,32 @@ export function DashboardShowcase({
           className="flex flex-col items-center justify-center text-center mb-10"
         >
           <div className="mb-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider font-semibold border text-white/80 bg-white/5 border-white/10 shadow-sm backdrop-blur-md">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider font-semibold border text-slate-800 bg-white border-slate-200 shadow-sm dark:text-white/80 dark:bg-white/5 dark:border-white/10 backdrop-blur-md">
               <span
-                className="h-1.5 w-1.5 rounded-full motion-safe:animate-pulse"
+                className="h-1.5 w-1.5 rounded-full animate-pulse"
                 style={{ background: brandColor }}
               />
-              Interactive preview
+              {t.dashboardShowcase.eyebrow}
             </span>
           </div>
 
-          <h2 className="font-display text-3xl sm:text-5xl font-bold leading-[1.1] tracking-tight text-white max-w-3xl">
-            Everything your marketing needs.{" "}
+          <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white max-w-2xl">
+            {t.dashboardShowcase.title}{" "}
             <span style={{ color: brandColor }} className="transition-colors duration-300">
-              Connected by intelligence.
+              {isCreator ? t.dashboardShowcase.creatorMode : t.dashboardShowcase.marketerMode}
             </span>
           </h2>
 
-          <p className="mt-2 text-xs sm:text-sm text-white/60 max-w-xl">
-            One workspace for creating, publishing, engaging and learning. Switch modes to see how it adapts to the way you work.
+          <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-white/60 max-w-xl">
+            {t.dashboardShowcase.subtitle}
           </p>
 
-          <div className="mt-6 inline-flex items-center gap-1 rounded-2xl border border-white/[0.10] bg-[#161616]/90 p-1.5 shadow-[0_10px_35px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+          <div className="mt-6 inline-flex items-center gap-1 rounded-2xl border border-slate-200/90 bg-white/90 p-1.5 shadow-sm dark:border-white/[0.10] dark:bg-[#161616]/90 backdrop-blur-xl">
             <button
               type="button"
               onClick={() => setPersona("creator")}
               className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer before:absolute before:inset-x-0 before:-inset-y-1.5 before:content-[''] ${
-                isCreator ? "text-white" : "text-white/55 hover:text-white"
+                isCreator ? "text-white" : "text-slate-600 hover:text-slate-900 dark:text-white/55 dark:hover:text-white"
               }`}
             >
               {isCreator && (
@@ -106,7 +107,7 @@ export function DashboardShowcase({
               )}
               <span className="relative z-10 flex items-center gap-2">
                 <Sparkles className="h-3.5 w-3.5" />
-                <span>Creator Mode</span>
+                <span>{t.dashboardShowcase.creatorMode}</span>
               </span>
             </button>
 
@@ -114,7 +115,7 @@ export function DashboardShowcase({
               type="button"
               onClick={() => setPersona("marketer")}
               className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer before:absolute before:inset-x-0 before:-inset-y-1.5 before:content-[''] ${
-                !isCreator ? "text-white" : "text-white/55 hover:text-white"
+                !isCreator ? "text-white" : "text-slate-600 hover:text-slate-900 dark:text-white/55 dark:hover:text-white"
               }`}
             >
               {!isCreator && (
@@ -126,7 +127,7 @@ export function DashboardShowcase({
               )}
               <span className="relative z-10 flex items-center gap-2">
                 <Target className="h-3.5 w-3.5" />
-                <span>Marketer Mode</span>
+                <span>{t.dashboardShowcase.marketerMode}</span>
               </span>
             </button>
           </div>
@@ -141,18 +142,18 @@ export function DashboardShowcase({
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          className="relative mx-auto overflow-hidden rounded-2xl sm:rounded-3xl border border-white/[0.10] bg-[#171717] shadow-[0_30px_90px_rgba(0,0,0,0.6)]"
+          className="relative mx-auto overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white shadow-xl dark:border-white/[0.10] dark:bg-[#171717] dark:shadow-[0_30px_90px_rgba(0,0,0,0.6)]"
         >
           {/* Window header */}
-          <div className="flex h-12 items-center justify-between border-b border-white/[0.07] bg-[#141414] px-4 sm:px-6">
+          <div className="flex h-12 items-center justify-between border-b border-slate-200/80 bg-slate-100/90 px-4 sm:px-6 dark:border-white/[0.07] dark:bg-[#141414]">
             <div className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-white/15" />
-              <span className="h-3 w-3 rounded-full bg-white/15" />
-              <span className="h-3 w-3 rounded-full bg-white/15" />
+              <span className="h-3 w-3 rounded-full bg-slate-300 dark:bg-white/15" />
+              <span className="h-3 w-3 rounded-full bg-slate-300 dark:bg-white/15" />
+              <span className="h-3 w-3 rounded-full bg-slate-300 dark:bg-white/15" />
             </div>
 
             {/* URL bar indicator */}
-            <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.025] px-4 py-1.5 text-xs text-white/45 font-mono">
+            <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs text-slate-500 font-mono dark:border-white/[0.06] dark:bg-white/[0.025] dark:text-white/45 shadow-xs">
               <span
                 className="h-1.5 w-1.5 rounded-full"
                 style={{ background: brandColor }}
@@ -162,20 +163,20 @@ export function DashboardShowcase({
                 className="rounded px-1.5 py-0.5 text-[10px] font-semibold text-white uppercase"
                 style={{ background: brandColor }}
               >
-                {persona}
+                {t.dashboardShowcase.previewMode}
               </span>
             </div>
 
-            <div className="h-6 w-6 rounded-full border border-white/10 bg-white/[0.04]" />
+            <div className="h-6 w-6 rounded-full border border-slate-200 bg-white dark:border-white/10 dark:bg-white/[0.04]" />
           </div>
 
           {/* Dashboard Mockup Grid */}
           <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[190px_1fr] min-h-[460px] sm:min-h-[520px]">
             {/* Left Sidebar */}
-            <div className="border-r border-white/[0.06] bg-[#151515] p-3 sm:p-4 flex flex-col justify-between">
+            <div className="border-r border-slate-200/80 bg-slate-50 p-3 sm:p-4 flex flex-col justify-between dark:border-white/[0.06] dark:bg-[#151515]">
               <div>
                 {/* Workspace selector */}
-                <div className="mb-5 flex items-center gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.03] p-2">
+                <div className="mb-5 flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white p-2 shadow-xs dark:border-white/[0.06] dark:bg-white/[0.03]">
                   <div
                     className="flex h-7 w-7 items-center justify-center rounded-lg text-white font-bold text-xs"
                     style={{ background: brandColor }}
@@ -183,11 +184,11 @@ export function DashboardShowcase({
                     K
                   </div>
                   <div className="min-w-0 flex-1 hidden sm:block">
-                    <div className="text-xs font-semibold text-white truncate">
+                    <div className="text-xs font-semibold text-slate-900 dark:text-white truncate">
                       Acme Workspace
                     </div>
-                    <div className="text-[10px] text-white/35 capitalize">
-                      {persona} Mode
+                    <div className="text-[10px] text-slate-500 dark:text-white/35 capitalize">
+                      {isCreator ? t.dashboardShowcase.creatorMode : t.dashboardShowcase.marketerMode}
                     </div>
                   </div>
                 </div>
@@ -196,21 +197,21 @@ export function DashboardShowcase({
                 <div className="space-y-1">
                   {isCreator ? (
                     <>
-                      <MockNavItem active icon={Sparkles} label="AI Studio" color={brandColor} />
-                      <MockNavItem icon={Calendar} label="Visual Calendar" color={brandColor} />
-                      <MockNavItem icon={TrendingUp} label="Viral Trends" color={brandColor} />
-                      <MockNavItem icon={RefreshCw} label="Repurpose" color={brandColor} />
-                      <MockNavItem icon={Users} label="Audience" color={brandColor} />
-                      <MockNavItem icon={Layers3} label="Brand Kit" color={brandColor} />
+                      <MockNavItem active icon={Sparkles} label={t.dashboardShowcase.aiStudio} color={brandColor} />
+                      <MockNavItem icon={Calendar} label={t.dashboardShowcase.visualCalendar} color={brandColor} />
+                      <MockNavItem icon={TrendingUp} label={t.dashboardShowcase.viralTrends} color={brandColor} />
+                      <MockNavItem icon={RefreshCw} label={t.dashboardShowcase.repurpose} color={brandColor} />
+                      <MockNavItem icon={Users} label={t.dashboardShowcase.audience} color={brandColor} />
+                      <MockNavItem icon={Layers3} label={t.dashboardShowcase.brandKit} color={brandColor} />
                     </>
                   ) : (
                     <>
-                      <MockNavItem active icon={Bot} label="Agent Operator" color={brandColor} />
-                      <MockNavItem icon={Target} label="Campaigns" color={brandColor} />
-                      <MockNavItem icon={Users} label="CRM & Leads" color={brandColor} />
-                      <MockNavItem icon={Zap} label="Automations" color={brandColor} />
-                      <MockNavItem icon={BarChart3} label="Attribution" color={brandColor} />
-                      <MockNavItem icon={Layers3} label="Strategy" color={brandColor} />
+                      <MockNavItem active icon={Bot} label={t.dashboardShowcase.agentOperator} color={brandColor} />
+                      <MockNavItem icon={Target} label={t.dashboardShowcase.campaigns} color={brandColor} />
+                      <MockNavItem icon={Users} label={t.dashboardShowcase.crmLeads} color={brandColor} />
+                      <MockNavItem icon={Zap} label={t.dashboardShowcase.automations} color={brandColor} />
+                      <MockNavItem icon={BarChart3} label={t.dashboardShowcase.attribution} color={brandColor} />
+                      <MockNavItem icon={Layers3} label={t.dashboardShowcase.strategy} color={brandColor} />
                     </>
                   )}
                 </div>
@@ -220,13 +221,13 @@ export function DashboardShowcase({
               <div className="hidden sm:block rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5">
                 <div className="flex items-center gap-2 text-[11px] text-white/60">
                   <span className="h-2 w-2 rounded-full bg-[#34d399] motion-safe:animate-pulse" />
-                  <span>Real-time Sync</span>
+                  <span>{t.dashboardShowcase.realTimeSync}</span>
                 </div>
               </div>
             </div>
 
             {/* Main Preview Content */}
-            <div className="p-4 sm:p-7 bg-[#121212] overflow-x-hidden flex flex-col justify-between">
+            <div className="p-4 sm:p-7 bg-slate-100/60 dark:bg-[#121212] overflow-x-hidden flex flex-col justify-between">
               <AnimatePresence mode="wait">
                 {isCreator ? (
                   <motion.div
@@ -239,41 +240,37 @@ export function DashboardShowcase({
                   >
                     {/* Top Metric Strip */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      <MockStat label="Total Reach" value="482.4K" change="+28.4%" positive color="#ff0a8a" />
-                      <MockStat label="Engagement" value="6.82%" change="+1.4%" positive color="#ff0a8a" />
-                      <MockStat label="Scheduled" value="18 Posts" change="All synced" positive color="#ff0a8a" />
-                      <MockStat label="AI Content Score" value="96/100" change="Optimal voice" positive color="#ff0a8a" />
+                      <MockStat label={t.dashboardShowcase.totalReach} value="482.4K" change="+28.4%" positive color="#ff0a8a" />
+                      <MockStat label={t.dashboardShowcase.engagement} value="6.82%" change="+1.4%" positive color="#ff0a8a" />
+                      <MockStat label={t.dashboardShowcase.scheduled} value="18 Posts" change={t.dashboardShowcase.allSynced} positive color="#ff0a8a" />
+                      <MockStat label={t.dashboardShowcase.aiContentScore} value="96/100" change={t.dashboardShowcase.optimalVoice} positive color="#ff0a8a" />
                     </div>
 
                     {/* Main Workspace Card: AI Compose Studio */}
-                    <div className="rounded-2xl border border-white/[0.08] bg-[#181818] p-4 sm:p-5">
-                      <div className="flex items-center justify-between border-b border-white/[0.07] pb-3 mb-4">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm dark:border-white/[0.08] dark:bg-[#181818]">
+                      <div className="flex items-center justify-between border-b border-slate-200/80 pb-3 mb-4 dark:border-white/[0.07]">
                         <div className="flex items-center gap-2">
                           <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#ff0a8a]/20 text-[#ff0a8a]">
                             <Sparkles className="h-3.5 w-3.5" />
                           </span>
-                          <span className="text-xs font-semibold text-white">
-                            Active AI Generation • Signature Brand Voice
+                          <span className="text-xs font-semibold text-slate-900 dark:text-white">
+                            {t.dashboardShowcase.activeAiGeneration}
                           </span>
                         </div>
 
                         <div className="flex items-center gap-1.5">
-                          <span className="rounded-md bg-white/[0.06] px-2 py-1 text-[10px] text-white/50">Instagram</span>
-                          <span className="rounded-md bg-white/[0.06] px-2 py-1 text-[10px] text-white/50">LinkedIn</span>
-                          <span className="rounded-md bg-white/[0.06] px-2 py-1 text-[10px] text-white/50">TikTok</span>
+                          <span className="rounded-md bg-slate-100 px-2 py-1 text-[10px] text-slate-600 dark:bg-white/[0.06] dark:text-white/50">Instagram</span>
+                          <span className="rounded-md bg-slate-100 px-2 py-1 text-[10px] text-slate-600 dark:bg-white/[0.06] dark:text-white/50">LinkedIn</span>
+                          <span className="rounded-md bg-slate-100 px-2 py-1 text-[10px] text-slate-600 dark:bg-white/[0.06] dark:text-white/50">TikTok</span>
                         </div>
                       </div>
 
                       {/* Post content preview */}
-                      <div className="rounded-xl border border-white/[0.06] bg-[#141414] p-3.5">
-                        <p className="text-xs font-semibold text-[#ff7fba]">
-                          Hook: 3 AI strategies modern creators are using to scale audience in 2026.
+                      <div className="rounded-xl border border-slate-200/80 bg-slate-50 p-3.5 dark:border-white/[0.06] dark:bg-[#141414]">
+                        <p className="text-xs font-semibold text-[#ff0a8a] dark:text-[#ff7fba]">
+                          {t.dashboardShowcase.hookPreview}
                         </p>
-                        <p className="mt-2 text-xs leading-relaxed text-white/70">
-                          Most creators focus on raw volume. The top 1% build repeatable audience loops.
-                          Here is the 4-step framework we used to 10x distribution while cutting editing time in half...
-                        </p>
-                        <div className="mt-3 flex items-center gap-2 text-[10px] text-white/40">
+                        <div className="mt-3 flex items-center gap-2 text-[10px] text-slate-400 dark:text-white/40">
                           <span>#CreatorEconomy</span>
                           <span>#BrandGrowth</span>
                           <span>#AIWorkflow</span>
@@ -282,13 +279,13 @@ export function DashboardShowcase({
 
                       {/* Bottom action bar */}
                       <div className="mt-4 flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs text-white/45">
+                        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-white/45">
                           <Check className="h-3.5 w-3.5 text-[#34d399]" />
-                          <span>8-step brand reflection passed</span>
+                          <span>{t.dashboardShowcase.eightStepReflection}</span>
                         </div>
 
-                        <button className="rounded-xl bg-[#ff0a8a] px-4 py-2 text-xs font-semibold text-white shadow-[0_4px_16px_rgba(255,10,138,0.25)]">
-                          Schedule to 5 Platforms
+                        <button className="rounded-xl bg-[#ff0a8a] px-4 py-2 text-xs font-semibold text-white shadow-[0_4px_16px_rgba(255,10,138,0.25)] hover:bg-[#ff299b] transition-colors">
+                          {t.dashboardShowcase.scheduleToPlatforms}
                         </button>
                       </div>
                     </div>
@@ -311,69 +308,69 @@ export function DashboardShowcase({
                     </div>
 
                     {/* Main Workspace Card: Marketing Operator & CRM Queue */}
-                    <div className="rounded-2xl border border-white/[0.08] bg-[#181818] p-4 sm:p-5">
-                      <div className="flex items-center justify-between border-b border-white/[0.07] pb-3 mb-4">
+                    <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm dark:border-white/[0.08] dark:bg-[#181818]">
+                      <div className="flex items-center justify-between border-b border-slate-200/80 pb-3 mb-4 dark:border-white/[0.07]">
                         <div className="flex items-center gap-2">
-                          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#3b82f6]/20 text-[#60a5fa]">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#3b82f6]/20 text-[#3b82f6] dark:text-[#60a5fa]">
                             <Bot className="h-3.5 w-3.5" />
                           </span>
-                          <span className="text-xs font-semibold text-white">
+                          <span className="text-xs font-semibold text-slate-900 dark:text-white">
                             AI Operator Action Queue • High-Intent Triage
                           </span>
                         </div>
 
-                        <span className="rounded-full bg-[#3b82f6]/15 border border-[#3b82f6]/30 px-2.5 py-0.5 text-[10px] font-semibold text-[#60a5fa]">
+                        <span className="rounded-full bg-[#3b82f6]/15 border border-[#3b82f6]/30 px-2.5 py-0.5 text-[10px] font-semibold text-[#3b82f6] dark:text-[#60a5fa]">
                           4 Awaiting Approval
                         </span>
                       </div>
 
                       {/* Leads row preview */}
                       <div className="space-y-2.5">
-                        <div className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-[#141414] p-3">
+                        <div className="flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50 p-3 dark:border-white/[0.06] dark:bg-[#141414]">
                           <div className="flex items-center gap-3">
-                            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#3b82f6]/20 text-xs font-bold text-[#60a5fa]">
+                            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#3b82f6]/20 text-xs font-bold text-[#3b82f6] dark:text-[#60a5fa]">
                               EK
                             </span>
                             <div>
-                              <div className="text-xs font-semibold text-white">
+                              <div className="text-xs font-semibold text-slate-900 dark:text-white">
                                 Emeka Kalu • Growth Lead at Paystack
                               </div>
-                              <div className="text-[10px] text-white/45">
+                              <div className="text-[10px] text-slate-500 dark:text-white/45">
                                 Commented: &quot;What are the team workspace limits on Pro plan?&quot;
                               </div>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <span className="rounded-md bg-[#34d399]/15 text-[#34d399] px-2 py-1 text-[10px] font-semibold">
+                            <span className="rounded-md bg-[#34d399]/15 text-emerald-700 dark:text-[#34d399] px-2 py-1 text-[10px] font-semibold">
                               Score: 94 (Hot)
                             </span>
-                            <button className="rounded-lg bg-[#3b82f6] px-3 py-1.5 text-[11px] font-semibold text-white">
+                            <button className="rounded-lg bg-[#3b82f6] px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-blue-600 transition-colors">
                               Approve DM
                             </button>
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-[#141414] p-3">
+                        <div className="flex items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50 p-3 dark:border-white/[0.06] dark:bg-[#141414]">
                           <div className="flex items-center gap-3">
-                            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/[0.08] text-xs font-bold text-white/70">
+                            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-700 dark:bg-white/[0.08] dark:text-white/70">
                               SA
                             </span>
                             <div>
-                              <div className="text-xs font-semibold text-white">
+                              <div className="text-xs font-semibold text-slate-900 dark:text-white">
                                 Sarah Adams • Founder at Designly
                               </div>
-                              <div className="text-[10px] text-white/45">
+                              <div className="text-[10px] text-slate-500 dark:text-white/45">
                                 Campaign &quot;Black Friday Early Access&quot; scale recommendation +20%
                               </div>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <span className="rounded-md bg-[#3b82f6]/15 text-[#60a5fa] px-2 py-1 text-[10px] font-semibold">
+                            <span className="rounded-md bg-[#3b82f6]/15 text-blue-700 dark:text-[#60a5fa] px-2 py-1 text-[10px] font-semibold">
                               ROAS: 4.1x
                             </span>
-                            <button className="rounded-lg border border-white/[0.10] bg-white/[0.04] px-3 py-1.5 text-[11px] font-medium text-white hover:bg-white/[0.08]">
+                            <button className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-medium text-slate-700 shadow-xs hover:bg-slate-100 hover:text-slate-900 dark:border-white/[0.10] dark:bg-white/[0.04] dark:text-white dark:hover:bg-white/[0.08]">
                               Apply Scale
                             </button>
                           </div>
@@ -385,17 +382,18 @@ export function DashboardShowcase({
               </AnimatePresence>
 
               {/* Bottom mini status */}
-              <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-white/35">
+              <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400 dark:text-white/35">
                 <span>KoraSpace v2.4 • Active Workspace Node</span>
-                <span>Unified Intelligence Cloud</span>
+                <span>{t.dashboardShowcase.unifiedIntelligenceCloud}</span>
               </div>
             </div>
           </div>
         </motion.div>
 
+          {/* Outside the frame on purpose: the frame is overflow-hidden, so a
+              card placed inside it would be cropped where it breaks the edge. */}
           {overlay}
         </div>
-
         {/* A metric strip used to sit here claiming "₦8.4M+ managed pipeline
             revenue", "10× faster content" and "4.2× higher lead intent", plus
             LinkedIn and TikTok as connected networks. None of it is backed by
@@ -421,8 +419,8 @@ function MockNavItem({
     <div
       className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-medium transition-colors ${
         active
-          ? "bg-white/[0.08] text-white"
-          : "text-white/40 hover:text-white/70"
+          ? "bg-slate-200/80 text-slate-900 font-semibold dark:bg-white/[0.08] dark:text-white"
+          : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-white/40 dark:hover:text-white/70"
       }`}
     >
       <Icon
@@ -451,15 +449,15 @@ function MockStat({
     <motion.div
       whileHover={{ y: -3, scale: 1.02 }}
       transition={{ duration: 0.2 }}
-      className="rounded-xl border border-white/[0.07] bg-[#161616] p-3 cursor-default"
+      className="rounded-xl border border-slate-200 bg-white p-3 shadow-xs dark:border-white/[0.07] dark:bg-[#161616] cursor-default"
     >
-      <div className="text-[10px] text-white/40 truncate">{label}</div>
-      <div className="mt-1 text-base font-bold text-white tracking-tight">
+      <div className="text-[10px] text-slate-500 dark:text-white/40 truncate">{label}</div>
+      <div className="mt-1 text-base font-bold text-slate-900 dark:text-white tracking-tight">
         {value}
       </div>
       <div
         className="mt-1 text-[10px] font-medium"
-        style={{ color: positive ? "#34d399" : color }}
+        style={{ color: positive ? "#10b981" : color }}
       >
         {change}
       </div>

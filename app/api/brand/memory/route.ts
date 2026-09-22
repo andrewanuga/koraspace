@@ -1,14 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+﻿import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { scanForPromptInjection } from "@/lib/security/enforcement";
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const session = await auth();
+    const user = session?.user;
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -31,7 +30,7 @@ export async function POST(request: NextRequest) {
     const titleScan = scanForPromptInjection(body.title);
     if (!titleScan.safe) {
       return NextResponse.json(
-        { error: `Security violation in title: ${titleScan.reason}` },
+        { error: `Security violation: ${titleScan.reason || contentScan.reason}` },
         { status: 400 }
       );
     }
@@ -40,15 +39,14 @@ export async function POST(request: NextRequest) {
       const contentScan = scanForPromptInjection(body.content);
       if (!contentScan.safe) {
         return NextResponse.json(
-          { error: `Security violation in content: ${contentScan.reason}` },
+          { error: `Security violation: ${titleScan.reason || contentScan.reason}` },
           { status: 400 }
         );
       }
     }
 
-    const { data, error } = await supabase
-      .from("brand_memories")
-      .insert({
+    const data = await prisma.brandMemory.create({
+      data: {
         user_id: user.id,
         title: body.title.trim(),
         content: body.content?.trim() || null,
@@ -56,13 +54,8 @@ export async function POST(request: NextRequest) {
         enabled: body.enabled !== undefined ? body.enabled : true,
         importance: body.importance || 5,
         source: body.source || "manual",
-      })
-      .select()
-      .single();
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+      }
+    });
 
     return NextResponse.json({ memory: data });
   } catch (error) {

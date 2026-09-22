@@ -1,14 +1,12 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const session = await auth();
+      const user = session?.user;
 
     if (!user?.email) {
       return NextResponse.json(
@@ -22,8 +20,6 @@ export async function POST(req: NextRequest) {
     if (guard) return guard;
 
     const email = user.email.trim().toLowerCase();
-    const admin = createAdminClient();
-
     // Find pending invitations for the authenticated email
     const { data: invitations, error } = await admin
       .from("team_invitations")

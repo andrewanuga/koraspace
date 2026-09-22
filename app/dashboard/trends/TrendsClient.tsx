@@ -201,38 +201,30 @@ export function TrendsClient({
         "Tell Kora what you're thinking about",
         "Enter a topic or content direction first."
       );
-
       return;
     }
 
     setGeneratingIdeas(true);
 
     try {
-      /**
-       * TEMPORARY FRONTEND FALLBACK
-       *
-       * Replace this with your AI endpoint later.
-       */
+      const res = await fetch("/api/ideas/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: ideaPrompt.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to generate ideas");
 
-      await new Promise((resolve) =>
-        setTimeout(resolve, 900)
-      );
-
-      setGeneratedIdeas([
-        `A controversial take about ${ideaPrompt}`,
-        `5 mistakes creators make with ${ideaPrompt}`,
-        `How I would start with ${ideaPrompt} from zero`,
-        `The future of ${ideaPrompt} in 2026`,
-      ]);
+      setGeneratedIdeas(data.ideas || []);
 
       success(
         "Ideas generated",
-        "Kora created four directions to explore."
+        `Kora created ${data.ideas?.length || 4} directions for your niche.`
       );
-    } catch {
+    } catch (err: unknown) {
       toastError(
         "Couldn't generate ideas",
-        "Please try again."
+        err instanceof Error ? err.message : "Please try again."
       );
     } finally {
       setGeneratingIdeas(false);

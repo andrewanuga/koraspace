@@ -1,9 +1,12 @@
 "use client";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useState } from "react";
 import { Flag, UserX, UserCheck, Loader2, AlertTriangle } from "lucide-react";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { timeAgo } from "@/lib/dashboard/helpers";
 import { suspendUser, unsuspendUser, flagUserForReview } from "./actions";
@@ -39,7 +42,6 @@ export default function AdminModeration() {
   const load = async () => {
     setLoading(true);
     try {
-      const supabase = createClient();
       const [{ data: flagged }, { data: events }] = await Promise.all([
         // Get suspended + recently flagged users
         supabase

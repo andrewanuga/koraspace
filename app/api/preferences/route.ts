@@ -1,5 +1,6 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { getUserPreferences, upsertUserPreferences } from "@/lib/preferences/server";
 import type { AnalyticsStyle, FontFamily, ThemeMode, DashboardDensity } from "@/lib/preferences/types";
@@ -31,11 +32,8 @@ const VALID_DENSITIES: DashboardDensity[] = ["minimal", "balanced", "detailed"];
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const session = await auth();
+      const user = session?.user;
 
     if (authError || !user) {
       return NextResponse.json(
@@ -64,11 +62,8 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const session = await auth();
+      const user = session?.user;
 
     if (authError || !user) {
       return NextResponse.json(

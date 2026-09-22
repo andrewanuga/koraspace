@@ -85,7 +85,36 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: var(--font-inter);
+  font-family: var(--font-inter, 'Inter', sans-serif);
+}
+
+/* ── Dynamic User Typography Settings ───────────────── */
+html[data-font="inter"], html[data-font="inter"] body {
+  font-family: var(--font-inter, 'Inter', sans-serif);
+}
+
+html[data-font="geist"], html[data-font="geist"] body {
+  font-family: var(--font-geist-sans, 'Geist', sans-serif);
+}
+
+html[data-font="dm-sans"], html[data-font="dm-sans"] body {
+  font-family: 'DM Sans', sans-serif;
+}
+
+html[data-font="manrope"], html[data-font="manrope"] body {
+  font-family: 'Manrope', sans-serif;
+}
+
+html[data-font="plus-jakarta"], html[data-font="plus-jakarta"] body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+html[data-font="space-grotesk"], html[data-font="space-grotesk"] body {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+html[data-font="ibm-plex"], html[data-font="ibm-plex"] body {
+  font-family: 'IBM Plex Sans', sans-serif;
 }
 
 /* ── Keyframes ──────────────────────────────────────── */

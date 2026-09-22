@@ -1,85 +1,84 @@
 "use server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+
 
 async function verifyAdmin() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) throw new Error("Unauthorized");
-  
-  const { data: profile } = await supabase.from("profiles").select("is_admin").eq("id", user.id).single();
-  if (!profile?.is_admin) throw new Error("Forbidden: Not an admin");
-  
+  if (!adminDb) throw new Error("Admin client not configured");
+
+  const { data: profile } = await adminDb
+    .from("profiles")
+    .select("is_admin, plan")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!profile?.is_admin && profile?.plan !== "team") {
+    throw new Error("Forbidden: Administrator privileges required");
+  }
   return user;
 }
 
-import { sendBroadcastEmail } from "@/lib/mailer";
-
-export async function createBroadcast(message: string, type: "info" | "warning" | "critical", targetUserId?: string) {
-  const user = await verifyAdmin();
-  const adminDb = createAdminClient();
+export async function createBroadcast(
+  message: string,
+  type: "info" | "warning" | "critical" = "info",
+  targetUser?: string,
+  targetPlan?: string,
+  style: "banner" | "toast" | "modal" = "banner",
+  linkUrl?: string
+) {
+  const admin = await verifyAdmin();
   if (!adminDb) throw new Error("Admin client not configured");
-  
-  let targetUsers: { id: string, email?: string }[] = [];
 
-  if (targetUserId) {
-    // Single user target
-    const { data: { user: tUser } } = await adminDb.auth.admin.getUserById(targetUserId);
-    if (!tUser) throw new Error("Target user not found");
-    targetUsers = [{ id: tUser.id, email: tUser.email }];
-  } else {
-    // Global broadcast
-    const { error: bError } = await adminDb.from("system_broadcasts").insert({
-      message, type, created_by: user.id
-    });
-    if (bError) throw new Error(bError.message);
-
-    // Fetch all users for notifications/emails
-    // In production with 10k+ users, this should paginate or use a background worker.
-    const { data: { users }, error: uError } = await adminDb.auth.admin.listUsers();
-    if (uError) throw new Error(uError.message);
-    targetUsers = users.map(u => ({ id: u.id, email: u.email }));
-  }
-
-  // Insert user notifications
-  if (targetUsers.length > 0) {
-    const notifs = targetUsers.map(u => ({
-      user_id: u.id,
-      title: type === "info" ? "New Announcement" : "System Alert",
+  // If targeted at a single user, create direct notification
+  if (targetUser) {
+    const { error } = await adminDb.from("user_notifications").insert({
+      user_id: targetUser,
+      title: `${type.toUpperCase()} Announcement`,
       body: message,
       type: "system",
-      is_read: false
-    }));
-    
-    // Batch insert notifications (max 1000 per chunk usually, but we assume small scale for MVP)
-    await adminDb.from("user_notifications").insert(notifs);
-
-    // Dispatch emails asynchronously so we don't block the UI
-    const emails = targetUsers.map(u => u.email).filter(Boolean) as string[];
-    if (emails.length > 0) {
-      sendBroadcastEmail(emails, message, type).catch(console.error);
-    }
+    });
+    if (error) throw new Error(error.message);
+    return;
   }
+
+  // Otherwise create global/targeted broadcast
+  const { error } = await adminDb.from("system_broadcasts").insert({
+    message,
+    type,
+    is_active: true,
+    created_by: admin.id,
+    target_plan: targetPlan || null,
+    style,
+    link_url: linkUrl || null,
+  });
+
+  if (error) throw new Error(error.message);
 }
 
-export async function toggleBroadcast(id: string, isActive: boolean) {
+export async function toggleBroadcast(id: string, is_active: boolean) {
   await verifyAdmin();
-  const adminDb = createAdminClient();
   if (!adminDb) throw new Error("Admin client not configured");
-  
-  const { error } = await adminDb.from("system_broadcasts").update({
-    is_active: isActive
-  }).eq("id", id);
-  
+
+  const { error } = await adminDb
+    .from("system_broadcasts")
+    .update({ is_active })
+    .eq("id", id);
+
   if (error) throw new Error(error.message);
 }
 
 export async function deleteBroadcast(id: string) {
   await verifyAdmin();
-  const adminDb = createAdminClient();
   if (!adminDb) throw new Error("Admin client not configured");
-  
-  const { error } = await adminDb.from("system_broadcasts").delete().eq("id", id);
+
+  const { error } = await adminDb
+    .from("system_broadcasts")
+    .delete()
+    .eq("id", id);
+
   if (error) throw new Error(error.message);
 }

@@ -1,7 +1,9 @@
+import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { randomBytes } from "node:crypto";
-import { createClient } from "@/lib/supabase/server";
 import { PLATFORMS, isPlatformConfigured, type PlatformId } from "@/lib/social/platforms";
 import { validateOAuthScopes } from "@/lib/security/enforcement";
 import { encryptToken } from "@/lib/security/tokenCrypto";
@@ -24,9 +26,9 @@ export async function GET(
   if (!p || p.connectType !== "oauth" || !p.oauth) {
     return backToIntegrations(origin, { error: "unsupported", platform });
   }
-
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) return NextResponse.redirect(new URL("/login", origin));
 
   if (!isPlatformConfigured(platform as PlatformId)) {
@@ -70,9 +72,9 @@ export async function POST(
   if (!p || p.connectType !== "token") {
     return NextResponse.json({ error: "This platform uses OAuth, not a token." }, { status: 400 });
   }
-
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { token } = await req.json();

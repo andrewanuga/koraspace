@@ -5,6 +5,8 @@
 /.pnp
 .pnp.*
 .yarn/*
+.venv/
+/.venv/
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
@@ -32,6 +34,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -48,6 +51,7 @@ certificates
 !package.json
 !package-lock.json
 !tsconfig.json
+!vercel.json
 !eslint.config.*
 !next.config.*
 !postcss.config.*

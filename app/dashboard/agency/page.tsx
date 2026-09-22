@@ -1,5 +1,6 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { getMarketerOverview } from "@/lib/marketer/overview";
 import { AgencyClient } from "./AgencyClient";
 import type { ApprovalItem } from "./AgencyClient";
@@ -12,11 +13,8 @@ export const metadata = {
 };
 
 export default async function AgencyPage() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
 
   if (!user) {
     redirect("/login");

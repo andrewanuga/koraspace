@@ -1,4 +1,8 @@
 "use client";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import {
   useMemo,
@@ -36,7 +40,6 @@ import {
   ArrowUpRight,
   Inbox as InboxIcon,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
 import type { PlatformId } from "@/lib/social/platforms";

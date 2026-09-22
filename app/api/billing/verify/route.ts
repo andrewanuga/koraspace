@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { isPlan } from "@/lib/billing/plans";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { isPlan, PLANS } from "@/lib/billing/plans";
 
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 
@@ -17,9 +18,9 @@ export async function GET(req: NextRequest) {
 
   const secret = process.env.PAYSTACK_SECRET_KEY;
   if (!reference || !secret) return done({ paid: "0" });
-
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) return NextResponse.redirect(new URL("/login", origin));
 
   // Rate limit payment verification attempts (10 req/min per user)
@@ -45,9 +46,16 @@ export async function GET(req: NextRequest) {
       return done({ paid: "0", error: "identity_mismatch" });
     }
 
-    const plan = isPlan(data.metadata?.plan) ? data.metadata.plan : "pro";
-    const admin = createAdminClient();
-
+    const plan = (isPlan(data.metadata?.plan) ? data.metadata.plan : "pro") as keyof typeof PLANS;
+    
+    // Security: Verify amount matches the minimum expected for the plan
+    // Paystack amounts are returned in kobo.
+    const expectedAmountKobo = Math.round(data.amount); 
+    const minRequiredKobo = (PLANS[plan].price * 100);
+    if (expectedAmountKobo < minRequiredKobo) {
+      console.warn(`[Security] Payment amount mismatch: user ${user.id} paid ${expectedAmountKobo} but ${minRequiredKobo} was required.`);
+      return done({ paid: "0", error: "invalid_amount" });
+    }
     // Update the subscription on the profile.
     await supabase.from("profiles").update({
       plan,

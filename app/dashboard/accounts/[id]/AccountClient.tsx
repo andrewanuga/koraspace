@@ -1,11 +1,14 @@
 "use client";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, TrendingUp, TrendingDown, Users, Eye, Heart, Sparkles, Loader2, MessageSquare } from "lucide-react";
 import { fmtNum, pctChange } from "@/lib/dashboard/helpers";
 import type { SocialAccount, SocialPost } from "@/lib/social/types";
-import type { SocialAccountMetric } from "@/lib/supabase/types";
 
 export function AccountClient({
   account,

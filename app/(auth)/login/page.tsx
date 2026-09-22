@@ -16,7 +16,8 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
-import { createClient } from "@/lib/supabase/client";
+import { signIn } from "next-auth/react";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 const inputCls =
   "h-12 w-full rounded-xl border border-white/[0.10] bg-white/[0.035] px-4 text-sm text-white outline-none transition-all placeholder:text-white/25 focus:border-[#ff0a8a]/60 focus:bg-white/[0.055] focus:ring-4 focus:ring-[#ff0a8a]/10";
@@ -30,6 +31,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { error: toastError } = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (searchParams.get("suspended") === "1") {
@@ -57,16 +59,14 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: email.trim(),
+        password,
+      });
 
-      const { error: authError } =
-        await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
-
-      if (authError) {
-        toastError("Couldn't sign in", authError.message);
+      if (result?.error) {
+        toastError("Couldn't sign in", "Invalid credentials");
         setLoading(false);
         return;
       }
@@ -100,15 +100,15 @@ function LoginForm() {
       <div className="mb-7">
         <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#ff0a8a]/20 bg-[#ff0a8a]/[0.06] px-3 py-1 text-[11px] font-medium text-[#ff7fba]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#ff0a8a]" />
-          <span>Marketing & Creator Suite</span>
+          <span>{t.authPages.marketingSuite}</span>
         </div>
 
         <h2 className="font-display text-[30px] font-semibold tracking-[-0.035em] text-white sm:text-[34px]">
-          Welcome back
+          {t.authPages.loginTitle}
         </h2>
 
         <p className="mt-2 text-[14px] leading-relaxed text-white/45">
-          Sign in to access your KoraSpace workspace and live campaigns.
+          {t.authPages.loginSubtitle}
         </p>
       </div>
 
@@ -121,7 +121,7 @@ function LoginForm() {
               htmlFor="email"
               className="text-[12px] font-medium text-white/70"
             >
-              Email address
+              {t.authPages.emailLabel}
             </Label>
 
             <input
@@ -143,14 +143,14 @@ function LoginForm() {
                 htmlFor="password"
                 className="text-[12px] font-medium text-white/70"
               >
-                Password
+                {t.authPages.passwordLabel}
               </Label>
 
               <Link
                 href="/reset-password"
                 className="text-[11.5px] font-medium text-[#ff4da6] transition-colors hover:text-[#ff7fba]"
               >
-                Forgot password?
+                {t.authPages.forgotPassword}
               </Link>
             </div>
 
@@ -196,7 +196,7 @@ function LoginForm() {
               </>
             ) : (
               <>
-                <span>Sign in</span>
+                <span>{t.authPages.loginButton}</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </>
             )}
@@ -222,12 +222,12 @@ function LoginForm() {
 
       {/* Signup link */}
       <p className="mt-6 text-center text-[13px] text-white/40">
-        Don&apos;t have an account?{" "}
+        {t.authPages.noAccount}{" "}
         <Link
           href="/signup"
           className="font-semibold text-[#ff4da6] transition-colors hover:text-[#ff7fba]"
         >
-          Create your workspace
+          {t.authPages.signupButton}
         </Link>
       </p>
 

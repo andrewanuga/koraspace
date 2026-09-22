@@ -5,11 +5,12 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import {
-  canvasStates,
+  getCanvasStates,
   STATE_DURATION_MS,
   type CanvasCard,
   type CanvasStateKey,
 } from "@/components/landing/canvas-states";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 /** Organic, slightly asymmetric radius — a boundary, not a photo frame. */
 const FRAME_RADIUS = "58% 42% 52% 48% / 44% 48% 52% 56%";
@@ -258,6 +259,8 @@ type IntelligenceCanvasProps = {
 export function IntelligenceCanvas({
   focusedKey = null,
 }: IntelligenceCanvasProps) {
+  const { t } = useLanguage();
+  const currentCanvasStates = getCanvasStates(t);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const reduce = useReducedMotion();
@@ -266,30 +269,25 @@ export function IntelligenceCanvas({
   // Derived, not pushed into state, so the canvas answers the rail on the same
   // render as the hover — no frame of lag and nothing to keep in sync.
   const focusedIndex = focusedKey
-    ? canvasStates.findIndex((s) => s.key === focusedKey)
+    ? currentCanvasStates.findIndex((s) => s.key === focusedKey)
     : -1;
   const activeIndex = focusedIndex >= 0 ? focusedIndex : index;
-  const state = canvasStates[activeIndex];
+  const state = currentCanvasStates[activeIndex] || currentCanvasStates[0];
 
   useEffect(() => {
     if (focusedIndex >= 0) {
-      // The rail is driving: hold this stage, no auto-advance. Adopting it as
-      // the new base means releasing the rail carries on from the stage you
-      // were just looking at instead of snapping back. Deferred by a tick
-      // rather than set synchronously here, which would be a setState in an
-      // effect body.
       if (focusedIndex === index) return;
       timer.current = window.setTimeout(() => setIndex(focusedIndex), 0);
     } else if (!paused) {
       timer.current = window.setTimeout(
-        () => setIndex((i) => (i + 1) % canvasStates.length),
+        () => setIndex((i) => (i + 1) % currentCanvasStates.length),
         state.durationMs ?? STATE_DURATION_MS
       );
     }
     return () => {
       if (timer.current !== null) window.clearTimeout(timer.current);
     };
-  }, [index, focusedIndex, paused, state.durationMs]);
+  }, [index, focusedIndex, paused, state.durationMs, currentCanvasStates.length]);
 
   return (
     <div
@@ -404,7 +402,7 @@ export function IntelligenceCanvas({
       {/* Stage rail — deliberately not pagination dots: this reads as one
           continuous system rather than a set of slides. */}
       <div className="mt-6 flex items-center gap-1.5">
-        {canvasStates.map((s, i) => {
+        {currentCanvasStates.map((s, i) => {
           const active = i === activeIndex;
           return (
             <button

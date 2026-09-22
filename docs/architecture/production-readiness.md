@@ -1,0 +1,51 @@
+# Koraspace AI — Production Readiness & Validation Checklist
+
+## 1. System Architecture Verification
+
+- [x] **Typed AI Core**: Zod validated request/response boundaries across all models and tool inputs.
+- [x] **Governed Tool Registry**: Centralized tool execution with permission checking, error trapping, and latency logging.
+- [x] **Deterministic Autonomy Engine**: Policy-gated decision engine for social interactions (`ALLOW` / `REQUIRE_APPROVAL` / `DENY`).
+- [x] **Persistent Workspace Memory**: Brand voice guardrails, audience facts, style preferences, and performance exemplars.
+- [x] **Deduplication & Consolidation**: Vector similarity and bidirectional lexical containment merging redundant memories.
+- [x] **API Error Normalizer**: Safe responses preventing stack trace, API key, and database leakage.
+- [x] **Security & Prompt Injection Defense**: Real-time scanning for instruction overrides, jailbreaks, and SQL injection.
+- [x] **Resilience & Circuit Breaker**: Exponential backoff retry loops and state-machine circuit breaker.
+- [x] **Rate Limiter & Budget Controls**: 60 req/min sliding window, token throughput caps, and monthly USD budget boundaries.
+- [x] **Real-Time Observability & Telemetry**: Trace IDs, percentiles (P50/P95/P99), cost accounting, and automated SLA alerts.
+- [x] **Closed-Loop Intelligence**: Structural feature extraction, winning pattern synthesis, and evaluation benchmark tracking.
+- [x] **AI Release Governance**: Cryptographic dataset pinning, apples-to-apples comparisons, and automated release gates.
+
+## 2. Multi-Tenant Security & Isolation Matrix
+
+| Resource | Owner | Admin | Member | Viewer |
+| :--- | :---: | :---: | :---: | :---: |
+| **ChatAgent Execution** | ✅ | ✅ | ✅ | ❌ |
+| **AI Memory Read** | ✅ | ✅ | ✅ | ✅ |
+| **AI Memory Create/Edit**| ✅ | ✅ | ✅ | ❌ |
+| **AI Memory Delete** | ✅ | ✅ | ❌ | ❌ |
+| **Social Auto-Posting** | ✅ | ✅ | ❌ | ❌ |
+| **Observability Dashboard**| ✅ | ✅ | ❌ | ❌ |
+| **Workspace & Billing** | ✅ | ❌ | ❌ | ❌ |
+
+## 3. Live Infrastructure & Staging Verification Status
+
+| Verification Track | Status | Notes |
+| :--- | :---: | :--- |
+| **Supabase Database Ping** | ✅ Verified | Tested via `/api/readiness` and unit integration |
+| **Supabase RLS Live Scenario** | ✅ Verified | Enforces workspace isolation in live staging and CI environments |
+| **LLM Provider Handshake** | ✅ Verified | Verified Gemini API contract, latency, and fallback |
+| **LLM Live Provider Scenario** | ✅ Verified | Automatic live staging ping when `GEMINI_API_KEY` configured |
+| **Webhook Signature Verification** | ✅ Verified | Cryptographic HMAC SHA-256 + Replay Deduplication |
+| **Process Liveness Probe** | ✅ Verified | Tested via `GET /api/health` |
+| **Deep Dependency Probe** | ✅ Verified | Tested via `GET /api/readiness` |
+| **Platform Server Integration** | ✅ Verified | `KoraspaceAIClient` with server-side security isolation |
+
+## 4. Automated Test Pyramid
+
+- **Unit Tests (`npm run test:unit`)**: Core math, prompt builders, policies, rate limits, token cost calculations.
+- **Contract Tests (`npm run test:contracts`)**: Zod schemas, API request/response payloads, error structures.
+- **Security Tests (`npm run test:security`)**: Prompt injection defense, zero secret leakage, token redaction.
+- **Integration Tests (`npm run test:integration`)**: RLS multi-tenant simulation, failure injection, circuit breaker tripping.
+- **E2E Tests (`npm run test:e2e`)**: Golden product journeys (Onboarding, Content Intelligence, Ghost Mode, Closed-Loop Learning).
+- **Evaluation Benchmark (`npm run test:eval`)**: Golden benchmarks, factuality, brand adherence ($\ge 95\%$), regression gates.
+- **Live Tests (`npm run test:live`)**: Live infrastructure validation against staging environments.

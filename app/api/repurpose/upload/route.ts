@@ -1,8 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { sanitizeRetrievedContext } from "@/lib/security/enforcement";
+import { uploadMediaBuffer, isCloudinaryConfigured } from "@/lib/media/cloudinary";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB ceiling
 
@@ -41,9 +44,8 @@ function isSafeHttpUrl(rawUrl: string): boolean {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  const session = await auth();
+      const user = session?.user;
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -139,21 +141,29 @@ export async function POST(request: NextRequest) {
     const filePath = `${user.id}/${randomUUID()}.${fileExt || "bin"}`;
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // Upload to Supabase Storage if bucket exists (non-blocking if not configured)
+    // Upload to Cloudinary if configured, fallback to local reference
     let uploadUrl: string | null = null;
+    let publicId: string | null = null;
+    let thumbnailUrl: string | null = null;
+
     try {
-      const { data: uploadData, error: uploadErr } = await supabase.storage
-        .from("repurpose-assets")
-        .upload(filePath, buffer, {
-          contentType: file.type || "application/octet-stream",
-          upsert: true,
+      const isVideo = file.type.startsWith("video/") || ["mp4", "mov", "webm", "mkv", "avi"].includes(fileExt);
+      const isImage = file.type.startsWith("image/") || ["png", "jpg", "jpeg", "webp", "gif"].includes(fileExt);
+
+      if (isCloudinaryConfigured() && (isVideo || isImage)) {
+        const cloudResult = await uploadMediaBuffer(buffer, {
+          folder: "repurpose",
+          resourceType: isVideo ? "video" : "image",
+          filename: file.name,
+          tags: ["user:" + user.id, "repurpose"],
         });
 
-      if (!uploadErr && uploadData) {
-        uploadUrl = filePath;
+        uploadUrl = cloudResult.secure_url;
+        publicId = cloudResult.public_id;
+        thumbnailUrl = cloudResult.thumbnail_url || null;
       }
-    } catch {
-      // Storage bucket not yet created in Supabase dashboard, graceful fallback
+    } catch (cloudErr) {
+      console.warn("Cloudinary upload fallback in repurpose:", cloudErr);
     }
 
     // Phase 2: Text extraction & simulated media transcription
@@ -172,6 +182,8 @@ export async function POST(request: NextRequest) {
       fileName: file.name,
       fileSize: file.size,
       mimeType: file.type,
+      publicId: publicId || undefined,
+      thumbnailUrl: thumbnailUrl || undefined,
       transcript: extractedText,
       sourceContent: extractedText,
     });

@@ -129,17 +129,17 @@ export function IdeasClient({
     }
     setGeneratingIdeas(true);
     try {
-      /* TODO: replace with POST /api/ideas/generate */
-      await new Promise((resolve) => setTimeout(resolve, 900));
-      setGeneratedIdeas([
-        `A controversial take about ${ideaPrompt}`,
-        `5 mistakes creators make with ${ideaPrompt}`,
-        `How I would start with ${ideaPrompt} from zero`,
-        `The future of ${ideaPrompt} in 2026`,
-      ]);
-      success("Ideas generated", "Kora created four directions to explore.");
-    } catch {
-      toastError("Couldn't generate ideas", "Please try again.");
+      const res = await fetch("/api/ideas/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: ideaPrompt.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to generate ideas");
+      setGeneratedIdeas(data.ideas || []);
+      success("Ideas generated", `Kora created ${data.ideas?.length || 4} custom directions for your niche.`);
+    } catch (err: unknown) {
+      toastError("Couldn't generate ideas", err instanceof Error ? err.message : "Please try again.");
     } finally {
       setGeneratingIdeas(false);
     }

@@ -6,6 +6,8 @@ import { PreferencesProvider } from "@/components/preferences/PreferencesProvide
 import { ToastProvider } from "@/components/ui/toast";
 import { ImpersonationBanner } from "@/components/admin/ImpersonationBanner";
 
+import { LanguageProvider } from "@/components/i18n/LanguageProvider";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -70,10 +72,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <PreferencesProvider>
-            <ToastProvider>
-              <ImpersonationBanner />
-              {children}
-            </ToastProvider>
+            <LanguageProvider>
+              <ToastProvider>
+                <ImpersonationBanner />
+                {children}
+              </ToastProvider>
+            </LanguageProvider>
           </PreferencesProvider>
         </ThemeProvider>
       </body>

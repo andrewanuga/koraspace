@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { InboxClient } from "./InboxClient";
 import type {
   SocialAccount,
@@ -7,11 +9,9 @@ import type {
 } from "@/lib/social/types";
 
 export default async function InboxPage() {
+  const session = await auth();
+    const user = session?.user;
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
 

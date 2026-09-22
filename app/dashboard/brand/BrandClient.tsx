@@ -1,4 +1,8 @@
 "use client";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+
+
 
 import { useMemo, useState } from "react";
 import {
@@ -29,7 +33,6 @@ import {
   Zap,
   Tag,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/toast";
 import { GlassCard, PageHeader, Pill } from "@/components/dashboard/ui";
 import type {
@@ -164,7 +167,6 @@ export function BrandClient({
   insights: initialInsights,
   userId,
 }: Props) {
-  const supabase = createClient();
   const { success, error: toastError } = useToast();
 
   const [activeTab, setActiveTab] = useState<Tab>("profile");

@@ -1,5 +1,6 @@
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { evaluateIncomingMessage } from "@/lib/ai/engine";
 import { dispatchReply } from "@/lib/social/dispatch";
 import { startBotTask, finishBotTask } from "@/lib/ai/bot_tasks";
@@ -30,8 +31,6 @@ export async function POST(
 ) {
   const { platform } = await params;
   const body = await req.json();
-
-  const supabase = createAdminClient();
   if (!supabase) return NextResponse.json({ error: "No DB" }, { status: 500 });
 
   try {

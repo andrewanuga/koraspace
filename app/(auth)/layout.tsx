@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   Check,
@@ -6,22 +10,126 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-[#121212] text-white">
       <div className="min-h-screen lg:grid lg:grid-cols-[minmax(0,1.08fr)_minmax(460px,0.92fr)] xl:grid-cols-[minmax(0,1.15fr)_minmax(500px,0.85fr)]">
         {/* =========================================================
             LEFT — PRODUCT / BRAND EXPERIENCE (Desktop)
         ========================================================= */}
-        <aside className="relative hidden min-h-screen overflow-hidden border-r border-white/[0.07] bg-[#121212] lg:flex">
-          {/* Subtle geometric lines */}
-          <div className="pointer-events-none absolute left-[-120px] top-[15%] h-[260px] w-[260px] rounded-full border border-[#ff0a8a]/10" />
-          <div className="pointer-events-none absolute bottom-[10%] right-[4%] h-[180px] w-[180px] rounded-full border border-[#3b82f6]/10" />
+        <aside className="relative hidden min-h-screen overflow-hidden border-r border-white/[0.07] bg-[#0e0e10] lg:flex">
+          {/* Animated Ambient Brand Blobs */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            {/* Primary Brand Pink Blob */}
+            <motion.div
+              animate={{
+                x: [0, 40, -30, 0],
+                y: [0, -50, 20, 0],
+                scale: [1, 1.15, 0.95, 1],
+              }}
+              transition={{
+                duration: 18,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute -left-20 -top-20 h-[520px] w-[520px] rounded-full opacity-35 blur-[120px]"
+              style={{
+                background:
+                  "radial-gradient(circle, #ff0a8a 0%, #b80062 50%, transparent 75%)",
+              }}
+            />
+
+            {/* Electric Brand Blue Blob */}
+            <motion.div
+              animate={{
+                x: [0, -50, 30, 0],
+                y: [0, 40, -30, 0],
+                scale: [1, 1.2, 0.9, 1],
+              }}
+              transition={{
+                duration: 22,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 2,
+              }}
+              className="absolute -bottom-24 right-[-10%] h-[480px] w-[480px] rounded-full opacity-30 blur-[130px]"
+              style={{
+                background:
+                  "radial-gradient(circle, #3b82f6 0%, #1d4ed8 50%, transparent 75%)",
+              }}
+            />
+
+            {/* Center Violet Synergy Glow */}
+            <motion.div
+              animate={{
+                x: [0, 25, -25, 0],
+                y: [0, -30, 35, 0],
+                scale: [0.9, 1.1, 1, 0.9],
+              }}
+              transition={{
+                duration: 26,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 4,
+              }}
+              className="absolute left-1/3 top-1/2 -translate-y-1/2 h-[420px] w-[420px] rounded-full opacity-20 blur-[140px]"
+              style={{
+                background:
+                  "radial-gradient(circle, #a855f7 0%, #7c3aed 50%, transparent 75%)",
+              }}
+            />
+
+            {/* Subtle Geometric Orbit Ring 1 (Brand Pink) */}
+            <motion.div
+              animate={{
+                rotate: 360,
+                scale: [1, 1.05, 1],
+              }}
+              transition={{
+                rotate: { duration: 40, repeat: Infinity, ease: "linear" },
+                scale: { duration: 10, repeat: Infinity, ease: "easeInOut" },
+              }}
+              className="absolute -left-[140px] top-[12%] h-[320px] w-[320px] rounded-full border border-[#ff0a8a]/20"
+            >
+              <div className="absolute top-1/2 -right-1.5 h-3 w-3 -translate-y-1/2 rounded-full bg-[#ff0a8a] shadow-[0_0_12px_#ff0a8a]" />
+            </motion.div>
+
+            {/* Subtle Geometric Orbit Ring 2 (Brand Blue) */}
+            <motion.div
+              animate={{
+                rotate: -360,
+                scale: [1, 1.08, 1],
+              }}
+              transition={{
+                rotate: { duration: 48, repeat: Infinity, ease: "linear" },
+                scale: { duration: 12, repeat: Infinity, ease: "easeInOut" },
+              }}
+              className="absolute bottom-[8%] -right-16 h-[260px] w-[260px] rounded-full border border-[#3b82f6]/20"
+            >
+              <div className="absolute top-0 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-[#3b82f6] shadow-[0_0_12px_#3b82f6]" />
+            </motion.div>
+
+            {/* Subtle Grid texture */}
+            <div
+              className="absolute inset-0 opacity-[0.035]"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)
+                `,
+                backgroundSize: "48px 48px",
+              }}
+            />
+          </div>
 
           <div className="relative z-10 flex w-full flex-col justify-between px-10 py-10 xl:px-14">
             {/* Top brand header */}
@@ -47,44 +155,43 @@ export default function AuthLayout({
                   <span className="flex h-1.5 w-1.5 rounded-full bg-[#ff0a8a]" />
                   <Sparkles className="h-3.5 w-3.5 text-[#ff0a8a]" />
                   <span className="text-[11px] font-medium text-[#ff7fba]">
-                    Your marketing & creator command center
+                    {t.authLayout.commandCenter}
                   </span>
                 </div>
 
                 {/* Hero Title */}
                 <h1 className="font-display text-[44px] font-semibold leading-[1.04] tracking-[-0.04em] text-white xl:text-[54px]">
-                  Turn your audience
+                  {t.authLayout.titleStart}
                   <span className="block text-[#ff0a8a]">
-                    into momentum.
+                    {t.authLayout.titleHighlight}
                   </span>
                 </h1>
 
                 {/* Description */}
                 <p className="mt-5 max-w-[540px] text-[14.5px] leading-relaxed text-white/50">
-                  Manage multi-channel campaigns, draft in your signature brand voice,
-                  automate CRM workflows, and track real revenue growth across your accounts.
+                  {t.authLayout.description}
                 </p>
 
                 {/* Product preview card */}
                 <div className="mt-8 max-w-[580px]">
-                  <ProductPreview />
+                  <ProductPreview t={t} />
                 </div>
 
                 {/* Trust / feature checklist */}
                 <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2.5 text-[11.5px] text-white/40">
                   <div className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#ff0a8a]" />
-                    <span>Multi-channel workflows</span>
+                    <span>{t.authLayout.feature1}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#ff0a8a]" />
-                    <span>AI-powered intelligence</span>
+                    <span>{t.authLayout.feature2}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Check className="h-3.5 w-3.5 text-[#ff0a8a]" />
-                    <span>Real-time attribution</span>
+                    <span>{t.authLayout.feature3}</span>
                   </div>
                 </div>
               </div>
@@ -92,12 +199,10 @@ export default function AuthLayout({
 
             {/* Bottom meta row */}
             <div className="flex items-center justify-between border-t border-white/[0.06] pt-5 text-[10.5px] text-white/30">
-              <span className="uppercase tracking-[0.16em]">
-                KoraSpace OS
-              </span>
+              
 
               <div className="flex items-center gap-4">
-                <span>Secure Cloud Workspace</span>
+                <span>{t.authLayout.secureCloud}</span>
                 <span>•</span>
                 <span>Creator & Marketer Edition</span>
               </div>
@@ -108,9 +213,63 @@ export default function AuthLayout({
         {/* =========================================================
             RIGHT — AUTH FORM CONTAINER
         ========================================================= */}
-        <main className="relative flex min-h-screen flex-1 flex-col justify-between">
+        <main className="relative flex min-h-screen flex-1 flex-col justify-between overflow-hidden bg-[#121212]">
+          {/* Animated Background Blobs on Auth form side */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            {/* Top Right Pink Glow */}
+            <motion.div
+              animate={{
+                x: [0, -30, 20, 0],
+                y: [0, 30, -20, 0],
+                scale: [1, 1.12, 0.95, 1],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute -right-24 -top-24 h-[460px] w-[460px] rounded-full opacity-20 blur-[130px]"
+              style={{
+                background:
+                  "radial-gradient(circle, #ff0a8a 0%, #b80062 50%, transparent 75%)",
+              }}
+            />
+
+            {/* Bottom Left Blue Glow */}
+            <motion.div
+              animate={{
+                x: [0, 30, -20, 0],
+                y: [0, -40, 20, 0],
+                scale: [1, 1.15, 0.9, 1],
+              }}
+              transition={{
+                duration: 24,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 3,
+              }}
+              className="absolute -bottom-28 -left-20 h-[440px] w-[440px] rounded-full opacity-18 blur-[120px]"
+              style={{
+                background:
+                  "radial-gradient(circle, #3b82f6 0%, #1d4ed8 50%, transparent 75%)",
+              }}
+            />
+
+            {/* Subtle Grid texture */}
+            <div
+              className="absolute inset-0 opacity-[0.025]"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)
+                `,
+                backgroundSize: "48px 48px",
+              }}
+            />
+          </div>
+
           {/* Top navigation row */}
-          <div className="flex items-center justify-between px-6 pt-6 sm:px-10">
+          <div className="relative z-50 flex items-center justify-between px-6 pt-6 sm:px-10">
             {/* Mobile Brand */}
             <Link href="/" className="flex items-center gap-2.5 lg:hidden">
               <KoraLogo />
@@ -119,23 +278,26 @@ export default function AuthLayout({
               </span>
             </Link>
 
-            {/* Back link */}
-            <Link
-              href="/"
-              className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 text-[12px] font-medium text-white/50 transition-colors hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Back to site</span>
-            </Link>
+            {/* Back link & Language Switcher */}
+            <div className="relative z-50 ml-auto flex items-center gap-3">
+              <LanguageSwitcher variant="compact" />
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 text-[12px] font-medium text-white/50 transition-colors hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                <span>Back to site</span>
+              </Link>
+            </div>
           </div>
 
           {/* Form wrapper */}
-          <div className="flex flex-1 items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
+          <div className="relative z-10 flex flex-1 items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
             {children}
           </div>
 
           {/* Mobile footer */}
-          <div className="px-6 pb-6 text-center text-[11px] text-white/25 lg:hidden">
+          <div className="relative z-10 px-6 pb-6 text-center text-[11px] text-white/25 lg:hidden">
             <span>© {new Date().getFullYear()} KoraSpace. All rights reserved.</span>
           </div>
         </main>
@@ -150,10 +312,15 @@ export default function AuthLayout({
 
 function KoraLogo() {
   return (
-    <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-[#ff0a8a] shadow-[0_6px_20px_rgba(255,10,138,0.22)]">
-      <div className="absolute h-3.5 w-3.5 rounded-[4px] border-[1.5px] border-white" />
-      <div className="absolute h-1.5 w-1.5 rounded-full bg-white" />
-      <div className="absolute right-[6px] top-[6px] h-1.5 w-1.5 rounded-full bg-[#3b82f6]" />
+    <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white p-1.5 shadow-sm transition-transform duration-200 group-hover:scale-105">
+      <Image
+        src="/logo.png"
+        alt="KoraSpace Logo"
+        width={36}
+        height={36}
+        className="h-full w-full object-contain"
+        priority
+      />
     </div>
   );
 }
@@ -162,7 +329,7 @@ function KoraLogo() {
    PRODUCT PREVIEW MOCKUP
 =============================================================== */
 
-function ProductPreview() {
+function ProductPreview({ t }: { t: any }) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/[0.09] bg-[#171717] shadow-[0_25px_70px_rgba(0,0,0,0.45)]">
       {/* Window header */}
@@ -176,7 +343,7 @@ function ProductPreview() {
         <div className="flex items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.025] px-3 py-1">
           <span className="h-1.5 w-1.5 rounded-full bg-[#ff0a8a]" />
           <span className="text-[8.5px] font-medium text-white/40">
-            Workspace Command Center
+            {t.authLayout.workspaceCommand}
           </span>
         </div>
 
@@ -187,21 +354,29 @@ function ProductPreview() {
         {/* Mini sidebar */}
         <div className="border-r border-white/[0.06] p-2.5">
           <div className="mb-4 flex items-center gap-2">
-            <div className="h-4 w-4 rounded-md bg-[#ff0a8a]" />
+            <div className="flex h-4 w-4 items-center justify-center rounded-sm bg-white p-0.5 shadow-xs">
+              <Image
+                src="/logo.png"
+                alt="KoraSpace"
+                width={16}
+                height={16}
+                className="h-full w-full object-contain"
+              />
+            </div>
             <div className="h-2 w-10 rounded-full bg-white/20" />
           </div>
 
           <div className="space-y-1">
-            <MiniNav active label="Overview" />
-            <MiniNav label="Create" />
-            <MiniNav label="Campaigns" />
-            <MiniNav label="Analytics" />
-            <MiniNav label="CRM & Leads" />
+            <MiniNav active label={t.authLayout.overview} />
+            <MiniNav label={t.authLayout.create} />
+            <MiniNav label={t.authLayout.campaignsNav} />
+            <MiniNav label={t.authLayout.analytics} />
+            <MiniNav label={t.authLayout.crmNav} />
           </div>
 
           <div className="mt-5 border-t border-white/[0.06] pt-2">
-            <MiniNav label="Brand Kit" />
-            <MiniNav label="Settings" />
+            <MiniNav label={t.authLayout.brandKitNav} />
+            <MiniNav label={t.authLayout.settings} />
           </div>
         </div>
 
@@ -219,17 +394,17 @@ function ProductPreview() {
           {/* Stats */}
           <div className="mt-4 grid grid-cols-3 gap-2">
             <MiniStat
-              label="Revenue"
+              label={t.authLayout.revenue}
               value="₦8.4M"
               accent="pink"
             />
             <MiniStat
-              label="ROAS"
+              label={t.authLayout.roas}
               value="3.42×"
               accent="blue"
             />
             <MiniStat
-              label="Leads"
+              label={t.authLayout.leads}
               value="1,284"
               accent="green"
             />
@@ -241,7 +416,7 @@ function ProductPreview() {
               <div className="h-1.5 w-16 rounded-full bg-white/20" />
               <div className="flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#ff0a8a]" />
-                <span className="text-[7.5px] text-white/30">Growth</span>
+                <span className="text-[7.5px] text-white/30">{t.authLayout.growth}</span>
               </div>
             </div>
 

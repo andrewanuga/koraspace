@@ -1,6 +1,6 @@
 // Lightweight tone learning: the agent stores past user messages and derives a
 // writing-style profile so replies/drafts mirror how the person actually chats.
-import type { SupabaseClient } from "@supabase/supabase-js";
+type SupabaseClient = any;
 
 const EMOJI = /\p{Extended_Pictographic}/gu;
 

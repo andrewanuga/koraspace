@@ -1,11 +1,13 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { GhostModeClient } from "./GhostModeClient";
-import type { AgentActionRow } from "@/lib/supabase/types";
 
 export default async function GhostModePage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await auth();
+    const user = session?.user;
   if (!user) redirect("/login");
 
   const todayStart = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();

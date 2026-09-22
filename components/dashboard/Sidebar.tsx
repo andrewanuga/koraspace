@@ -684,7 +684,7 @@ export function Sidebar({
             {/* MODE MENU */}
 
             {modeMenuOpen && (
-              <div className="absolute left-3 right-3 top-[calc(100%+8px)] z-[100] overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[#181818] p-1.5 shadow-2xl">
+              <div className="absolute left-3 right-3 top-[calc(100%+8px)] z-[100] overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--app-surface)] p-1.5 shadow-2xl backdrop-blur-xl">
                 {/* HEADER */}
 
                 <div className="px-3 py-2.5">
@@ -857,7 +857,7 @@ export function Sidebar({
           plan !== "advanced" &&
           plan !== "team" && (
             <div className="px-3 pb-3">
-              <div className="rounded-2xl border border-[var(--stroke)] bg-[#161616] p-4">
+              <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 transition-colors">
                 <div className="mb-3 flex items-center justify-between">
                   <div
                     className="flex h-8 w-8 items-center justify-center rounded-xl"
@@ -939,38 +939,36 @@ export function Sidebar({
               <div
                 className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white"
                 style={{
-                  background: "var(--brand-primary)",
+                  background:
+                    "var(--brand-primary)",
                 }}
               >
                 {initial}
               </div>
             )}
 
-            {/* USER INFO */}
+            {/* INFO */}
 
             {!collapsed && (
-              <>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[12.5px] font-medium text-[var(--fg)]">
-                    {profile?.full_name ||
-                      "Account"}
-                  </p>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[12.5px] font-medium text-[var(--fg)]">
+                  {profile?.full_name || "User"}
+                </p>
 
-                  <p className="mt-0.5 text-[10.5px] text-[var(--fg-4)]">
-                    {persona === "marketer"
-                      ? "Marketer Mode"
-                      : "Creator Mode"}
-                  </p>
-                </div>
+                <p className="truncate text-[10.5px] capitalize text-[var(--fg-4)]">
+                  {persona === "marketer" ? "Marketer Mode" : "Creator Mode"}
+                </p>
+              </div>
+            )}
 
-                <ChevronDown
-                  className={cn(
-                    "h-3.5 w-3.5 flex-shrink-0 text-[var(--fg-4)] transition-transform",
-                    profileMenuOpen &&
-                      "rotate-180"
-                  )}
-                />
-              </>
+            {!collapsed && (
+              <ChevronDown
+                className={cn(
+                  "h-3.5 w-3.5 text-[var(--fg-4)] transition-transform",
+                  profileMenuOpen &&
+                    "rotate-180"
+                )}
+              />
             )}
           </button>
 
@@ -978,7 +976,7 @@ export function Sidebar({
 
           {profileMenuOpen &&
             !collapsed && (
-              <div className="absolute bottom-[calc(100%+8px)] left-2.5 right-2.5 z-[100] overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[#181818] p-1.5 shadow-2xl">
+              <div className="absolute bottom-[calc(100%+8px)] left-2.5 right-2.5 z-[100] overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--app-surface)] p-1.5 shadow-2xl backdrop-blur-xl">
                 <Link
                   href="/dashboard/settings"
                   className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[12px] text-[var(--fg-2)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--fg)]"
@@ -1031,7 +1029,7 @@ export function Sidebar({
           type="button"
           onClick={onToggle}
           aria-label="Toggle sidebar"
-          className="absolute -right-3 top-[70px] z-50 flex h-7 w-7 items-center justify-center rounded-full border border-[var(--stroke)] bg-[#181818] text-[var(--fg-3)] shadow-lg transition-all hover:bg-[var(--hover)] hover:text-[var(--fg)]"
+          className="absolute -right-3 top-[70px] z-50 flex h-7 w-7 items-center justify-center rounded-full border border-[var(--stroke)] bg-[var(--app-surface)] text-[var(--fg-3)] shadow-lg transition-all hover:bg-[var(--hover)] hover:text-[var(--fg)]"
         >
           {collapsed ? (
             <PanelLeftOpen className="h-3.5 w-3.5" />
