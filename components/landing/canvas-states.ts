@@ -20,6 +20,10 @@ export type CanvasCard = {
   depth: "front" | "back";
 };
 
+/**
+ * Stable ids for the five states, so an external control can select one by
+ * name rather than by index (see IntelligenceCanvas's `focusedKey`).
+ */
 export type CanvasStateKey =
   | "understand"
   | "create"

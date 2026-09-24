@@ -50,6 +50,34 @@ export function FloatingNav() {
   };
 
   useEffect(() => {
+    // Reveal immediately unless this page actually has a preloader running.
+    //
+    // Only the homepage renders <Preloader/>; every other marketing page would
+    // otherwise sit here with no navbar until the 2400ms fallback below fired.
+    // That failure mode hides on client-side navigation — the layout does not
+    // remount, so `sai-loaded` is still set — and only shows on a cold load.
+    const hasPreloader =
+      typeof document !== "undefined" &&
+      document.querySelector("[data-preloader]") !== null;
+
+    if (
+      typeof document !== "undefined" &&
+      (!hasPreloader ||
+        document.documentElement.classList.contains("sai-loaded"))
+    ) {
+      setIsLoaded(true);
+    }
+
+    const onLoaderDone = () => {
+      setIsLoaded(true);
+    };
+
+    window.addEventListener("koraspace-loader-done", onLoaderDone);
+
+    const fallbackTimer = window.setTimeout(() => {
+      setIsLoaded(true);
+    }, 2400);
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 30);
     };
@@ -59,6 +87,8 @@ export function FloatingNav() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("koraspace-loader-done", onLoaderDone);
+      clearTimeout(fallbackTimer);
     };
   }, []);
 
@@ -146,7 +176,7 @@ export function FloatingNav() {
                   type="button"
                   onClick={() => setShowMobileMenu((prev) => !prev)}
                   aria-label="Toggle navigation menu"
-                  className="flex items-center justify-center h-9 w-9 rounded-xl border border-slate-200 bg-white text-slate-900 transition-colors hover:bg-slate-100 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-white dark:hover:bg-white/[0.08]"
+                  className="relative flex items-center justify-center h-9 w-9 rounded-xl before:absolute before:-inset-1.5 before:content-[''] border border-slate-200 bg-white text-slate-900 transition-colors hover:bg-slate-100 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-white dark:hover:bg-white/[0.08]"
                 >
                   {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
                 </button>
@@ -218,7 +248,7 @@ export function FloatingNav() {
                   type="button"
                   onClick={() => setShowMobileMenu((prev) => !prev)}
                   aria-label="Toggle navigation menu"
-                  className="flex items-center justify-center h-8 w-8 rounded-lg border border-slate-200 bg-white text-slate-900 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-white"
+                  className="relative flex items-center justify-center h-8 w-8 rounded-lg before:absolute before:-inset-2 before:content-[''] border border-slate-200 bg-white text-slate-900 dark:border-white/[0.08] dark:bg-white/[0.04] dark:text-white"
                 >
                   {showMobileMenu ? <X size={18} /> : <Menu size={18} />}
                 </button>

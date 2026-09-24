@@ -27,6 +27,7 @@ export const scrapeUrlTool: AITool<
 > = {
   name: "scrape_url",
   description: "Scrape and extract the main article text, title, and metadata from a given public web URL. Useful for competitor research, fact-checking, and repurposing external content.",
+  requiredCapabilities: ["web:search"],
   parameters: {
     type: "object",
     properties: {

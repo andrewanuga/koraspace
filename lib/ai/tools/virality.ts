@@ -168,6 +168,7 @@ export const evaluateViralityTool: AITool<
 > = {
   name: "evaluate_virality",
   description: "Critique and evaluate a drafted post across 6 dimensions (hook, clarity, emotional pull, retention, CTA, platform fit) with structured scores and improvement recommendations.",
+  requiredCapabilities: ["content:score"],
   parameters: {
     type: "object",
     properties: {

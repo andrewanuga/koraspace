@@ -14,22 +14,23 @@
 import type { AgentContext, AgentResult } from "../../core/types";
 import { defaultToolRegistry } from "../../tools/index";
 import { callAI, isConfigured, ChatMessage, buildMultimodalContent } from "../../openrouter";
-import { AI_TOOLS } from "../../tools";
 import {
   BrandIntelligenceLoader,
   MemoryFormationEngine,
-  MemoryRetrievalEngine,
   type BrandComplianceReport,
   type BrandIntelligence,
 } from "../../memory";
+import { ContextEngine } from "../../context/engine";
 import type {
   AgentStep,
   ChatAgentInput,
   ChatAgentOutput,
+  ChatPlan,
   ToolInvocation,
 } from "./types";
 import { ChatPlanner } from "./planner";
 import { ChatExecutor } from "./executor";
+import { ChatEvaluator } from "./evaluator";
 
 /* -- 1. Fallback Response Generator ----------------------------- */
 
@@ -88,34 +89,45 @@ export class ChatAgent {
     const lastUserText = [...messages].reverse().find((m) => m.role === "user")?.content || "";
 
     // 1. Contextual Memory Retrieval (Brand, Semantic, Performance)
-    const memoryBundle = await MemoryRetrievalEngine.retrieveContext(
-      lastUserText,
-      context
-    );
+    const contextRequest = {
+        workspaceId: context.workspaceId,
+        userId: context.userId,
+        chatId: context.chatId,
+        messages: input.messages,
+        attachments,
+        model: model,
+        supabase: context.supabase,
+        capabilities: context.capabilities,
+        // other optional fields can be added as needed
+      } as any; // ContextRequest type
+      const engine = new ContextEngine();
+      const assembly = await engine.assemble(contextRequest);
+      // Load brand directly for compliance checks
+      const brand = await BrandIntelligenceLoader.load(context.workspaceId, context.supabase);
 
     // 2. Dev / offline fallback
     if (!isConfigured()) {
-      return {
-        success: true,
-        data: generateFallbackResponse(input, memoryBundle.brand),
-        metadata: { latencyMs: Date.now() - startTime },
-      };
-    }
+        return {
+          success: true,
+          data: generateFallbackResponse(input, undefined),
+          metadata: { latencyMs: Date.now() - startTime },
+        };
+      }
 
     // 3. Planning and Intent Decomposition
     const plan = ChatPlanner.plan(messages);
     const steps: AgentStep[] = [];
 
-    // 4. Construct System Prompt with Memory Context
+    // 4. Construct System Prompt with ContextEngine output
     const baseSystem = userSystemPrompt || "You are Koraspace AI, an elite autonomous social media agent.";
-    const consolidatedSystemPrompt = [
+    const systemPrompt = [
       baseSystem,
       "",
-      memoryBundle.formattedSystemContext,
+      assembly.systemPrompt,
     ].join("\n\n");
 
     // 5. Assemble system and user messages
-    const aiMessages: ChatMessage[] = [{ role: "system", content: consolidatedSystemPrompt }];
+    const aiMessages: ChatMessage[] = [{ role: "system", content: systemPrompt }];
 
     for (const msg of messages) {
       if (msg.role === "system") continue;
@@ -158,8 +170,7 @@ export class ChatAgent {
     }
 
     // 7. Tool Definitions from ToolRegistry
-    const registeredDefinitions = defaultToolRegistry.getDefinitions();
-    const toolsToUse = registeredDefinitions.length > 0 ? registeredDefinitions : AI_TOOLS;
+    const toolsToUse = defaultToolRegistry.getDefinitions();
 
     // 8. ReAct Reasoning Loop
     let iterations = 0;
@@ -217,7 +228,8 @@ export class ChatAgent {
         const { step: observationStep, observationText } = await ChatExecutor.executeTool(
           iterations,
           invocation,
-          context
+          context,
+          plan
         );
 
         steps.push(observationStep);
@@ -240,74 +252,23 @@ export class ChatAgent {
       }
     }
 
-    // 9. Self-Correction & Virality Check
-    if (requireSelfCorrection && finalContent && finalContent.length > 40) {
-      const viralityCheck = await defaultToolRegistry.execute(
-        "evaluate_virality",
-        { content: finalContent, platform: "x" },
-        context
-      );
-
-      if (viralityCheck.success && viralityCheck.data) {
-        const score = (viralityCheck.data as any).overallScore ?? 100;
-        if (score < 65) {
-          selfCorrected = true;
-          steps.push({
-            stepIndex: ++iterations,
-            type: "self_correction",
-            thought: `Initial draft scored ${score}/100 in virality. Refining hook and pacing.`,
-            timestamp: Date.now(),
-          });
-
-          const refinementRes = await callAI(
-            [
-              ...aiMessages,
-              { role: "assistant", content: finalContent },
-              {
-                role: "system",
-                content: `Self-Correction Trigger: The draft scored ${score}/100 in engagement probability. Weaknesses: ${JSON.stringify(
-                  (viralityCheck.data as any).breakdown
-                )}. Rewrite to maximize retention, clarity, and authority. Return only the revised draft.`,
-              },
-            ],
-            { agent: "chat", model, temperature: 0.5 }
-          );
-
-          if (refinementRes.content) {
-            finalContent = refinementRes.content;
-          }
-        }
+    // 9. Evaluation & Self-Correction Guardrail Pipeline
+    const evalResult = await ChatEvaluator.evaluateAndRefine(
+      finalContent,
+      brand,
+      context,
+      {
+        aiMessages,
+        model,
+        requireSelfCorrection,
+        startingIteration: iterations,
       }
-    }
+    );
 
-    // 10. Brand Compliance Guardrail Verification
-    const compliance = BrandIntelligenceLoader.checkCompliance(finalContent, memoryBundle.brand);
-    if (!compliance.compliant && compliance.violations.length > 0 && finalContent.length > 20) {
-      steps.push({
-        stepIndex: ++iterations,
-        type: "self_correction",
-        thought: `Brand compliance violation detected: ${compliance.violations.join(", ")}. Sanitizing output.`,
-        timestamp: Date.now(),
-      });
-
-      const complianceFixRes = await callAI(
-        [
-          ...aiMessages,
-          { role: "assistant", content: finalContent },
-          {
-            role: "system",
-            content: `Compliance Guardrail Trigger: The draft violated brand rules (${compliance.violations.join(
-              ", "
-            )}). Rewrite the text to strictly remove all forbidden terms and maintain high compliance. Return only the sanitized content.`,
-          },
-        ],
-        { agent: "chat", model, temperature: 0.3 }
-      );
-
-      if (complianceFixRes.content) {
-        finalContent = complianceFixRes.content;
-      }
-    }
+    finalContent = evalResult.content;
+    selfCorrected = evalResult.selfCorrected;
+    iterations = evalResult.finalIterations;
+    steps.push(...evalResult.steps);
 
     if (!finalContent && iterations >= maxIterations) {
       finalContent = "I completed multi-step analysis and reached the iteration limit. Here is the synthesized output based on observations gathered.";
@@ -342,13 +303,47 @@ export class ChatAgent {
   }
 
   /**
-   * Helper to execute a specific tool directly through the registry.
+   * Helper to execute a specific tool through the policy-governed ChatExecutor.
+   * Requires a validated ChatPlan.
    */
   public static async executeTool(
     toolName: string,
     params: unknown,
-    context: AgentContext
+    context: AgentContext,
+    plan: ChatPlan
   ): Promise<AgentResult<unknown>> {
-    return defaultToolRegistry.execute(toolName, params, context);
+    const args = (typeof params === "object" && params !== null
+      ? (params as Record<string, unknown>)
+      : {}) as ToolInvocation["args"];
+
+    const invocation: ToolInvocation = {
+      toolName,
+      args,
+      timestamp: Date.now(),
+    };
+
+    const { step, observationText } = await ChatExecutor.executeTool(
+      1,
+      invocation,
+      context,
+      plan
+    );
+
+    if (step.observation?.success) {
+      return {
+        success: true,
+        data: step.observation.output,
+        metadata: { latencyMs: step.observation.latencyMs },
+      };
+    }
+
+    return {
+      success: false,
+      error: {
+        code: "TOOL_EXECUTION_FAILED",
+        message: step.observation?.error || observationText,
+      },
+      metadata: { latencyMs: step.observation?.latencyMs ?? 0 },
+    };
   }
 }

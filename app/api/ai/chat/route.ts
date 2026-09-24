@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   try {
     const workspace = await getActiveWorkspace(supabase);
     if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const workspaceId = workspace.workspaceId;
+    const { workspaceId, role, userId } = workspace;
 
     // Rate limit: 30 requests/min per user.
     const guard = await checkRequest(req, requestKey(req, workspaceId), 30);

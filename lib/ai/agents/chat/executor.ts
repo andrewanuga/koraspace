@@ -10,7 +10,7 @@
 
 import type { AgentContext } from "../../core/types";
 import { defaultToolRegistry } from "../../tools/index";
-import type { AgentStep, ToolInvocation, ToolObservation } from "./types";
+import type { AgentStep, ToolInvocation, ToolObservation, ChatPlan } from "./types";
 
 export class ChatExecutor {
   /**
@@ -19,11 +19,36 @@ export class ChatExecutor {
   public static async executeTool(
     stepIndex: number,
     invocation: ToolInvocation,
-    context: AgentContext
+    context: AgentContext,
+    plan: ChatPlan
   ): Promise<{ step: AgentStep; observationText: string }> {
     const startTime = Date.now();
-    const { toolName, args } = invocation;
+    const { toolName } = invocation;
 
+    // Policy check for this invocation
+    const { decideInvocation } = await import('./policyEngine');
+    // plan is passed as argument to executeTool
+    const decision = decideInvocation({ toolInvocation: invocation, plan, context });
+    if (decision.action !== 'ALLOW') {
+      const errorMsg = `Policy ${decision.action} (${decision.reasonCodes.join(', ')}): ${decision.reasons.join('; ')}`;
+      const observation: ToolObservation = {
+        toolName,
+        success: false,
+        output: null,
+        error: errorMsg,
+        latencyMs: Date.now() - startTime,
+      };
+      const step: AgentStep = {
+        stepIndex,
+        type: "observation",
+        toolInvocation: invocation,
+        observation,
+        timestamp: Date.now(),
+      };
+      return { step, observationText: errorMsg };
+    }
+
+    const { args } = invocation;
     let success = false;
     let output: any = null;
     let error: string | undefined = undefined;
@@ -72,9 +97,6 @@ export class ChatExecutor {
       timestamp: Date.now(),
     };
 
-    return {
-      step,
-      observationText,
-    };
+    return { step, observationText };
   }
 }

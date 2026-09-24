@@ -103,31 +103,7 @@ export class ToolRegistry {
       };
     }
 
-    // 2. Permission Check (if granular permissions are configured in context)
-    if (tool.requiredPermissions && tool.requiredPermissions.length > 0) {
-      if (context.permissions) {
-        const hasAll = tool.requiredPermissions.every((p) =>
-          context.permissions?.includes(p)
-        );
-        if (!hasAll) {
-          return {
-            success: false,
-            error: {
-              code: "PERMISSION_DENIED",
-              message: `Execution of tool "${name}" denied. Missing required permissions: ${tool.requiredPermissions.join(
-                ", "
-              )}`,
-            },
-            metadata: {
-              latencyMs: Date.now() - startTime,
-              toolCallsExecuted: [name],
-            },
-          };
-        }
-      }
-    }
-
-    // 3. Input Validation
+    // 2. Input Validation
     let validatedInput = rawInput;
     if (typeof tool.validateInput === "function") {
       try {

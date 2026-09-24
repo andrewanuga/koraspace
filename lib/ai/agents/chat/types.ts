@@ -67,12 +67,66 @@ export interface AgentStep {
 
 /* -- 3. Planning & Decomposition -------------------------------- */
 
+/**
+ * Attestation object that records a user‑approved plan.
+ * Presence of the object means the plan is approved; absence means not approved.
+ */
+export interface PlanApproval {
+  /** Always true – indicates the object exists = approved */
+  approved: true;
+  /** When the approval was granted */
+  approvedAt: Date;
+  /** Fingerprint of the exact plan that was approved */
+  planFingerprint: string;
+}
+
+/**
+ * Chat plan describing intent, required tools, steps and risk.
+ * Optional `approval` is attached after user confirmation.
+ */
 export interface ChatPlan {
   intent: string;
   isComplex: boolean;
-  requiredTools: string[];
+  requiredTools: string[]; // order matters for execution
   plannedSteps: string[];
   estimatedRisk: "low" | "medium" | "high";
+  approval?: PlanApproval;
+}
+
+/**
+ * Compute a deterministic fingerprint for a plan.
+ * Hashes only immutable, authorization‑relevant fields (excludes approval).
+ */
+export function computePlanFingerprint(plan: ChatPlan): string {
+  // Node's crypto module is available in the runtime.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { createHash } = require("crypto");
+  const payload = JSON.stringify({
+    requiredTools: plan.requiredTools,
+    intent: plan.intent,
+    estimatedRisk: plan.estimatedRisk,
+    plannedSteps: plan.plannedSteps,
+  });
+  return createHash("sha256").update(payload).digest("hex");
+}
+
+/* ── 4. Policy Types ──────────────────────────────────────── */
+
+export type PolicyReasonCode =
+  | "UNKNOWN_TOOL"
+  | "MISSING_CAPABILITY"
+  | "PLAN_DEVIATION"
+  | "STALE_APPROVAL"
+  | "CONFIRMATION_REQUIRED"
+  | "HIGH_RISK_ACTION";
+
+export type PolicyAction = "ALLOW" | "DENY" | "REQUIRE_CONFIRMATION";
+
+export interface PolicyDecision {
+  action: PolicyAction;
+  reasonCodes: PolicyReasonCode[]; // machine‑readable for telemetry / tests
+  reasons: string[]; // human‑readable explanations / logs
+  requiredConfirmation?: string; // present when action === REQUIRE_CONFIRMATION
 }
 
 /* -- 4. Output & Telemetry Results ------------------------------ */
