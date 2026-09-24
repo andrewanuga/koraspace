@@ -38,6 +38,7 @@ import {
   WandSparkles,
   ArrowRight,
   Megaphone,
+  PenLine,
 } from "lucide-react";
 
 import { prisma } from "@/lib/db";
@@ -954,7 +955,7 @@ export default async function DashboardPage() {
                 "0 7px 18px rgba(37,99,255,.18)",
             }}
           >
-            <Zap className="h-3.5 w-3.5" />
+            <PenLine className="h-3.5 w-3.5" />
             Create Post
           </Link>
         </div>
@@ -1091,7 +1092,7 @@ export default async function DashboardPage() {
                 background: KORA_BLUE,
               }}
             >
-              <Zap className="h-4 w-4 text-white" />
+              <PenLine className="h-4 w-4 text-white" />
             </div>
 
             <div>
