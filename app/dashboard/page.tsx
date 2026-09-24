@@ -60,16 +60,8 @@ import { RecentAnalyticsCard } from "@/components/dashboard/RecentAnalyticsCard"
 /* -------------------------------------------------------------------------- */
 
 const KORA_BLUE = "#2563FF";
+const KORA_PINK = "#FF0A8A";
 const KORA_GREEN = "#22E68A";
-
-const KORA_STYLE = {
-  "--brand-primary": KORA_BLUE,
-  "--brand-primary-soft": "rgba(37, 99, 255, 0.09)",
-  "--brand-primary-border": "rgba(37, 99, 255, 0.22)",
-  "--brand-primary-shadow": "0 8px 24px rgba(37, 99, 255, 0.16)",
-  "--kora-blue": KORA_BLUE,
-  "--kora-green": KORA_GREEN,
-} as CSSProperties;
 
 /* -------------------------------------------------------------------------- */
 /*                                   CONFIG                                   */
@@ -204,6 +196,8 @@ function Sparkline({
 
 function PerformanceChart({
   series,
+  brandColor = "#FF0A8A",
+  brandAreaFill = "rgba(255, 10, 138, 0.08)",
 }: {
   series: {
     label: string;
@@ -212,6 +206,8 @@ function PerformanceChart({
     reach: number;
     followers: number;
   }[];
+  brandColor?: string;
+  brandAreaFill?: string;
 }) {
   const values = series.map((item) => item.reach || item.views || 0);
 
@@ -296,13 +292,13 @@ function PerformanceChart({
         >
           <path
             d={areaPath}
-            fill="rgba(37, 99, 255, 0.08)"
+            fill={brandAreaFill}
           />
 
           <path
             d={linePath}
             fill="none"
-            stroke={KORA_BLUE}
+            stroke={brandColor}
             strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -315,7 +311,7 @@ function PerformanceChart({
               cy={point.y}
               r="3.5"
               fill="var(--panel-fill)"
-              stroke={KORA_BLUE}
+              stroke={brandColor}
               strokeWidth="2"
             />
           ))}
@@ -438,11 +434,19 @@ function SectionHeader({
 function StatusPill({
   children,
   tone = "blue",
+  brandColor,
 }: {
   children: React.ReactNode;
-  tone?: "blue" | "green" | "orange";
+  tone?: "blue" | "green" | "orange" | "brand";
+  brandColor?: string;
 }) {
+  const isPink = brandColor === KORA_PINK;
   const styles = {
+    brand: {
+      background: isPink ? "rgba(255,10,138,.09)" : "rgba(37,99,255,.09)",
+      color: brandColor ?? (isPink ? KORA_PINK : KORA_BLUE),
+      border: isPink ? "rgba(255,10,138,.16)" : "rgba(37,99,255,.16)",
+    },
     blue: {
       background: "rgba(37,99,255,.09)",
       color: KORA_BLUE,
@@ -460,7 +464,7 @@ function StatusPill({
     },
   };
 
-  const style = styles[tone];
+  const style = styles[tone] ?? styles.blue;
 
   return (
     <span
@@ -498,6 +502,7 @@ export default async function DashboardPage() {
       onboarded: true,
       full_name: true,
       avatar_url: true,
+      persona: true,
     },
   });
 
@@ -918,6 +923,28 @@ export default async function DashboardPage() {
     });
 
   /* ---------------------------------------------------------------------- */
+  /*                              PERSONA THEME                             */
+  /* ---------------------------------------------------------------------- */
+
+  const isMarketer = onboardProfile?.persona === "marketer";
+  const brandPrimary = isMarketer ? KORA_BLUE : KORA_PINK;
+  const brandSoft = isMarketer ? "rgba(37, 99, 255, 0.09)" : "rgba(255, 10, 138, 0.09)";
+  const brandBorder = isMarketer ? "rgba(37, 99, 255, 0.22)" : "rgba(255, 10, 138, 0.22)";
+  const brandShadow = isMarketer ? "0 8px 24px rgba(37, 99, 255, 0.16)" : "0 8px 24px rgba(255, 10, 138, 0.16)";
+  const brandAreaFill = isMarketer ? "rgba(37, 99, 255, 0.08)" : "rgba(255, 10, 138, 0.08)";
+  const workspaceBadge = isMarketer ? "Marketer workspace" : "Creator workspace";
+
+  const dynamicKoraStyle = {
+    "--brand-primary": brandPrimary,
+    "--brand-primary-soft": brandSoft,
+    "--brand-primary-border": brandBorder,
+    "--brand-primary-shadow": brandShadow,
+    "--kora-blue": KORA_BLUE,
+    "--kora-pink": KORA_PINK,
+    "--kora-green": KORA_GREEN,
+  } as CSSProperties;
+
+  /* ---------------------------------------------------------------------- */
   /*                              GREETING                                  */
   /* ---------------------------------------------------------------------- */
 
@@ -942,7 +969,7 @@ export default async function DashboardPage() {
   return (
     <main
       className="mx-auto w-full max-w-[1440px] pb-12"
-      style={KORA_STYLE}
+      style={dynamicKoraStyle}
     >
       {/* ================================================================== */}
       {/* HEADER                                                             */}
@@ -961,7 +988,7 @@ export default async function DashboardPage() {
             />
 
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--fg-4)]">
-              Creator workspace
+              {workspaceBadge}
             </span>
           </div>
 
@@ -981,9 +1008,12 @@ export default async function DashboardPage() {
             href="/dashboard/create"
             className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-[12px] font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98]"
             style={{
-              background: KORA_BLUE,
-              boxShadow:
-                "0 7px 18px rgba(37,99,255,.18)",
+              background: brandPrimary,
+              boxShadow: `0 7px 18px ${
+                isMarketer
+                  ? "rgba(37,99,255,.18)"
+                  : "rgba(255,10,138,.18)"
+              }`,
             }}
           >
             <PenLine className="h-3.5 w-3.5" />
@@ -1004,7 +1034,7 @@ export default async function DashboardPage() {
                 const color =
                   PLATFORM_COLORS[
                     account.platform
-                  ] ?? KORA_BLUE;
+                  ] ?? brandPrimary;
 
                 return (
                   <Link
@@ -1108,7 +1138,7 @@ export default async function DashboardPage() {
             <div
               className="flex h-9 w-9 items-center justify-center rounded-lg"
               style={{
-                background: KORA_BLUE,
+                background: brandPrimary,
               }}
             >
               <PenLine className="h-4 w-4 text-white" />
@@ -1166,14 +1196,13 @@ export default async function DashboardPage() {
             <div
               className="flex h-9 w-9 items-center justify-center rounded-lg"
               style={{
-                background:
-                  "rgba(37,99,255,.09)",
+                background: brandSoft,
               }}
             >
               <RefreshCw
                 className="h-4 w-4"
                 style={{
-                  color: KORA_BLUE,
+                  color: brandPrimary,
                 }}
               />
             </div>
@@ -1247,7 +1276,11 @@ export default async function DashboardPage() {
             </span>
           </div>
 
-          <PerformanceChart series={dailySeries} />
+          <PerformanceChart
+            series={dailySeries}
+            brandColor={brandPrimary}
+            brandAreaFill={brandAreaFill}
+          />
 
           <div className="mt-2 grid grid-cols-2 border-t border-[var(--stroke)] pt-4 sm:grid-cols-4">
             <div className="px-1">
@@ -1302,8 +1335,7 @@ export default async function DashboardPage() {
         <article
           className="rounded-2xl border p-5"
           style={{
-            borderColor:
-              "var(--brand-primary-border)",
+            borderColor: brandBorder,
             background:
               "var(--panel-fill)",
           }}
@@ -1312,14 +1344,13 @@ export default async function DashboardPage() {
             <div
               className="flex h-8 w-8 items-center justify-center rounded-lg"
               style={{
-                background:
-                  "var(--brand-primary-soft)",
+                background: brandSoft,
               }}
             >
               <Sparkles
                 className="h-4 w-4"
                 style={{
-                  color: KORA_BLUE,
+                  color: brandPrimary,
                 }}
               />
             </div>
@@ -1359,7 +1390,7 @@ export default async function DashboardPage() {
             href="/dashboard/analytics"
             className="mt-6 inline-flex items-center gap-1.5 text-[10.5px] font-semibold"
             style={{
-              color: KORA_BLUE,
+              color: brandPrimary,
             }}
           >
             View insight
@@ -1398,7 +1429,7 @@ export default async function DashboardPage() {
                 href="/dashboard/create"
                 className="mt-4 rounded-lg px-3.5 py-2 text-[10.5px] font-semibold text-white"
                 style={{
-                  background: KORA_BLUE,
+                  background: brandPrimary,
                 }}
               >
                 Create a post
@@ -1411,7 +1442,7 @@ export default async function DashboardPage() {
                   const platformColor =
                     PLATFORM_COLORS[
                       post.platform
-                    ] ?? KORA_BLUE;
+                    ] ?? brandPrimary;
 
                   return (
                     <div
@@ -1493,14 +1524,13 @@ export default async function DashboardPage() {
               <div
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
                 style={{
-                  background:
-                    "rgba(37,99,255,.09)",
+                  background: brandSoft,
                 }}
               >
                 <MessageCircle
                   className="h-3.5 w-3.5"
                   style={{
-                    color: KORA_BLUE,
+                    color: brandPrimary,
                   }}
                 />
               </div>
@@ -1594,14 +1624,13 @@ export default async function DashboardPage() {
               <span
                 className="flex h-7 w-7 items-center justify-center rounded-lg"
                 style={{
-                  background:
-                    "rgba(37,99,255,.09)",
+                  background: brandSoft,
                 }}
               >
                 <Flame
                   className="h-3.5 w-3.5"
                   style={{
-                    color: KORA_BLUE,
+                    color: brandPrimary,
                   }}
                 />
               </span>
@@ -1616,7 +1645,7 @@ export default async function DashboardPage() {
             </p>
 
             <div className="mt-3 flex items-center justify-between">
-              <StatusPill tone="blue">
+              <StatusPill tone="brand" brandColor={brandPrimary}>
                 Rising
               </StatusPill>
 
@@ -1670,14 +1699,13 @@ export default async function DashboardPage() {
               <span
                 className="flex h-7 w-7 items-center justify-center rounded-lg"
                 style={{
-                  background:
-                    "rgba(37,99,255,.09)",
+                  background: brandSoft,
                 }}
               >
                 <Bot
                   className="h-3.5 w-3.5"
                   style={{
-                    color: KORA_BLUE,
+                    color: brandPrimary,
                   }}
                 />
               </span>
@@ -1692,7 +1720,7 @@ export default async function DashboardPage() {
             </p>
 
             <div className="mt-3 flex items-center justify-between">
-              <StatusPill tone="blue">
+              <StatusPill tone="brand" brandColor={brandPrimary}>
                 Opportunity
               </StatusPill>
 
