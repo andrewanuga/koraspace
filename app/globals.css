@@ -573,6 +573,7 @@ html.sai-js [data-reveal] { opacity: 0; }
 /* Accessibility: honour reduced motion everywhere */
 @media (prefers-reduced-motion: reduce) {
   .sai-flow-text { animation: none; }
+  .animate-pulse-glow { animation: none; }
   html.sai-js [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
   * { scroll-behavior: auto !important; }
 }
@@ -888,4 +889,190 @@ html.sai-js [data-reveal] { opacity: 0; }
   --fg-2: #c3cad4;
   --fg-3: #7b8593;
   --fg-4: #596473;
+}
+/* ── KoraSpace marketing surface tokens ──────────────────────────────────────
+ *
+ * The landing pages are being moved onto light grounds while the hero stays
+ * dark, so a section's surface — not each file — has to decide its text and
+ * border colours. Every value below has a dark and a light twin under the same
+ * name, which is what lets one component render on either ground.
+ *
+ * Namespaced --ks-* on purpose: --kora-* and --panel-* already exist above and
+ * belong to the dashboard shell (.sai-app), which the landing tree never enters.
+ *
+ * Dark is the default, declared on :root, so any component that adopts these
+ * tokens keeps rendering exactly as it does today until something wraps it in
+ * .kora-light. .kora-dark restates the same values, which is how a dark panel
+ * sits inside a light section.
+ */
+:root,
+.kora-dark {
+  --ks-ground: transparent;
+
+  --ks-ink: #ffffff;
+  --ks-ink-2: rgba(255, 255, 255, 0.6);
+  --ks-ink-3: rgba(255, 255, 255, 0.4);
+  --ks-ink-4: rgba(255, 255, 255, 0.25);
+
+  --ks-line: rgba(255, 255, 255, 0.08);
+  --ks-line-strong: rgba(255, 255, 255, 0.14);
+
+  /* --ks-accent fills; --ks-accent-ink is the text-safe twin. On dark these
+     differ (a fill reads brighter than type); on light they converge. */
+  --ks-accent: #ff0a8a;
+  --ks-accent-ink: #ff9fc9;
+  --ks-accent-soft: rgba(255, 10, 138, 0.07);
+  --ks-accent-line: rgba(255, 10, 138, 0.3);
+
+  --ks-orb: rgba(255, 10, 138, 0.2);
+  --ks-numeral: rgba(255, 255, 255, 0.045);
+
+  /* Skeleton bars standing in for drafted copy, and the faint chip fill. */
+  --ks-skeleton: rgba(255, 255, 255, 0.13);
+  --ks-skeleton-2: rgba(255, 255, 255, 0.1);
+  --ks-chip: rgba(255, 255, 255, 0.03);
+
+  --ks-eyebrow-glow-neutral: 0 0 15px rgba(255, 255, 255, 0.05);
+  --ks-eyebrow-glow-accent: 0 0 15px rgba(255, 10, 138, 0.15);
+  --ks-eyebrow-dot: #ffffff;
+
+  /* Hairline from a floating card to the thing it annotates. */
+  --ks-connector: rgba(255, 159, 201, 0.35);
+  /* Chart furniture: a dashed baseline marker, and a neutral data bar. Kept
+     apart from --ks-line because a border can be nearly invisible and still
+     do its job, where a bar that cannot be seen is a bug. */
+  --ks-marker: rgba(255, 255, 255, 0.35);
+  --ks-bar: rgba(255, 255, 255, 0.3);
+  --ks-bar-from: #5a3cff;
+  --ks-bar-to: #ff9fc9;
+
+  /* product-panel surface ladder */
+  --ks-panel-frame: #171717;
+  --ks-panel-chrome: #141414;
+  --ks-panel-canvas: #121212;
+  --ks-panel-raised: #181818;
+  --ks-panel-inset: rgba(255, 255, 255, 0.07);
+  /* The frame's own outline, kept apart from --ks-line-strong: a panel edge
+     wants to be quieter than an emphasis border, and on a large rounded frame
+     the difference between 0.10 and 0.14 is visible. */
+  --ks-panel-line: rgba(255, 255, 255, 0.1);
+  --ks-panel-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+
+  /* floating intelligence card */
+  --ks-card: rgba(14, 10, 28, 0.92);
+  --ks-card-line: rgba(255, 255, 255, 0.12);
+  --ks-card-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* Light ground. --ks-accent drops to #d6006f: the brand #ff0a8a is 3.7:1 on
+   white and fails AA as text or as a button label; this is 5.1:1. The brand
+   pink survives untouched as a fill, gradient and glow elsewhere. */
+.kora-light {
+  --ks-ground: #fbfafc;
+
+  --ks-ink: #0e0a1c;
+  --ks-ink-2: #46405a;
+  --ks-ink-3: #6e687f;
+  /* Only a shade lighter than --ks-ink-3, unlike the dark scope where the two
+     are far apart. On paper, muted type runs out of room long before it does on
+     a dark ground — #938da3 measured 2.95:1 and failed AA on the "Preview" tag,
+     which is the label that tells visitors the panel data is illustrative. */
+  --ks-ink-4: #6b6579;
+
+  --ks-line: rgba(14, 10, 28, 0.08);
+  --ks-line-strong: rgba(14, 10, 28, 0.16);
+
+  --ks-accent: #d6006f;
+  --ks-accent-ink: #d6006f;
+  --ks-accent-soft: rgba(214, 0, 111, 0.07);
+  --ks-accent-line: rgba(214, 0, 111, 0.28);
+
+  --ks-orb: rgba(214, 0, 111, 0.07);
+  --ks-numeral: rgba(14, 10, 28, 0.05);
+
+  --ks-skeleton: rgba(14, 10, 28, 0.14);
+  --ks-skeleton-2: rgba(14, 10, 28, 0.1);
+  --ks-chip: rgba(14, 10, 28, 0.035);
+
+  /* No glow on paper: a soft halo behind a pill reads as a printing fault
+     rather than as light. */
+  --ks-eyebrow-glow-neutral: none;
+  --ks-eyebrow-glow-accent: none;
+  --ks-eyebrow-dot: var(--ks-ink-2);
+
+  --ks-connector: rgba(214, 0, 111, 0.4);
+  --ks-marker: rgba(14, 10, 28, 0.3);
+  --ks-bar: rgba(14, 10, 28, 0.22);
+  /* The gradient ends on the accent rather than the pale #ff9fc9: that pink
+     carries a filled bar on a dark ground, but on paper the bar fades out
+     exactly where it is meant to read as strongest. */
+  --ks-bar-from: #5a3cff;
+  --ks-bar-to: #d6006f;
+
+  --ks-panel-frame: #ffffff;
+  --ks-panel-chrome: #f7f5fa;
+  --ks-panel-canvas: #ffffff;
+  --ks-panel-raised: #f8f7fb;
+  --ks-panel-inset: rgba(14, 10, 28, 0.08);
+  --ks-panel-line: rgba(14, 10, 28, 0.09);
+  --ks-panel-shadow: 0 1px 2px rgba(14, 10, 28, 0.05), 0 18px 48px rgba(14, 10, 28, 0.1);
+
+  --ks-card: #ffffff;
+  --ks-card-line: rgba(14, 10, 28, 0.1);
+  --ks-card-shadow: 0 1px 2px rgba(14, 10, 28, 0.05), 0 14px 38px rgba(14, 10, 28, 0.12);
+}
+
+/* The background rhythm. Deliberately close in value — this is atmosphere, so
+   a chapter should register without a hard edge between sections. */
+.kora-light[data-ground="2"] {
+  --ks-ground: #f3f0f8;
+}
+
+.kora-light[data-ground="3"] {
+  --ks-ground: #ebe5f5;
+}
+
+/* Border and shadow helpers for the marketing scopes.
+ *
+ * These exist because of a pre-existing rule near the top of this file:
+ *
+ *   * { border-color: hsl(var(--border)); }
+ *
+ * It sits outside any @layer, and unlayered CSS beats layered CSS in the
+ * cascade — so it overrides every Tailwind border-color utility in the app.
+ * `border-white/[0.07]` has never actually produced white; it has been
+ * resolving to hsl(240 4% 16%) everywhere. On dark surfaces that reads as a
+ * plausible hairline, which is why it went unnoticed; on a light ground the
+ * same colour is a hard near-black line, which is how it surfaced.
+ *
+ * Moving that rule into @layer base would fix it site-wide and is the real
+ * repair, but it would also restyle every border in the dashboard, so it wants
+ * its own change rather than riding along inside a landing-page stage. These
+ * classes are unlayered too, and a class beats `*` on specificity.
+ *
+ * Same story for box-shadow: shadow-[var(--token)] generates nothing, because
+ * Tailwind's shadow utilities compose through their own custom properties.
+ */
+.ks-line { border-color: var(--ks-line); }
+.ks-line-panel { border-color: var(--ks-panel-line); }
+.ks-line-accent { border-color: var(--ks-accent-line); }
+.ks-line-card { border-color: var(--ks-card-line); }
+.ks-line-marker { border-color: var(--ks-marker); }
+
+.ks-shadow-panel { box-shadow: var(--ks-panel-shadow); }
+.ks-shadow-card { box-shadow: var(--ks-card-shadow); }
+
+/* Eyebrow pills, as classes for the same cascade reason as .ks-line above. */
+.ks-eyebrow-neutral {
+  color: var(--ks-ink-2);
+  background: var(--ks-chip);
+  border-color: var(--ks-line);
+  box-shadow: var(--ks-eyebrow-glow-neutral);
+}
+
+.ks-eyebrow-accent {
+  color: var(--ks-accent);
+  background: var(--ks-accent-soft);
+  border-color: var(--ks-accent-line);
+  box-shadow: var(--ks-eyebrow-glow-accent);
 }

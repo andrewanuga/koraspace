@@ -41,9 +41,14 @@ const nextConfig: NextConfig = {
     const staticCsp = [
       `default-src 'self'`,
       `script-src 'self' 'unsafe-inline' https://js.paystack.co`,
-      `style-src 'self' 'unsafe-inline'`,
+      // The two font hosts are load-bearing: without them the display face and
+      // the Google families are blocked, and the landing page loses both its
+      // typography and the hero's gradient. Deliberately NO nonce in style-src
+      // — per CSP a nonce makes 'unsafe-inline' inert, which strips every
+      // inline style attribute on the page.
+      `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com`,
       `img-src 'self' blob: data: https://res.cloudinary.com ${supabaseUrl} https://lh3.googleusercontent.com https://pbs.twimg.com https://media.licdn.com`,
-      `font-src 'self'`,
+      `font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com`,
       `connect-src 'self' https://res.cloudinary.com ${supabaseUrl} https://openrouter.ai https://api.paystack.co wss://*.supabase.co`,
       `media-src 'self' blob: https://res.cloudinary.com`,
       `frame-ancestors 'none'`,

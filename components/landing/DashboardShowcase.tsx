@@ -1,15 +1,14 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import { useState } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowRight,
   BarChart3,
   Bot,
   Calendar,
   Check,
-  ChevronRight,
   Layers3,
   RefreshCw,
   Sparkles,
@@ -20,7 +19,23 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 
-export function DashboardShowcase() {
+/**
+ * The homepage's product preview: one real environment rather than a wall of
+ * screenshots.
+ *
+ * `overlay` renders floating cards around the app frame. They sit OUTSIDE the
+ * frame element on purpose — the frame is overflow-hidden to contain its own
+ * UI, so anything placed inside it that breaks the frame's edge gets cropped.
+ */
+export function DashboardShowcase({
+  overlay,
+  after,
+}: {
+  /** Floating cards positioned relative to the app frame. */
+  overlay?: ReactNode;
+  /** Content below the frame, e.g. links into the product pages. */
+  after?: ReactNode;
+} = {}) {
   const { t } = useLanguage();
   const [persona, setPersona] = useState<"creator" | "marketer">("creator");
 
@@ -79,7 +94,7 @@ export function DashboardShowcase() {
             <button
               type="button"
               onClick={() => setPersona("creator")}
-              className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer ${
+              className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer before:absolute before:inset-x-0 before:-inset-y-1.5 before:content-[''] ${
                 isCreator ? "text-white" : "text-slate-600 hover:text-slate-900 dark:text-white/55 dark:hover:text-white"
               }`}
             >
@@ -99,7 +114,7 @@ export function DashboardShowcase() {
             <button
               type="button"
               onClick={() => setPersona("marketer")}
-              className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer ${
+              className={`relative flex items-center gap-2 rounded-xl px-4.5 py-2 text-xs font-semibold transition-colors duration-200 cursor-pointer before:absolute before:inset-x-0 before:-inset-y-1.5 before:content-[''] ${
                 !isCreator ? "text-white" : "text-slate-600 hover:text-slate-900 dark:text-white/55 dark:hover:text-white"
               }`}
             >
@@ -121,6 +136,7 @@ export function DashboardShowcase() {
         {/* ================================================================ */}
         {/* INTERACTIVE HIGH-FIDELITY PRODUCT SHOWCASE FRAME */}
         {/* ================================================================ */}
+        <div className="relative">
         <motion.div
           initial={{ opacity: 0, y: 40, scale: 0.96 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -204,7 +220,7 @@ export function DashboardShowcase() {
               {/* Bottom status badge */}
               <div className="hidden sm:block rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5">
                 <div className="flex items-center gap-2 text-[11px] text-white/60">
-                  <span className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
+                  <span className="h-2 w-2 rounded-full bg-[#34d399] motion-safe:animate-pulse" />
                   <span>{t.dashboardShowcase.realTimeSync}</span>
                 </div>
               </div>
@@ -374,21 +390,15 @@ export function DashboardShowcase() {
           </div>
         </motion.div>
 
-        {/* ================================================================ */}
-        {/* METRIC STRIP SUMMARY */}
-        {/* ================================================================ */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-          className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto"
-        >
-          <KpiMetricCard number="10×" label={t.dashboardShowcase.fasterContentSpeed} sub={t.dashboardShowcase.fasterContentDesc} />
-          <KpiMetricCard number="₦8.4M+" label={t.dashboardShowcase.managedPipelineRevenue} sub={t.dashboardShowcase.managedPipelineDesc} />
-          <KpiMetricCard number="4.2×" label={t.dashboardShowcase.higherLeadIntent} sub={t.dashboardShowcase.higherLeadDesc} />
-          <KpiMetricCard number="6+" label={t.dashboardShowcase.connectedNetworks} sub={t.dashboardShowcase.connectedNetworksDesc} />
-        </motion.div>
+          {/* Outside the frame on purpose: the frame is overflow-hidden, so a
+              card placed inside it would be cropped where it breaks the edge. */}
+          {overlay}
+        </div>
+        {/* A metric strip used to sit here claiming "₦8.4M+ managed pipeline
+            revenue", "10× faster content" and "4.2× higher lead intent", plus
+            LinkedIn and TikTok as connected networks. None of it is backed by
+            real customers or the PRD, so it was removed rather than reworded. */}
+        {after}
       </div>
     </section>
   );
@@ -455,33 +465,6 @@ function MockStat({
   );
 }
 
-function KpiMetricCard({
-  number,
-  label,
-  sub,
-}: {
-  number: string;
-  label: string;
-  sub: string;
-}) {
-  return (
-    <motion.div
-      whileHover={{ y: -6, scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="rounded-2xl border border-slate-200 bg-white/90 p-5 text-center transition-colors hover:border-slate-300 hover:bg-white shadow-sm dark:border-white/[0.08] dark:bg-[#161616]/70 dark:hover:border-white/20 dark:hover:bg-[#1a1a1a] cursor-default"
-    >
-      <div className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-        {number}
-      </div>
-      <div className="mt-1.5 text-xs font-semibold text-slate-700 dark:text-white/80">
-        {label}
-      </div>
-      <div className="mt-1 text-[11px] text-slate-500 dark:text-white/40">
-        {sub}
-      </div>
-    </motion.div>
-  );
-}
 
 export default DashboardShowcase;
 
