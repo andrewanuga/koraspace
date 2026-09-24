@@ -40,6 +40,7 @@ import {
   CircleUserRound,
   SlidersHorizontal,
   ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 
 import { useToast } from "@/components/ui/toast";
@@ -491,51 +492,92 @@ export function InboxClient({
       {/* SUMMARY BAR                                                        */}
       {/* ------------------------------------------------------------------ */}
 
-      <div className="mb-4 flex flex-wrap items-center rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-4 py-3">
-        <div className="flex items-center gap-2 border-r border-[var(--stroke)] pr-5">
+      <div className="mb-4 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-[var(--stroke)] bg-[var(--stroke)] sm:grid-cols-3 md:grid-cols-5">
+        <div className="flex items-center gap-2.5 bg-[var(--panel-fill)] px-3.5 py-2.5 sm:px-4 sm:py-3">
           <span className="text-sm font-bold text-[var(--fg)]">
             {counts.all}
           </span>
-          <span className="text-[10px] text-[var(--fg-3)]">
+          <span className="text-[11px] text-[var(--fg-3)]">
             Total
           </span>
         </div>
 
-        <div className="flex items-center gap-2 border-r border-[var(--stroke)] px-5">
+        <div className="flex items-center gap-2.5 bg-[var(--panel-fill)] px-3.5 py-2.5 sm:px-4 sm:py-3">
           <span className="text-sm font-bold text-[var(--fg)]">
             {unreadCount}
           </span>
-          <span className="text-[10px] text-[var(--fg-3)]">
+          <span className="text-[11px] text-[var(--fg-3)]">
             Unread
           </span>
         </div>
 
-        <div className="flex items-center gap-2 border-r border-[var(--stroke)] px-5">
+        <div className="flex items-center gap-2.5 bg-[var(--panel-fill)] px-3.5 py-2.5 sm:px-4 sm:py-3">
           <span className="text-sm font-bold text-[var(--fg)]">
             {needsReplyCount}
           </span>
-          <span className="text-[10px] text-[var(--fg-3)]">
+          <span className="text-[11px] text-[var(--fg-3)]">
             Needs Reply
           </span>
         </div>
 
-        <div className="flex items-center gap-2 border-r border-[var(--stroke)] px-5">
+        <div className="flex items-center gap-2.5 bg-[var(--panel-fill)] px-3.5 py-2.5 sm:px-4 sm:py-3">
           <span className="text-sm font-bold text-[var(--fg)]">
             {counts.mentions}
           </span>
-          <span className="text-[10px] text-[var(--fg-3)]">
+          <span className="text-[11px] text-[var(--fg-3)]">
             Mentions
           </span>
         </div>
 
-        <div className="flex items-center gap-2 px-5">
+        <div className="col-span-2 flex items-center gap-2.5 bg-[var(--panel-fill)] px-3.5 py-2.5 sm:col-span-1 sm:px-4 sm:py-3">
           <span className="text-sm font-bold text-[var(--fg)]">
             {accounts.length}
           </span>
-          <span className="text-[10px] text-[var(--fg-3)]">
+          <span className="text-[11px] text-[var(--fg-3)]">
             Channels
           </span>
         </div>
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* MOBILE CATEGORY TABS (lg:hidden)                                  */}
+      {/* ------------------------------------------------------------------ */}
+
+      <div className="mb-3 flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar lg:hidden">
+        {[
+          { id: "all", label: "All", count: counts.all },
+          { id: "messages", label: "Messages", count: counts.messages },
+          { id: "comments", label: "Comments", count: counts.comments },
+          { id: "mentions", label: "Mentions", count: counts.mentions },
+          { id: "dms", label: "DMs", count: counts.dms },
+        ].map((tab) => {
+          const active = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id as typeof activeTab)}
+              className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[10px] font-semibold transition ${
+                active
+                  ? "border-[var(--brand-primary)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]"
+                  : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:text-[var(--fg)]"
+              }`}
+            >
+              <span>{tab.label}</span>
+              {tab.count > 0 && (
+                <span
+                  className={`rounded px-1 text-[9px] font-bold ${
+                    active
+                      ? "bg-[var(--brand-primary)] text-white"
+                      : "bg-[var(--panel-fill-2)] text-[var(--fg-4)]"
+                  }`}
+                >
+                  {tab.count}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* ------------------------------------------------------------------ */}
@@ -697,7 +739,11 @@ export function InboxClient({
         {/* MIDDLE CONVERSATION LIST                                         */}
         {/* ================================================================ */}
 
-        <section className="flex min-w-0 flex-col border-r border-[var(--stroke)]">
+        <section
+          className={`${
+            selectedId ? "hidden lg:flex" : "flex"
+          } min-w-0 flex-col border-r border-[var(--stroke)]`}
+        >
           {/* SEARCH */}
 
           <div className="border-b border-[var(--stroke)] p-3">
@@ -936,15 +982,28 @@ export function InboxClient({
         {/* RIGHT CONVERSATION                                               */}
         {/* ================================================================ */}
 
-        <section className="flex min-w-0 flex-col bg-[var(--panel-fill)]">
+        <section
+          className={`${
+            selectedId ? "flex" : "hidden lg:flex"
+          } min-w-0 flex-col bg-[var(--panel-fill)]`}
+        >
           {selectedMessage ? (
             <>
               {/* ---------------------------------------------------------- */}
               {/* CHAT HEADER                                                 */}
               {/* ---------------------------------------------------------- */}
 
-              <div className="flex min-h-[64px] items-center justify-between border-b border-[var(--stroke)] px-4 py-3 sm:px-5">
-                <div className="flex min-w-0 items-center gap-3">
+              <div className="flex min-h-[64px] items-center justify-between border-b border-[var(--stroke)] px-3 py-3 sm:px-5">
+                <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedId(null)}
+                    className="flex h-8 items-center gap-1 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-2 text-[10px] font-semibold text-[var(--fg-2)] transition hover:text-[var(--fg)] lg:hidden"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                    <span>Back</span>
+                  </button>
+
                   <div className="relative shrink-0">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[10px] font-bold text-[var(--fg-2)]">
                       {initials(
