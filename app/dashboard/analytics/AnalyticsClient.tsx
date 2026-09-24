@@ -29,6 +29,7 @@ import {
   Check,
   RefreshCw,
   Layers,
+  Clock,
 } from "lucide-react";
 import { GlassCard, Pill } from "@/components/dashboard/ui";
 import { fmtNum, fmtNaira, platformLabel } from "@/lib/dashboard/helpers";
@@ -371,83 +372,119 @@ function AudienceDonut({
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                HEATMAP                                     */
+/*                          BEST TIME TO POST CARD                            */
 /* -------------------------------------------------------------------------- */
 
-function BestTimeHeatmap({ grid }: { grid?: number[][] }) {
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const hours = ["12a", "4a", "8a", "12p", "4p", "8p"];
+interface BestTimeStatsType {
+  bestDayName: string;
+  bestDayShort: string;
+  bestSlotTime: string;
+  bestSlotLabel: string;
+  days: Array<{ name: string; full: string; pct: number }>;
+  slots: Array<{ id: string; label: string; time: string; percentage: number }>;
+  hasRealData: boolean;
+}
 
-  const defaultHeatmap = [
-    [1, 1, 2, 3, 4, 3, 2, 1],
-    [1, 2, 4, 6, 7, 5, 3, 1],
-    [2, 3, 5, 8, 9, 7, 4, 2],
-    [2, 3, 6, 9, 9, 8, 5, 2],
-    [1, 2, 4, 7, 8, 6, 4, 1],
-    [1, 2, 3, 5, 6, 4, 2, 1],
-    [1, 1, 2, 3, 3, 2, 1, 1],
-  ];
-
-  const heatmap = grid || defaultHeatmap;
-  const getOpacity = (value: number) => 0.08 + Math.min(value, 9) * 0.09;
-
+function BestTimeToPostCard({ stats }: { stats: BestTimeStatsType }) {
   return (
-    <div>
-      <div className="mt-5 grid grid-cols-[28px_repeat(8,1fr)] gap-1.5">
-        <div />
-
-        {Array.from({ length: 8 }).map((_, index) => (
-          <div key={index} />
-        ))}
-
-        {days.map((day, dayIndex) => (
-          <div key={day} className="contents">
-            <div className="flex items-center text-[9px] font-medium text-[var(--fg-4)]">
-              {day}
-            </div>
-
-            {heatmap[dayIndex].map((value, hourIndex) => (
-              <div
-                key={`${day}-${hourIndex}`}
-                className="aspect-square min-h-[16px] rounded-[5px] border transition-transform hover:scale-110"
-                style={{
-                  backgroundColor: `color-mix(in srgb, var(--brand-primary) ${Math.round(
-                    getOpacity(value) * 100
-                  )}%, transparent)`,
-                  borderColor: "var(--brand-primary-border)",
-                }}
-              />
-            ))}
+    <div className="mt-4 space-y-4">
+      {/* Top Best Window Highlight */}
+      <div className="flex items-center justify-between rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
+            <Clock className="h-4 w-4" />
           </div>
-        ))}
-      </div>
-
-      <div className="ml-8 mt-3 grid grid-cols-6">
-        {hours.map((hour) => (
-          <span key={hour} className="text-[9px] font-medium text-[var(--fg-4)]">
-            {hour}
-          </span>
-        ))}
-      </div>
-
-      <div className="mt-4 flex items-center justify-end gap-2 text-[9px] text-[var(--fg-4)]">
-        <span>Less active</span>
-
-        <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map((item) => (
-            <span
-              key={item}
-              className="h-2 w-3 rounded-sm"
-              style={{
-                backgroundColor: `color-mix(in srgb, var(--brand-primary) ${
-                  12 + item * 18
-                }%, transparent)`,
-              }}
-            />
-          ))}
+          <div>
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--fg-4)]">
+              Peak Window
+            </p>
+            <p className="font-display text-xs font-bold text-[var(--fg)]">
+              {stats.bestDayName}s · {stats.bestSlotTime}
+            </p>
+          </div>
         </div>
 
-        <span>Peak activity</span>
+        <span className="rounded-full bg-[var(--success-soft)] px-2 py-0.5 text-[9px] font-bold text-[var(--success)]">
+          Optimal
+        </span>
+      </div>
+
+      {/* Days of Week Activity Chart */}
+      <div>
+        <p className="mb-2 text-[10px] font-semibold text-[var(--fg-4)]">
+          Day-by-Day Activity
+        </p>
+        <div className="flex items-end justify-between gap-1.5 pt-1 pb-1">
+          {stats.days.map((day) => {
+            const isPeak = day.name === stats.bestDayShort;
+            return (
+              <div key={day.name} className="flex flex-1 flex-col items-center gap-1.5">
+                <div className="flex h-14 w-full items-end justify-center rounded-md bg-[var(--panel-fill-2)] p-0.5">
+                  <div
+                    className={`w-full rounded-xs transition-all duration-300 ${
+                      isPeak
+                        ? "bg-[var(--brand-primary)] shadow-xs"
+                        : "bg-[var(--fg-4)] opacity-25 hover:opacity-40"
+                    }`}
+                    style={{ height: `${Math.max(day.pct, 14)}%` }}
+                  />
+                </div>
+                <span
+                  className={`text-[9px] font-medium ${
+                    isPeak
+                      ? "font-bold text-[var(--brand-primary)]"
+                      : "text-[var(--fg-4)]"
+                  }`}
+                >
+                  {day.name}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Time Slots Breakdown */}
+      <div className="space-y-1.5 pt-1 border-t border-[var(--stroke)]">
+        <div className="flex items-center justify-between text-[9px] text-[var(--fg-4)] font-medium">
+          <span>Publishing Window</span>
+          <span>Avg Share</span>
+        </div>
+        <div className="grid grid-cols-2 gap-1.5">
+          {stats.slots.map((slot) => {
+            const isTop = slot.label === stats.bestSlotLabel;
+            return (
+              <div
+                key={slot.id}
+                className={`rounded-lg border p-2 text-left transition ${
+                  isTop
+                    ? "border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)]"
+                    : "border-[var(--stroke)] bg-[var(--panel-fill-2)]"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`text-[10px] font-semibold ${
+                      isTop ? "text-[var(--brand-primary)]" : "text-[var(--fg)]"
+                    }`}
+                  >
+                    {slot.label}
+                  </span>
+                  <span
+                    className={`font-display text-[10px] font-bold ${
+                      isTop ? "text-[var(--brand-primary)]" : "text-[var(--fg-3)]"
+                    }`}
+                  >
+                    {slot.percentage}%
+                  </span>
+                </div>
+                <p className="mt-0.5 text-[9px] text-[var(--fg-4)]">
+                  {slot.time}
+                </p>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -819,11 +856,28 @@ export function AnalyticsClient({
   }, [currentPosts]);
 
   /* ------------------------------------------------------------------------ */
-  /* BEST TIME HEATMAP DATA                                                   */
+  /* BEST TIME TO POST ANALYTICS (REAL CALCULATIONS)                          */
   /* ------------------------------------------------------------------------ */
 
-  const heatmapGrid = useMemo(() => {
-    const grid = Array.from({ length: 7 }, () => Array(8).fill(1));
+  const bestTimeStats = useMemo(() => {
+    const daysData = [
+      { name: "Mon", full: "Monday", totalEng: 0, count: 0 },
+      { name: "Tue", full: "Tuesday", totalEng: 0, count: 0 },
+      { name: "Wed", full: "Wednesday", totalEng: 0, count: 0 },
+      { name: "Thu", full: "Thursday", totalEng: 0, count: 0 },
+      { name: "Fri", full: "Friday", totalEng: 0, count: 0 },
+      { name: "Sat", full: "Saturday", totalEng: 0, count: 0 },
+      { name: "Sun", full: "Sunday", totalEng: 0, count: 0 },
+    ];
+
+    const timeSlots = [
+      { id: "morning", label: "Morning", time: "6 AM – 12 PM", totalEng: 0, count: 0 },
+      { id: "afternoon", label: "Afternoon", time: "12 PM – 5 PM", totalEng: 0, count: 0 },
+      { id: "evening", label: "Evening", time: "5 PM – 9 PM", totalEng: 0, count: 0 },
+      { id: "night", label: "Night", time: "9 PM – 12 AM", totalEng: 0, count: 0 },
+    ];
+
+    let totalRecordedEng = 0;
 
     allFilteredPosts.forEach((post) => {
       if (!post.posted_at) return;
@@ -831,12 +885,72 @@ export function AnalyticsClient({
       const day = d.getDay();
       const dayIdx = (day + 6) % 7; // Mon:0 -> Sun:6
       const hour = d.getHours();
-      const slot = Math.min(7, Math.floor(hour / 3));
-      const engWeight = Math.max(1, Math.round(postEngagement(post) / 100));
-      grid[dayIdx][slot] = Math.min(9, grid[dayIdx][slot] + engWeight);
+      const eng = postEngagement(post) || 1;
+
+      daysData[dayIdx].totalEng += eng;
+      daysData[dayIdx].count += 1;
+      totalRecordedEng += eng;
+
+      if (hour >= 6 && hour < 12) {
+        timeSlots[0].totalEng += eng;
+        timeSlots[0].count += 1;
+      } else if (hour >= 12 && hour < 17) {
+        timeSlots[1].totalEng += eng;
+        timeSlots[1].count += 1;
+      } else if (hour >= 17 && hour < 21) {
+        timeSlots[2].totalEng += eng;
+        timeSlots[2].count += 1;
+      } else {
+        timeSlots[3].totalEng += eng;
+        timeSlots[3].count += 1;
+      }
     });
 
-    return grid;
+    const hasRealData = totalRecordedEng > 0;
+
+    // Fallback baseline if no posts yet
+    const finalDays = daysData.map((d, idx) => {
+      const defaultWeights = [45, 65, 88, 95, 75, 50, 40];
+      const avg = d.count > 0 ? Math.round(d.totalEng / d.count) : 0;
+      return {
+        ...d,
+        avgEng: avg,
+        score: hasRealData ? (avg || 0) : defaultWeights[idx],
+      };
+    });
+
+    const maxDayScore = Math.max(...finalDays.map((d) => d.score), 1);
+    const daysWithPct = finalDays.map((d) => ({
+      ...d,
+      pct: Math.round((d.score / maxDayScore) * 100),
+    }));
+
+    const bestDay = [...daysWithPct].sort((a, b) => b.score - a.score)[0] || daysWithPct[3];
+
+    const finalSlots = timeSlots.map((s, idx) => {
+      const defaultSlotPct = [22, 34, 48, 16];
+      const slotPct =
+        hasRealData && totalRecordedEng > 0
+          ? Math.round((s.totalEng / totalRecordedEng) * 100)
+          : defaultSlotPct[idx];
+      return {
+        ...s,
+        percentage: Math.max(slotPct, 8),
+      };
+    });
+
+    const bestSlot =
+      [...finalSlots].sort((a, b) => b.percentage - a.percentage)[0] || finalSlots[2];
+
+    return {
+      bestDayName: bestDay.full,
+      bestDayShort: bestDay.name,
+      bestSlotTime: bestSlot.time,
+      bestSlotLabel: bestSlot.label,
+      days: daysWithPct,
+      slots: finalSlots,
+      hasRealData,
+    };
   }, [allFilteredPosts]);
 
   /* ------------------------------------------------------------------------ */
@@ -1371,7 +1485,7 @@ export function AnalyticsClient({
             </p>
           </div>
 
-          <BestTimeHeatmap grid={heatmapGrid} />
+          <BestTimeToPostCard stats={bestTimeStats} />
         </GlassCard>
 
         {/* PLATFORM DISTRIBUTION */}
