@@ -27,7 +27,15 @@ export default async function OnboardingPage() {
     },
   });
 
-  if (profile?.onboarded) {
+  if (!profile) {
+    /*
+     * Session token exists but no profile row in DB.
+     * This happens when the account was deleted or never fully created.
+     */
+    redirect("/login");
+  }
+
+  if (profile.onboarded) {
     redirect("/dashboard");
   }
 

@@ -13,8 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import { getCookie, setCookie } from "cookies-next";
 
-import { getUserWorkspaces, updateUserPersona } from "@/app/dashboard/actions";
-import { createClient } from "@/lib/supabase/client";
+import { updateUserPersona } from "@/app/dashboard/actions";
 
 /* -------------------------------------------------------------------------- */
 /*                                   TYPES                                    */
@@ -126,16 +125,6 @@ function getPlanCapabilities(plan: Plan) {
   };
 }
 
-/* -------------------------------------------------------------------------- */
-/*                              PROFILE DATA TYPE                             */
-/* -------------------------------------------------------------------------- */
-
-type ProfileData = {
-  id: string;
-  full_name: string | null;
-  persona: Persona | null;
-  plan: Plan | null;
-};
 
 /* -------------------------------------------------------------------------- */
 /*                            WORKSPACE PROVIDER                              */
@@ -147,16 +136,6 @@ export function WorkspaceProvider({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-
-  /*
-    Keep Supabase client stable.
-
-    We do not want a new client instance on every render.
-  */
-
-  const supabaseRef = useRef(createClient());
-
-  const supabase = supabaseRef.current;
 
   /* -------------------------------- States -------------------------------- */
 
@@ -205,14 +184,14 @@ export function WorkspaceProvider({
       }
 
       try {
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+        /*
+         * Fetch current user profile via our NextAuth-backed /api/me endpoint.
+         * This replaces the old supabase.auth.getUser() + profile query pattern.
+         */
+        const res = await fetch("/api/me");
 
-        if (userError || !user) {
+        if (res.status === 401 || res.status === 404) {
           if (!isMountedRef.current) return;
-
           setWorkspaces([]);
           setActiveWorkspaceId(null);
           setIsLoading(false);
@@ -220,46 +199,18 @@ export function WorkspaceProvider({
           return;
         }
 
-        /* -------------------------- Load profile -------------------------- */
-
-        const { data: rawProfile, error: profileError } =
-          await supabase
-            .from("profiles")
-            .select("id, full_name, persona, plan")
-            .eq("id", user.id)
-            .single();
-
-        const profile = rawProfile as ProfileData | null;
-
-        if (profileError) {
-          console.error(
-            "[WorkspaceProvider] Failed to load profile:",
-            profileError.message
-          );
+        if (!res.ok) {
+          console.error("[WorkspaceProvider] /api/me returned", res.status);
+          if (!isMountedRef.current) return;
+          setIsLoading(false);
+          return;
         }
+
+        const { user: profile, memberships } = await res.json();
 
         if (profile && isMountedRef.current) {
           setPersonaState(profile.persona || "creator");
-
           setPlan(profile.plan || "free");
-        }
-
-        /* --------------------- Load collaborative workspaces --------------------- */
-
-        const { data: members, error: membersError } =
-          await supabase
-            .from("workspace_members")
-            .select(`
-              workspace_id,
-              role
-            `)
-            .eq("user_id", user.id);
-
-        if (membersError) {
-          console.error(
-            "[WorkspaceProvider] Failed to load workspaces:",
-            membersError.message
-          );
         }
 
         /* ----------------------- Build workspace list ----------------------- */
@@ -267,53 +218,28 @@ export function WorkspaceProvider({
         const loadedWorkspaces: Workspace[] = [];
 
         /*
-          Personal workspace.
-
-          Every user gets their own personal KoraSpace workspace.
+          Personal workspace — every user gets their own Koraspace.
         */
-
         if (profile) {
           loadedWorkspaces.push({
             id: profile.id,
-
-            name:
-              profile.full_name
-                ? `${profile.full_name}'s Space`
-                : "My Space",
-
+            name: profile.full_name
+              ? `${profile.full_name}'s Space`
+              : "My Space",
             role: "owner",
-
             isPersonal: true,
           });
         }
 
         /*
-          Collaborative workspaces.
-
-          Note:
-          Right now we only have workspace_id and role.
-
-          Ideally your database should have a real
-          `workspaces` table containing:
-
-          id
-          name
-          owner_id
-          avatar_url
-          created_at
-
-          Until then we generate a fallback name.
+          Collaborative workspaces from workspace_members.
         */
-
-        if (members) {
-          for (const member of members) {
+        if (memberships) {
+          for (const member of memberships) {
             loadedWorkspaces.push({
               id: member.workspace_id,
-
               name: "Team Workspace",
-
               role: member.role as WorkspaceRole,
-
               isPersonal: false,
             });
           }
@@ -337,14 +263,12 @@ export function WorkspaceProvider({
 
         if (savedWorkspaceExists) {
           setActiveWorkspaceId(savedWorkspaceId);
-
           return;
         }
 
         /*
           Prefer personal workspace as default.
         */
-
         const personalWorkspace =
           loadedWorkspaces.find(
             (workspace) => workspace.isPersonal
@@ -357,7 +281,6 @@ export function WorkspaceProvider({
 
         if (defaultWorkspace) {
           setActiveWorkspaceId(defaultWorkspace.id);
-
           setCookie(
             WORKSPACE_COOKIE,
             defaultWorkspace.id,
@@ -379,7 +302,7 @@ export function WorkspaceProvider({
         }
       }
     },
-    [supabase]
+    [router]
   );
 
   /* ------------------------------------------------------------------------ */
@@ -506,18 +429,10 @@ export function WorkspaceProvider({
       setPersonaState(newPersona);
 
       try {
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
-
-        if (userError || !user) {
-          throw new Error(
-            userError?.message ||
-              "User session not found"
-          );
-        }
-
+        /*
+          updateUserPersona is a server action that reads the session
+          internally — no need to fetch the user here.
+        */
         const updateError = !(await updateUserPersona(newPersona));
 
         if (updateError) {
@@ -557,7 +472,6 @@ export function WorkspaceProvider({
       persona,
       plan,
       router,
-      supabase,
     ]
   );
 

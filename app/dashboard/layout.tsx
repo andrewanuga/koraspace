@@ -1,201 +1,58 @@
-"use client";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/db";
+import { DashboardShell } from "./DashboardShell";
 
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-
-import { Sidebar } from "@/components/dashboard/Sidebar";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { FloatingAiAssistant } from "@/components/ui/glowing-ai-chat-assistant";
-import { WorkspaceProvider } from "@/components/dashboard/WorkspaceProvider";
-import { GlobalBanner } from "@/components/dashboard/GlobalBanner";
-
-import { cn } from "@/lib/utils";
-
-const SIDEBAR_STORAGE_KEY = "koraspace-sidebar-collapsed";
-
-import { useWorkspace } from "@/components/dashboard/WorkspaceProvider";
-
-function DashboardShell({
+/*
+ * Server-side layout — no "use client" directive.
+ *
+ * This runs on every request to /dashboard/** and enforces two guards:
+ *
+ * 1. Session guard  – if the JWT session is missing, redirect to /login.
+ * 2. Profile guard  – if the session user has no row in `profiles`, redirect
+ *    to /login. This handles the case where a user's account has been deleted
+ *    or was never fully persisted.
+ *
+ * NOTE: Prisma runs on Node.js runtime (not Edge). Layouts are always
+ *       Node.js runtime by default, so Prisma is safe here.
+ */
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { persona } = useWorkspace();
-  const pathname = usePathname();
+  const session = await auth();
+  const user = session?.user;
 
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  /* ---- 1. Session guard ---- */
+  if (!user?.id) {
+    redirect("/login");
+  }
 
-  /*
-   * Restore sidebar preference.
-   * mounted prevents visual layout shifting before localStorage is read.
-   */
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(SIDEBAR_STORAGE_KEY);
+  /* ---- 2. Profile existence guard ---- */
+  const profile = await prisma.profile.findUnique({
+    where: { id: user.id },
+    select: { id: true, onboarded: true },
+  });
 
-      if (saved !== null) {
-        setCollapsed(saved === "true");
-      }
-    } catch {
-      // Ignore storage errors.
-    } finally {
-      setMounted(true);
-    }
-  }, []);
+  if (!profile) {
+    /*
+     * The JWT token exists but there is no matching profile row.
+     * This can happen when:
+     *   - The user's account was deleted from the DB.
+     *   - A stale cookie / token exists from a previous account.
+     * Redirect to login so the session is cleared.
+     */
+    redirect("/login");
+  }
 
-  /*
-   * Close mobile navigation whenever the route changes.
-   */
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
+  if (!profile.onboarded) {
+    /*
+     * User authenticated but hasn't completed onboarding yet.
+     * Send them to the onboarding flow.
+     */
+    redirect("/onboarding");
+  }
 
-  /*
-   * Prevent background scrolling while mobile navigation is open.
-   */
-  useEffect(() => {
-    if (!mobileOpen) return;
-
-    const originalOverflow = document.body.style.overflow;
-
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = originalOverflow;
-    };
-  }, [mobileOpen]);
-
-  const toggleSidebar = () => {
-    setCollapsed((current) => {
-      const next = !current;
-
-      try {
-        localStorage.setItem(SIDEBAR_STORAGE_KEY, String(next));
-      } catch {
-        // Ignore storage errors.
-      }
-
-      return next;
-    });
-  };
-
-  const closeMobileSidebar = () => {
-    setMobileOpen(false);
-  };
-
-  return (
-    <div
-      data-persona={persona}
-      className="sai-app relative min-h-screen overflow-x-hidden bg-[var(--app-bg)] text-[var(--fg)]"
-    >
-      {/* Desktop Sidebar */}
-
-      <aside
-        className={cn(
-          "fixed inset-y-0 left-0 z-40 hidden md:block",
-          "transition-[width] duration-300 ease-out"
-        )}
-      >
-        <Sidebar
-          collapsed={mounted ? collapsed : false}
-          onToggle={toggleSidebar}
-        />
-      </aside>
-
-      {/* Mobile Backdrop */}
-
-      <div
-        aria-hidden={!mobileOpen}
-        onClick={closeMobileSidebar}
-        className={cn(
-          "fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px] transition-opacity duration-300 md:hidden",
-          mobileOpen
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0"
-        )}
-      />
-
-      {/* Mobile Sidebar */}
-
-      <aside
-        aria-label="Mobile navigation"
-        className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[280px] max-w-[85vw]",
-          "transform transition-transform duration-300 ease-out md:hidden",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        <Sidebar
-          collapsed={false}
-          isMobile
-          onToggle={closeMobileSidebar}
-        />
-      </aside>
-
-      {/* Main Application Area */}
-
-      <div
-        className={cn(
-          "relative flex min-h-screen flex-col",
-          "transition-[padding-left] duration-300 ease-out",
-          mounted && collapsed
-            ? "md:pl-[72px]"
-            : "md:pl-[260px]"
-        )}
-      >
-        {/* Global announcement / status */}
-
-        <GlobalBanner />
-
-        {/* Header */}
-
-        <DashboardHeader
-          onMobileMenuToggle={() => setMobileOpen((open) => !open)}
-          onToggleSidebar={toggleSidebar}
-        />
-
-        {/* Main Content */}
-
-        <main
-          id="main-content"
-          className={cn(
-            "relative flex-1",
-            "min-w-0 overflow-x-hidden"
-          )}
-        >
-          <div
-            className={cn(
-              "mx-auto w-full",
-              "px-4 py-5",
-              "sm:px-6 sm:py-6",
-              "lg:px-8 lg:py-8",
-              "2xl:px-10"
-            )}
-          >
-            <div className="mx-auto w-full max-w-[1600px]">
-              {children}
-            </div>
-          </div>
-        </main>
-      </div>
-
-      {/* Global AI Assistant */}
-
-      <FloatingAiAssistant />
-    </div>
-  );
-}
-
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <WorkspaceProvider>
-      <DashboardShell>{children}</DashboardShell>
-    </WorkspaceProvider>
-  );
+  return <DashboardShell>{children}</DashboardShell>;
 }
