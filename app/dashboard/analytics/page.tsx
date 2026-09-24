@@ -1,9 +1,8 @@
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { daysAgoISO } from "@/lib/dashboard/helpers";
 import { AnalyticsClient } from "./AnalyticsClient";
-import type { SocialPost, Campaign } from "@/lib/social/types";
+import type { SocialPost, Campaign, SocialAccount } from "@/lib/social/types";
 
 export default async function AnalyticsPage() {
   const session = await auth();
@@ -12,8 +11,6 @@ export default async function AnalyticsPage() {
   if (!user?.id) {
     redirect("/login");
   }
-
-  const d30 = daysAgoISO(30);
 
   let profile: any = null;
   let posts: any[] = [];
@@ -24,11 +21,11 @@ export default async function AnalyticsPage() {
     const [profileRes, postsRes, campaignsRes, accountsRes] = await Promise.allSettled([
       prisma.profile.findUnique({
         where: { id: user.id },
-        select: { persona: true }
+        select: { persona: true },
       }),
       prisma.$queryRaw<any[]>`
         SELECT * FROM "social_posts"
-        WHERE "user_id"::text = ${user.id} AND "posted_at" >= ${new Date(d30)}
+        WHERE "user_id"::text = ${user.id}
         ORDER BY "posted_at" ASC
       `,
       prisma.$queryRaw<any[]>`
@@ -37,9 +34,10 @@ export default async function AnalyticsPage() {
         ORDER BY "spend" DESC
       `,
       prisma.$queryRaw<any[]>`
-        SELECT "platform", "status" FROM "social_accounts"
+        SELECT "id", "user_id", "platform", "handle", "display_name", "avatar_url", "followers", "status"
+        FROM "social_accounts"
         WHERE "user_id"::text = ${user.id}
-      `
+      `,
     ]);
 
     if (profileRes.status === "fulfilled") profile = profileRes.value;
@@ -50,16 +48,18 @@ export default async function AnalyticsPage() {
     console.error("Error loading analytics data:", err);
   }
 
+  const socialAccounts = (accounts ?? []) as SocialAccount[];
+  const connectedCount = socialAccounts.filter(
+    (account) => account.status === "connected"
+  ).length;
+
   return (
     <AnalyticsClient
       persona={profile?.persona ?? "creator"}
       posts={(posts ?? []) as SocialPost[]}
       campaigns={(campaigns ?? []) as Campaign[]}
-      connectedCount={
-        (accounts ?? []).filter(
-          (account) => account.status === "connected"
-        ).length
-      }
+      accounts={socialAccounts}
+      connectedCount={connectedCount}
     />
   );
 }
