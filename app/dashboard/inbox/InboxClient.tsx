@@ -1,14 +1,6 @@
 "use client";
 
-// Existing Inbox data, filtering, selection, and reply logic retained.
-// UI-only redesign for unified inbox
-
-import {
-  useMemo,
-  useState,
-  type ComponentType,
-  type CSSProperties,
-} from "react";
+import { useMemo, useState, type ComponentType, type CSSProperties } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -33,23 +25,27 @@ import {
   CheckCheck,
   Clock,
   X,
-  Filter,
-  ArrowUpRight,
-  Inbox as InboxIcon,
-  MessageSquare,
-  CircleUserRound,
   SlidersHorizontal,
   ChevronRight,
   ChevronLeft,
+  ArrowUpRight,
+  Inbox as InboxIcon,
+  MessageSquare,
+  TrendingUp,
+  Activity,
+  Heart,
+  Eye,
+  ShieldCheck,
+  RefreshCw,
+  Plus,
 } from "lucide-react";
 
+import { GlassCard, Pill } from "@/components/dashboard/ui";
+import { fmtNum } from "@/lib/dashboard/helpers";
 import { useToast } from "@/components/ui/toast";
 import { createClient } from "@/lib/supabase/client";
 import type { PlatformId } from "@/lib/social/platforms";
-import type {
-  SocialAccount,
-  SocialInboxMessage,
-} from "@/lib/social/types";
+import type { SocialAccount, SocialInboxMessage } from "@/lib/social/types";
 
 /* -------------------------------------------------------------------------- */
 /*                                  PLATFORMS                                 */
@@ -60,10 +56,7 @@ type IconProps = {
   style?: CSSProperties;
 };
 
-const PLATFORM_ICONS: Record<
-  PlatformId | "system" | "tiktok",
-  ComponentType<IconProps>
-> = {
+const PLATFORM_ICONS: Record<PlatformId | "system" | "tiktok", ComponentType<IconProps>> = {
   instagram: Camera,
   youtube: Video,
   x: AtSign,
@@ -78,10 +71,7 @@ const PLATFORM_ICONS: Record<
   tiktok: Play,
 };
 
-const PLATFORM_COLORS: Record<
-  PlatformId | "system" | "tiktok",
-  string
-> = {
+const PLATFORM_COLORS: Record<PlatformId | "system" | "tiktok", string> = {
   instagram: "#ec168c",
   youtube: "#ef4444",
   x: "#e2e8f0",
@@ -140,8 +130,8 @@ function PlatformIcon({
     );
   }
 
-  const Icon = getPlatformIcon(platform);
-  const color = getPlatformColor(platform);
+  const Icon = PLATFORM_ICONS[normPlatform as PlatformId] || MessageCircle;
+  const color = PLATFORM_COLORS[normPlatform as PlatformId] || "var(--brand-primary)";
   return (
     <span
       className={`inline-flex shrink-0 items-center justify-center rounded-full ${className}`}
@@ -235,28 +225,90 @@ function getCategoryBadge(category: string | null | undefined) {
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/*                              PLATFORM HELPERS                              */
-/* -------------------------------------------------------------------------- */
-
-function getPlatformIcon(platform: string | null | undefined) {
-  return (
-    PLATFORM_ICONS[
-      platform as PlatformId | "system" | "tiktok"
-    ] || MessageCircle
-  );
-}
-
-function getPlatformColor(platform: string | null | undefined) {
-  return (
-    PLATFORM_COLORS[
-      platform as PlatformId | "system" | "tiktok"
-    ] || "var(--brand-primary)"
-  );
-}
-
 function getAccountName(account: SocialAccount) {
   return account.handle || account.display_name || "Connected account";
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                STAT CARD                                   */
+/* -------------------------------------------------------------------------- */
+
+function InboxStatCard({
+  label,
+  value,
+  icon: Icon,
+  tone = "primary",
+  highlight,
+}: {
+  label: string;
+  value: string | number;
+  icon: React.ElementType;
+  tone?: "primary" | "pink" | "blue" | "green" | "purple" | "indigo";
+  highlight?: boolean;
+}) {
+  const toneMap: Record<string, { bg: string; color: string; border: string }> = {
+    primary: {
+      bg: "var(--brand-primary-soft)",
+      color: "var(--brand-primary)",
+      border: "var(--brand-primary-border)",
+    },
+    pink: {
+      bg: "var(--brand-primary-soft)",
+      color: "var(--brand-primary)",
+      border: "var(--brand-primary-border)",
+    },
+    blue: {
+      bg: "var(--kora-blue-soft)",
+      color: "var(--kora-blue)",
+      border: "rgba(59, 130, 246, 0.2)",
+    },
+    green: {
+      bg: "var(--success-soft)",
+      color: "var(--success)",
+      border: "rgba(34, 197, 94, 0.2)",
+    },
+    purple: {
+      bg: "rgba(168, 85, 247, 0.12)",
+      color: "#c084fc",
+      border: "rgba(168, 85, 247, 0.2)",
+    },
+    indigo: {
+      bg: "var(--kora-blue-soft)",
+      color: "var(--kora-blue)",
+      border: "rgba(59, 130, 246, 0.2)",
+    },
+  };
+
+  const currentTone = toneMap[tone] || toneMap.primary;
+
+  return (
+    <div className="group relative overflow-hidden rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--stroke-strong)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)]">
+      <div className="flex items-center justify-between gap-3">
+        <div
+          className="flex h-8 w-8 items-center justify-center rounded-lg"
+          style={{
+            backgroundColor: currentTone.bg,
+            color: currentTone.color,
+            border: `1px solid ${currentTone.border}`,
+          }}
+        >
+          <Icon className="h-4 w-4" />
+        </div>
+
+        {highlight && (
+          <span className="flex h-2 w-2 rounded-full bg-[var(--brand-primary)]" />
+        )}
+      </div>
+
+      <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--fg-4)]">
+        {label}
+      </p>
+
+      <p className="mt-0.5 font-display text-xl font-bold tracking-tight text-[var(--fg)]">
+        {value}
+      </p>
+    </div>
+  );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -272,9 +324,7 @@ export function InboxClient({
 }) {
   const { success } = useToast();
 
-  const [messagesList, setMessagesList] =
-    useState<SocialInboxMessage[]>(messages);
-
+  const [messagesList, setMessagesList] = useState<SocialInboxMessage[]>(messages);
   const connectedCount = accounts.length;
 
   const [activeTab, setActiveTab] = useState<
@@ -285,8 +335,7 @@ export function InboxClient({
     "all" | "unread" | "needs-reply"
   >("all");
 
-  const [selectedAccount, setSelectedAccount] =
-    useState<string>("all");
+  const [selectedAccount, setSelectedAccount] = useState<string>("all");
 
   const [selectedId, setSelectedId] = useState<string | null>(
     messages[0]?.id ?? null
@@ -294,14 +343,12 @@ export function InboxClient({
 
   const [search, setSearch] = useState("");
   const [reply, setReply] = useState("");
-  const [localReplies, setLocalReplies] = useState<
-    Record<string, string>
-  >({});
+  const [localReplies, setLocalReplies] = useState<Record<string, string>>({});
   const [sortNewest, setSortNewest] = useState(true);
 
-  /* ---------------------------------------------------------------------- */
-  /*                                COUNTS                                  */
-  /* ---------------------------------------------------------------------- */
+  /* ------------------------------------------------------------------------ */
+  /*                                COUNTS                                    */
+  /* ------------------------------------------------------------------------ */
 
   const counts = useMemo(() => {
     return {
@@ -318,7 +365,8 @@ export function InboxClient({
       ).length,
 
       mentions: messagesList.filter((m) =>
-        (m.kind || "").toLowerCase().includes("mention")
+        (m.kind || "").toLowerCase().includes("mention") ||
+        (m.category || "").toLowerCase() === "mention"
       ).length,
 
       dms: messagesList.filter(
@@ -332,8 +380,7 @@ export function InboxClient({
   const unreadCount = useMemo(
     () =>
       messagesList.filter(
-        (message) =>
-          !message.is_read && !localReplies[message.id]
+        (message) => !message.is_read && !localReplies[message.id]
       ).length,
     [messagesList, localReplies]
   );
@@ -349,25 +396,28 @@ export function InboxClient({
     [messagesList, localReplies]
   );
 
-  /* ---------------------------------------------------------------------- */
-  /*                                FILTERING                               */
-  /* ---------------------------------------------------------------------- */
+  /* ------------------------------------------------------------------------ */
+  /*                                FILTERING                                 */
+  /* ------------------------------------------------------------------------ */
 
   const filteredMessages = useMemo(() => {
     let result = [...messagesList];
 
     if (selectedAccount !== "all") {
       result = result.filter(
-        (message) => message.account_id === selectedAccount
+        (message) =>
+          message.account_id === selectedAccount ||
+          message.platform === selectedAccount
       );
     }
 
     if (activeTab !== "all") {
       result = result.filter((message) => {
         const kind = message.kind?.toLowerCase() || "";
+        const cat = message.category?.toLowerCase() || "";
 
         if (activeTab === "messages") {
-          return kind.includes("message") || kind.includes("dm");
+          return kind.includes("message") || kind.includes("dm") || kind.includes("reply");
         }
 
         if (activeTab === "comments") {
@@ -375,7 +425,7 @@ export function InboxClient({
         }
 
         if (activeTab === "mentions") {
-          return kind.includes("mention");
+          return kind.includes("mention") || cat.includes("mention");
         }
 
         if (activeTab === "dms") {
@@ -439,14 +489,13 @@ export function InboxClient({
   ]);
 
   const selectedMessage = useMemo(
-    () =>
-      messagesList.find((m) => m.id === selectedId) || null,
+    () => messagesList.find((m) => m.id === selectedId) || null,
     [messagesList, selectedId]
   );
 
-  /* ---------------------------------------------------------------------- */
-  /*                               ACTIONS                                  */
-  /* ---------------------------------------------------------------------- */
+  /* ------------------------------------------------------------------------ */
+  /*                                ACTIONS                                   */
+  /* ------------------------------------------------------------------------ */
 
   const selectConversation = async (id: string) => {
     setSelectedId(id);
@@ -522,7 +571,6 @@ export function InboxClient({
     );
 
     try {
-      // 1. Dispatch real API reply if account is connected
       if (message.platform && message.platform !== "system") {
         await fetch("/api/social/send-dm", {
           method: "POST",
@@ -543,7 +591,6 @@ export function InboxClient({
         }).catch((e) => console.warn("Dispatch warning:", e));
       }
 
-      // 2. Persist in database
       const supabase = createClient();
       await supabase
         .from("social_inbox")
@@ -561,37 +608,37 @@ export function InboxClient({
     }
   };
 
-  /* ---------------------------------------------------------------------- */
-  /*                                  RENDER                                */
-  /* ---------------------------------------------------------------------- */
+  /* ------------------------------------------------------------------------ */
+  /*                                  RENDER                                  */
+  /* ------------------------------------------------------------------------ */
 
   return (
-    <div className="mx-auto w-full max-w-[1600px] pb-8">
+    <div className="mx-auto max-w-[1500px] space-y-5 pb-12">
       {/* ------------------------------------------------------------------ */}
       {/* HEADER                                                             */}
       {/* ------------------------------------------------------------------ */}
 
-      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--brand-primary)]">
-            Community
-          </p>
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-2.5 py-1 text-[10px] font-semibold text-[var(--brand-primary)]">
+            <MessageSquare className="h-3 w-3" />
+            <span>Community & Engagement</span>
+          </div>
 
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-semibold tracking-tight text-[var(--fg)]">
+          <div className="flex items-center gap-3">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-[var(--fg)]">
               Inbox
             </h1>
 
-            {counts.all > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--brand-primary)] px-1.5 text-[9px] font-bold text-white">
-                {counts.all}
+            {unreadCount > 0 && (
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--brand-primary)] px-2 text-[9px] font-bold text-white shadow-[var(--brand-primary-shadow)]">
+                {unreadCount} new
               </span>
             )}
           </div>
 
           <p className="mt-1 text-xs text-[var(--fg-3)]">
-            Stay on top of comments, messages and mentions across
-            your social channels.
+            Stay on top of comments, messages and mentions across your social channels.
           </p>
         </div>
 
@@ -600,19 +647,27 @@ export function InboxClient({
             type="button"
             onClick={markAllAsRead}
             disabled={unreadCount === 0}
-            className="inline-flex h-9 items-center gap-2 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 text-[11px] font-medium text-[var(--fg-2)] transition hover:border-[var(--stroke-strong)] hover:text-[var(--fg)] disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)] px-3.5 text-[11px] font-medium text-[var(--fg-2)] transition hover:border-[var(--stroke-strong)] hover:bg-[var(--panel-fill-2)] hover:text-[var(--fg)] disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <CheckCheck className="h-3.5 w-3.5" />
+            <CheckCheck className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
             Mark all as read
           </button>
+
+          <Link
+            href="/dashboard/integrations"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[var(--brand-primary)] px-3.5 text-[11px] font-semibold text-white shadow-[var(--brand-primary-shadow)] transition-opacity hover:opacity-90"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Connect Channel
+          </Link>
         </div>
       </div>
 
       {/* ------------------------------------------------------------------ */}
-      {/* MOBILE CHANNELS (lg:hidden) - Below Mark all as read               */}
+      {/* MOBILE CHANNELS (lg:hidden) - Directly below Mark all as read      */}
       {/* ------------------------------------------------------------------ */}
 
-      <div className="mb-4 block lg:hidden">
+      <div className="block lg:hidden">
         <div className="mb-2 flex items-center justify-between px-0.5">
           <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-4)]">
             Channels ({accounts.length})
@@ -654,9 +709,7 @@ export function InboxClient({
                   key={account.id}
                   type="button"
                   onClick={() =>
-                    setSelectedAccount(
-                      active ? "all" : account.id
-                    )
+                    setSelectedAccount(active ? "all" : account.id)
                   }
                   className={`flex shrink-0 items-center gap-2 rounded-full border px-2.5 py-1 text-[10px] font-medium transition ${
                     active
@@ -679,61 +732,53 @@ export function InboxClient({
       </div>
 
       {/* ------------------------------------------------------------------ */}
-      {/* SUMMARY BAR                                                        */}
+      {/* METRIC CARDS                                                       */}
       {/* ------------------------------------------------------------------ */}
 
-      <div className="mb-4 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-[var(--stroke)] bg-[var(--stroke)] sm:grid-cols-3 md:grid-cols-5">
-        <div className="flex items-center gap-2.5 bg-[var(--panel-fill)] px-3.5 py-2.5 sm:px-4 sm:py-3">
-          <span className="text-sm font-bold text-[var(--fg)]">
-            {counts.all}
-          </span>
-          <span className="text-[11px] text-[var(--fg-3)]">
-            Total
-          </span>
-        </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+        <InboxStatCard
+          label="Total Messages"
+          value={fmtNum(counts.all)}
+          icon={MessageSquare}
+          tone="primary"
+        />
 
-        <div className="flex items-center gap-2.5 bg-[var(--panel-fill)] px-3.5 py-2.5 sm:px-4 sm:py-3">
-          <span className="text-sm font-bold text-[var(--fg)]">
-            {unreadCount}
-          </span>
-          <span className="text-[11px] text-[var(--fg-3)]">
-            Unread
-          </span>
-        </div>
+        <InboxStatCard
+          label="Unread"
+          value={fmtNum(unreadCount)}
+          icon={Bell}
+          tone="pink"
+          highlight={unreadCount > 0}
+        />
 
-        <div className="flex items-center gap-2.5 bg-[var(--panel-fill)] px-3.5 py-2.5 sm:px-4 sm:py-3">
-          <span className="text-sm font-bold text-[var(--fg)]">
-            {needsReplyCount}
-          </span>
-          <span className="text-[11px] text-[var(--fg-3)]">
-            Needs Reply
-          </span>
-        </div>
+        <InboxStatCard
+          label="Needs Reply"
+          value={fmtNum(needsReplyCount)}
+          icon={MessageCircle}
+          tone="purple"
+          highlight={needsReplyCount > 0}
+        />
 
-        <div className="flex items-center gap-2.5 bg-[var(--panel-fill)] px-3.5 py-2.5 sm:px-4 sm:py-3">
-          <span className="text-sm font-bold text-[var(--fg)]">
-            {counts.mentions}
-          </span>
-          <span className="text-[11px] text-[var(--fg-3)]">
-            Mentions
-          </span>
-        </div>
+        <InboxStatCard
+          label="Mentions"
+          value={fmtNum(counts.mentions)}
+          icon={AtSign}
+          tone="blue"
+        />
 
-        <div className="col-span-2 flex items-center gap-2.5 bg-[var(--panel-fill)] px-3.5 py-2.5 sm:col-span-1 sm:px-4 sm:py-3">
-          <span className="text-sm font-bold text-[var(--fg)]">
-            {accounts.length}
-          </span>
-          <span className="text-[11px] text-[var(--fg-3)]">
-            Channels
-          </span>
-        </div>
+        <InboxStatCard
+          label="Channels"
+          value={fmtNum(accounts.length)}
+          icon={Users}
+          tone="green"
+        />
       </div>
 
       {/* ------------------------------------------------------------------ */}
       {/* MOBILE CATEGORY TABS (lg:hidden)                                  */}
       {/* ------------------------------------------------------------------ */}
 
-      <div className="mb-3 flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar lg:hidden">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar lg:hidden">
         {[
           { id: "all", label: "All", count: counts.all },
           { id: "messages", label: "Messages", count: counts.messages },
@@ -771,21 +816,21 @@ export function InboxClient({
       </div>
 
       {/* ------------------------------------------------------------------ */}
-      {/* MAIN THREE-COLUMN INBOX                                            */}
+      {/* MAIN THREE-COLUMN INBOX CONTAINER                                 */}
       {/* ------------------------------------------------------------------ */}
 
-      <div className="grid min-h-[720px] overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] lg:grid-cols-[155px_300px_minmax(0,1fr)]">
+      <GlassCard className="grid min-h-[740px] overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] lg:grid-cols-[165px_320px_minmax(0,1fr)]">
         {/* ================================================================ */}
         {/* LEFT SIDEBAR                                                     */}
         {/* ================================================================ */}
 
         <aside className="hidden border-r border-[var(--stroke)] bg-[var(--panel-fill)] lg:flex lg:flex-col">
           <div className="border-b border-[var(--stroke)] px-3 py-4">
-            <div className="mb-2 px-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-4)]">
-              Inbox
+            <div className="mb-2.5 px-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-4)]">
+              Categories
             </div>
 
-            <div className="space-y-0.5">
+            <div className="space-y-1">
               {[
                 {
                   id: "all",
@@ -825,18 +870,14 @@ export function InboxClient({
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() =>
-                      setActiveTab(
-                        item.id as typeof activeTab
-                      )
-                    }
-                    className={`group flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left transition ${
+                    onClick={() => setActiveTab(item.id as typeof activeTab)}
+                    className={`group flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-left transition ${
                       active
-                        ? "bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]"
+                        ? "border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)] font-semibold"
                         : "text-[var(--fg-2)] hover:bg-[var(--panel-fill-2)] hover:text-[var(--fg)]"
                     }`}
                   >
-                    <span className="flex min-w-0 items-center gap-2">
+                    <span className="flex min-w-0 items-center gap-2.5">
                       <Icon
                         className={`h-3.5 w-3.5 ${
                           active
@@ -845,17 +886,17 @@ export function InboxClient({
                         }`}
                       />
 
-                      <span className="truncate text-[10px] font-medium">
+                      <span className="truncate text-[11px]">
                         {item.label}
                       </span>
                     </span>
 
                     {item.count > 0 && (
                       <span
-                        className={`text-[9px] font-semibold ${
+                        className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold ${
                           active
-                            ? "text-[var(--brand-primary)]"
-                            : "text-[var(--fg-4)]"
+                            ? "bg-[var(--brand-primary)] text-white"
+                            : "bg-[var(--panel-fill-2)] text-[var(--fg-4)]"
                         }`}
                       >
                         {item.count}
@@ -870,23 +911,23 @@ export function InboxClient({
           {/* CHANNELS */}
 
           <div className="border-b border-[var(--stroke)] px-3 py-4">
-            <div className="mb-2 flex items-center justify-between px-2">
+            <div className="mb-2.5 flex items-center justify-between px-2">
               <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-4)]">
                 Channels
               </span>
               <Link
                 href="/dashboard/integrations"
-                className="text-[9px] font-medium text-[var(--brand-primary)] hover:underline"
+                className="text-[9px] font-medium text-[var(--brand-primary)] transition hover:underline"
               >
                 + Connect
               </Link>
             </div>
 
-            <div className="space-y-0.5">
+            <div className="space-y-1">
               {accounts.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-[var(--stroke)] p-2.5 text-center">
-                  <p className="text-[9px] text-[var(--fg-4)]">
-                    No accounts connected
+                <div className="rounded-xl border border-dashed border-[var(--stroke)] p-3 text-center">
+                  <p className="text-[10px] text-[var(--fg-4)]">
+                    No connected accounts
                   </p>
                   <Link
                     href="/dashboard/integrations"
@@ -898,21 +939,18 @@ export function InboxClient({
                 </div>
               ) : (
                 accounts.map((account) => {
-                  const active =
-                    selectedAccount === account.id;
+                  const active = selectedAccount === account.id;
 
                   return (
                     <button
                       key={account.id}
                       type="button"
                       onClick={() =>
-                        setSelectedAccount(
-                          active ? "all" : account.id
-                        )
+                        setSelectedAccount(active ? "all" : account.id)
                       }
-                      className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left transition ${
+                      className={`flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition ${
                         active
-                          ? "bg-[var(--panel-fill-2)] text-[var(--fg)]"
+                          ? "border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)] font-semibold"
                           : "text-[var(--fg-3)] hover:bg-[var(--panel-fill-2)] hover:text-[var(--fg)]"
                       }`}
                     >
@@ -921,7 +959,7 @@ export function InboxClient({
                         className="h-5 w-5 rounded-full ring-1 ring-[var(--stroke)]"
                       />
 
-                      <span className="min-w-0 truncate text-[10px] font-medium">
+                      <span className="min-w-0 truncate text-[11px] font-medium">
                         {getAccountName(account)}
                       </span>
                     </button>
@@ -943,17 +981,15 @@ export function InboxClient({
         >
           {/* SEARCH */}
 
-          <div className="border-b border-[var(--stroke)] p-3">
-            <div className="flex h-9 items-center gap-2 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 transition focus-within:border-[var(--brand-primary-border)]">
+          <div className="border-b border-[var(--stroke)] p-3.5">
+            <div className="flex h-9 items-center gap-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 transition focus-within:border-[var(--brand-primary-border)]">
               <Search className="h-3.5 w-3.5 shrink-0 text-[var(--fg-4)]" />
 
               <input
                 value={search}
-                onChange={(event) =>
-                  setSearch(event.target.value)
-                }
+                onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search messages, people or keywords..."
-                className="min-w-0 flex-1 bg-transparent text-[10px] text-[var(--fg)] outline-none placeholder:text-[var(--fg-4)]"
+                className="min-w-0 flex-1 bg-transparent text-[11px] text-[var(--fg)] outline-none placeholder:text-[var(--fg-4)]"
               />
 
               {search && (
@@ -969,21 +1005,12 @@ export function InboxClient({
 
             {/* MINI FILTERS */}
 
-            <div className="mt-2 flex items-center justify-between gap-2">
-              <div className="flex min-w-0 items-center overflow-hidden rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)]">
+            <div className="mt-2.5 flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center overflow-hidden rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)] p-0.5">
                 {[
-                  {
-                    id: "all",
-                    label: "All",
-                  },
-                  {
-                    id: "unread",
-                    label: "Unread",
-                  },
-                  {
-                    id: "needs-reply",
-                    label: "Needs Reply",
-                  },
+                  { id: "all", label: "All" },
+                  { id: "unread", label: "Unread" },
+                  { id: "needs-reply", label: "Needs Reply" },
                 ].map((item) => {
                   const active = statusFilter === item.id;
 
@@ -992,13 +1019,11 @@ export function InboxClient({
                       key={item.id}
                       type="button"
                       onClick={() =>
-                        setStatusFilter(
-                          item.id as typeof statusFilter
-                        )
+                        setStatusFilter(item.id as typeof statusFilter)
                       }
-                      className={`whitespace-nowrap px-2.5 py-1.5 text-[8px] font-semibold transition ${
+                      className={`rounded-md whitespace-nowrap px-2.5 py-1 text-[9px] font-semibold transition ${
                         active
-                          ? "bg-[var(--brand-primary)] text-white"
+                          ? "bg-[var(--brand-primary)] text-white shadow-sm"
                           : "text-[var(--fg-4)] hover:text-[var(--fg)]"
                       }`}
                     >
@@ -1010,10 +1035,8 @@ export function InboxClient({
 
               <button
                 type="button"
-                onClick={() =>
-                  setSortNewest((value) => !value)
-                }
-                className="flex h-7 shrink-0 items-center gap-1 rounded-lg border border-[var(--stroke)] px-2 text-[9px] font-medium text-[var(--fg-3)] hover:text-[var(--fg)]"
+                onClick={() => setSortNewest((value) => !value)}
+                className="flex h-7 shrink-0 items-center gap-1 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)] px-2 text-[9px] font-medium text-[var(--fg-3)] hover:text-[var(--fg)]"
               >
                 <SlidersHorizontal className="h-3 w-3" />
                 {sortNewest ? "Newest" : "Oldest"}
@@ -1023,41 +1046,41 @@ export function InboxClient({
 
           {/* LIST HEADER */}
 
-          <div className="flex items-center justify-between border-b border-[var(--stroke)] px-3 py-2.5">
+          <div className="flex items-center justify-between border-b border-[var(--stroke)] px-3.5 py-2.5 bg-[var(--panel-fill-2)]">
             <span className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--fg-4)]">
               Conversations
             </span>
 
-            <span className="text-[9px] text-[var(--fg-4)]">
+            <span className="rounded-full bg-[var(--panel-fill)] px-2 py-0.5 text-[9px] font-bold text-[var(--fg-3)]">
               {filteredMessages.length}
             </span>
           </div>
 
-          {/* CONVERSATIONS */}
+          {/* CONVERSATIONS LIST */}
 
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="min-h-0 flex-1 overflow-y-auto divide-y divide-[var(--stroke)]">
             {filteredMessages.length === 0 ? (
-              <div className="flex h-full min-h-[350px] flex-col items-center justify-center px-6 text-center">
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--panel-fill-2)] text-[var(--fg-4)]">
-                  <MessageCircle className="h-4 w-4" />
+              <div className="flex h-full min-h-[360px] flex-col items-center justify-center px-6 text-center">
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
+                  <MessageCircle className="h-5 w-5" />
                 </div>
 
-                <p className="text-xs font-semibold text-[var(--fg-2)]">
+                <p className="font-display text-sm font-bold text-[var(--fg)]">
                   {messagesList.length === 0
                     ? "No conversations yet"
                     : "No conversations found"}
                 </p>
 
-                <p className="mt-1 max-w-[210px] text-[9px] leading-4 text-[var(--fg-4)]">
+                <p className="mt-1 max-w-[210px] text-[10px] leading-4 text-[var(--fg-4)]">
                   {messagesList.length === 0
-                    ? "Connect your social channels or wait for incoming messages, comments, and mentions."
-                    : "Try changing your active filters, channels, or search query."}
+                    ? "Connect your social channels to receive messages, comments, and mentions."
+                    : "Try adjusting your filters, channels, or search query."}
                 </p>
 
                 {messagesList.length === 0 && accounts.length === 0 && (
                   <Link
                     href="/dashboard/integrations"
-                    className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[var(--brand-primary)] px-3 py-1.5 text-[9px] font-semibold text-white transition hover:opacity-90"
+                    className="mt-3.5 inline-flex items-center gap-1.5 rounded-xl bg-[var(--brand-primary)] px-3.5 py-1.5 text-[10px] font-semibold text-white shadow-[var(--brand-primary-shadow)] transition hover:opacity-90"
                   >
                     Connect Channels
                     <ArrowUpRight className="h-3 w-3" />
@@ -1066,55 +1089,35 @@ export function InboxClient({
               </div>
             ) : (
               filteredMessages.map((message) => {
-                const active =
-                  selectedMessage?.id === message.id;
-
-                const Icon = getPlatformIcon(
-                  message.platform
-                );
-
-                const platformColor = getPlatformColor(
-                  message.platform
-                );
-
-                const unread =
-                  !message.is_read &&
-                  !localReplies[message.id];
-
-                const badge = getCategoryBadge(
-                  message.category
-                );
+                const active = selectedMessage?.id === message.id;
+                const unread = !message.is_read && !localReplies[message.id];
+                const badge = getCategoryBadge(message.category);
 
                 return (
                   <button
                     key={message.id}
                     type="button"
-                    onClick={() =>
-                      selectConversation(message.id)
-                    }
-                    className={`relative flex w-full gap-2.5 border-b border-[var(--stroke)] px-3 py-3 text-left transition ${
+                    onClick={() => selectConversation(message.id)}
+                    className={`relative flex w-full gap-3 p-3.5 text-left transition ${
                       active
                         ? "bg-[var(--brand-primary-soft)]"
                         : "hover:bg-[var(--panel-fill-2)]"
                     }`}
                   >
-                    {/* ACTIVE BAR */}
-
+                    {/* ACTIVE ACCENT BAR */}
                     {active && (
-                      <span className="absolute inset-y-0 left-0 w-0.5 bg-[var(--brand-primary)]" />
+                      <span className="absolute inset-y-0 left-0 w-1 bg-[var(--brand-primary)]" />
                     )}
 
                     {/* AVATAR */}
-
                     <div className="relative shrink-0">
-                      <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[9px] font-bold text-[var(--fg-2)]">
+                      <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[10px] font-bold text-[var(--fg-2)]">
                         {initials(
-                          message.author_name ||
-                            message.author_handle
+                          message.author_name || message.author_handle
                         )}
                       </div>
 
-                      <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--panel-fill)] bg-[var(--panel-fill)]">
+                      <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--panel-fill)] bg-[var(--panel-fill)] shadow-xs">
                         <PlatformIcon
                           platform={message.platform}
                           className="h-full w-full rounded-full"
@@ -1123,11 +1126,10 @@ export function InboxClient({
                     </div>
 
                     {/* CONTENT */}
-
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
                         <p
-                          className={`truncate text-[10px] ${
+                          className={`truncate text-[11px] ${
                             unread
                               ? "font-bold text-[var(--fg)]"
                               : "font-semibold text-[var(--fg-2)]"
@@ -1138,35 +1140,31 @@ export function InboxClient({
                             "Unknown"}
                         </p>
 
-                        <span className="shrink-0 text-[8px] text-[var(--fg-4)]">
-                          {formatTime(
-                            message.received_at
-                          )}
+                        <span className="shrink-0 text-[9px] text-[var(--fg-4)]">
+                          {formatTime(message.received_at)}
                         </span>
                       </div>
 
-                      <p className="mt-0.5 truncate text-[9px] text-[var(--fg-3)]">
+                      <p className="mt-0.5 line-clamp-2 text-[10px] leading-relaxed text-[var(--fg-3)]">
                         {message.body}
                       </p>
 
-                      <div className="mt-1.5 flex items-center gap-1.5">
+                      <div className="mt-2 flex items-center gap-1.5">
                         {message.category && (
                           <span
-                            className="rounded px-1.5 py-0.5 text-[7px] font-semibold"
+                            className="rounded px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wider"
                             style={{
                               backgroundColor: badge.bg,
                               color: badge.text,
                               border: `1px solid ${badge.border}`,
                             }}
                           >
-                            {categoryLabel(
-                              message.category
-                            )}
+                            {categoryLabel(message.category)}
                           </span>
                         )}
 
                         {unread && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand-primary)]" />
+                          <span className="h-2 w-2 rounded-full bg-[var(--brand-primary)]" />
                         )}
                       </div>
                     </div>
@@ -1178,7 +1176,7 @@ export function InboxClient({
         </section>
 
         {/* ================================================================ */}
-        {/* RIGHT CONVERSATION                                               */}
+        {/* RIGHT CONVERSATION THREAD                                        */}
         {/* ================================================================ */}
 
         <section
@@ -1192,26 +1190,26 @@ export function InboxClient({
               {/* CHAT HEADER                                                 */}
               {/* ---------------------------------------------------------- */}
 
-              <div className="flex min-h-[64px] items-center justify-between border-b border-[var(--stroke)] px-3 py-3 sm:px-5">
-                <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+              <div className="flex min-h-[64px] items-center justify-between border-b border-[var(--stroke)] px-4 py-3 sm:px-6">
+                <div className="flex min-w-0 items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setSelectedId(null)}
-                    className="flex h-8 items-center gap-1 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-2 text-[10px] font-semibold text-[var(--fg-2)] transition hover:text-[var(--fg)] lg:hidden"
+                    className="flex h-8 items-center gap-1 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-2.5 text-[11px] font-semibold text-[var(--fg-2)] transition hover:text-[var(--fg)] lg:hidden"
                   >
                     <ChevronLeft className="h-3.5 w-3.5" />
                     <span>Back</span>
                   </button>
 
                   <div className="relative shrink-0">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[10px] font-bold text-[var(--fg-2)]">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[11px] font-bold text-[var(--fg-2)]">
                       {initials(
                         selectedMessage.author_name ||
                           selectedMessage.author_handle
                       )}
                     </div>
 
-                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--panel-fill)] bg-[var(--panel-fill)]">
+                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4.5 w-4.5 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--panel-fill)] bg-[var(--panel-fill)] shadow-xs">
                       <PlatformIcon
                         platform={selectedMessage.platform}
                         className="h-full w-full rounded-full"
@@ -1221,38 +1219,31 @@ export function InboxClient({
 
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <h2 className="truncate text-xs font-semibold text-[var(--fg)]">
+                      <h2 className="font-display truncate text-xs font-bold text-[var(--fg)]">
                         {selectedMessage.author_name ||
                           selectedMessage.author_handle ||
                           "Unknown"}
                       </h2>
 
                       {!selectedMessage.is_read && (
-                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand-primary)]" />
+                        <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--brand-primary)]" />
                       )}
                     </div>
 
-                    <p className="mt-0.5 truncate text-[9px] text-[var(--fg-4)]">
+                    <p className="mt-0.5 truncate text-[10px] text-[var(--fg-4)]">
                       {selectedMessage.author_handle
-                        ? `@${selectedMessage.author_handle.replace(
-                            "@",
-                            ""
-                          )}`
+                        ? `@${selectedMessage.author_handle.replace("@", "")}`
                         : selectedMessage.platform}{" "}
                       ·{" "}
-                      <span className="capitalize">
-                        {selectedMessage.kind}
-                      </span>
+                      <span className="capitalize">{selectedMessage.kind}</span>
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5">
-                  <div className="hidden items-center gap-1.5 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-2 py-1.5 text-[8px] text-[var(--fg-4)] md:flex">
+                <div className="flex items-center gap-2">
+                  <div className="hidden items-center gap-1.5 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-2.5 py-1 text-[9px] font-medium text-[var(--fg-4)] md:flex">
                     <Clock className="h-3 w-3" />
-                    {formatTime(
-                      selectedMessage.received_at
-                    )}
+                    {formatTime(selectedMessage.received_at)}
                   </div>
 
                   <button
@@ -1268,11 +1259,11 @@ export function InboxClient({
               {/* CHAT BODY                                                   */}
               {/* ---------------------------------------------------------- */}
 
-              <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
-                <div className="mx-auto max-w-[720px]">
+              <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+                <div className="mx-auto max-w-[760px] space-y-6">
                   {/* POST CONTEXT */}
 
-                  <div className="mb-6 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3">
+                  <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3.5">
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--stroke)] bg-[var(--panel-fill)]">
                         <PlatformIcon
@@ -1282,14 +1273,11 @@ export function InboxClient({
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[9px] font-semibold text-[var(--fg)]">
-                          {categoryLabel(
-                            selectedMessage.kind
-                          )}{" "}
-                          conversation
+                        <p className="truncate text-[10px] font-semibold text-[var(--fg)]">
+                          {categoryLabel(selectedMessage.kind)} conversation
                         </p>
 
-                        <p className="mt-0.5 truncate text-[8px] text-[var(--fg-4)]">
+                        <p className="mt-0.5 truncate text-[9px] text-[var(--fg-4)]">
                           {selectedMessage.platform
                             ? `${selectedMessage.platform} interaction`
                             : "Social interaction"}
@@ -1298,19 +1286,20 @@ export function InboxClient({
 
                       <button
                         type="button"
-                        className="shrink-0 text-[8px] font-semibold text-[var(--brand-primary)] hover:underline"
+                        className="inline-flex items-center gap-1 text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
                       >
                         View post
+                        <ArrowUpRight className="h-2.5 w-2.5" />
                       </button>
                     </div>
                   </div>
 
-                  {/* DATE */}
+                  {/* DATE SEPARATOR */}
 
-                  <div className="mb-6 flex items-center gap-3">
+                  <div className="flex items-center gap-3">
                     <div className="h-px flex-1 bg-[var(--stroke)]" />
 
-                    <span className="text-[8px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-4)]">
+                    <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-4)]">
                       Conversation
                     </span>
 
@@ -1320,22 +1309,20 @@ export function InboxClient({
                   <div className="space-y-5">
                     {/* INCOMING MESSAGE */}
 
-                    <div className="flex items-start gap-2.5">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[8px] font-bold text-[var(--fg-2)]">
-                        {initials(
-                          selectedMessage.author_name
-                        )}
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[9px] font-bold text-[var(--fg-2)]">
+                        {initials(selectedMessage.author_name)}
                       </div>
 
                       <div className="max-w-[78%]">
-                        <div className="rounded-xl rounded-tl-sm border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3.5 py-3">
-                          <p className="text-[10px] leading-[1.65] text-[var(--fg)]">
+                        <div className="rounded-2xl rounded-tl-sm border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-4 py-3 shadow-xs">
+                          <p className="text-[11px] leading-[1.65] text-[var(--fg)]">
                             {selectedMessage.body}
                           </p>
                         </div>
 
-                        <div className="mt-1 flex items-center gap-2 px-1">
-                          <span className="text-[8px] text-[var(--fg-4)]">
+                        <div className="mt-1.5 flex items-center gap-2 px-1">
+                          <span className="text-[9px] text-[var(--fg-4)]">
                             {new Date(
                               selectedMessage.received_at
                             ).toLocaleTimeString([], {
@@ -1346,21 +1333,19 @@ export function InboxClient({
 
                           {selectedMessage.category && (
                             <>
-                              <span className="text-[8px] text-[var(--fg-4)]">
+                              <span className="text-[9px] text-[var(--fg-4)]">
                                 ·
                               </span>
 
                               <span
-                                className="text-[8px] font-medium"
+                                className="text-[9px] font-semibold"
                                 style={{
                                   color: getCategoryBadge(
                                     selectedMessage.category
                                   ).text,
                                 }}
                               >
-                                {categoryLabel(
-                                  selectedMessage.category
-                                )}
+                                {categoryLabel(selectedMessage.category)}
                               </span>
                             </>
                           )}
@@ -1372,18 +1357,19 @@ export function InboxClient({
 
                     {(selectedMessage.replied ||
                       localReplies[selectedMessage.id]) &&
-                      selectedMessage.reply_body && (
+                      (selectedMessage.reply_body ||
+                        localReplies[selectedMessage.id]) && (
                         <div className="flex justify-end">
                           <div className="max-w-[78%]">
-                            <div className="rounded-xl rounded-tr-sm bg-[var(--brand-primary)] px-3.5 py-3 text-white">
-                              <p className="text-[10px] leading-[1.65]">
-                                {selectedMessage.reply_body}
+                            <div className="rounded-2xl rounded-tr-sm bg-[var(--brand-primary)] px-4 py-3 text-white shadow-[var(--brand-primary-shadow)]">
+                              <p className="text-[11px] leading-[1.65]">
+                                {selectedMessage.reply_body ||
+                                  localReplies[selectedMessage.id]}
                               </p>
                             </div>
 
-                            <div className="mt-1 flex items-center justify-end gap-1.5 px-1 text-[8px] text-[var(--fg-4)]">
-                              <span>Sent</span>
-
+                            <div className="mt-1.5 flex items-center justify-end gap-1.5 px-1 text-[9px] text-[var(--fg-4)]">
+                              <span>Delivered</span>
                               <CheckCheck className="h-3 w-3 text-[var(--brand-primary)]" />
                             </div>
                           </div>
@@ -1393,33 +1379,29 @@ export function InboxClient({
                     {/* AI SUGGESTION */}
 
                     {selectedMessage.category === "lead" && (
-                      <div className="ml-9 rounded-xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] p-3.5">
+                      <div className="ml-11 rounded-xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] p-4">
                         <div className="mb-2 flex items-center gap-2">
                           <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-[var(--brand-primary)] text-white">
-                            <Bot className="h-3 w-3" />
+                            <Bot className="h-3.5 w-3.5" />
                           </div>
 
                           <div>
-                            <p className="text-[9px] font-semibold text-[var(--brand-primary)]">
+                            <p className="font-display text-[10px] font-bold text-[var(--brand-primary)]">
                               Kora AI · Suggested reply
                             </p>
 
-                            <p className="text-[7px] text-[var(--fg-4)]">
-                              Generated from this conversation
+                            <p className="text-[8px] text-[var(--fg-4)]">
+                              Generated from this conversation context
                             </p>
                           </div>
                         </div>
 
-                        <p className="text-[9px] leading-[1.65] text-[var(--fg-2)]">
+                        <p className="text-[10px] leading-[1.65] text-[var(--fg-2)]">
                           Hi{" "}
                           {(
-                            selectedMessage.author_name ||
-                            "there"
+                            selectedMessage.author_name || "there"
                           ).split(" ")[0]}
-                          ! Thanks so much for reaching
-                          out. I would be happy to share
-                          more details and help you get
-                          started with our services.
+                          ! Thanks so much for reaching out. I would be happy to share more details and help you get started with our services.
                         </p>
 
                         <div className="mt-3 flex items-center gap-2">
@@ -1429,27 +1411,26 @@ export function InboxClient({
                               setReply(
                                 `Hi ${
                                   (
-                                    selectedMessage.author_name ||
-                                    "there"
+                                    selectedMessage.author_name || "there"
                                   ).split(" ")[0]
                                 }! Thanks so much for reaching out. I would be happy to share more details and help you get started with our services.`
                               )
                             }
-                            className="rounded-lg border border-[var(--brand-primary-border)] bg-[var(--panel-fill)] px-2.5 py-1.5 text-[8px] font-semibold text-[var(--brand-primary)] transition hover:bg-[var(--panel-fill-2)]"
+                            className="rounded-lg border border-[var(--brand-primary-border)] bg-[var(--panel-fill)] px-3 py-1.5 text-[9px] font-semibold text-[var(--brand-primary)] transition hover:bg-[var(--panel-fill-2)]"
                           >
                             Use reply
                           </button>
 
                           <button
                             type="button"
-                            className="text-[8px] font-medium text-[var(--fg-4)] hover:text-[var(--fg)]"
+                            className="text-[9px] font-medium text-[var(--fg-4)] hover:text-[var(--fg)]"
                           >
                             Improve
                           </button>
 
                           <button
                             type="button"
-                            className="text-[8px] font-medium text-[var(--fg-4)] hover:text-[var(--fg)]"
+                            className="text-[9px] font-medium text-[var(--fg-4)] hover:text-[var(--fg)]"
                           >
                             Change tone
                           </button>
@@ -1464,57 +1445,52 @@ export function InboxClient({
               {/* COMPOSER                                                    */}
               {/* ---------------------------------------------------------- */}
 
-              {(selectedMessage.platform as string) !==
-              "system" ? (
-                <div className="border-t border-[var(--stroke)] bg-[var(--panel-fill)] p-3.5 sm:p-4">
-                  <div className="mx-auto max-w-[720px]">
+              {(selectedMessage.platform as string) !== "system" ? (
+                <div className="border-t border-[var(--stroke)] bg-[var(--panel-fill)] p-4">
+                  <div className="mx-auto max-w-[760px]">
                     {/* AUTOMATION NOTICE */}
 
                     <div className="mb-2 flex items-center gap-1.5 px-1">
                       <Bot className="h-3 w-3 text-[var(--fg-4)]" />
 
-                      <span className="text-[8px] text-[var(--fg-4)]">
+                      <span className="text-[9px] text-[var(--fg-4)]">
                         Auto-reply rules are active
                       </span>
 
-                      <span className="text-[8px] text-[var(--fg-4)]">
-                        ·
-                      </span>
+                      <span className="text-[9px] text-[var(--fg-4)]">·</span>
 
-                      <button
-                        type="button"
-                        className="text-[8px] font-semibold text-[var(--brand-primary)] hover:underline"
+                      <Link
+                        href="/dashboard/automations"
+                        className="text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
                       >
                         Manage automation →
-                      </button>
+                      </Link>
                     </div>
 
-                    {/* INPUT */}
+                    {/* INPUT CONTAINER */}
 
-                    <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-2.5 transition focus-within:border-[var(--brand-primary-border)]">
+                    <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 transition focus-within:border-[var(--brand-primary-border)]">
                       <textarea
                         value={reply}
-                        onChange={(event) =>
-                          setReply(event.target.value)
-                        }
+                        onChange={(event) => setReply(event.target.value)}
                         placeholder="Write a reply..."
-                        className="min-h-[52px] w-full resize-none bg-transparent px-1 py-1 text-[10px] leading-[1.6] text-[var(--fg)] outline-none placeholder:text-[var(--fg-4)]"
+                        className="min-h-[60px] w-full resize-none bg-transparent px-1 py-1 text-[11px] leading-[1.6] text-[var(--fg)] outline-none placeholder:text-[var(--fg-4)]"
                       />
 
-                      <div className="mt-2 flex items-center justify-between border-t border-[var(--stroke)] pt-2">
-                        <div className="flex items-center gap-0.5">
+                      <div className="mt-2 flex items-center justify-between border-t border-[var(--stroke)] pt-2.5">
+                        <div className="flex items-center gap-1">
                           <button
                             type="button"
                             className="flex h-7 w-7 items-center justify-center rounded-lg text-[var(--fg-4)] transition hover:bg-[var(--panel-fill)] hover:text-[var(--fg)]"
                           >
-                            <Smile className="h-3.5 w-3.5" />
+                            <Smile className="h-4 w-4" />
                           </button>
 
                           <button
                             type="button"
                             className="flex h-7 w-7 items-center justify-center rounded-lg text-[var(--fg-4)] transition hover:bg-[var(--panel-fill)] hover:text-[var(--fg)]"
                           >
-                            <Paperclip className="h-3.5 w-3.5" />
+                            <Paperclip className="h-4 w-4" />
                           </button>
 
                           <button
@@ -1524,13 +1500,12 @@ export function InboxClient({
                                 reply ||
                                   `Hi ${
                                     (
-                                      selectedMessage.author_name ||
-                                      "there"
+                                      selectedMessage.author_name || "there"
                                     ).split(" ")[0]
                                   }! Thanks for reaching out 🙌`
                               )
                             }
-                            className="ml-1 inline-flex h-7 items-center gap-1.5 rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-2.5 text-[8px] font-semibold text-[var(--brand-primary)] transition hover:opacity-80"
+                            className="ml-1 inline-flex h-7 items-center gap-1.5 rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-2.5 text-[9px] font-semibold text-[var(--brand-primary)] transition hover:opacity-80"
                           >
                             <Sparkles className="h-3 w-3" />
                             AI Assist
@@ -1539,11 +1514,9 @@ export function InboxClient({
 
                         <button
                           type="button"
-                          onClick={() =>
-                            sendReply(selectedMessage)
-                          }
+                          onClick={() => sendReply(selectedMessage)}
                           disabled={!reply.trim()}
-                          className="inline-flex h-8 items-center gap-2 rounded-lg bg-[var(--brand-primary)] px-3.5 text-[9px] font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                          className="inline-flex h-8 items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-4 text-[10px] font-bold text-white shadow-[var(--brand-primary-shadow)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           Send
                           <Send className="h-3 w-3" />
@@ -1556,10 +1529,8 @@ export function InboxClient({
                 <div className="flex justify-end border-t border-[var(--stroke)] bg-[var(--panel-fill)] p-4">
                   <button
                     type="button"
-                    onClick={() =>
-                      sendReply(selectedMessage)
-                    }
-                    className="rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-4 py-2 text-[9px] font-semibold text-[var(--fg-2)] transition hover:border-[var(--stroke-strong)] hover:text-[var(--fg)]"
+                    onClick={() => sendReply(selectedMessage)}
+                    className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-4 py-2 text-[10px] font-semibold text-[var(--fg-2)] transition hover:border-[var(--stroke-strong)] hover:text-[var(--fg)]"
                   >
                     Dismiss Notification
                   </button>
@@ -1572,17 +1543,16 @@ export function InboxClient({
             /* -------------------------------------------------------------- */
 
             <div className="flex flex-1 flex-col items-center justify-center p-10 text-center">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
-                <MessageCircle className="h-5 w-5" />
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
+                <MessageCircle className="h-6 w-6" />
               </div>
 
-              <h3 className="text-sm font-semibold text-[var(--fg)]">
+              <h3 className="font-display text-base font-bold text-[var(--fg)]">
                 Select a conversation
               </h3>
 
-              <p className="mt-1 max-w-xs text-[10px] leading-5 text-[var(--fg-4)]">
-                Choose a message from your inbox to review
-                and reply to your audience.
+              <p className="mt-1.5 max-w-xs text-[11px] leading-5 text-[var(--fg-4)]">
+                Choose a message from your inbox to review and reply to your audience.
               </p>
 
               {filteredMessages.length > 0 && (
@@ -1592,7 +1562,7 @@ export function InboxClient({
                     filteredMessages[0] &&
                     selectConversation(filteredMessages[0].id)
                   }
-                  className="mt-4 inline-flex items-center gap-1.5 text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
+                  className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-semibold text-[var(--brand-primary)] transition hover:underline"
                 >
                   Open first conversation
                   <ChevronRight className="h-3 w-3" />
@@ -1601,7 +1571,7 @@ export function InboxClient({
             </div>
           )}
         </section>
-      </div>
+      </GlassCard>
     </div>
   );
 }
