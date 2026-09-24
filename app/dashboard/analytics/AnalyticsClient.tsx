@@ -30,6 +30,7 @@ import {
   RefreshCw,
   Layers,
   Clock,
+  Hash,
 } from "lucide-react";
 import { GlassCard, Pill } from "@/components/dashboard/ui";
 import { fmtNum, fmtNaira, platformLabel } from "@/lib/dashboard/helpers";
@@ -760,7 +761,7 @@ export function AnalyticsClient({
   }, [currentPosts]);
 
   /* ------------------------------------------------------------------------ */
-  /* PLATFORM DISTRIBUTION & SHARES                                           */
+  /* PLATFORM DISTRIBUTION & SHARES (100% REAL DATA)                          */
   /* ------------------------------------------------------------------------ */
 
   const platformDistribution = useMemo(() => {
@@ -780,79 +781,95 @@ export function AnalyticsClient({
       map[plat].posts += 1;
     });
 
-    const totalEng = Math.max(
-      Object.values(map).reduce((sum, item) => sum + item.engagement, 0),
-      1
-    );
+    const totalEng = Object.values(map).reduce((sum, item) => sum + item.engagement, 0);
 
-    const list = Object.entries(map).map(([platform, data]) => ({
-      platform,
-      label: platformLabel(platform),
-      engagement: data.engagement,
-      impressions: data.impressions,
-      reach: data.reach,
-      posts: data.posts,
-      percentage: Math.round((data.engagement / totalEng) * 100),
-    }));
-
-    if (list.length > 0) {
-      return list.sort((a, b) => b.engagement - a.engagement);
-    }
-
-    return [
-      { platform: "instagram", label: "Instagram", engagement: 4700, impressions: 45000, reach: 52000, posts: 12, percentage: 47 },
-      { platform: "tiktok", label: "TikTok", engagement: 2800, impressions: 32000, reach: 38000, posts: 8, percentage: 28 },
-      { platform: "youtube", label: "YouTube", engagement: 1400, impressions: 18000, reach: 24000, posts: 4, percentage: 14 },
-      { platform: "twitter", label: "X (Twitter)", engagement: 800, impressions: 11000, reach: 13000, posts: 15, percentage: 8 },
-      { platform: "linkedin", label: "LinkedIn", engagement: 300, impressions: 5000, reach: 6200, posts: 3, percentage: 3 },
-    ];
+    return Object.entries(map)
+      .map(([platform, data]) => ({
+        platform,
+        label: platformLabel(platform),
+        engagement: data.engagement,
+        impressions: data.impressions,
+        reach: data.reach,
+        posts: data.posts,
+        percentage: totalEng > 0 ? Math.round((data.engagement / totalEng) * 100) : 0,
+      }))
+      .sort((a, b) => b.engagement - a.engagement);
   }, [allFilteredPosts]);
 
   /* ------------------------------------------------------------------------ */
-  /* TOP TOPICS                                                               */
+  /* TOP TOPICS EXTRACTOR (FROM POST CONTENT & HASHTAGS)                      */
   /* ------------------------------------------------------------------------ */
 
   const topTopics = useMemo(() => {
-    const words: Record<string, number> = {};
+    const topicMap: Record<
+      string,
+      { count: number; totalEngagement: number; totalReach: number }
+    > = {};
+
     const stopWords = new Set([
       "the", "and", "this", "that", "with", "from", "your", "about", "have", "just",
-      "into", "for", "you", "are", "was", "but", "not", "our", "out", "how", "what", "when"
+      "into", "for", "you", "are", "was", "but", "not", "our", "out", "how", "what",
+      "when", "where", "which", "will", "would", "could", "should", "their", "there",
+      "been", "more", "some", "them", "then", "than", "very", "also", "much", "many",
+      "post", "posts", "like", "link", "http", "https", "here", "they", "were", "well"
     ]);
 
     currentPosts.forEach((post) => {
-      const text = post.content?.toLowerCase() ?? "";
-      text
-        .replace(/[^\w\s]/g, "")
+      const text = post.content ?? "";
+      if (!text.trim()) return;
+
+      const eng = postEngagement(post);
+      const reach = postReach(post);
+
+      // Extract hashtags
+      const hashtags = (text.match(/#[\w\d_]+/g) || []).map((h) =>
+        h.replace(/^#/, "").toLowerCase()
+      );
+
+      // Extract meaningful keywords (length >= 4)
+      const cleanWords = text
+        .toLowerCase()
+        .replace(/[^\w\s]/g, " ")
         .split(/\s+/)
-        .filter((word) => word.length > 3 && !stopWords.has(word))
-        .forEach((word) => {
-          words[word] = (words[word] ?? 0) + 1;
-        });
+        .filter((w) => w.length >= 4 && !stopWords.has(w) && !/^\d+$/.test(w));
+
+      const uniqueTerms = Array.from(new Set([...hashtags, ...cleanWords]));
+
+      uniqueTerms.forEach((term) => {
+        if (!topicMap[term]) {
+          topicMap[term] = { count: 0, totalEngagement: 0, totalReach: 0 };
+        }
+        topicMap[term].count += 1;
+        topicMap[term].totalEngagement += eng;
+        topicMap[term].totalReach += reach;
+      });
     });
 
-    const extracted = Object.entries(words)
-      .sort((a, b) => b[1] - a[1])
+    const entries = Object.entries(topicMap);
+    if (entries.length === 0) return [];
+
+    const totalTrackedEng = entries.reduce(
+      (sum, [, data]) => sum + data.totalEngagement,
+      0
+    );
+
+    return entries
+      .sort((a, b) => {
+        if (b[1].totalEngagement !== a[1].totalEngagement) {
+          return b[1].totalEngagement - a[1].totalEngagement;
+        }
+        return b[1].count - a[1].count;
+      })
       .slice(0, 5)
-      .map(([topic, count]) => ({
+      .map(([topic, data]) => ({
         topic: topic.charAt(0).toUpperCase() + topic.slice(1),
-        count,
+        count: data.count,
+        totalEngagement: data.totalEngagement,
+        percentage:
+          totalTrackedEng > 0
+            ? Math.round((data.totalEngagement / totalTrackedEng) * 100)
+            : Math.round((data.count / currentPosts.length) * 100),
       }));
-
-    if (extracted.length > 0) {
-      const max = Math.max(...extracted.map((item) => item.count), 1);
-      return extracted.map((item) => ({
-        ...item,
-        percentage: Math.round((item.count / max) * 34),
-      }));
-    }
-
-    return [
-      { topic: "Productivity", percentage: 34 },
-      { topic: "Content creation", percentage: 28 },
-      { topic: "Social media tips", percentage: 18 },
-      { topic: "Lifestyle", percentage: 12 },
-      { topic: "Tech & AI", percentage: 8 },
-    ];
   }, [currentPosts]);
 
   /* ------------------------------------------------------------------------ */
@@ -969,140 +986,197 @@ export function AnalyticsClient({
 
     const hasPosts = currentPosts.length > 0;
 
-    // 1. TIMING & PUBLISHING CADENCE INSIGHT
-    if (bestTimeStats.hasRealData) {
+    if (!hasPosts) {
+      if (connectedCount > 0) {
+        insights.push({
+          id: "connect-active",
+          title: "Connected Channels Ready",
+          description: (
+            <span>
+              You have <strong className="text-[var(--fg)]">{connectedCount} active social channel{connectedCount === 1 ? "" : "s"}</strong> connected. Schedule or publish your first posts to generate live performance insights.
+            </span>
+          ),
+          icon: Plug,
+          badge: "Setup",
+          tone: "primary",
+        });
+      } else {
+        insights.push({
+          id: "no-channel",
+          title: "Connect Channels to Begin",
+          description: (
+            <span>
+              Link your social accounts in <strong className="text-[var(--fg)]">Integrations</strong> to automatically track analytics, audience engagement, and reach metrics.
+            </span>
+          ),
+          icon: Plug,
+          badge: "Action",
+          tone: "primary",
+        });
+      }
+
       insights.push({
-        id: "timing",
-        title: "Optimal Publishing Cadence",
+        id: "date-filter-empty",
+        title: "Date Range Window",
         description: (
           <span>
-            Publishing on <strong className="text-[var(--fg)]">{bestTimeStats.bestDayName}s</strong> during the{" "}
-            <strong className="text-[var(--fg)]">{bestTimeStats.bestSlotTime}</strong> window yields peak engagement across your active audience.
+            No published posts were recorded in the selected <strong className="text-[var(--fg)]">{dateRange === "all" ? "All Time" : dateRange.toUpperCase()}</strong> filter. Switch date range or post new content to analyze performance.
+          </span>
+        ),
+        icon: CalendarDays,
+        badge: "Status",
+        tone: "blue",
+      });
+
+      return insights;
+    }
+
+    // 1. TIMING & PUBLISHING CADENCE INSIGHT (REAL)
+    if (bestTimeStats.hasRealData) {
+      const peakDay = bestTimeStats.bestDayName;
+      const peakWindow = bestTimeStats.bestSlotTime;
+      const peakSlotData = bestTimeStats.slots.find((s) => s.time === peakWindow);
+      const slotPct = peakSlotData?.percentage ?? 0;
+
+      insights.push({
+        id: "timing",
+        title: "Peak Publishing Window",
+        description: (
+          <span>
+            Publishing on <strong className="text-[var(--fg)]">{peakDay}s</strong> during <strong className="text-[var(--fg)]">{peakWindow}</strong> produces your highest interaction density ({slotPct}% of audience responses).
           </span>
         ),
         icon: Clock,
         badge: "Timing",
         tone: "primary",
       });
-    } else {
-      insights.push({
-        id: "timing",
-        title: "Optimal Publishing Window",
-        description: (
-          <span>
-            Target publishing between <strong className="text-[var(--fg)]">4:00 PM – 8:00 PM on Wednesdays and Thursdays</strong> to maximize initial algorithmic distribution.
-          </span>
-        ),
-        icon: Clock,
-        badge: "Benchmark",
-        tone: "primary",
-      });
     }
 
-    // 2. CONTENT FORMAT & ENGAGEMENT DRIVER
-    if (hasPosts) {
-      const videoPosts = currentPosts.filter((p) => safeNumber(p.video_views) > 0);
-      const avgVideoReach =
-        videoPosts.length > 0
-          ? Math.round(videoPosts.reduce((s, p) => s + postReach(p), 0) / videoPosts.length)
-          : 0;
-      const staticPosts = currentPosts.filter((p) => safeNumber(p.video_views) === 0);
-      const avgStaticReach =
-        staticPosts.length > 0
-          ? Math.round(staticPosts.reduce((s, p) => s + postReach(p), 0) / staticPosts.length)
-          : 0;
+    // 2. CONTENT FORMAT & ENGAGEMENT DRIVER (REAL)
+    const videoPosts = currentPosts.filter((p) => safeNumber(p.video_views) > 0);
+    const staticPosts = currentPosts.filter((p) => safeNumber(p.video_views) === 0);
 
-      if (videoPosts.length > 0 && avgVideoReach > avgStaticReach) {
-        const lift = avgStaticReach > 0 ? Math.round(((avgVideoReach - avgStaticReach) / avgStaticReach) * 100) : 45;
+    if (videoPosts.length > 0 && staticPosts.length > 0) {
+      const avgVideoReach = Math.round(
+        videoPosts.reduce((s, p) => s + postReach(p), 0) / videoPosts.length
+      );
+      const avgStaticReach = Math.round(
+        staticPosts.reduce((s, p) => s + postReach(p), 0) / staticPosts.length
+      );
+
+      if (avgVideoReach >= avgStaticReach) {
+        const diff =
+          avgStaticReach > 0
+            ? Math.round(((avgVideoReach - avgStaticReach) / avgStaticReach) * 100)
+            : 100;
         insights.push({
-          id: "format",
-          title: "High-Performing Video Formats",
+          id: "video-format",
+          title: "Video Reach Outperformance",
           description: (
             <span>
-              Your video content generates <strong className="text-[var(--fg)]">{lift}% higher average reach</strong> than static posts. Double down on short-form reels and clips.
+              Your video content averages <strong className="text-[var(--fg)]">{fmtNum(avgVideoReach)} reach</strong> per post ({diff > 0 ? `+${diff}% vs` : "vs"} {fmtNum(avgStaticReach)} for static posts).
             </span>
           ),
           icon: Play,
           badge: "Format Lift",
           tone: "purple",
         });
-      } else if (totals.saves > 0 || totals.shares > 0) {
-        const viralScore = Math.round(
-          ((totals.shares + totals.saves) / Math.max(totals.engagement, 1)) * 100
-        );
-        insights.push({
-          id: "retention",
-          title: "High Value & Retention Ratio",
-          description: (
-            <span>
-              <strong className="text-[var(--fg)]">{viralScore}% of your total interactions</strong> come from shares and saves, signaling high-value reference content that boosts algorithmic recommendation.
-            </span>
-          ),
-          icon: Share2,
-          badge: "Retention",
-          tone: "purple",
-        });
       } else {
-        const topPost = topContent[0];
         insights.push({
-          id: "top-post",
-          title: "Top Content Benchmark",
+          id: "static-format",
+          title: "Visual & Text Consistency",
           description: (
             <span>
-              Your top post generated <strong className="text-[var(--fg)]">{fmtNum(topPost ? postReach(topPost) : totals.reach)} reach</strong>. Content structured with strong early hooks achieves the highest completion rates.
+              Static posts average <strong className="text-[var(--fg)]">{fmtNum(avgStaticReach)} reach</strong> across {staticPosts.length} posts, outperforming video plays.
             </span>
           ),
           icon: Sparkles,
-          badge: "Performance",
+          badge: "Content Mix",
           tone: "purple",
         });
       }
-    } else {
+    } else if (totals.saves > 0 || totals.shares > 0) {
+      const saveShareTotal = totals.shares + totals.saves;
+      const ratio = totals.engagement > 0 ? Math.round((saveShareTotal / totals.engagement) * 100) : 0;
       insights.push({
-        id: "format",
-        title: "Video Hook Strategy",
+        id: "retention-rate",
+        title: "High Value Retention",
         description: (
           <span>
-            Short-form video clips with on-screen text hooks generate <strong className="text-[var(--fg)]">38% more saves</strong> than static images or single-link posts.
+            <strong className="text-[var(--fg)]">{fmtNum(saveShareTotal)} shares & saves</strong> recorded ({ratio}% of all interactions), signaling high-value reference content.
           </span>
         ),
-        icon: Play,
-        badge: "Format Lift",
+        icon: Share2,
+        badge: "Retention",
+        tone: "purple",
+      });
+    } else if (topContent.length > 0) {
+      const peakPost = topContent[0];
+      insights.push({
+        id: "top-post-insight",
+        title: "Top Content Benchmark",
+        description: (
+          <span>
+            Your top post on <strong className="text-[var(--fg)]">{platformLabel(peakPost.platform)}</strong> achieved <strong className="text-[var(--fg)]">{fmtNum(postReach(peakPost))} reach</strong> and <strong className="text-[var(--fg)]">{postEngRate(peakPost)}% engagement rate</strong>.
+          </span>
+        ),
+        icon: Trophy,
+        badge: "Top Post",
         tone: "purple",
       });
     }
 
-    // 3. TOPIC & THEMATIC RESONANCE
+    // 3. TOPIC & THEMATIC RESONANCE (REAL)
     if (topTopics.length > 0) {
-      const topTopicName = topTopics[0]?.topic;
-      const secondTopic = topTopics[1]?.topic;
+      const top1 = topTopics[0];
+      const top2 = topTopics[1];
       insights.push({
         id: "topics",
         title: "Audience Interest Resonance",
         description: (
           <span>
             Your audience engages most with content focused on{" "}
-            <strong className="text-[var(--fg)]">{topTopicName || "Industry Insights"}</strong>
-            {secondTopic ? <> and <strong className="text-[var(--fg)]">{secondTopic}</strong></> : ""}. Repurpose these top performers across your connected channels.
+            <strong className="text-[var(--fg)]">&quot;{top1.topic}&quot;</strong>
+            {top2 ? (
+              <>
+                {" "}and <strong className="text-[var(--fg)]">&quot;{top2.topic}&quot;</strong>
+              </>
+            ) : (
+              ""
+            )}
+            . Repurpose these top performers across your connected channels.
           </span>
         ),
         icon: Users,
         badge: "Audience Match",
         tone: "blue",
       });
+    } else {
+      insights.push({
+        id: "engagement-rate-insight",
+        title: "Account Engagement Rate",
+        description: (
+          <span>
+            Your cross-channel engagement rate is <strong className="text-[var(--fg)]">{totals.engagementRate.toFixed(1)}%</strong> from <strong className="text-[var(--fg)]">{fmtNum(totals.engagement)} interactions</strong> over {totals.count} posts.
+          </span>
+        ),
+        icon: Heart,
+        badge: "Engagement",
+        tone: "blue",
+      });
     }
 
-    // 4. PLATFORM LEVERAGE
+    // 4. PLATFORM LEVERAGE (REAL)
     if (platformDistribution.length > 0) {
       const topPlatform = platformDistribution[0];
-      if (topPlatform && topPlatform.percentage > 0) {
+      if (topPlatform && topPlatform.posts > 0) {
         insights.push({
           id: "platform-leverage",
           title: "Channel Synergy & Reach",
           description: (
             <span>
               <strong className="text-[var(--fg)]">{topPlatform.label}</strong> is your primary audience driver, accounting for{" "}
-              <strong className="text-[var(--fg)]">{topPlatform.percentage}% of all engagements</strong>. Consider cross-posting top clips to expand your secondary channels.
+              <strong className="text-[var(--fg)]">{topPlatform.percentage}% of all engagements</strong> ({fmtNum(topPlatform.engagement)} interactions across {topPlatform.posts} posts).
             </span>
           ),
           icon: TrendingUp,
@@ -1113,7 +1187,7 @@ export function AnalyticsClient({
     }
 
     return insights.slice(0, 3);
-  }, [currentPosts, bestTimeStats, topTopics, totals, topContent, platformDistribution]);
+  }, [currentPosts, bestTimeStats, topTopics, totals, topContent, platformDistribution, connectedCount, dateRange]);
 
   /* ------------------------------------------------------------------------ */
   /*                                  RENDER                                  */
@@ -1675,51 +1749,65 @@ export function AnalyticsClient({
             </span>
           </div>
 
-          <div className="mt-5 space-y-4">
-            {platformDistribution.slice(0, 5).map((platform) => {
-              const color = getPlatformColor(platform.platform);
+          {platformDistribution.length > 0 ? (
+            <div className="mt-5 space-y-4">
+              {platformDistribution.slice(0, 5).map((platform) => {
+                const color = getPlatformColor(platform.platform);
 
-              return (
-                <div
-                  key={platform.platform}
-                  onClick={() => setSelectedPlatform(platform.platform)}
-                  className="group cursor-pointer"
-                >
-                  <div className="mb-2 flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <PlatformIcon
-                        platform={platform.platform}
-                        className="h-7 w-7 rounded-full ring-1 ring-[var(--stroke)]"
-                      />
+                return (
+                  <div
+                    key={platform.platform}
+                    onClick={() => setSelectedPlatform(platform.platform)}
+                    className="group cursor-pointer"
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <PlatformIcon
+                          platform={platform.platform}
+                          className="h-7 w-7 rounded-full ring-1 ring-[var(--stroke)]"
+                        />
 
-                      <div>
-                        <span className="text-[11px] font-semibold text-[var(--fg)] group-hover:text-[var(--brand-primary)] transition">
-                          {platform.label}
-                        </span>
-                        <p className="text-[9px] text-[var(--fg-4)]">
-                          {fmtNum(platform.reach)} reach · {fmtNum(platform.engagement)} eng
-                        </p>
+                        <div>
+                          <span className="text-[11px] font-semibold text-[var(--fg)] group-hover:text-[var(--brand-primary)] transition">
+                            {platform.label}
+                          </span>
+                          <p className="text-[9px] text-[var(--fg-4)]">
+                            {fmtNum(platform.reach)} reach · {fmtNum(platform.engagement)} eng
+                          </p>
+                        </div>
                       </div>
+
+                      <span className="font-display text-[11px] font-bold text-[var(--fg-2)]">
+                        {platform.percentage}%
+                      </span>
                     </div>
 
-                    <span className="font-display text-[11px] font-bold text-[var(--fg-2)]">
-                      {platform.percentage}%
-                    </span>
+                    <div className="h-1.5 overflow-hidden rounded-full bg-[var(--panel-fill-2)]">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.max(platform.percentage, 4)}%`,
+                          backgroundColor: color,
+                        }}
+                      />
+                    </div>
                   </div>
-
-                  <div className="h-1.5 overflow-hidden rounded-full bg-[var(--panel-fill-2)]">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{
-                        width: `${Math.max(platform.percentage, 4)}%`,
-                        backgroundColor: color,
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex min-h-[180px] flex-col items-center justify-center p-6 text-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--panel-fill-2)] text-[var(--fg-4)]">
+                <Layers className="h-5 w-5" />
+              </div>
+              <p className="mt-2 text-xs font-semibold text-[var(--fg-2)]">
+                No channel distribution
+              </p>
+              <p className="mt-1 text-[10px] text-[var(--fg-4)] max-w-[220px]">
+                Connect channels and post content to track cross-platform engagement share.
+              </p>
+            </div>
+          )}
         </GlassCard>
       </div>
 
@@ -1807,33 +1895,50 @@ export function AnalyticsClient({
             </p>
           </div>
 
-          <div className="mt-4 space-y-2">
-            {topTopics.map((topic, index) => (
-              <div
-                key={topic.topic}
-                className="flex items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-2.5"
-              >
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[var(--panel-fill)] text-[10px] font-bold text-[var(--fg-4)]">
-                  {index + 1}
-                </div>
+          {topTopics.length > 0 ? (
+            <div className="mt-4 space-y-2">
+              {topTopics.map((topic, index) => (
+                <div
+                  key={topic.topic}
+                  className="flex items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-2.5"
+                >
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[var(--panel-fill)] text-[10px] font-bold text-[var(--fg-4)]">
+                    {index + 1}
+                  </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[11px] font-semibold text-[var(--fg)]">
-                    {topic.topic}
-                  </p>
-                </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[11px] font-semibold text-[var(--fg)]">
+                      {topic.topic}
+                    </p>
+                    <p className="text-[9px] text-[var(--fg-4)]">
+                      {topic.count} post{topic.count === 1 ? "" : "s"}
+                    </p>
+                  </div>
 
-                <span className="font-display text-[11px] font-bold text-[var(--fg-2)]">
-                  {topic.percentage}%
-                </span>
+                  <span className="font-display text-[11px] font-bold text-[var(--fg-2)]">
+                    {topic.percentage}%
+                  </span>
 
-                <div className="flex items-center gap-1 rounded-md bg-[var(--success-soft)] px-2 py-0.5 text-[9px] font-semibold text-[var(--success)]">
-                  <TrendingUp className="h-2.5 w-2.5" />+
-                  {Math.max(2, Math.round(topic.percentage / 5))}%
+                  <div className="flex items-center gap-1 rounded-md bg-[var(--success-soft)] px-2 py-0.5 text-[9px] font-semibold text-[var(--success)]">
+                    <TrendingUp className="h-2.5 w-2.5" />+
+                    {Math.max(2, Math.round(topic.percentage / 5))}%
+                  </div>
                 </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex min-h-[180px] flex-col items-center justify-center p-6 text-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--panel-fill-2)] text-[var(--fg-4)]">
+                <Hash className="h-5 w-5" />
               </div>
-            ))}
-          </div>
+              <p className="mt-2 text-xs font-semibold text-[var(--fg-2)]">
+                No topic trends yet
+              </p>
+              <p className="mt-1 text-[10px] text-[var(--fg-4)] max-w-[220px]">
+                Add captions and hashtags to your social posts to unlock automated subject ranking.
+              </p>
+            </div>
+          )}
         </GlassCard>
       </div>
 
