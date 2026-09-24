@@ -21,7 +21,7 @@ import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 
 export function FloatingNav() {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true);
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
@@ -50,23 +50,6 @@ export function FloatingNav() {
   };
 
   useEffect(() => {
-    if (
-      typeof document !== "undefined" &&
-      document.documentElement.classList.contains("sai-loaded")
-    ) {
-      setIsLoaded(true);
-    }
-
-    const onLoaderDone = () => {
-      setIsLoaded(true);
-    };
-
-    window.addEventListener("koraspace-loader-done", onLoaderDone);
-
-    const fallbackTimer = window.setTimeout(() => {
-      setIsLoaded(true);
-    }, 2400);
-
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 30);
     };
@@ -75,9 +58,7 @@ export function FloatingNav() {
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
-      window.removeEventListener("koraspace-loader-done", onLoaderDone);
       window.removeEventListener("scroll", handleScroll);
-      window.clearTimeout(fallbackTimer);
     };
   }, []);
 

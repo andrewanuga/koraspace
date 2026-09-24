@@ -36,11 +36,16 @@ const nextConfig: NextConfig = {
   async headers() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 
+    const isDev = process.env.NODE_ENV !== "production";
+    const scriptSrc = isDev
+      ? `'self' 'unsafe-inline' 'unsafe-eval' https://js.paystack.co`
+      : `'self' 'unsafe-inline' https://js.paystack.co`;
+
     // Static CSP (no nonce) — used for API routes and static assets.
     // The middleware injects a stricter nonce-based CSP for all HTML pages.
     const staticCsp = [
       `default-src 'self'`,
-      `script-src 'self' 'unsafe-inline' https://js.paystack.co`,
+      `script-src ${scriptSrc}`,
       `style-src 'self' 'unsafe-inline'`,
       `img-src 'self' blob: data: https://res.cloudinary.com ${supabaseUrl} https://lh3.googleusercontent.com https://pbs.twimg.com https://media.licdn.com`,
       `font-src 'self'`,

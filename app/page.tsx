@@ -1,6 +1,5 @@
 "use client";
 
-import { Preloader } from "@/components/landing/Preloader";
 import { FloatingNav } from "@/components/landing/FloatingNav";
 import { Hero } from "@/components/landing/Hero";
 import { DashboardShowcase } from "@/components/landing/DashboardShowcase";
@@ -28,7 +27,6 @@ export default function LandingPage() {
 
   return (
     <div className="relative min-h-screen transition-colors duration-200 bg-slate-50 text-slate-900 dark:bg-[#121212] dark:text-white selection:bg-[#ff0a8a]/20 selection:text-[#ff0a8a]">
-      <Preloader />
       <FloatingNav />
       <main>
         <Hero />
