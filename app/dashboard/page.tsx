@@ -109,6 +109,24 @@ const PLATFORM_COLORS: Record<string, string> = {
   reddit: "#FF4500",
 };
 
+const PLATFORM_IMAGE_MAP: Record<string, string> = {
+  youtube: "/integrations/yt.png",
+  instagram: "/integrations/insta.png",
+  facebook: "/integrations/facebook.png",
+  x: "/integrations/twitter.png",
+  twitter: "/integrations/twitter.png",
+  threads: "/integrations/threads.png",
+  telegram: "/integrations/telegram.png",
+  tiktok: "/integrations/ticktok.png",
+  whatsapp: "/integrations/whatsapp.png",
+  linkedin: "/integrations/linkedin.png",
+  snapchat: "/integrations/Snapchat.png",
+  reddit: "/integrations/reddit.png",
+  pinterest: "/integrations/pin.png",
+  discord: "/integrations/discord.png",
+  messenger: "/integrations/messanger.png",
+};
+
 /* -------------------------------------------------------------------------- */
 /*                              PLATFORM ICON                                 */
 /* -------------------------------------------------------------------------- */
@@ -122,7 +140,20 @@ function PlatformIcon({
   className?: string;
   color?: string;
 }) {
-  const Icon = PLATFORM_ICONS[platform] ?? Plug;
+  const p = platform.toLowerCase();
+  const imgSrc = PLATFORM_IMAGE_MAP[p];
+
+  if (imgSrc) {
+    return (
+      <img
+        src={imgSrc}
+        alt={platform}
+        className={`rounded-full object-cover shrink-0 ${className ?? "h-full w-full"}`}
+      />
+    );
+  }
+
+  const Icon = PLATFORM_ICONS[p] ?? Plug;
 
   return (
     <Icon
@@ -982,15 +1013,11 @@ export default async function DashboardPage() {
                     className="group flex min-w-0 items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 py-2.5 transition-all hover:-translate-y-0.5 hover:border-[var(--brand-primary-border)] hover:shadow-sm"
                   >
                     <div
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                      style={{
-                        background: `${color}12`,
-                        border: `1px solid ${color}22`,
-                      }}
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full overflow-hidden border border-[var(--stroke)] bg-[var(--panel-fill-2)]"
                     >
                       <PlatformIcon
                         platform={account.platform}
-                        className="h-3.5 w-3.5"
+                        className="h-full w-full object-cover rounded-full"
                         color={color}
                       />
                     </div>
@@ -1034,19 +1061,11 @@ export default async function DashboardPage() {
                 className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 py-2.5 transition-all hover:border-[var(--brand-primary-border)]"
               >
                 <div
-                  className="flex h-8 w-8 items-center justify-center rounded-lg"
-                  style={{
-                    background:
-                      "var(--brand-primary-soft)",
-                    border:
-                      "1px solid var(--brand-primary-border)",
-                  }}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full overflow-hidden border border-[var(--stroke)] bg-[var(--panel-fill-2)]"
                 >
-                  <Plug
-                    className="h-3.5 w-3.5"
-                    style={{
-                      color: KORA_BLUE,
-                    }}
+                  <PlatformIcon
+                    platform={platform.toLowerCase()}
+                    className="h-full w-full object-cover rounded-full"
                   />
                 </div>
 
@@ -1400,15 +1419,11 @@ export default async function DashboardPage() {
                       className="group flex items-center gap-3 py-3 first:pt-0 last:pb-0"
                     >
                       <div
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                        style={{
-                          background: `${platformColor}12`,
-                          border: `1px solid ${platformColor}20`,
-                        }}
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden border border-[var(--stroke)] bg-[var(--panel-fill-2)]"
                       >
                         <PlatformIcon
                           platform={post.platform}
-                          className="h-4 w-4"
+                          className="h-full w-full object-cover rounded-full"
                           color={platformColor}
                         />
                       </div>
