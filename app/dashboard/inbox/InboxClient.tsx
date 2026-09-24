@@ -95,6 +95,62 @@ const PLATFORM_COLORS: Record<
   tiktok: "#a855f7",
 };
 
+const PLATFORM_IMAGE_MAP: Record<string, string> = {
+  youtube: "/integrations/yt.png",
+  instagram: "/integrations/insta.png",
+  facebook: "/integrations/facebook.png",
+  x: "/integrations/twitter.png",
+  twitter: "/integrations/twitter.png",
+  threads: "/integrations/threads.png",
+  telegram: "/integrations/telegram.png",
+  tiktok: "/integrations/ticktok.png",
+  whatsapp: "/integrations/whatsapp.png",
+  linkedin: "/integrations/linkedin.png",
+  snapchat: "/integrations/Snapchat.png",
+  reddit: "/integrations/reddit.png",
+  pinterest: "/integrations/pin.png",
+  discord: "/integrations/discord.png",
+  messenger: "/integrations/messanger.png",
+};
+
+function PlatformIcon({
+  platform,
+  className = "h-4 w-4",
+  imgClassName = "object-cover",
+}: {
+  platform: string | null | undefined;
+  className?: string;
+  imgClassName?: string;
+}) {
+  const normPlatform = (platform || "").toLowerCase();
+  const imageSrc = PLATFORM_IMAGE_MAP[normPlatform];
+
+  if (imageSrc) {
+    return (
+      <span
+        className={`relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full ${className}`}
+      >
+        <img
+          src={imageSrc}
+          alt={platform || "Social platform"}
+          className={`h-full w-full rounded-full object-cover ${imgClassName}`}
+        />
+      </span>
+    );
+  }
+
+  const Icon = getPlatformIcon(platform);
+  const color = getPlatformColor(platform);
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center justify-center rounded-full ${className}`}
+      style={{ color, backgroundColor: `${color}16` }}
+    >
+      <Icon className="h-3/5 w-3/5" />
+    </span>
+  );
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                   HELPERS                                  */
 /* -------------------------------------------------------------------------- */
@@ -506,7 +562,7 @@ export function InboxClient({
       {/* HEADER                                                             */}
       {/* ------------------------------------------------------------------ */}
 
-      <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--brand-primary)]">
             Community
@@ -540,6 +596,64 @@ export function InboxClient({
             <CheckCheck className="h-3.5 w-3.5" />
             Mark all as read
           </button>
+        </div>
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* MOBILE CHANNELS (lg:hidden) - Below Mark all as read               */}
+      {/* ------------------------------------------------------------------ */}
+
+      <div className="mb-4 block lg:hidden">
+        <div className="mb-2 flex items-center justify-between px-0.5">
+          <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-4)]">
+            Channels
+          </span>
+          <span className="text-[9px] text-[var(--fg-4)]">
+            {accounts.length} connected
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          <button
+            type="button"
+            onClick={() => setSelectedAccount("all")}
+            className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-medium transition ${
+              selectedAccount === "all"
+                ? "border-[var(--brand-primary)] bg-[var(--brand-primary-soft)] font-semibold text-[var(--brand-primary)]"
+                : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:text-[var(--fg)]"
+            }`}
+          >
+            <span>All Channels</span>
+          </button>
+
+          {accounts.map((account) => {
+            const active = selectedAccount === account.id;
+
+            return (
+              <button
+                key={account.id}
+                type="button"
+                onClick={() =>
+                  setSelectedAccount(
+                    active ? "all" : account.id
+                  )
+                }
+                className={`flex shrink-0 items-center gap-2 rounded-full border px-2.5 py-1 text-[10px] font-medium transition ${
+                  active
+                    ? "border-[var(--brand-primary)] bg-[var(--brand-primary-soft)] font-semibold text-[var(--brand-primary)]"
+                    : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:text-[var(--fg)]"
+                }`}
+              >
+                <PlatformIcon
+                  platform={account.platform}
+                  className="h-4 w-4 rounded-full ring-1 ring-[var(--stroke)]"
+                />
+                <span className="max-w-[120px] truncate">
+                  {getAccountName(account)}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -746,11 +860,6 @@ export function InboxClient({
                 </div>
               ) : (
                 accounts.map((account) => {
-                  const Icon = getPlatformIcon(account.platform);
-                  const color = getPlatformColor(
-                    account.platform
-                  );
-
                   const active =
                     selectedAccount === account.id;
 
@@ -765,21 +874,16 @@ export function InboxClient({
                       }
                       className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left transition ${
                         active
-                          ? "bg-[var(--panel-fill-2)]"
-                          : "hover:bg-[var(--panel-fill-2)]"
+                          ? "bg-[var(--panel-fill-2)] text-[var(--fg)]"
+                          : "text-[var(--fg-3)] hover:bg-[var(--panel-fill-2)] hover:text-[var(--fg)]"
                       }`}
                     >
-                      <span
-                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
-                        style={{
-                          color,
-                          backgroundColor: `${color}16`,
-                        }}
-                      >
-                        <Icon className="h-2.5 w-2.5" />
-                      </span>
+                      <PlatformIcon
+                        platform={account.platform}
+                        className="h-5 w-5 rounded-full ring-1 ring-[var(--stroke)]"
+                      />
 
-                      <span className="min-w-0 truncate text-[10px] font-medium text-[var(--fg-2)]">
+                      <span className="min-w-0 truncate text-[10px] font-medium">
                         {getAccountName(account)}
                       </span>
                     </button>
@@ -958,14 +1062,11 @@ export function InboxClient({
                         )}
                       </div>
 
-                      <span
-                        className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border-2 border-[var(--panel-fill)]"
-                        style={{
-                          color: platformColor,
-                          backgroundColor: `${platformColor}20`,
-                        }}
-                      >
-                        <Icon className="h-1.5 w-1.5" />
+                      <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--panel-fill)] bg-[var(--panel-fill)]">
+                        <PlatformIcon
+                          platform={message.platform}
+                          className="h-full w-full rounded-full"
+                        />
                       </span>
                     </div>
 
@@ -1058,26 +1159,11 @@ export function InboxClient({
                       )}
                     </div>
 
-                    <span
-                      className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full border-2 border-[var(--panel-fill)]"
-                      style={{
-                        color: getPlatformColor(
-                          selectedMessage.platform
-                        ),
-                        backgroundColor: `${getPlatformColor(
-                          selectedMessage.platform
-                        )}20`,
-                      }}
-                    >
-                      {(() => {
-                        const Icon = getPlatformIcon(
-                          selectedMessage.platform
-                        );
-
-                        return (
-                          <Icon className="h-2 w-2" />
-                        );
-                      })()}
+                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--panel-fill)] bg-[var(--panel-fill)]">
+                      <PlatformIcon
+                        platform={selectedMessage.platform}
+                        className="h-full w-full rounded-full"
+                      />
                     </span>
                   </div>
 
@@ -1136,16 +1222,11 @@ export function InboxClient({
 
                   <div className="mb-6 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--panel-fill)] text-[var(--fg-4)]">
-                        {(() => {
-                          const Icon = getPlatformIcon(
-                            selectedMessage.platform
-                          );
-
-                          return (
-                            <Icon className="h-4 w-4" />
-                          );
-                        })()}
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--stroke)] bg-[var(--panel-fill)]">
+                        <PlatformIcon
+                          platform={selectedMessage.platform}
+                          className="h-6 w-6 rounded-full"
+                        />
                       </div>
 
                       <div className="min-w-0 flex-1">
