@@ -224,6 +224,10 @@ export function InboxClient({
     "all" | "messages" | "comments" | "mentions" | "dms"
   >("all");
 
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "unread" | "needs-reply"
+  >("all");
+
   const [selectedAccount, setSelectedAccount] =
     useState<string>("all");
 
@@ -325,14 +329,36 @@ export function InboxClient({
       });
     }
 
+    if (statusFilter === "unread") {
+      result = result.filter(
+        (message) => !message.is_read && !localReplies[message.id]
+      );
+    } else if (statusFilter === "needs-reply") {
+      result = result.filter(
+        (message) =>
+          !message.replied &&
+          !localReplies[message.id] &&
+          message.platform !== "system"
+      );
+    }
+
     if (search.trim()) {
-      const query = search.toLowerCase();
+      const query = search.toLowerCase().trim();
 
       result = result.filter((message) => {
         return (
-          message.author_name?.toLowerCase().includes(query) ||
-          message.author_handle?.toLowerCase().includes(query) ||
-          message.body?.toLowerCase().includes(query)
+          (message.author_name &&
+            message.author_name.toLowerCase().includes(query)) ||
+          (message.author_handle &&
+            message.author_handle.toLowerCase().includes(query)) ||
+          (message.body &&
+            message.body.toLowerCase().includes(query)) ||
+          (message.platform &&
+            message.platform.toLowerCase().includes(query)) ||
+          (message.category &&
+            message.category.toLowerCase().includes(query)) ||
+          (message.kind &&
+            message.kind.toLowerCase().includes(query))
         );
       });
     }
@@ -349,7 +375,9 @@ export function InboxClient({
     messagesList,
     activeTab,
     selectedAccount,
+    statusFilter,
     search,
+    localReplies,
     sortNewest,
   ]);
 
@@ -362,6 +390,31 @@ export function InboxClient({
   /* ---------------------------------------------------------------------- */
   /*                               ACTIONS                                  */
   /* ---------------------------------------------------------------------- */
+
+  const selectConversation = (id: string) => {
+    setSelectedId(id);
+    setMessagesList((prev) =>
+      prev.map((msg) =>
+        msg.id === id ? { ...msg, is_read: true } : msg
+      )
+    );
+  };
+
+  const markAllAsRead = () => {
+    if (unreadCount === 0) return;
+
+    setMessagesList((prev) =>
+      prev.map((msg) => ({
+        ...msg,
+        is_read: true,
+      }))
+    );
+
+    success(
+      "All marked as read",
+      "All inbox conversations and notifications have been marked as read."
+    );
+  };
 
   const sendReply = async (message: SocialInboxMessage) => {
     if (!reply.trim()) return;
@@ -480,7 +533,9 @@ export function InboxClient({
         <div className="flex items-center gap-2">
           <button
             type="button"
-            className="inline-flex h-9 items-center gap-2 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 text-[11px] font-medium text-[var(--fg-2)] transition hover:border-[var(--stroke-strong)] hover:text-[var(--fg)]"
+            onClick={markAllAsRead}
+            disabled={unreadCount === 0}
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 text-[11px] font-medium text-[var(--fg-2)] transition hover:border-[var(--stroke-strong)] hover:text-[var(--fg)] disabled:cursor-not-allowed disabled:opacity-40"
           >
             <CheckCheck className="h-3.5 w-3.5" />
             Mark all as read
@@ -780,34 +835,25 @@ export function InboxClient({
                     label: "All",
                   },
                   {
-                    id: "messages",
+                    id: "unread",
                     label: "Unread",
                   },
                   {
-                    id: "comments",
+                    id: "needs-reply",
                     label: "Needs Reply",
                   },
-                ].map((item, index) => {
-                  const active =
-                    index === 0
-                      ? activeTab === "all"
-                      : index === 1
-                        ? unreadCount > 0
-                        : needsReplyCount > 0;
+                ].map((item) => {
+                  const active = statusFilter === item.id;
 
                   return (
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => {
-                        if (index === 0) {
-                          setActiveTab("all");
-                        } else if (index === 1) {
-                          setActiveTab("messages");
-                        } else {
-                          setActiveTab("messages");
-                        }
-                      }}
+                      onClick={() =>
+                        setStatusFilter(
+                          item.id as typeof statusFilter
+                        )
+                      }
                       className={`whitespace-nowrap px-2.5 py-1.5 text-[8px] font-semibold transition ${
                         active
                           ? "bg-[var(--brand-primary)] text-white"
@@ -888,7 +934,7 @@ export function InboxClient({
                     key={message.id}
                     type="button"
                     onClick={() =>
-                      setSelectedId(message.id)
+                      selectConversation(message.id)
                     }
                     className={`relative flex w-full gap-2.5 border-b border-[var(--stroke)] px-3 py-3 text-left transition ${
                       active
@@ -1408,7 +1454,11 @@ export function InboxClient({
 
               <button
                 type="button"
-                className="mt-4 inline-flex items-center gap-1.5 text-[9px] font-semibold text-[var(--brand-primary)]"
+                onClick={() =>
+                  filteredMessages[0] &&
+                  selectConversation(filteredMessages[0].id)
+                }
+                className="mt-4 inline-flex items-center gap-1.5 text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
               >
                 Open first conversation
                 <ChevronRight className="h-3 w-3" />

@@ -2,24 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Space_Grotesk, Inter } from "next/font/google";
 import { motion, type Variants } from "framer-motion";
 import { GrowthRail } from "@/components/landing/GrowthRail";
 import { IntelligenceCanvas } from "@/components/landing/IntelligenceCanvas";
 import type { CanvasStateKey } from "@/components/landing/canvas-states";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
-
-const display = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display",
-});
-
-const body = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-body",
-});
 
 function ArrowIcon() {
   return (
@@ -96,7 +83,7 @@ export function Hero() {
 
   return (
     <section
-      className={`${display.variable} ${body.variable} min-h-screen transition-colors duration-200 bg-slate-100 dark:bg-[#07050d] px-3 py-3 font-[family-name:var(--font-body)] sm:px-6 sm:py-6 lg:px-10 lg:py-8 overflow-hidden`}
+      className="min-h-screen transition-colors duration-200 bg-slate-100 dark:bg-[#07050d] px-3 py-3 sm:px-6 sm:py-6 lg:px-10 lg:py-8 overflow-hidden"
     >
       <motion.div
         initial="hidden"
