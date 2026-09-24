@@ -1360,7 +1360,7 @@ export function AnalyticsClient({
       {/* TOP PRIMARY METRICS                                                */}
       {/* ------------------------------------------------------------------ */}
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
         <AnalyticsStatCard
           label="Total Followers"
           value={fmtNum(
@@ -1380,7 +1380,7 @@ export function AnalyticsClient({
           value={fmtNum(totals.reach)}
           growth={totals.growth.reach.text}
           growthPositive={totals.growth.reach.positive}
-          subtitle={`${fmtNum(totals.videoViews)} video views`}
+          subtitle={`Across ${totals.count} posts`}
           icon={TrendingUp}
           tone="pink"
         />
@@ -1390,7 +1390,7 @@ export function AnalyticsClient({
           value={fmtNum(totals.impressions)}
           growth={totals.growth.impressions.text}
           growthPositive={totals.growth.impressions.positive}
-          subtitle={`Across ${totals.count} posts`}
+          subtitle="Total views & loads"
           icon={Eye}
           tone="pink"
         />
@@ -1402,6 +1402,26 @@ export function AnalyticsClient({
           growthPositive={totals.growth.engagementRate.positive}
           subtitle={`${fmtNum(totals.engagement)} interactions`}
           icon={Heart}
+          tone="pink"
+        />
+
+        <AnalyticsStatCard
+          label="Total Engagements"
+          value={fmtNum(totals.engagement)}
+          growth={totals.growth.engagement.text}
+          growthPositive={totals.growth.engagement.positive}
+          subtitle={`${fmtNum(totals.likes)} likes · ${fmtNum(totals.comments)} comm.`}
+          icon={Heart}
+          tone="pink"
+        />
+
+        <AnalyticsStatCard
+          label="Shares & Saves"
+          value={fmtNum(totals.shares + totals.saves)}
+          growth="+15%"
+          growthPositive={true}
+          subtitle={`${fmtNum(totals.shares)} shares · ${fmtNum(totals.saves)} saves`}
+          icon={Share2}
           tone="pink"
         />
       </div>
@@ -1564,55 +1584,6 @@ export function AnalyticsClient({
         </GlassCard>
       </div>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* SECONDARY METRICS: ENGAGEMENT, VIDEO, REVENUE, INTERACTIONS        */}
-      {/* ------------------------------------------------------------------ */}
-
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <AnalyticsStatCard
-          label="Total Engagements"
-          value={fmtNum(totals.engagement)}
-          growth={totals.growth.engagement.text}
-          growthPositive={totals.growth.engagement.positive}
-          subtitle={`${fmtNum(totals.likes)} likes · ${fmtNum(totals.comments)} comments`}
-          icon={Heart}
-          tone="pink"
-        />
-
-        <AnalyticsStatCard
-          label="Video Views"
-          value={fmtNum(totals.videoViews)}
-          growth={totals.growth.views.text}
-          growthPositive={totals.growth.views.positive}
-          subtitle="Shorts, Reels & TikTok plays"
-          icon={Play}
-          tone="pink"
-        />
-
-        <AnalyticsStatCard
-          label="Shares & Saves"
-          value={fmtNum(totals.shares + totals.saves)}
-          growth="+15%"
-          growthPositive={true}
-          subtitle={`${fmtNum(totals.shares)} shares · ${fmtNum(totals.saves)} saves`}
-          icon={Share2}
-          tone="pink"
-        />
-
-        <AnalyticsStatCard
-          label="Attributed Revenue"
-          value={fmtNaira(totals.revenue)}
-          growth={totals.growth.revenue.text}
-          growthPositive={totals.growth.revenue.positive}
-          subtitle={
-            totals.revenuePer1k > 0
-              ? `${fmtNaira(totals.revenuePer1k)} / 1K imp.`
-              : "Direct social conversions"
-          }
-          icon={DollarSign}
-          tone="pink"
-        />
-      </div>
 
       {/* ------------------------------------------------------------------ */}
       {/* AUDIENCE / BEST TIME / PLATFORMS                                   */}
