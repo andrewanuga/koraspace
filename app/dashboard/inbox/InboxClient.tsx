@@ -691,47 +691,6 @@ export function InboxClient({
               )}
             </div>
           </div>
-
-          {/* QUICK STATUS */}
-
-          <div className="mt-auto p-3">
-            <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3">
-              <div className="mb-2 flex items-center gap-2">
-                <CircleUserRound className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
-
-                <span className="text-[9px] font-semibold text-[var(--fg-2)]">
-                  Inbox health
-                </span>
-              </div>
-
-              <div className="space-y-2">
-                <div>
-                  <div className="mb-1 flex justify-between text-[8px] text-[var(--fg-4)]">
-                    <span>Response queue</span>
-                    <span>{needsReplyCount}</span>
-                  </div>
-
-                  <div className="h-1 overflow-hidden rounded-full bg-[var(--stroke)]">
-                    <div
-                      className="h-full rounded-full bg-[var(--brand-primary)]"
-                      style={{
-                        width: `${
-                          messagesList.length
-                            ? Math.min(
-                                100,
-                                (needsReplyCount /
-                                  messagesList.length) *
-                                  100
-                              )
-                            : 0
-                        }%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </aside>
 
         {/* ================================================================ */}
