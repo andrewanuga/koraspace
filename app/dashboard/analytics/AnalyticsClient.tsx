@@ -1308,7 +1308,7 @@ export function AnalyticsClient({
           growthPositive={totals.growth.reach.positive}
           subtitle={`${fmtNum(totals.videoViews)} video views`}
           icon={TrendingUp}
-          tone="blue"
+          tone="pink"
         />
 
         <AnalyticsStatCard
@@ -1318,7 +1318,7 @@ export function AnalyticsClient({
           growthPositive={totals.growth.impressions.positive}
           subtitle={`Across ${totals.count} posts`}
           icon={Eye}
-          tone="green"
+          tone="pink"
         />
 
         <AnalyticsStatCard
@@ -1328,7 +1328,7 @@ export function AnalyticsClient({
           growthPositive={totals.growth.engagementRate.positive}
           subtitle={`${fmtNum(totals.engagement)} interactions`}
           icon={Heart}
-          tone="purple"
+          tone="pink"
         />
       </div>
 
@@ -1502,7 +1502,7 @@ export function AnalyticsClient({
           growthPositive={totals.growth.engagement.positive}
           subtitle={`${fmtNum(totals.likes)} likes · ${fmtNum(totals.comments)} comments`}
           icon={Heart}
-          tone="primary"
+          tone="pink"
         />
 
         <AnalyticsStatCard
@@ -1512,7 +1512,7 @@ export function AnalyticsClient({
           growthPositive={totals.growth.views.positive}
           subtitle="Shorts, Reels & TikTok plays"
           icon={Play}
-          tone="purple"
+          tone="pink"
         />
 
         <AnalyticsStatCard
@@ -1522,7 +1522,7 @@ export function AnalyticsClient({
           growthPositive={true}
           subtitle={`${fmtNum(totals.shares)} shares · ${fmtNum(totals.saves)} saves`}
           icon={Share2}
-          tone="blue"
+          tone="pink"
         />
 
         <AnalyticsStatCard
@@ -1536,7 +1536,7 @@ export function AnalyticsClient({
               : "Direct social conversions"
           }
           icon={DollarSign}
-          tone="amber"
+          tone="pink"
         />
       </div>
 
