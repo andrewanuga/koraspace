@@ -1081,6 +1081,147 @@ export default async function DashboardPage() {
       </section>
 
       {/* ================================================================== */}
+      {/* QUICK ACTIONS                                                      */}
+      {/* ================================================================== */}
+
+      <section className="mb-5 rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
+        <SectionHeader
+          title="Quick actions"
+          subtitle="Jump straight into the tools you use most"
+        />
+
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <Link
+            href="/dashboard/create"
+            className="group flex items-center gap-3 rounded-xl border border-transparent p-3.5 transition-all hover:-translate-y-0.5"
+            style={{
+              background:
+                "var(--brand-primary-soft)",
+              borderColor:
+                "var(--brand-primary-border)",
+            }}
+          >
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-lg"
+              style={{
+                background: KORA_BLUE,
+              }}
+            >
+              <Zap className="h-4 w-4 text-white" />
+            </div>
+
+            <div>
+              <p className="text-[11px] font-semibold text-[var(--fg)]">
+                Create post
+              </p>
+
+              <p className="mt-0.5 text-[9px] text-[var(--fg-4)]">
+                Create with AI
+              </p>
+            </div>
+
+            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--brand-primary)]" />
+          </Link>
+
+          <Link
+            href="/dashboard/trends"
+            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] p-3.5 transition-all hover:bg-[var(--hover)]"
+          >
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-lg"
+              style={{
+                background:
+                  "rgba(34,230,138,.10)",
+              }}
+            >
+              <Lightbulb
+                className="h-4 w-4"
+                style={{
+                  color: "#0E9F63",
+                }}
+              />
+            </div>
+
+            <div>
+              <p className="text-[11px] font-semibold text-[var(--fg)]">
+                Find ideas
+              </p>
+
+              <p className="mt-0.5 text-[9px] text-[var(--fg-4)]">
+                Discover trends
+              </p>
+            </div>
+
+            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)]" />
+          </Link>
+
+          <Link
+            href="/dashboard/repurpose"
+            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] p-3.5 transition-all hover:bg-[var(--hover)]"
+          >
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-lg"
+              style={{
+                background:
+                  "rgba(37,99,255,.09)",
+              }}
+            >
+              <RefreshCw
+                className="h-4 w-4"
+                style={{
+                  color: KORA_BLUE,
+                }}
+              />
+            </div>
+
+            <div>
+              <p className="text-[11px] font-semibold text-[var(--fg)]">
+                Repurpose
+              </p>
+
+              <p className="mt-0.5 text-[9px] text-[var(--fg-4)]">
+                Turn one idea into many
+              </p>
+            </div>
+
+            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)]" />
+          </Link>
+
+          <Link
+            href="/dashboard/calendar"
+            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] p-3.5 transition-all hover:bg-[var(--hover)]"
+          >
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-lg"
+              style={{
+                background:
+                  "rgba(34,230,138,.10)",
+              }}
+            >
+              <CalendarClock
+                className="h-4 w-4"
+                style={{
+                  color: "#0E9F63",
+                }}
+              />
+            </div>
+
+            <div>
+              <p className="text-[11px] font-semibold text-[var(--fg)]">
+                Content calendar
+              </p>
+
+              <p className="mt-0.5 text-[9px] text-[var(--fg-4)]">
+                Plan your publishing
+              </p>
+            </div>
+
+            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)]" />
+          </Link>
+        </div>
+      </section>
+
+      {/* ================================================================== */}
       {/* MAIN PERFORMANCE AREA                                              */}
       {/* ================================================================== */}
 
@@ -1643,147 +1784,6 @@ export default async function DashboardPage() {
             )}
           </div>
         </article>
-      </section>
-
-      {/* ================================================================== */}
-      {/* QUICK ACTIONS                                                      */}
-      {/* ================================================================== */}
-
-      <section className="mb-5 rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
-        <SectionHeader
-          title="Quick actions"
-          subtitle="Jump straight into the tools you use most"
-        />
-
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          <Link
-            href="/dashboard/create"
-            className="group flex items-center gap-3 rounded-xl border border-transparent p-3.5 transition-all hover:-translate-y-0.5"
-            style={{
-              background:
-                "var(--brand-primary-soft)",
-              borderColor:
-                "var(--brand-primary-border)",
-            }}
-          >
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-lg"
-              style={{
-                background: KORA_BLUE,
-              }}
-            >
-              <Zap className="h-4 w-4 text-white" />
-            </div>
-
-            <div>
-              <p className="text-[11px] font-semibold text-[var(--fg)]">
-                Create post
-              </p>
-
-              <p className="mt-0.5 text-[9px] text-[var(--fg-4)]">
-                Create with AI
-              </p>
-            </div>
-
-            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--brand-primary)]" />
-          </Link>
-
-          <Link
-            href="/dashboard/trends"
-            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] p-3.5 transition-all hover:bg-[var(--hover)]"
-          >
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-lg"
-              style={{
-                background:
-                  "rgba(34,230,138,.10)",
-              }}
-            >
-              <Lightbulb
-                className="h-4 w-4"
-                style={{
-                  color: "#0E9F63",
-                }}
-              />
-            </div>
-
-            <div>
-              <p className="text-[11px] font-semibold text-[var(--fg)]">
-                Find ideas
-              </p>
-
-              <p className="mt-0.5 text-[9px] text-[var(--fg-4)]">
-                Discover trends
-              </p>
-            </div>
-
-            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)]" />
-          </Link>
-
-          <Link
-            href="/dashboard/repurpose"
-            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] p-3.5 transition-all hover:bg-[var(--hover)]"
-          >
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-lg"
-              style={{
-                background:
-                  "rgba(37,99,255,.09)",
-              }}
-            >
-              <RefreshCw
-                className="h-4 w-4"
-                style={{
-                  color: KORA_BLUE,
-                }}
-              />
-            </div>
-
-            <div>
-              <p className="text-[11px] font-semibold text-[var(--fg)]">
-                Repurpose
-              </p>
-
-              <p className="mt-0.5 text-[9px] text-[var(--fg-4)]">
-                Turn one idea into many
-              </p>
-            </div>
-
-            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)]" />
-          </Link>
-
-          <Link
-            href="/dashboard/calendar"
-            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] p-3.5 transition-all hover:bg-[var(--hover)]"
-          >
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-lg"
-              style={{
-                background:
-                  "rgba(34,230,138,.10)",
-              }}
-            >
-              <CalendarClock
-                className="h-4 w-4"
-                style={{
-                  color: "#0E9F63",
-                }}
-              />
-            </div>
-
-            <div>
-              <p className="text-[11px] font-semibold text-[var(--fg)]">
-                Content calendar
-              </p>
-
-              <p className="mt-0.5 text-[9px] text-[var(--fg-4)]">
-                Plan your publishing
-              </p>
-            </div>
-
-            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)]" />
-          </Link>
-        </div>
       </section>
 
       {/* ================================================================== */}
