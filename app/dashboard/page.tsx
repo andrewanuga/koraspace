@@ -945,14 +945,6 @@ export default async function DashboardPage() {
         <div className="flex flex-wrap items-center gap-2">
           <SyncButton />
 
-          <button
-            type="button"
-            className="flex items-center gap-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3.5 py-2 text-[11.5px] font-medium text-[var(--fg-2)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--fg)]"
-          >
-            Last 7 days
-            <ChevronDown className="h-3.5 w-3.5 text-[var(--fg-4)]" />
-          </button>
-
           <Link
             href="/dashboard/create"
             className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-[12px] font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98]"
