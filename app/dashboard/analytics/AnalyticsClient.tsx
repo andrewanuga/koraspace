@@ -1835,7 +1835,7 @@ export function AnalyticsClient({
               </div>
             </div>
 
-            <span className="rounded-full bg-[var(--brand-primary-soft)] px-2.5 py-0.5 text-[9px] font-bold text-[var(--brand-primary)] border border-[var(--brand-primary-border)]">
+            <span className="rounded-full bg-[var(--brand-primary-soft)] px-2.5 py-0.5 text-[9px] font-bold text-[var(--brand-primary)] dark:text-white border border-[var(--brand-primary-border)]">
               Live Analysis
             </span>
           </div>
