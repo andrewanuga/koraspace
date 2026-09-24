@@ -934,15 +934,7 @@ export default async function DashboardPage() {
           </div>
 
           <h1 className="font-display text-[27px] font-semibold tracking-[-0.035em] text-[var(--fg)] sm:text-[32px]">
-            {greeting}, {firstName}{" "}
-            <span
-              className="inline-block"
-              style={{
-                color: KORA_BLUE,
-              }}
-            >
-              ✦
-            </span>
+            {greeting}, {firstName}
           </h1>
 
           <p className="mt-1.5 text-[13px] text-[var(--fg-3)]">
