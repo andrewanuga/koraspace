@@ -628,49 +628,6 @@ export function AnalyticsClient({
   }, [posts]);
 
   /* ------------------------------------------------------------------------ */
-  /*                               EMPTY STATE                                */
-  /* ------------------------------------------------------------------------ */
-
-  if (
-    connectedCount === 0 &&
-    posts.length === 0 &&
-    campaigns.length === 0
-  ) {
-    return (
-      <div className="mx-auto max-w-[1500px]">
-        <PageHeader
-          eyebrow="Creator Analytics"
-          title="Analytics"
-          sub="Connect your accounts to start tracking your content performance."
-        />
-
-        <GlassCard className="mt-6 flex min-h-[420px] flex-col items-center justify-center p-10 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)]">
-            <Plug className="h-7 w-7 text-[var(--brand-primary)]" />
-          </div>
-
-          <h2 className="mt-5 font-display text-xl font-bold text-[var(--fg)]">
-            No analytics yet
-          </h2>
-
-          <p className="mt-2 max-w-md text-sm leading-6 text-[var(--fg-3)]">
-            Connect your social accounts and sync your content to unlock detailed
-            cross-platform performance insights.
-          </p>
-
-          <Link
-            href="/dashboard/integrations"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 shadow-[var(--brand-primary-shadow)]"
-          >
-            Connect Accounts
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-        </GlassCard>
-      </div>
-    );
-  }
-
-  /* ------------------------------------------------------------------------ */
   /*                                  RENDER                                  */
   /* ------------------------------------------------------------------------ */
 
