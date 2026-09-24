@@ -965,9 +965,9 @@ export function AnalyticsClient({
 
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-2.5 py-1 text-[10px] font-semibold text-[var(--brand-primary)]">
-            <Activity className="h-3 w-3" />
-            <span>
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--brand-primary)] bg-[var(--brand-primary)] px-2.5 py-1 text-[10px] font-semibold text-white shadow-xs">
+            <Activity className="h-3 w-3 text-white" />
+            <span className="text-white font-medium">
               {persona === "creator"
                 ? "Creator Performance"
                 : "Performance Insights"}
@@ -996,10 +996,10 @@ export function AnalyticsClient({
 
           <Link
             href="/dashboard/integrations"
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 text-[11px] font-medium text-[var(--fg-2)] transition hover:border-[var(--stroke-strong)] hover:bg-[var(--panel-fill-2)]"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--brand-primary)] bg-[var(--brand-primary)] px-3 text-[11px] font-semibold text-white shadow-xs transition hover:opacity-90"
           >
-            <Plug className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
-            Channels ({connectedCount})
+            <Plug className="h-3.5 w-3.5 text-white" />
+            <span className="text-white">Channels ({connectedCount})</span>
           </Link>
         </div>
       </div>
@@ -1017,18 +1017,26 @@ export function AnalyticsClient({
             onClick={() => setSelectedPlatform("all")}
             className={`flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
               activeSelectedPlatform === "all"
-                ? "border-[var(--brand-primary)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)] shadow-sm ring-1 ring-[var(--brand-primary-border)]"
+                ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white shadow-sm"
                 : "border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-3)] hover:text-[var(--fg)] hover:border-[var(--stroke-strong)]"
             }`}
           >
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--brand-primary)] text-[10px] font-bold text-white shadow-xs">
+            <span
+              className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold shadow-xs ${
+                activeSelectedPlatform === "all"
+                  ? "bg-white/20 text-white"
+                  : "bg-[var(--brand-primary)] text-white"
+              }`}
+            >
               ∑
             </span>
-            <span>Total</span>
+            <span className={activeSelectedPlatform === "all" ? "text-white font-semibold" : ""}>
+              Total
+            </span>
             <span
               className={`rounded-full px-1.5 py-0.2 text-[9px] font-bold ${
                 activeSelectedPlatform === "all"
-                  ? "bg-[var(--brand-primary)] text-white"
+                  ? "bg-white/20 text-white"
                   : "bg-[var(--panel-fill)] text-[var(--fg-4)]"
               }`}
             >
@@ -1047,7 +1055,7 @@ export function AnalyticsClient({
                 onClick={() => setSelectedPlatform(active ? "all" : p.id)}
                 className={`flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                   active
-                    ? "border-[var(--brand-primary)] bg-[var(--brand-primary-soft)] font-semibold text-[var(--brand-primary)] shadow-sm ring-1 ring-[var(--brand-primary-border)]"
+                    ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] font-semibold text-white shadow-sm"
                     : "border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-3)] hover:text-[var(--fg)] hover:border-[var(--stroke-strong)]"
                 }`}
               >
@@ -1055,12 +1063,12 @@ export function AnalyticsClient({
                   platform={p.id}
                   className="h-5 w-5 rounded-full ring-1 ring-[var(--stroke)]"
                 />
-                <span>{p.label}</span>
+                <span className={active ? "text-white font-semibold" : ""}>{p.label}</span>
                 {p.postCount > 0 && (
                   <span
                     className={`rounded-full px-1.5 py-0.2 text-[9px] font-bold ${
                       active
-                        ? "bg-[var(--brand-primary)] text-white"
+                        ? "bg-white/20 text-white"
                         : "bg-[var(--panel-fill)] text-[var(--fg-4)]"
                     }`}
                   >
@@ -1075,10 +1083,10 @@ export function AnalyticsClient({
           {connectedPlatforms.length === 0 && (
             <Link
               href="/dashboard/integrations"
-              className="flex shrink-0 items-center gap-1.5 rounded-full border border-dashed border-[var(--stroke-strong)] bg-[var(--panel-fill-2)] px-3 py-1 text-xs font-medium text-[var(--brand-primary)] hover:border-[var(--brand-primary)] transition"
+              className="flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--brand-primary)] bg-[var(--brand-primary)] px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:opacity-90"
             >
-              <Plug className="h-3.5 w-3.5" />
-              <span>+ Connect Channels</span>
+              <Plug className="h-3.5 w-3.5 text-white" />
+              <span className="text-white">+ Connect Account</span>
             </Link>
           )}
         </div>
