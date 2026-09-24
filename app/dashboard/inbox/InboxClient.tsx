@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 
 import { useToast } from "@/components/ui/toast";
+import { createClient } from "@/lib/supabase/client";
 import type { PlatformId } from "@/lib/social/platforms";
 import type {
   SocialAccount,
@@ -447,17 +448,29 @@ export function InboxClient({
   /*                               ACTIONS                                  */
   /* ---------------------------------------------------------------------- */
 
-  const selectConversation = (id: string) => {
+  const selectConversation = async (id: string) => {
     setSelectedId(id);
     setMessagesList((prev) =>
       prev.map((msg) =>
         msg.id === id ? { ...msg, is_read: true } : msg
       )
     );
+
+    try {
+      const supabase = createClient();
+      await supabase
+        .from("social_inbox")
+        .update({ is_read: true })
+        .eq("id", id);
+    } catch (err) {
+      console.warn("Failed to mark conversation as read in db:", err);
+    }
   };
 
-  const markAllAsRead = () => {
+  const markAllAsRead = async () => {
     if (unreadCount === 0) return;
+
+    const unreadIds = messagesList.filter((m) => !m.is_read).map((m) => m.id);
 
     setMessagesList((prev) =>
       prev.map((msg) => ({
@@ -465,6 +478,18 @@ export function InboxClient({
         is_read: true,
       }))
     );
+
+    try {
+      const supabase = createClient();
+      if (unreadIds.length > 0) {
+        await supabase
+          .from("social_inbox")
+          .update({ is_read: true })
+          .in("id", unreadIds);
+      }
+    } catch (err) {
+      console.warn("Failed to mark all as read in db:", err);
+    }
 
     success(
       "All marked as read",
@@ -475,7 +500,8 @@ export function InboxClient({
   const sendReply = async (message: SocialInboxMessage) => {
     if (!reply.trim()) return;
 
-    const currentReply = reply;
+    const currentReply = reply.trim();
+    setReply("");
 
     setLocalReplies((prev) => ({
       ...prev,
@@ -495,62 +521,45 @@ export function InboxClient({
       )
     );
 
-    setReply("");
+    try {
+      // 1. Dispatch real API reply if account is connected
+      if (message.platform && message.platform !== "system") {
+        await fetch("/api/social/send-dm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            accountId:
+              message.account_id !== message.platform
+                ? message.account_id
+                : undefined,
+            platform: message.platform,
+            recipientId:
+              message.thread_id ||
+              message.author_handle ||
+              message.author_name,
+            message: currentReply,
+            isHumanAgent: true,
+          }),
+        }).catch((e) => console.warn("Dispatch warning:", e));
+      }
 
-    success(
-      "Reply sent",
-      "Your response has been sent to the user."
-    );
+      // 2. Persist in database
+      const supabase = createClient();
+      await supabase
+        .from("social_inbox")
+        .update({
+          replied: true,
+          reply_content: currentReply,
+          is_read: true,
+        })
+        .eq("id", message.id);
+
+      success("Reply sent", "Your response has been sent.");
+    } catch (err) {
+      console.error("Error sending reply:", err);
+      success("Reply recorded", "Your reply was updated locally.");
+    }
   };
-
-  /* ---------------------------------------------------------------------- */
-  /*                                EMPTY STATE                             */
-  /* ---------------------------------------------------------------------- */
-
-  if (connectedCount === 0 && messagesList.length === 0) {
-    return (
-      <div className="mx-auto w-full max-w-[1500px] pb-10">
-        <div className="mb-6">
-          <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--brand-primary)]">
-            Unified Inbox
-          </p>
-
-          <h1 className="text-2xl font-semibold tracking-tight text-[var(--fg)]">
-            Inbox
-          </h1>
-
-          <p className="mt-1 text-xs text-[var(--fg-3)]">
-            Your audience is talking. Stay connected, respond,
-            and build your community.
-          </p>
-        </div>
-
-        <div className="flex min-h-[500px] flex-col items-center justify-center rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-10 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
-            <MessageCircle className="h-7 w-7" />
-          </div>
-
-          <h2 className="mt-5 text-lg font-semibold text-[var(--fg)]">
-            Your inbox is quiet
-          </h2>
-
-          <p className="mt-2 max-w-md text-sm leading-6 text-[var(--fg-3)]">
-            Connect your social accounts to bring messages,
-            comments, and mentions across all channels into one
-            unified workspace.
-          </p>
-
-          <Link
-            href="/dashboard/integrations"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-5 py-2.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
-          >
-            Connect an Account
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   /* ---------------------------------------------------------------------- */
   /*                                  RENDER                                */
@@ -606,11 +615,14 @@ export function InboxClient({
       <div className="mb-4 block lg:hidden">
         <div className="mb-2 flex items-center justify-between px-0.5">
           <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-4)]">
-            Channels
+            Channels ({accounts.length})
           </span>
-          <span className="text-[9px] text-[var(--fg-4)]">
-            {accounts.length} connected
-          </span>
+          <Link
+            href="/dashboard/integrations"
+            className="text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
+          >
+            + Connect
+          </Link>
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
@@ -626,34 +638,43 @@ export function InboxClient({
             <span>All Channels</span>
           </button>
 
-          {accounts.map((account) => {
-            const active = selectedAccount === account.id;
+          {accounts.length === 0 ? (
+            <Link
+              href="/dashboard/integrations"
+              className="flex shrink-0 items-center gap-1.5 rounded-full border border-dashed border-[var(--stroke)] px-3 py-1 text-[10px] font-medium text-[var(--fg-4)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]"
+            >
+              <span>+ Connect your first channel</span>
+            </Link>
+          ) : (
+            accounts.map((account) => {
+              const active = selectedAccount === account.id;
 
-            return (
-              <button
-                key={account.id}
-                type="button"
-                onClick={() =>
-                  setSelectedAccount(
-                    active ? "all" : account.id
-                  )
-                }
-                className={`flex shrink-0 items-center gap-2 rounded-full border px-2.5 py-1 text-[10px] font-medium transition ${
-                  active
-                    ? "border-[var(--brand-primary)] bg-[var(--brand-primary-soft)] font-semibold text-[var(--brand-primary)]"
-                    : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:text-[var(--fg)]"
-                }`}
-              >
-                <PlatformIcon
-                  platform={account.platform}
-                  className="h-4 w-4 rounded-full ring-1 ring-[var(--stroke)]"
-                />
-                <span className="max-w-[120px] truncate">
-                  {getAccountName(account)}
-                </span>
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={account.id}
+                  type="button"
+                  onClick={() =>
+                    setSelectedAccount(
+                      active ? "all" : account.id
+                    )
+                  }
+                  className={`flex shrink-0 items-center gap-2 rounded-full border px-2.5 py-1 text-[10px] font-medium transition ${
+                    active
+                      ? "border-[var(--brand-primary)] bg-[var(--brand-primary-soft)] font-semibold text-[var(--brand-primary)]"
+                      : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:text-[var(--fg)]"
+                  }`}
+                >
+                  <PlatformIcon
+                    platform={account.platform}
+                    className="h-4 w-4 rounded-full ring-1 ring-[var(--stroke)]"
+                  />
+                  <span className="max-w-[120px] truncate">
+                    {getAccountName(account)}
+                  </span>
+                </button>
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -849,14 +870,31 @@ export function InboxClient({
           {/* CHANNELS */}
 
           <div className="border-b border-[var(--stroke)] px-3 py-4">
-            <div className="mb-2 px-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-4)]">
-              Channels
+            <div className="mb-2 flex items-center justify-between px-2">
+              <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--fg-4)]">
+                Channels
+              </span>
+              <Link
+                href="/dashboard/integrations"
+                className="text-[9px] font-medium text-[var(--brand-primary)] hover:underline"
+              >
+                + Connect
+              </Link>
             </div>
 
             <div className="space-y-0.5">
               {accounts.length === 0 ? (
-                <div className="px-2 py-2 text-[10px] text-[var(--fg-4)]">
-                  No connected accounts
+                <div className="rounded-lg border border-dashed border-[var(--stroke)] p-2.5 text-center">
+                  <p className="text-[9px] text-[var(--fg-4)]">
+                    No accounts connected
+                  </p>
+                  <Link
+                    href="/dashboard/integrations"
+                    className="mt-1.5 inline-flex items-center gap-1 text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
+                  >
+                    Connect channel
+                    <ArrowUpRight className="h-2.5 w-2.5" />
+                  </Link>
                 </div>
               ) : (
                 accounts.map((account) => {
@@ -1005,12 +1043,26 @@ export function InboxClient({
                 </div>
 
                 <p className="text-xs font-semibold text-[var(--fg-2)]">
-                  No conversations found
+                  {messagesList.length === 0
+                    ? "No conversations yet"
+                    : "No conversations found"}
                 </p>
 
-                <p className="mt-1 max-w-[190px] text-[9px] leading-4 text-[var(--fg-4)]">
-                  Try changing your filters or search terms.
+                <p className="mt-1 max-w-[210px] text-[9px] leading-4 text-[var(--fg-4)]">
+                  {messagesList.length === 0
+                    ? "Connect your social channels or wait for incoming messages, comments, and mentions."
+                    : "Try changing your active filters, channels, or search query."}
                 </p>
+
+                {messagesList.length === 0 && accounts.length === 0 && (
+                  <Link
+                    href="/dashboard/integrations"
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[var(--brand-primary)] px-3 py-1.5 text-[9px] font-semibold text-white transition hover:opacity-90"
+                  >
+                    Connect Channels
+                    <ArrowUpRight className="h-3 w-3" />
+                  </Link>
+                )}
               </div>
             ) : (
               filteredMessages.map((message) => {
@@ -1533,17 +1585,19 @@ export function InboxClient({
                 and reply to your audience.
               </p>
 
-              <button
-                type="button"
-                onClick={() =>
-                  filteredMessages[0] &&
-                  selectConversation(filteredMessages[0].id)
-                }
-                className="mt-4 inline-flex items-center gap-1.5 text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
-              >
-                Open first conversation
-                <ChevronRight className="h-3 w-3" />
-              </button>
+              {filteredMessages.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    filteredMessages[0] &&
+                    selectConversation(filteredMessages[0].id)
+                  }
+                  className="mt-4 inline-flex items-center gap-1.5 text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
+                >
+                  Open first conversation
+                  <ChevronRight className="h-3 w-3" />
+                </button>
+              )}
             </div>
           )}
         </section>

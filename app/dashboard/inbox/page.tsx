@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { InboxClient } from "./InboxClient";
@@ -10,70 +9,51 @@ import type {
 
 export default async function InboxPage() {
   const session = await auth();
-    const user = session?.user;
+  const user = session?.user;
   const supabase = await createClient();
 
   if (!user) redirect("/login");
 
-  const [{ data: accounts }, { data: messages }, { data: notifs }] =
+  const [{ data: accounts }, { data: messages }] =
     await Promise.all([
       supabase
         .from("social_accounts")
-        .select("*")
-        .order("connected_at", { ascending: false }),
+        .select("id, user_id, platform, account_type, external_id, handle, display_name, avatar_url, scopes, status, followers, following, runs_ads, connected_at, last_synced_at, meta")
+        .eq("user_id", user.id),
 
       supabase
         .from("social_inbox")
         .select("*")
+        .eq("user_id", user.id)
         .order("received_at", { ascending: false })
         .limit(200),
-
-      supabase
-        .from("user_notifications")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(100),
     ]);
 
-  const allAccounts = [
-    {
-      id: "system",
-      platform: "system" as any,
-      handle: "Koraspace",
-      display_name: "System Notifications",
-    },
-    ...(accounts ?? []),
-  ] as SocialAccount[];
+  const socialAccounts = (accounts ?? []) as SocialAccount[];
 
-  const systemMessages = (notifs ?? []).map((n) => ({
-    id: n.id,
-    account_id: "system",
-    platform: "system" as any,
-    author_name: n.title || "KoraSpace",
-    author_handle: "system",
-    body: n.body,
-    category: n.type || "info",
-    importance: "normal",
-    is_read: n.is_read,
-    received_at: n.created_at,
-    reply_body: null,
-    replied: false,
-    kind: "notification",
+  const formattedMessages: SocialInboxMessage[] = (messages ?? []).map((m: any) => ({
+    id: m.id,
+    user_id: m.user_id,
+    account_id: m.account_id || m.platform,
+    platform: m.platform,
+    thread_id: m.thread_id || m.platform_message_id || null,
+    kind: (m.kind as any) || (m.category === "mention" ? "mention" : "dm"),
+    author_name: m.author_name || null,
+    author_handle: m.author_handle || null,
+    author_avatar: m.author_avatar || null,
+    body: m.body || m.message || "",
+    category: (m.category as any) || "lead",
+    importance: (m.importance as any) || "normal",
+    is_read: Boolean(m.is_read),
+    replied: Boolean(m.replied),
+    reply_body: m.reply_body || m.reply_content || null,
+    received_at: m.received_at || new Date().toISOString(),
   }));
-
-  const allMessages = [
-    ...(messages ?? []),
-    ...systemMessages,
-  ].sort(
-    (a, b) =>
-      new Date(b.received_at).getTime() -
-      new Date(a.received_at).getTime()
-  );
 
   return (
     <InboxClient
-      accounts={allAccounts}
-      messages={allMessages as SocialInboxMessage[]}
+      accounts={socialAccounts}
+      messages={formattedMessages}
     />
   );
 }
