@@ -55,6 +55,21 @@ const postReach = (post: SocialPost) => {
   return safeNumber(post.impressions) + safeNumber(post.video_views);
 };
 
+const postEngRate = (p: SocialPost) => {
+  if (p.engagement_rate && Number(p.engagement_rate) > 0) {
+    return Number(p.engagement_rate).toFixed(1);
+  }
+  const imp = safeNumber(p.impressions);
+  const eng = postEngagement(p);
+  if (imp > 0) {
+    return ((eng / imp) * 100).toFixed(1);
+  }
+  if (eng > 0) {
+    return "100.0";
+  }
+  return "0.0";
+};
+
 function calcGrowth(curr: number, prev: number): { text: string; positive: boolean } {
   if (curr === 0 && prev === 0) return { text: "0.0%", positive: true };
   if (prev === 0) return { text: curr > 0 ? "+100%" : "0.0%", positive: curr > 0 };
@@ -465,39 +480,52 @@ export function AnalyticsClient({
   const [activeAudienceTab, setActiveAudienceTab] = useState<"gender" | "age" | "location">("gender");
 
   /* ------------------------------------------------------------------------ */
-  /* AVAILABLE PLATFORMS FOR FILTER                                           */
+  /* CONNECTED PLATFORMS FOR FILTER (CONNECTED CHANNELS ONLY)                 */
   /* ------------------------------------------------------------------------ */
 
-  const availablePlatforms = useMemo(() => {
+  const connectedPlatforms = useMemo(() => {
     const discovered = new Set<string>();
 
     accounts.forEach((a) => {
-      if (a.platform) discovered.add(a.platform.toLowerCase());
+      // Only include platforms that are connected
+      if ((!a.status || a.status === "connected") && a.platform) {
+        discovered.add(a.platform.toLowerCase());
+      }
     });
-
-    posts.forEach((p) => {
-      if (p.platform) discovered.add(p.platform.toLowerCase());
-    });
-
-    // Ensure standard platforms are listed if not present
-    ["instagram", "tiktok", "youtube", "twitter", "linkedin", "facebook"].forEach((p) =>
-      discovered.add(p)
-    );
 
     return Array.from(discovered).map((id) => {
       const count = posts.filter(
         (p) =>
           (p.platform || "").toLowerCase() === id ||
-          (id === "twitter" && (p.platform || "").toLowerCase() === "x")
+          ((id === "twitter" || id === "x") &&
+            ((p.platform || "").toLowerCase() === "twitter" ||
+              (p.platform || "").toLowerCase() === "x"))
       ).length;
+
+      const account = accounts.find(
+        (a) =>
+          (a.platform || "").toLowerCase() === id ||
+          ((id === "twitter" || id === "x") &&
+            ((a.platform || "").toLowerCase() === "twitter" ||
+              (a.platform || "").toLowerCase() === "x"))
+      );
 
       return {
         id,
         label: platformLabel(id),
         postCount: count,
+        handle: account?.handle,
+        followers: account?.followers ?? 0,
       };
     });
   }, [accounts, posts]);
+
+  // If currently selected platform is not connected, fallback to 'all'
+  const activeSelectedPlatform = useMemo(() => {
+    if (selectedPlatform === "all") return "all";
+    const exists = connectedPlatforms.some((p) => p.id === selectedPlatform);
+    return exists ? selectedPlatform : "all";
+  }, [selectedPlatform, connectedPlatforms]);
 
   /* ------------------------------------------------------------------------ */
   /* DATE WINDOW & FILTERING                                                  */
@@ -525,9 +553,9 @@ export function AnalyticsClient({
     const previousStart = new Date(now.getTime() - 2 * selectedDays * 86400000);
 
     const platformMatch = (p: SocialPost) => {
-      if (selectedPlatform === "all") return true;
+      if (activeSelectedPlatform === "all") return true;
       const postPlat = (p.platform || "").toLowerCase();
-      const targetPlat = selectedPlatform.toLowerCase();
+      const targetPlat = activeSelectedPlatform.toLowerCase();
       if (targetPlat === "twitter" || targetPlat === "x") {
         return postPlat === "twitter" || postPlat === "x";
       }
@@ -558,7 +586,7 @@ export function AnalyticsClient({
       previousPosts: prev,
       allFilteredPosts: platformPosts,
     };
-  }, [posts, selectedPlatform, selectedDays]);
+  }, [posts, activeSelectedPlatform, selectedDays]);
 
   /* ------------------------------------------------------------------------ */
   /* COMPLEX METRICS CALCULATIONS                                             */
@@ -591,9 +619,9 @@ export function AnalyticsClient({
 
     // Followers calculation across connected accounts
     const filteredAccounts = accounts.filter((a) => {
-      if (selectedPlatform === "all") return true;
+      if (activeSelectedPlatform === "all") return true;
       const plat = (a.platform || "").toLowerCase();
-      const target = selectedPlatform.toLowerCase();
+      const target = activeSelectedPlatform.toLowerCase();
       if (target === "twitter" || target === "x") return plat === "twitter" || plat === "x";
       return plat === target;
     });
@@ -629,7 +657,7 @@ export function AnalyticsClient({
         followers: calcGrowth(followersGained, prevFollowersGained),
       },
     };
-  }, [currentPosts, previousPosts, accounts, selectedPlatform]);
+  }, [currentPosts, previousPosts, accounts, activeSelectedPlatform]);
 
   /* ------------------------------------------------------------------------ */
   /* DAILY TIME SERIES BUCKETS FOR GROWTH CHART                               */
@@ -677,12 +705,20 @@ export function AnalyticsClient({
   }, [currentPosts, selectedDays, chartMetric, totals.reach]);
 
   /* ------------------------------------------------------------------------ */
-  /* TOP CONTENT (BY REACH & IMPRESSIONS)                                     */
+  /* TOP CONTENT (BY REACH, ENGAGEMENT & IMPRESSIONS)                         */
   /* ------------------------------------------------------------------------ */
 
   const topContent = useMemo(() => {
     return [...currentPosts]
-      .sort((a, b) => postReach(b) - postReach(a))
+      .sort((a, b) => {
+        const reachA = postReach(a);
+        const reachB = postReach(b);
+        if (reachB !== reachA) return reachB - reachA;
+        const engA = postEngagement(a);
+        const engB = postEngagement(b);
+        if (engB !== engA) return engB - engA;
+        return safeNumber(b.impressions) - safeNumber(a.impressions);
+      })
       .slice(0, 5);
   }, [currentPosts]);
 
@@ -866,7 +902,7 @@ export function AnalyticsClient({
             type="button"
             onClick={() => setSelectedPlatform("all")}
             className={`flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
-              selectedPlatform === "all"
+              activeSelectedPlatform === "all"
                 ? "border-[var(--brand-primary)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)] shadow-sm ring-1 ring-[var(--brand-primary-border)]"
                 : "border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-3)] hover:text-[var(--fg)] hover:border-[var(--stroke-strong)]"
             }`}
@@ -877,7 +913,7 @@ export function AnalyticsClient({
             <span>Total</span>
             <span
               className={`rounded-full px-1.5 py-0.2 text-[9px] font-bold ${
-                selectedPlatform === "all"
+                activeSelectedPlatform === "all"
                   ? "bg-[var(--brand-primary)] text-white"
                   : "bg-[var(--panel-fill)] text-[var(--fg-4)]"
               }`}
@@ -886,9 +922,9 @@ export function AnalyticsClient({
             </span>
           </button>
 
-          {/* INDIVIDUAL PLATFORMS WITH CIRCULAR INTEGRATION ICONS */}
-          {availablePlatforms.map((p) => {
-            const active = selectedPlatform === p.id;
+          {/* INDIVIDUAL CONNECTED PLATFORMS WITH CIRCULAR INTEGRATION ICONS */}
+          {connectedPlatforms.map((p) => {
+            const active = activeSelectedPlatform === p.id;
 
             return (
               <button
@@ -920,6 +956,17 @@ export function AnalyticsClient({
               </button>
             );
           })}
+
+          {/* IF NO CONNECTED CHANNELS YET */}
+          {connectedPlatforms.length === 0 && (
+            <Link
+              href="/dashboard/integrations"
+              className="flex shrink-0 items-center gap-1.5 rounded-full border border-dashed border-[var(--stroke-strong)] bg-[var(--panel-fill-2)] px-3 py-1 text-xs font-medium text-[var(--brand-primary)] hover:border-[var(--brand-primary)] transition"
+            >
+              <Plug className="h-3.5 w-3.5" />
+              <span>+ Connect Channels</span>
+            </Link>
+          )}
         </div>
 
         {/* DYNAMIC DATE RANGE SWITCHER */}
@@ -1111,9 +1158,21 @@ export function AnalyticsClient({
                             {fmtNum(postReach(post))}
                           </span>{" "}
                           reach · {fmtNum(postEngagement(post))} eng ·{" "}
-                          {post.engagement_rate ?? 0}% rate
+                          <span className="font-semibold text-[var(--brand-primary)]">
+                            {postEngRate(post)}%
+                          </span>{" "}
+                          rate
                         </p>
                       </div>
+
+                      {post.posted_at && (
+                        <span className="shrink-0 text-[10px] font-medium text-[var(--fg-4)]">
+                          {new Date(post.posted_at).toLocaleDateString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                      )}
 
                       <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--fg-4)] transition-transform group-hover:translate-x-0.5" />
                     </div>
