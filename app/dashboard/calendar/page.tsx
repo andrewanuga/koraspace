@@ -1163,7 +1163,8 @@ export default function CalendarPage() {
                 key={platform}
                 onClick={() => setPlatformFilter(platform)}
                 className={`shrink-0 h-8 px-3 rounded-lg text-[11px] font-semibold transition-all ${
-                  platformFilter === platform
+                  platformFilter.toLowerCase() === platform.toLowerCase() ||
+                  (platform === "All" && (platformFilter === "All" || platformFilter === "all"))
                     ? "bg-[var(--brand-primary)] text-white shadow-md"
                     : "border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-4)] hover:text-[var(--fg)] hover:border-[var(--stroke-strong)]"
                 }`}
