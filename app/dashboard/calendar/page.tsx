@@ -987,7 +987,7 @@ export default function CalendarPage() {
 
       <GlassCard className="flex-1 flex flex-col overflow-hidden rounded-3xl border border-[#ec4899]/30 bg-[var(--panel-fill)] shadow-lg">
         {/* TOOLBAR */}
-        <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 px-5 py-4 border-b border-[var(--stroke)] bg-[var(--panel-fill)]">
+        <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 px-5 py-4 border-b border-[#ec4899]/30 bg-[var(--panel-fill)]">
           {/* LEFT: MONTH NAVIGATOR */}
           <div className="flex items-center gap-4">
             <div className="relative" ref={datePickerRef}>
@@ -1066,7 +1066,7 @@ export default function CalendarPage() {
         {view === "calendar" ? (
           <div className="flex-1 overflow-auto bg-[var(--app-bg)]">
             {/* WEEK HEADERS */}
-            <div className="grid grid-cols-7 sticky top-0 z-10 border-b border-[var(--stroke)] bg-[var(--panel-fill-2)]">
+            <div className="grid grid-cols-7 sticky top-0 z-10 border-b border-[#ec4899]/30 bg-[var(--panel-fill-2)] divide-x divide-[#ec4899]/20">
               {WEEK_DAYS.map((day) => (
                 <div
                   key={day}
@@ -1122,7 +1122,7 @@ export default function CalendarPage() {
                     onClick={() => {
                       if (isCurrentMonth) handleOpenComposerForDay(dayNum);
                     }}
-                    className={`group/cell relative border-r border-b border-[var(--stroke)] min-h-[140px] p-2.5 transition-all cursor-pointer ${
+                    className={`group/cell relative border-r border-b border-[#ec4899]/30 min-h-[140px] p-2.5 transition-all cursor-pointer ${
                       isCurrentMonth
                         ? "bg-[var(--panel-fill-2)]/70 hover:bg-[var(--hover)]"
                         : "bg-[var(--app-bg)] opacity-30 cursor-default"
