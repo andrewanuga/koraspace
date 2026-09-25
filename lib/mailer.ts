@@ -34,7 +34,9 @@ export async function sendWelcomeVerificationEmail(email: string, name: string) 
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://koraspace.site";
   const loginUrl = `${appUrl}/login`;
-  const subject = "Welcome to Koraspace — Your Workspace is Ready!";
+  const subject = "Welcome to Koraspace — Your Workspace is Ready";
+
+  const text = `Welcome aboard, ${name || "Creator"}!\n\nYour Koraspace workspace has been successfully created. You're now equipped with multi-platform publishing, autonomous AI bot engines, and brand memory across 11 social networks.\n\nSign in to your workspace:\n${loginUrl}\n\nNeed help? Contact us at support@koraspace.site`;
 
   const html = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 24px; border: 1px solid #1f2937; border-radius: 16px; background-color: #111827; color: #f3f4f6;">
@@ -66,7 +68,12 @@ export async function sendWelcomeVerificationEmail(email: string, name: string) 
       from: MAIL_FROM,
       to: email,
       subject,
+      text,
       html,
+      headers: {
+        "X-Auto-Response-Suppress": "OOF, AutoReply",
+        "Auto-Submitted": "auto-generated",
+      },
     });
   } catch (err) {
     console.error("[Mailer] Failed to send welcome verification email:", err);
@@ -78,6 +85,8 @@ export async function sendPasswordResetEmail(email: string, resetUrl: string) {
   if (!transporter) return;
 
   const subject = "Reset your Koraspace password";
+  const text = `Password Reset Request\n\nWe received a request to reset your password for your Koraspace account. Click the link below to choose a new password:\n\n${resetUrl}\n\nIf you did not request a password reset, you can safely ignore this email.`;
+
   const html = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 24px; border: 1px solid #1f2937; border-radius: 16px; background-color: #111827; color: #f3f4f6;">
       <div style="text-align: center; margin-bottom: 24px;">
@@ -106,7 +115,12 @@ export async function sendPasswordResetEmail(email: string, resetUrl: string) {
       from: MAIL_FROM,
       to: email,
       subject,
+      text,
       html,
+      headers: {
+        "X-Auto-Response-Suppress": "OOF, AutoReply",
+        "Auto-Submitted": "auto-generated",
+      },
     });
   } catch (err) {
     console.error("[Mailer] Failed to send password reset email:", err);
@@ -117,39 +131,80 @@ export async function sendVerificationEmail(email: string, name: string, verifyU
   const transporter = getTransporter();
   if (!transporter) return;
 
-  const subject = "Verify your email address — Koraspace";
-  const html = `
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 24px; border: 1px solid #1f2937; border-radius: 16px; background-color: #111827; color: #f3f4f6;">
-      <div style="text-align: center; margin-bottom: 24px;">
-        <h1 style="color: #ffffff; font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">Kora<span style="color: #ff0a8a;">Space</span></h1>
-        <p style="color: #9ca3af; font-size: 13px; margin-top: 4px;">AI Social Media Operating System</p>
-      </div>
-      
-      <div style="background-color: #1f2937; border-radius: 12px; padding: 28px 24px; margin-bottom: 24px;">
-        <h2 style="color: #ffffff; font-size: 19px; margin: 0 0 12px 0;">Verify your email address</h2>
-        <p style="color: #d1d5db; line-height: 1.6; font-size: 14px; margin: 0 0 16px 0;">
-          Hi ${name ? name.split(" ")[0] : "there"}, welcome to Koraspace! Please verify your email address to activate your account and start managing your social channels with AI.
-        </p>
-        <div style="text-align: center; margin: 28px 0 20px 0;">
-          <a href="${verifyUrl}" style="background-color: #ff0a8a; color: #ffffff; padding: 14px 32px; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 10px; display: inline-block; box-shadow: 0 8px 25px rgba(255, 10, 138, 0.25);">
-            Verify Email Address →
-          </a>
-        </div>
-        <p style="color: #9ca3af; font-size: 12px; margin: 20px 0 0 0; line-height: 1.5;">
-          This verification link will expire in 24 hours. If you did not create a Koraspace account, you can safely ignore this message.
-        </p>
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
-          <p style="color: #6b7280; font-size: 11px; word-break: break-all; margin: 0;">
-            Button not working? Copy and paste this link into your browser:<br/>
-            <a href="${verifyUrl}" style="color: #ff7fba; text-decoration: underline;">${verifyUrl}</a>
-          </p>
-        </div>
-      </div>
+  const firstName = name ? name.split(" ")[0] : "there";
+  const subject = "Verify your email address for Koraspace";
+  
+  const text = `Hi ${firstName},\n\nWelcome to Koraspace! Please verify your email address to activate your account and start managing your social channels with AI.\n\nClick here to verify:\n${verifyUrl}\n\nThis verification link will expire in 24 hours. If you did not create a Koraspace account, you can safely ignore this message.\n\nNeed assistance? Reach out to support@koraspace.site`;
 
-      <p style="color: #6b7280; font-size: 12px; text-align: center; margin: 0;">
-        Questions or need assistance? Reach out to us at <a href="mailto:support@koraspace.site" style="color: #ff0a8a; text-decoration: none;">support@koraspace.site</a>.
-      </p>
-    </div>
+  const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${subject}</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #0b0f19; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #f3f4f6;">
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #0b0f19; padding: 40px 16px;">
+        <tr>
+          <td align="center">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #111827; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; overflow: hidden;">
+              
+              <!-- Header -->
+              <tr>
+                <td style="padding: 32px 32px 20px 32px; text-align: center;">
+                  <h1 style="color: #ffffff; font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">
+                    Kora<span style="color: #ff0a8a;">Space</span>
+                  </h1>
+                  <p style="color: #9ca3af; font-size: 13px; margin: 4px 0 0 0;">AI Social Media Operating System</p>
+                </td>
+              </tr>
+              
+              <!-- Body -->
+              <tr>
+                <td style="padding: 0 32px 24px 32px;">
+                  <div style="background-color: #1f2937; border-radius: 14px; padding: 28px 24px; border: 1px solid rgba(255, 255, 255, 0.06);">
+                    <h2 style="color: #ffffff; font-size: 19px; font-weight: 700; margin: 0 0 12px 0;">Verify your email address</h2>
+                    <p style="color: #d1d5db; line-height: 1.6; font-size: 14px; margin: 0 0 20px 0;">
+                      Hi ${firstName}, welcome to Koraspace! Please verify your email address to activate your account and start managing your social channels with AI.
+                    </p>
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td align="center" style="padding: 10px 0 20px 0;">
+                          <a href="${verifyUrl}" style="background-color: #ff0a8a; color: #ffffff; padding: 14px 32px; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 10px; display: inline-block; box-shadow: 0 8px 25px rgba(255, 10, 138, 0.25);">
+                            Verify Email Address →
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="color: #9ca3af; font-size: 12px; margin: 10px 0 0 0; line-height: 1.5;">
+                      This verification link will expire in 24 hours. If you did not create a Koraspace account, you can safely ignore this message.
+                    </p>
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+                      <p style="color: #6b7280; font-size: 11px; word-break: break-all; margin: 0;">
+                        Button not working? Copy and paste this URL into your browser:<br/>
+                        <a href="${verifyUrl}" style="color: #ff7fba; text-decoration: underline;">${verifyUrl}</a>
+                      </p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Footer -->
+              <tr>
+                <td style="padding: 0 32px 32px 32px; text-align: center;">
+                  <p style="color: #6b7280; font-size: 12px; margin: 0;">
+                    Questions or need assistance? Contact us at <a href="mailto:support@koraspace.site" style="color: #ff0a8a; text-decoration: none;">support@koraspace.site</a>.
+                  </p>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
   `;
 
   try {
@@ -157,7 +212,12 @@ export async function sendVerificationEmail(email: string, name: string, verifyU
       from: MAIL_FROM,
       to: email,
       subject,
+      text,
       html,
+      headers: {
+        "X-Auto-Response-Suppress": "OOF, AutoReply",
+        "Auto-Submitted": "auto-generated",
+      },
     });
   } catch (err) {
     console.error("[Mailer] Failed to send email verification:", err);
@@ -409,13 +469,20 @@ export async function sendOnboardingWelcomeEmail(params: OnboardingWelcomeParams
     </html>
   `;
 
+  const text = `Welcome aboard, ${firstName}!\n\nYour Koraspace command center ${username ? `(@${username})` : ""} is ready. We've customized your tools for ${personaLabel}${niche ? ` in the ${niche} niche` : ""}.\n\nLaunch your dashboard:\n${dashboardUrl}\n\nQuick features:\n- Multi-Platform AI Composer: ${composeUrl}\n- Smart Content Calendar: ${calendarUrl}\n- Connect Social Accounts: ${integrationsUrl}\n- Autonomous AI Bots: ${botsUrl}\n\nNeed help? Reply directly to this email or reach us at hello@koraspace.site.\n\nHappy creating,\nThe Koraspace Team`;
+
   try {
     await transporter.sendMail({
       from: MAIL_HELLO_FROM,
       to: email,
       replyTo: "hello@koraspace.site",
       subject,
+      text,
       html,
+      headers: {
+        "X-Auto-Response-Suppress": "OOF, AutoReply",
+        "Auto-Submitted": "auto-generated",
+      },
     });
   } catch (err) {
     console.error("[Mailer] Failed to send onboarding welcome email:", err);
