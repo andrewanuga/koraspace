@@ -1935,9 +1935,9 @@ export default function CalendarPage() {
                         type="button"
                         onClick={handleGenerateBatchIdeas}
                         disabled={isGeneratingBatch}
-                        className="px-3.5 py-2 rounded-xl bg-black text-white dark:bg-white dark:text-black text-xs font-semibold shadow-xs flex items-center gap-1.5 disabled:opacity-60"
+                        className="px-3.5 py-2 rounded-xl bg-[#ec4899] hover:bg-[#db2777] text-white text-xs font-semibold shadow-md flex items-center gap-1.5 disabled:opacity-60 transition-all"
                       >
-                        {isGeneratingBatch ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white dark:text-black" /> : <Sparkles className="w-3.5 h-3.5 text-white dark:text-black" />}
+                        {isGeneratingBatch ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white" /> : <Sparkles className="w-3.5 h-3.5 text-white" />}
                         Generate
                       </button>
                     </div>
