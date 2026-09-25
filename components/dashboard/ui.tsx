@@ -461,9 +461,13 @@ export function StatTile({
           >
             <Icon
               className={cn("h-[17px] w-[17px]", iconClassName)}
-              style={{
-                color: iconColor || theme.color,
-              }}
+              style={
+                iconColor
+                  ? { color: iconColor }
+                  : !iconClassName
+                  ? { color: theme.color }
+                  : undefined
+              }
             />
           </div>
         )}
