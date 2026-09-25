@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Calendar as CalendarIcon,
   LayoutGrid,
@@ -462,36 +463,44 @@ export default function CalendarPage() {
   }, []);
 
   /* ---------------------------------------------------------------------- */
-  /*                         DYNAMIC PLATFORM FILTERS                       */
+  /*                         CONNECTED ACCOUNTS FILTERS                     */
   /* ---------------------------------------------------------------------- */
 
-  const ALL_PLATFORMS = useMemo(
-    () => [
-      { id: "All", label: "All Platforms" },
-      { id: "x", label: "X (Twitter)" },
-      { id: "instagram", label: "Instagram" },
-      { id: "linkedin", label: "LinkedIn" },
-      { id: "tiktok", label: "TikTok" },
-      { id: "youtube", label: "YouTube" },
-      { id: "threads", label: "Threads" },
-      { id: "facebook", label: "Facebook" },
-    ],
-    []
-  );
+  const connectedAccountFilters = useMemo(() => {
+    const list: Array<{
+      id: string;
+      platform: string;
+      label: string;
+      platformName: string;
+      handle?: string;
+      avatar_url?: string;
+    }> = [
+      {
+        id: "All",
+        platform: "all",
+        label: "All Accounts",
+        platformName: "All Accounts",
+      },
+    ];
 
-  const platformFilterOptions = useMemo(() => {
-    const list = [...ALL_PLATFORMS];
     accounts.forEach((acc) => {
-      if (acc.platform) {
-        const pLower = acc.platform.toLowerCase();
-        const exists = list.some((item) => item.id.toLowerCase() === pLower);
-        if (!exists) {
-          list.push({ id: pLower, label: platformLabel(acc.platform) });
-        }
-      }
+      const p = (acc.platform || "").toLowerCase();
+      const displayName = acc.handle
+        ? `@${acc.handle.replace(/^@/, "")}`
+        : acc.display_name || platformLabel(acc.platform);
+
+      list.push({
+        id: acc.id || p,
+        platform: p,
+        label: displayName,
+        platformName: platformLabel(acc.platform),
+        handle: acc.handle,
+        avatar_url: acc.avatar_url,
+      });
     });
+
     return list;
-  }, [accounts, ALL_PLATFORMS]);
+  }, [accounts]);
 
   const dynamicPlatformFilters = useMemo(() => {
     const set = new Set<string>(["All"]);
@@ -501,11 +510,11 @@ export default function CalendarPage() {
     return Array.from(set);
   }, [accounts]);
 
-  const getPlatformCount = (platformId: string) => {
-    if (platformId === "All") return scheduledEvents.length;
+  const getPlatformCount = (platformKey: string) => {
+    if (platformKey === "All" || platformKey === "all") return scheduledEvents.length;
     return scheduledEvents.filter((e) => {
       const p = (e.platform || "").toLowerCase();
-      const target = platformId.toLowerCase();
+      const target = platformKey.toLowerCase();
       return p === target || platformLabel(e.platform).toLowerCase() === target;
     }).length;
   };
@@ -995,21 +1004,23 @@ export default function CalendarPage() {
       />
 
       {/* ================================================================ */}
-      {/* PLATFORMS FILTER BAR                                             */}
+      {/* CONNECTED ACCOUNTS FILTER BAR                                    */}
       {/* ================================================================ */}
       <div className="mt-4 mb-1 flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none">
-        {platformFilterOptions.map((opt) => {
+        {connectedAccountFilters.map((opt) => {
           const isActive =
+            (opt.id === "All" && (platformFilter === "All" || platformFilter === "all")) ||
+            platformFilter.toLowerCase() === opt.platform.toLowerCase() ||
             platformFilter.toLowerCase() === opt.id.toLowerCase() ||
-            (opt.id === "All" && platformFilter === "All") ||
-            opt.label.toLowerCase() === platformFilter.toLowerCase();
-          const count = getPlatformCount(opt.id);
+            platformFilter.toLowerCase() === opt.label.toLowerCase() ||
+            platformFilter.toLowerCase() === opt.platformName.toLowerCase();
+          const count = getPlatformCount(opt.platform || opt.id);
 
           return (
             <button
               key={opt.id}
               type="button"
-              onClick={() => setPlatformFilter(opt.id)}
+              onClick={() => setPlatformFilter(opt.platform === "all" ? "All" : opt.platform)}
               className={`shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
                 isActive
                   ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-xs"
@@ -1022,10 +1033,16 @@ export default function CalendarPage() {
                     isActive ? "text-white dark:text-black" : "text-[var(--fg)] dark:text-white"
                   }`}
                 />
+              ) : opt.avatar_url ? (
+                <img
+                  src={opt.avatar_url}
+                  alt={opt.label}
+                  className="w-4 h-4 rounded-full object-cover shrink-0"
+                />
               ) : (
-                <PlatformIcon platform={opt.id} className="w-3.5 h-3.5" />
+                <PlatformIcon platform={opt.platform} className="w-3.5 h-3.5" />
               )}
-              <span>{opt.label}</span>
+              <span className="truncate max-w-[150px]">{opt.label}</span>
               {count > 0 && (
                 <span
                   className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none ${
@@ -1040,6 +1057,16 @@ export default function CalendarPage() {
             </button>
           );
         })}
+
+        {accounts.length === 0 && (
+          <Link
+            href="/dashboard/integrations"
+            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold border border-dashed border-[var(--stroke-strong)] text-[var(--fg-4)] hover:text-[var(--fg)] hover:border-[var(--brand-primary-border)] transition-all"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Connect Channel</span>
+          </Link>
+        )}
       </div>
 
       {/* ================================================================ */}
