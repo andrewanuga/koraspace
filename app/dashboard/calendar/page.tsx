@@ -934,9 +934,8 @@ export default function CalendarPage() {
                 setModalMode("ai_batch");
                 setShowModal(true);
               }}
-              className="flex items-center gap-1.5 h-10 px-3.5 rounded-xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)] text-xs font-semibold hover:bg-[var(--brand-primary-soft)]/80 transition-all"
+              className="flex items-center justify-center h-10 px-4 rounded-xl bg-white text-black text-xs font-semibold hover:bg-neutral-100 shadow-sm transition-all"
             >
-              <Sparkles className="w-3.5 h-3.5 text-white" />
               <span>AI Week Plan</span>
             </button>
 
@@ -1523,11 +1522,11 @@ export default function CalendarPage() {
                 onClick={() => setModalMode("ai_batch")}
                 className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   modalMode === "ai_batch"
-                    ? "bg-[var(--panel-fill-2)] text-[var(--fg)] shadow-xs text-[var(--brand-primary)]"
+                    ? "bg-[var(--panel-fill-2)] text-white shadow-xs"
                     : "text-[var(--fg-4)] hover:text-[var(--fg)]"
                 }`}
               >
-                ⚡ AI Week Plan
+                AI Week Plan
               </button>
             </div>
 
