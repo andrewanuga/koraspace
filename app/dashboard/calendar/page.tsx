@@ -1022,10 +1022,41 @@ export default function CalendarPage() {
 
     setIsGeneratingBatch(true);
     try {
+      // Upload any reference images to pass to Gemini Vision
+      const uploadedUrls: string[] = [];
+      if (mediaFiles.length > 0) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        const userId = user?.id || currentUserId;
+
+        if (userId) {
+          for (const media of mediaFiles) {
+            const fileExt = media.file.name.split(".").pop();
+            const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+            const filePath = `${userId}/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+              .from("media")
+              .upload(filePath, media.file);
+
+            if (!uploadError) {
+              const { data: publicUrlData } = supabase.storage
+                .from("media")
+                .getPublicUrl(filePath);
+              uploadedUrls.push(publicUrlData.publicUrl);
+            }
+          }
+        }
+      }
+
       const res = await fetch("/api/ideas/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: batchTopic.trim() }),
+        body: JSON.stringify({
+          prompt: batchTopic.trim(),
+          imageUrls: uploadedUrls,
+        }),
       });
 
       const data = await res.json();
@@ -1058,6 +1089,34 @@ export default function CalendarPage() {
     try {
       const platform = selectedPlatform || accounts[0]?.platform || "x";
 
+      // Upload reference media if any
+      const uploadedUrls: string[] = [];
+      if (mediaFiles.length > 0) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        const userId = user?.id || currentUserId;
+
+        if (userId) {
+          for (const media of mediaFiles) {
+            const fileExt = media.file.name.split(".").pop();
+            const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+            const filePath = `${userId}/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+              .from("media")
+              .upload(filePath, media.file);
+
+            if (!uploadError) {
+              const { data: publicUrlData } = supabase.storage
+                .from("media")
+                .getPublicUrl(filePath);
+              uploadedUrls.push(publicUrlData.publicUrl);
+            }
+          }
+        }
+      }
+
       for (const item of batchIdeas) {
         const targetDate = new Date(selectedDate.year, selectedDate.month, selectedDate.day + item.dayOffset);
         const slot = getOptimalPostTimeForDay(targetDate, platform);
@@ -1077,6 +1136,7 @@ export default function CalendarPage() {
             content: item.idea,
             platforms: [platform],
             scheduledAt,
+            mediaUrls: uploadedUrls,
           }),
         });
       }
@@ -1085,6 +1145,7 @@ export default function CalendarPage() {
       setShowModal(false);
       setBatchIdeas([]);
       setBatchTopic("");
+      setMediaFiles([]);
       loadData();
     } catch (err: any) {
       toastError("Batch Error", err.message || "Failed to schedule batch posts");
@@ -2205,6 +2266,64 @@ export default function CalendarPage() {
                       className="w-full rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-xs text-[var(--fg)] placeholder:text-[var(--fg-4)] outline-none focus:border-[var(--brand-primary-border)] transition-all resize-none"
                     />
                   </div>
+
+                  {/* VISUAL CONTEXT & REFERENCE IMAGES (GEMINI VISION) */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-[var(--brand-primary)]" />
+                        <span>Visual Context & Reference Images (Optional)</span>
+                      </label>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400 font-mono font-semibold">
+                        Gemini Vision
+                      </span>
+                    </div>
+
+                    <p className="text-[10px] text-[var(--fg-4)] mb-2">
+                      Upload screenshots, infographics, product mockups, or diagrams so Gemini Vision analyzes the visual aesthetics to write sharper content.
+                    </p>
+
+                    {mediaFiles.length > 0 ? (
+                      <div className="flex gap-2 overflow-x-auto pb-1">
+                        {mediaFiles.map((media, idx) => (
+                          <div
+                            key={idx}
+                            className="relative w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-[var(--stroke)] group"
+                          >
+                            {media.type === "image" ? (
+                              <img src={media.previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                            ) : (
+                              <video src={media.previewUrl} className="w-full h-full object-cover" />
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => removeMedia(idx)}
+                              className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="w-3 h-3 text-white" />
+                            </button>
+                          </div>
+                        ))}
+
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="w-16 h-16 shrink-0 rounded-xl border border-dashed border-[var(--stroke-strong)] flex flex-col items-center justify-center text-[var(--fg-4)] hover:text-[var(--brand-primary)] hover:border-[var(--brand-primary-border)] transition-all"
+                        >
+                          <Plus className="w-4 h-4 text-[var(--fg-4)] hover:text-[var(--fg)]" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full h-16 rounded-xl border border-dashed border-[var(--stroke)] bg-[var(--panel-fill-2)]/50 flex items-center justify-center gap-2 text-[var(--fg-4)] hover:border-[var(--brand-primary-border)] hover:bg-[var(--panel-fill-2)] transition-all"
+                      >
+                        <ImageIcon className="w-4 h-4 text-[var(--fg-4)] dark:text-white" />
+                        <span className="text-[11px]">Upload reference image for AI visual understanding</span>
+                      </button>
+                    )}
+                  </div>
                 </>
               )}
 
@@ -2233,6 +2352,60 @@ export default function CalendarPage() {
                         Generate
                       </button>
                     </div>
+                  </div>
+
+                  {/* CAMPAIGN VISUAL REFERENCES (GEMINI MULTIMODAL) */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-[var(--brand-primary)]" />
+                        <span>Campaign Moodboard & Visual Assets (Optional)</span>
+                      </label>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400 font-mono font-semibold">
+                        Multimodal Plan
+                      </span>
+                    </div>
+
+                    <p className="text-[10px] text-[var(--fg-4)] mb-2">
+                      Attach product images, moodboard graphics, or brand themes so Gemini structures your 5-day week plan around your visual assets.
+                    </p>
+
+                    {mediaFiles.length > 0 ? (
+                      <div className="flex gap-2 overflow-x-auto pb-1">
+                        {mediaFiles.map((media, idx) => (
+                          <div
+                            key={idx}
+                            className="relative w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-[var(--stroke)] group"
+                          >
+                            <img src={media.previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => removeMedia(idx)}
+                              className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="w-3 h-3 text-white" />
+                            </button>
+                          </div>
+                        ))}
+
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="w-16 h-16 shrink-0 rounded-xl border border-dashed border-[var(--stroke-strong)] flex flex-col items-center justify-center text-[var(--fg-4)] hover:text-[var(--brand-primary)] hover:border-[var(--brand-primary-border)] transition-all"
+                        >
+                          <Plus className="w-4 h-4 text-[var(--fg-4)] hover:text-[var(--fg)]" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full h-16 rounded-xl border border-dashed border-[var(--stroke)] bg-[var(--panel-fill-2)]/50 flex items-center justify-center gap-2 text-[var(--fg-4)] hover:border-[var(--brand-primary-border)] hover:bg-[var(--panel-fill-2)] transition-all"
+                      >
+                        <ImageIcon className="w-4 h-4 text-[var(--fg-4)] dark:text-white" />
+                        <span className="text-[11px]">Upload campaign or moodboard images</span>
+                      </button>
+                    )}
                   </div>
 
                   {batchIdeas.length > 0 && (

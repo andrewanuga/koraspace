@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     if (guard) return guard;
 
     const body = await req.json();
-    const { prompt } = body;
+    const { prompt, imageUrls } = body;
 
     if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
@@ -65,6 +65,16 @@ export async function POST(req: NextRequest) {
 
     const ideasPrompt = buildIdeasPrompt(prompt.trim(), brandContext, trends);
 
+    const userMessageContent: any = Array.isArray(imageUrls) && imageUrls.length > 0
+      ? [
+          { type: "text", text: ideasPrompt },
+          ...imageUrls.filter(Boolean).map((url: string) => ({
+            type: "image_url",
+            image_url: { url },
+          })),
+        ]
+      : ideasPrompt;
+
     const result = await callAI(
       [
         {
@@ -73,7 +83,7 @@ export async function POST(req: NextRequest) {
         },
         {
           role: "user",
-          content: ideasPrompt,
+          content: userMessageContent,
         },
       ],
       {

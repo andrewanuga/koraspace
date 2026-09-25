@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { callAI, isConfigured } from "@/lib/ai/gemini";
@@ -19,6 +19,7 @@ interface GenerateBody {
   context?: string;
   type?: "caption" | "thread" | "reply" | "hashtags" | "bio" | "idea" | "variations" | "repurpose" | "brand";
   useTrends?: boolean;
+  imageUrls?: string[];
 }
 
 /* -------------------------------------------------------------------------- */
@@ -100,9 +101,19 @@ export async function POST(req: NextRequest) {
       brandContext,
     });
 
-    const userPrompt = context
+    const baseUserPrompt = context
       ? `Brand context: ${brandContext}\n\nCreate a compelling ${framework} piece about: ${trendUsed}`
       : `Create a compelling ${framework} piece about: ${trendUsed}`;
+
+    const userMessageContent: any = Array.isArray(body.imageUrls) && body.imageUrls.length > 0
+      ? [
+          { type: "text", text: baseUserPrompt },
+          ...body.imageUrls.filter(Boolean).map((url: string) => ({
+            type: "image_url",
+            image_url: { url },
+          })),
+        ]
+      : baseUserPrompt;
 
     // No API key mock
     if (!isConfigured()) {
@@ -114,7 +125,7 @@ export async function POST(req: NextRequest) {
     const result = await callAI(
       [
         { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
+        { role: "user", content: userMessageContent },
       ],
       {
         agent: "generate",
