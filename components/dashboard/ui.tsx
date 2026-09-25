@@ -393,6 +393,11 @@ interface StatTileProps {
 
   tone?: AccentTone;
 
+  iconColor?: string;
+  iconBg?: string;
+  iconBorder?: string;
+  iconClassName?: string;
+
   footer?: React.ReactNode;
 
   className?: string;
@@ -404,6 +409,10 @@ export function StatTile({
   delta,
   icon: Icon,
   tone = "primary",
+  iconColor,
+  iconBg,
+  iconBorder,
+  iconClassName,
   footer,
   className,
 }: StatTileProps) {
@@ -446,14 +455,14 @@ export function StatTile({
               border
             "
             style={{
-              background: theme.bg,
-              borderColor: theme.border,
+              background: iconBg || theme.bg,
+              borderColor: iconBorder || theme.border,
             }}
           >
             <Icon
-              className="h-[17px] w-[17px]"
+              className={cn("h-[17px] w-[17px]", iconClassName)}
               style={{
-                color: theme.color,
+                color: iconColor || theme.color,
               }}
             />
           </div>
