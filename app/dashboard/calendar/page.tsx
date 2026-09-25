@@ -1935,9 +1935,9 @@ export default function CalendarPage() {
                         type="button"
                         onClick={handleGenerateBatchIdeas}
                         disabled={isGeneratingBatch}
-                        className="px-3.5 py-2 rounded-xl bg-[var(--brand-primary)] text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 disabled:opacity-60"
+                        className="px-3.5 py-2 rounded-xl bg-black text-white dark:bg-white dark:text-black text-xs font-semibold shadow-xs flex items-center gap-1.5 disabled:opacity-60"
                       >
-                        {isGeneratingBatch ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white" /> : <Sparkles className="w-3.5 h-3.5 text-white" />}
+                        {isGeneratingBatch ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white dark:text-black" /> : <Sparkles className="w-3.5 h-3.5 text-white dark:text-black" />}
                         Generate
                       </button>
                     </div>
@@ -1950,13 +1950,13 @@ export default function CalendarPage() {
                           key={i}
                           className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-2.5 flex items-start gap-2"
                         >
-                          <div className="w-5 h-5 rounded-md bg-[var(--brand-primary-soft)] text-[var(--brand-primary)] dark:text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                          <div className="w-5 h-5 rounded-md bg-black/10 text-black dark:bg-white/10 dark:text-white flex items-center justify-center text-[10px] font-bold shrink-0">
                             +{item.dayOffset}d
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="text-xs text-[var(--fg)] leading-snug">{item.idea}</p>
-                            <p className="text-[9px] text-[var(--brand-primary)] mt-1 flex items-center gap-1">
-                              <Zap className="w-2.5 h-2.5 text-[var(--brand-primary)] dark:text-white" />
+                            <p className="text-[9px] text-[var(--fg-4)] mt-1 flex items-center gap-1">
+                              <Zap className="w-2.5 h-2.5 text-black dark:text-white" />
                               Optimal Slot: {item.timeStr}
                             </p>
                           </div>
@@ -1971,14 +1971,16 @@ export default function CalendarPage() {
               {modalMode !== "ai_batch" && (
                 <div className="space-y-3 pt-2 border-t border-[var(--stroke)]">
                   {/* BEST TIME RECOMMENDATION CALLOUT */}
-                  <div className="flex items-center justify-between rounded-xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] p-2.5">
-                    <div className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-[var(--brand-primary)] dark:text-white shrink-0" />
+                  <div className="flex items-center justify-between rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-black text-white dark:bg-white/10 flex items-center justify-center shrink-0">
+                        <Zap className="w-3.5 h-3.5 text-white" />
+                      </div>
                       <div>
-                        <p className="text-[10px] font-semibold text-[var(--fg)]">
-                          Audience Surge Slot: <span className="text-[var(--brand-primary)] font-bold">{activeOptimalSlot.formatted}</span>
+                        <p className="text-[10.5px] font-semibold text-[var(--fg)]">
+                          Audience Surge Slot: <span className="font-bold text-[var(--fg)]">{activeOptimalSlot.formatted}</span>
                         </p>
-                        <p className="text-[9px] text-[var(--fg-4)]">
+                        <p className="text-[9.5px] text-[var(--fg-4)]">
                           {activeOptimalSlot.label} · {activeOptimalSlot.surgeWindow}
                         </p>
                       </div>
@@ -1987,9 +1989,9 @@ export default function CalendarPage() {
                     <button
                       type="button"
                       onClick={applyBestTime}
-                      className="px-2.5 py-1 rounded-lg bg-[var(--panel-fill)] border border-[var(--brand-primary-border)] text-[10px] font-semibold text-[var(--brand-primary)] hover:bg-[var(--brand-primary)] hover:text-white transition-all shadow-xs"
+                      className="px-3 py-1.5 rounded-lg bg-black text-white dark:bg-white dark:text-black border border-black dark:border-white text-[10px] font-semibold hover:opacity-90 transition-all shadow-xs"
                     >
-                      ⚡ Apply Best Time
+                      Apply Best Time
                     </button>
                   </div>
 
@@ -2056,9 +2058,9 @@ export default function CalendarPage() {
                   type="button"
                   onClick={handleScheduleAllBatchIdeas}
                   disabled={isSaving || batchIdeas.length === 0}
-                  className="px-4 py-2 rounded-xl bg-[var(--brand-primary)] text-xs font-semibold text-white shadow-md disabled:opacity-50 flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl bg-black text-white dark:bg-white dark:text-black text-xs font-semibold shadow-md disabled:opacity-50 flex items-center gap-1.5"
                 >
-                  {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white" /> : <Check className="w-3.5 h-3.5 text-white" />}
+                  {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white dark:text-black" /> : <Check className="w-3.5 h-3.5 text-white dark:text-black" />}
                   Schedule All {batchIdeas.length} Posts
                 </button>
               ) : (
@@ -2066,9 +2068,9 @@ export default function CalendarPage() {
                   type="button"
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="px-4 py-2 rounded-xl bg-[var(--brand-primary)] text-xs font-semibold text-white shadow-md disabled:opacity-50 flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl bg-black text-white dark:bg-white dark:text-black text-xs font-semibold shadow-md disabled:opacity-50 flex items-center gap-1.5"
                 >
-                  {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white" /> : <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                  {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white dark:text-black" /> : <CheckCircle2 className="w-3.5 h-3.5 text-white dark:text-black" />}
                   Confirm Schedule
                 </button>
               )}
