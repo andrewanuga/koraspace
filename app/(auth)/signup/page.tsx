@@ -9,13 +9,14 @@ import {
   EyeOff,
   Loader2,
   MailCheck,
+  RotateCw,
   Sparkles,
   ShieldCheck,
 } from "lucide-react";
 
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
-import { registerUser } from "./actions";
+import { registerUser, resendVerificationEmail } from "./actions";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 const PASSWORD_REQUIREMENTS = [
@@ -37,6 +38,7 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [resending, setResending] = useState(false);
 
   const { error: toastError, success: toastSuccess } = useToast();
   const { t } = useLanguage();
@@ -67,13 +69,30 @@ export default function SignupPage() {
         return;
       }
 
-      toastSuccess("Account created", "You can now sign in.");
+      toastSuccess("Account created", "Check your inbox to verify your email address.");
       setSuccess(true);
       setLoading(false);
     } catch (err) {
       console.error(err);
       toastError("Signup failed", "An unexpected error occurred. Please try again.");
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (resending || !email) return;
+    setResending(true);
+    try {
+      const res = await resendVerificationEmail(email);
+      if (res.error) {
+        toastError("Couldn't resend", res.error);
+      } else {
+        toastSuccess("Verification link sent", "Please check your inbox.");
+      }
+    } catch (err) {
+      toastError("Failed to resend", "Please try again shortly.");
+    } finally {
+      setResending(false);
     }
   };
 
@@ -85,24 +104,52 @@ export default function SignupPage() {
             <MailCheck className="h-8 w-8 text-[#ff0a8a]" />
           </div>
 
-          <h2 className="font-display text-2xl font-semibold text-white">
-            Workspace Created!
+          <div className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[#ff0a8a]/20 bg-[#ff0a8a]/[0.06] px-3 py-1 text-[11px] font-medium text-[#ff7fba]">
+            <Sparkles className="h-3.5 w-3.5 text-[#ff0a8a]" />
+            <span>Almost Done!</span>
+          </div>
+
+          <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
+            Verify Your Email
           </h2>
 
-          <p className="mt-3 text-sm leading-relaxed text-white/55">
-            Your Koraspace account is ready and an activation email was sent to{" "}
-            <span className="font-semibold text-white">{email}</span>. You can now sign in immediately to launch your workspace.
+          <p className="mt-3 text-sm leading-relaxed text-white/60">
+            We sent a secure verification link to{" "}
+            <span className="font-semibold text-white">{email}</span>. Click the link in your email to activate your account and enter your workspace.
           </p>
 
-          <div className="mt-8">
+          <div className="mt-7 space-y-3">
             <Link
               href="/login"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#ff0a8a] px-6 text-xs font-semibold text-white transition-all hover:bg-[#ff299b] hover:shadow-[0_8px_25px_rgba(255,10,138,0.20)]"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#ff0a8a] px-6 text-sm font-semibold text-white transition-all hover:bg-[#ff299b] hover:shadow-[0_8px_25px_rgba(255,10,138,0.22)]"
             >
-              <span>Sign in to your workspace</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <span>Go to Sign In</span>
+              <ArrowRight className="h-4 w-4" />
             </Link>
+
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resending}
+              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/[0.10] bg-white/[0.03] text-xs font-semibold text-white/80 transition-all hover:bg-white/[0.07] hover:text-white disabled:opacity-60"
+            >
+              {resending ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <span>Resending link...</span>
+                </>
+              ) : (
+                <>
+                  <RotateCw className="h-3.5 w-3.5" />
+                  <span>Resend verification email</span>
+                </>
+              )}
+            </button>
           </div>
+
+          <p className="mt-5 text-[11px] text-white/35">
+            Can&apos;t find the email? Check your spam folder or wait a minute before requesting another link.
+          </p>
         </div>
       </div>
     );

@@ -9,6 +9,8 @@ import {
   Eye,
   EyeOff,
   Loader2,
+  MailWarning,
+  RotateCw,
   TrendingUp,
   Users,
   Zap,
@@ -18,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
 import { signIn } from "next-auth/react";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
+import { checkUserVerificationStatus, resendVerificationEmail } from "@/app/(auth)/signup/actions";
 
 const inputCls =
   "h-12 w-full rounded-xl border border-white/[0.10] bg-white/[0.035] px-4 text-sm text-white outline-none transition-all placeholder:text-white/25 focus:border-[#ff0a8a]/60 focus:bg-white/[0.055] focus:ring-4 focus:ring-[#ff0a8a]/10";
@@ -27,13 +30,23 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [resendingVerification, setResendingVerification] = useState(false);
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { error: toastError } = useToast();
+  const { error: toastError, success: toastSuccess } = useToast();
   const { t } = useLanguage();
 
   useEffect(() => {
+    if (searchParams.get("verified") === "1") {
+      toastSuccess(
+        "Email verified!",
+        "Your account is active. You can now sign in."
+      );
+      window.history.replaceState({}, "", "/login");
+    }
+
     if (searchParams.get("suspended") === "1") {
       toastError(
         "Account suspended",
@@ -52,21 +65,53 @@ function LoginForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
+  const handleResendFromLogin = async () => {
+    const targetEmail = unverifiedEmail || email.trim();
+    if (!targetEmail) return;
+
+    setResendingVerification(true);
+    try {
+      const res = await resendVerificationEmail(targetEmail);
+      if (res.error) {
+        toastError("Couldn't send link", res.error);
+      } else {
+        toastSuccess("Verification link sent", "Please check your inbox for the activation link.");
+      }
+    } catch (err) {
+      toastError("Failed to send", "Please try again shortly.");
+    } finally {
+      setResendingVerification(false);
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (loading) return;
     setLoading(true);
+    setUnverifiedEmail(null);
+
+    const cleanEmail = email.trim();
 
     try {
       const result = await signIn("credentials", {
         redirect: false,
-        email: email.trim(),
+        email: cleanEmail,
         password,
       });
 
       if (result?.error) {
-        toastError("Couldn't sign in", "Invalid credentials");
+        // Check if the user is unverified
+        const status = await checkUserVerificationStatus(cleanEmail);
+        if (status.exists && !status.verified) {
+          setUnverifiedEmail(cleanEmail);
+          toastError(
+            "Email not verified",
+            "Please verify your email address to access your workspace."
+          );
+        } else {
+          toastError("Couldn't sign in", "Invalid email or password.");
+        }
         setLoading(false);
         return;
       }
@@ -182,6 +227,41 @@ function LoginForm() {
               </button>
             </div>
           </div>
+
+          {/* Unverified Email Alert Banner */}
+          {unverifiedEmail && (
+            <div className="rounded-xl border border-amber-500/25 bg-amber-500/[0.08] p-3.5 text-left">
+              <div className="flex items-start gap-2.5">
+                <MailWarning className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+                <div className="flex-1">
+                  <p className="text-[12px] font-semibold text-amber-300">
+                    Email verification required
+                  </p>
+                  <p className="mt-0.5 text-[11px] leading-relaxed text-white/60">
+                    Your account ({unverifiedEmail}) has not been verified yet. Check your inbox for the activation link.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleResendFromLogin}
+                    disabled={resendingVerification}
+                    className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[11px] font-medium text-amber-300 transition-colors hover:bg-amber-400/20 disabled:opacity-50"
+                  >
+                    {resendingVerification ? (
+                      <>
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        <span>Sending link...</span>
+                      </>
+                    ) : (
+                      <>
+                        <RotateCw className="h-3 w-3" />
+                        <span>Resend verification email</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Submit button */}
           <button

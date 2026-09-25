@@ -113,3 +113,54 @@ export async function sendPasswordResetEmail(email: string, resetUrl: string) {
   }
 }
 
+export async function sendVerificationEmail(email: string, name: string, verifyUrl: string) {
+  const transporter = getTransporter();
+  if (!transporter) return;
+
+  const subject = "Verify your email address — Koraspace";
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 24px; border: 1px solid #1f2937; border-radius: 16px; background-color: #111827; color: #f3f4f6;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h1 style="color: #ffffff; font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">Kora<span style="color: #ff0a8a;">Space</span></h1>
+        <p style="color: #9ca3af; font-size: 13px; margin-top: 4px;">AI Social Media Operating System</p>
+      </div>
+      
+      <div style="background-color: #1f2937; border-radius: 12px; padding: 28px 24px; margin-bottom: 24px;">
+        <h2 style="color: #ffffff; font-size: 19px; margin: 0 0 12px 0;">Verify your email address</h2>
+        <p style="color: #d1d5db; line-height: 1.6; font-size: 14px; margin: 0 0 16px 0;">
+          Hi ${name ? name.split(" ")[0] : "there"}, welcome to Koraspace! Please verify your email address to activate your account and start managing your social channels with AI.
+        </p>
+        <div style="text-align: center; margin: 28px 0 20px 0;">
+          <a href="${verifyUrl}" style="background-color: #ff0a8a; color: #ffffff; padding: 14px 32px; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 10px; display: inline-block; box-shadow: 0 8px 25px rgba(255, 10, 138, 0.25);">
+            Verify Email Address →
+          </a>
+        </div>
+        <p style="color: #9ca3af; font-size: 12px; margin: 20px 0 0 0; line-height: 1.5;">
+          This verification link will expire in 24 hours. If you did not create a Koraspace account, you can safely ignore this message.
+        </p>
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+          <p style="color: #6b7280; font-size: 11px; word-break: break-all; margin: 0;">
+            Button not working? Copy and paste this link into your browser:<br/>
+            <a href="${verifyUrl}" style="color: #ff7fba; text-decoration: underline;">${verifyUrl}</a>
+          </p>
+        </div>
+      </div>
+
+      <p style="color: #6b7280; font-size: 12px; text-align: center; margin: 0;">
+        Questions or need assistance? Reach out to us at <a href="mailto:support@koraspace.site" style="color: #ff0a8a; text-decoration: none;">support@koraspace.site</a>.
+      </p>
+    </div>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: MAIL_FROM,
+      to: email,
+      subject,
+      html,
+    });
+  } catch (err) {
+    console.error("[Mailer] Failed to send email verification:", err);
+  }
+}
+

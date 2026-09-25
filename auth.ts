@@ -1,4 +1,4 @@
-﻿import NextAuth from "next-auth"
+import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/db"
@@ -21,8 +21,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null
         }
         
+        const cleanEmail = (credentials.email as string).toLowerCase().trim();
         const user = await prisma.profile.findUnique({
-          where: { email: credentials.email as string }
+          where: { email: cleanEmail }
         })
 
         if (!user || !user.password_hash) {
@@ -36,6 +37,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!isValid) {
           return null
+        }
+
+        if (!user.emailVerified) {
+          throw new Error("EMAIL_NOT_VERIFIED");
         }
 
         return {
