@@ -74,16 +74,17 @@ function Toggle({ enabled, onChange }: ToggleProps) {
       type="button"
       onClick={() => onChange(!enabled)}
       aria-pressed={enabled}
-      className="relative h-6 w-11 shrink-0 rounded-full border transition-all"
+      className="relative h-6 w-11 shrink-0 rounded-full border transition-all cursor-pointer"
       style={{
-        background: enabled ? "#ff0a8a" : "#242424",
-        borderColor: enabled ? "#ff0a8a" : "#3a3a3a",
+        background: enabled ? "#ffffff" : "#242424",
+        borderColor: enabled ? "#ffffff" : "#3a3a3a",
       }}
     >
       <span
-        className="absolute top-1 h-4 w-4 rounded-full bg-white transition-all"
+        className="absolute top-1 h-4 w-4 rounded-full transition-all"
         style={{
           left: enabled ? "22px" : "4px",
+          background: enabled ? "#000000" : "#ffffff",
         }}
       />
     </button>
@@ -104,8 +105,8 @@ function SettingRow({
   return (
     <div className="flex items-center justify-between gap-6 border-b border-[#252525] py-5 last:border-b-0">
       <div className="flex min-w-0 items-start gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#303030] bg-[#191919]">
-          <Icon className="h-4 w-4 text-[#bdbdbd]" />
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white">
+          <Icon className="h-4 w-4 text-white" />
         </div>
 
         <div className="min-w-0">
@@ -136,10 +137,10 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="overflow-hidden rounded-2xl border border-[#292929] bg-[#171717]">
+    <section className="overflow-hidden rounded-2xl border border-black/80 dark:border-[#292929] bg-[#171717]">
       <div className="border-b border-[#292929] px-5 py-5 sm:px-6">
         {eyebrow && (
-          <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#ff0a8a]">
+          <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#999]">
             {eyebrow}
           </p>
         )}
@@ -179,12 +180,12 @@ function NavItem({
     <button
       type="button"
       onClick={onClick}
-      className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all"
+      className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all cursor-pointer"
       style={{
         background: active
           ? danger
             ? "rgba(239,68,68,0.08)"
-            : "rgba(255,10,138,0.10)"
+            : "rgba(255,255,255,0.08)"
           : "transparent",
       }}
     >
@@ -194,9 +195,9 @@ function NavItem({
           borderColor: active
             ? danger
               ? "rgba(239,68,68,0.35)"
-              : "rgba(255,10,138,0.35)"
+              : "rgba(255,255,255,0.25)"
             : "#292929",
-          background: active ? "#1c1c1c" : "#171717",
+          background: active ? (danger ? "#241919" : "#242424") : "#171717",
         }}
       >
         <Icon
@@ -205,7 +206,7 @@ function NavItem({
             color: active
               ? danger
                 ? "#ef4444"
-                : "#ff0a8a"
+                : "#fff"
               : "#858585",
           }}
         />
@@ -233,7 +234,7 @@ function NavItem({
       <ChevronRight
         className="h-3.5 w-3.5 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-50"
         style={{
-          color: danger ? "#ef4444" : "#ff0a8a",
+          color: danger ? "#ef4444" : "#ffffff",
         }}
       />
     </button>
@@ -413,7 +414,7 @@ export default function SettingsPage() {
 
             <button
               type="button"
-              className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-lg border border-[#121212] bg-[#ff0a8a] text-white shadow-lg"
+              className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-lg border border-[#303030] bg-black text-white shadow-lg cursor-pointer"
             >
               <Camera className="h-3.5 w-3.5" />
             </button>
@@ -427,7 +428,7 @@ export default function SettingsPage() {
 
             <button
               type="button"
-              className="mt-3 rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-1.5 text-[11px] font-medium text-[#ccc] transition hover:border-[#ff0a8a]/40 hover:text-white"
+              className="mt-3 rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-1.5 text-[11px] font-medium text-[#ccc] transition hover:border-[#fff]/40 hover:text-white cursor-pointer"
             >
               Change photo
             </button>
@@ -446,7 +447,7 @@ export default function SettingsPage() {
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="h-11 w-full rounded-xl border border-[#303030] bg-[#121212] pl-10 pr-3 text-[13px] text-white outline-none transition focus:border-[#ff0a8a]/50"
+                className="h-11 w-full rounded-xl border border-[#303030] bg-[#121212] pl-10 pr-3 text-[13px] text-white outline-none transition focus:border-white/50"
               />
             </div>
           </label>
@@ -464,7 +465,7 @@ export default function SettingsPage() {
               <input
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="h-11 w-full rounded-xl border border-[#303030] bg-[#121212] pl-8 pr-3 text-[13px] text-white outline-none transition focus:border-[#ff0a8a]/50"
+                className="h-11 w-full rounded-xl border border-[#303030] bg-[#121212] pl-8 pr-3 text-[13px] text-white outline-none transition focus:border-white/50"
               />
             </div>
           </label>
@@ -498,7 +499,7 @@ export default function SettingsPage() {
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               rows={4}
-              className="w-full resize-none rounded-xl border border-[#303030] bg-[#121212] p-3 text-[13px] leading-relaxed text-white outline-none transition focus:border-[#ff0a8a]/50"
+              className="w-full resize-none rounded-xl border border-[#303030] bg-[#121212] p-3 text-[13px] leading-relaxed text-white outline-none transition focus:border-white/50"
             />
           </label>
         </div>
@@ -507,7 +508,7 @@ export default function SettingsPage() {
           <button
             onClick={saveAccount}
             disabled={saving}
-            className="flex items-center gap-2 rounded-xl bg-[#ff0a8a] px-4 py-2.5 text-[12px] font-semibold text-white transition hover:bg-[#ff2298] disabled:opacity-50"
+            className="flex items-center gap-2 rounded-xl bg-white text-black hover:bg-neutral-200 px-4 py-2.5 text-[12px] font-semibold transition disabled:opacity-50 cursor-pointer"
           >
             <Save className="h-3.5 w-3.5" />
             {saving ? "Saving…" : "Save changes"}
@@ -535,7 +536,7 @@ export default function SettingsPage() {
           title="Password"
           description="Update the password used to sign into KoraSpace."
         >
-          <button className="rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-2 text-[11px] font-medium text-[#ccc] hover:text-white">
+          <button className="rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-2 text-[11px] font-medium text-[#ccc] hover:text-white cursor-pointer">
             Change
           </button>
         </SettingRow>
@@ -562,7 +563,7 @@ export default function SettingsPage() {
               <input
                 value={workspaceName}
                 onChange={(e) => setWorkspaceName(e.target.value)}
-                className="h-11 w-full rounded-xl border border-[#303030] bg-[#121212] pl-10 pr-3 text-[13px] text-white outline-none focus:border-[#ff0a8a]/50"
+                className="h-11 w-full rounded-xl border border-[#303030] bg-[#121212] pl-10 pr-3 text-[13px] text-white outline-none focus:border-white/50"
               />
             </div>
           </label>
@@ -602,7 +603,7 @@ export default function SettingsPage() {
           <button
             onClick={saveWorkspace}
             disabled={saving}
-            className="flex items-center gap-2 rounded-xl bg-[#ff0a8a] px-4 py-2.5 text-[12px] font-semibold text-white disabled:opacity-50"
+            className="flex items-center gap-2 rounded-xl bg-white text-black hover:bg-neutral-200 px-4 py-2.5 text-[12px] font-semibold transition disabled:opacity-50 cursor-pointer"
           >
             <Save className="h-3.5 w-3.5" />
             {saving ? "Saving…" : "Save workspace"}
@@ -789,7 +790,7 @@ export default function SettingsPage() {
         <button
           onClick={savePreferences}
           disabled={saving}
-          className="flex items-center gap-2 rounded-xl bg-[#ff0a8a] px-4 py-2.5 text-[12px] font-semibold text-white disabled:opacity-50 cursor-pointer"
+          className="flex items-center gap-2 rounded-xl bg-white text-black hover:bg-neutral-200 px-4 py-2.5 text-[12px] font-semibold transition disabled:opacity-50 cursor-pointer"
         >
           <Save className="h-3.5 w-3.5" />
           {saving ? "Saving…" : "Save preferences"}
@@ -865,7 +866,7 @@ export default function SettingsPage() {
         <button
           onClick={saveNotifications}
           disabled={saving}
-          className="flex items-center gap-2 rounded-xl bg-[#ff0a8a] px-4 py-2.5 text-[12px] font-semibold text-white disabled:opacity-50"
+          className="flex items-center gap-2 rounded-xl bg-white text-black hover:bg-neutral-200 px-4 py-2.5 text-[12px] font-semibold transition disabled:opacity-50 cursor-pointer"
         >
           <Save className="h-3.5 w-3.5" />
           {saving ? "Saving…" : "Save notifications"}
@@ -876,11 +877,11 @@ export default function SettingsPage() {
 
   const renderAI = () => (
     <div className="space-y-5">
-      <div className="overflow-hidden rounded-2xl border border-[#3b1c34] bg-[#1a1418]">
+      <div className="overflow-hidden rounded-2xl border border-black/80 dark:border-[#292929] bg-[#171717]">
         <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#ff0a8a]/30 bg-[#251421]">
-              <Brain className="h-5 w-5 text-[#ff0a8a]" />
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white">
+              <Brain className="h-5 w-5 text-white" />
             </div>
 
             <div>
@@ -889,7 +890,7 @@ export default function SettingsPage() {
                   Personal Brand Brain
                 </h2>
 
-                <span className="rounded-full border border-[#ff0a8a]/25 bg-[#ff0a8a]/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#ff4aa8]">
+                <span className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white">
                   Active
                 </span>
               </div>
@@ -903,7 +904,7 @@ export default function SettingsPage() {
 
           <button
             onClick={() => setSection("ai")}
-            className="rounded-lg border border-[#393939] bg-[#202020] px-3 py-2 text-[11px] font-medium text-[#ccc]"
+            className="rounded-lg border border-[#393939] bg-[#202020] px-3 py-2 text-[11px] font-medium text-[#ccc] cursor-pointer"
           >
             Manage brain
           </button>
@@ -988,7 +989,7 @@ export default function SettingsPage() {
         <button
           onClick={saveAI}
           disabled={saving}
-          className="flex items-center gap-2 rounded-xl bg-[#ff0a8a] px-4 py-2.5 text-[12px] font-semibold text-white disabled:opacity-50"
+          className="flex items-center gap-2 rounded-xl bg-white text-black hover:bg-neutral-200 px-4 py-2.5 text-[12px] font-semibold transition disabled:opacity-50 cursor-pointer"
         >
           <Save className="h-3.5 w-3.5" />
           {saving ? "Saving…" : "Save AI settings"}
@@ -1009,7 +1010,7 @@ export default function SettingsPage() {
           title="Password"
           description="Last changed recently."
         >
-          <button className="rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-2 text-[11px] font-medium text-[#ccc]">
+          <button className="rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-2 text-[11px] font-medium text-[#ccc] cursor-pointer">
             Change password
           </button>
         </SettingRow>
@@ -1027,7 +1028,7 @@ export default function SettingsPage() {
           title="Login sessions"
           description="Review the devices currently signed into your account."
         >
-          <button className="flex items-center gap-1.5 rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-2 text-[11px] font-medium text-[#ccc]">
+          <button className="flex items-center gap-1.5 rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-2 text-[11px] font-medium text-[#ccc] cursor-pointer">
             Review
             <ChevronRight className="h-3 w-3" />
           </button>
@@ -1054,14 +1055,14 @@ export default function SettingsPage() {
           title="Mobile device"
           description="Last active recently"
         >
-          <button className="text-[11px] font-medium text-[#888] hover:text-white">
+          <button className="text-[11px] font-medium text-[#888] hover:text-white cursor-pointer">
             Sign out
           </button>
         </SettingRow>
       </SectionCard>
 
       <div className="flex justify-end">
-        <button className="flex items-center gap-2 rounded-xl border border-[#343434] bg-[#1b1b1b] px-4 py-2.5 text-[12px] font-medium text-[#ccc] hover:text-white">
+        <button className="flex items-center gap-2 rounded-xl border border-[#343434] bg-[#1b1b1b] px-4 py-2.5 text-[12px] font-medium text-[#ccc] hover:text-white cursor-pointer">
           <LogOut className="h-3.5 w-3.5" />
           Sign out all other sessions
         </button>
@@ -1071,12 +1072,12 @@ export default function SettingsPage() {
 
   const renderBilling = () => (
     <div className="space-y-5">
-      <div className="overflow-hidden rounded-2xl border border-[#343434] bg-[#171717]">
+      <div className="overflow-hidden rounded-2xl border border-black/80 dark:border-[#343434] bg-[#171717]">
         <div className="flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <Crown className="h-4 w-4 text-[#ff0a8a]" />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#ff0a8a]">
+              <Crown className="h-4 w-4 text-white" />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#999]">
                 Current plan
               </span>
             </div>
@@ -1090,7 +1091,7 @@ export default function SettingsPage() {
             </p>
           </div>
 
-          <button className="rounded-xl bg-[#ff0a8a] px-4 py-2.5 text-[12px] font-semibold text-white">
+          <button className="rounded-xl bg-white text-black hover:bg-neutral-200 px-4 py-2.5 text-[12px] font-semibold cursor-pointer">
             Manage plan
           </button>
         </div>
@@ -1130,7 +1131,7 @@ export default function SettingsPage() {
           title="Payment method"
           description="No payment method displayed here."
         >
-          <button className="rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-2 text-[11px] font-medium text-[#ccc]">
+          <button className="rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-2 text-[11px] font-medium text-[#ccc] cursor-pointer">
             Manage
           </button>
         </SettingRow>
@@ -1140,7 +1141,7 @@ export default function SettingsPage() {
           title="Invoices"
           description="View and download your previous invoices."
         >
-          <button className="flex items-center gap-1.5 text-[11px] font-medium text-[#aaa] hover:text-white">
+          <button className="flex items-center gap-1.5 text-[11px] font-medium text-[#aaa] hover:text-white cursor-pointer">
             View invoices
             <ChevronRight className="h-3 w-3" />
           </button>
@@ -1179,7 +1180,7 @@ export default function SettingsPage() {
           title="Sign out everywhere"
           description="End all active sessions across your devices."
         >
-          <button className="rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-2 text-[11px] font-medium text-[#ccc]">
+          <button className="rounded-lg border border-[#343434] bg-[#1d1d1d] px-3 py-2 text-[11px] font-medium text-[#ccc] cursor-pointer">
             Sign out
           </button>
         </SettingRow>
@@ -1189,7 +1190,7 @@ export default function SettingsPage() {
           title="Delete account"
           description="Permanently delete your account, workspace and associated data."
         >
-          <button className="rounded-lg border border-[#6b3030] bg-[#241919] px-3 py-2 text-[11px] font-medium text-[#ef7777] hover:bg-[#2b1a1a]">
+          <button className="rounded-lg border border-[#6b3030] bg-[#241919] px-3 py-2 text-[11px] font-medium text-[#ef7777] hover:bg-[#2b1a1a] cursor-pointer">
             Delete account
           </button>
         </SettingRow>
@@ -1267,7 +1268,7 @@ export default function SettingsPage() {
         <div className="mb-7">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#ff0a8a]">
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#999]">
                 Workspace
               </p>
 
@@ -1281,8 +1282,8 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-2 rounded-xl border border-[#292929] bg-[#171717] px-3 py-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#ff0a8a] text-[11px] font-bold text-white">
+            <div className="flex items-center gap-2 rounded-xl border border-black/80 dark:border-[#292929] bg-[#171717] px-3 py-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-black border border-[#333] text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white text-[11px] font-bold">
                 {name
                   .split(" ")
                   .map((x) => x[0])

@@ -979,12 +979,7 @@ export default async function DashboardPage() {
         <div>
           <div className="mb-2 flex items-center gap-2">
             <span
-              className="h-1.5 w-1.5 rounded-full"
-              style={{
-                background: KORA_GREEN,
-                boxShadow:
-                  "0 0 0 3px rgba(34,230,138,.10)",
-              }}
+              className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.15)]"
             />
 
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--fg-4)]">
@@ -1006,15 +1001,7 @@ export default async function DashboardPage() {
 
           <Link
             href="/dashboard/create"
-            className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-[12px] font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98]"
-            style={{
-              background: brandPrimary,
-              boxShadow: `0 7px 18px ${
-                isMarketer
-                  ? "rgba(37,99,255,.18)"
-                  : "rgba(255,10,138,.18)"
-              }`,
-            }}
+            className="inline-flex items-center gap-2 rounded-xl bg-black text-white hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200 px-4 py-2.5 text-[12px] font-semibold shadow-sm transition-all active:scale-[0.98]"
           >
             <PenLine className="h-3.5 w-3.5" />
             Create Post
@@ -1038,7 +1025,7 @@ export default async function DashboardPage() {
               <Link
                 key={account.id}
                 href={`/dashboard/accounts/${account.id}`}
-                className="group flex min-w-0 items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 py-2.5 transition-all hover:-translate-y-0.5 hover:border-[var(--brand-primary-border)] hover:shadow-sm"
+                className="group flex min-w-0 items-center gap-3 rounded-xl border border-black/80 dark:border-[var(--stroke)] bg-[var(--panel-fill)] px-3 py-2.5 transition-all hover:-translate-y-0.5 hover:shadow-sm"
               >
                 <div
                   className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full overflow-hidden border border-[var(--stroke)] bg-[var(--panel-fill-2)]"
@@ -1057,12 +1044,7 @@ export default async function DashboardPage() {
 
                   <div className="mt-0.5 flex items-center gap-1">
                     <span
-                      className="h-1.5 w-1.5 rounded-full"
-                      style={{
-                        background:
-                          KORA_GREEN,
-                        boxShadow: "0 0 0 2px rgba(34,230,138,.18)",
-                      }}
+                      className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_0_2px_rgba(16,185,129,0.2)]"
                     />
 
                     <span className="text-[9px] text-[var(--fg-4)] truncate">
@@ -1078,7 +1060,7 @@ export default async function DashboardPage() {
 
           <Link
             href="/dashboard/integrations"
-            className="group flex items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 py-2.5 text-[10.5px] font-medium text-[var(--fg-3)] transition-all hover:border-[var(--brand-primary-border)] hover:bg-[var(--hover)] hover:text-[var(--fg)]"
+            className="group flex items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 py-2.5 text-[10.5px] font-medium text-[var(--fg-3)] transition-all hover:border-[var(--stroke-strong)] hover:bg-[var(--hover)] hover:text-[var(--fg)]"
           >
             <Plug className="h-3.5 w-3.5 text-[var(--fg-4)] group-hover:text-[var(--fg)]" />
             <span>+ Add channel</span>
@@ -1088,17 +1070,9 @@ export default async function DashboardPage() {
         <section className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-dashed border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4">
           <div className="flex items-center gap-3">
             <div
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-              style={{
-                background: brandSoft,
-              }}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
             >
-              <Plug
-                className="h-4 w-4"
-                style={{
-                  color: brandPrimary,
-                }}
-              />
+              <Plug className="h-4 w-4 text-white" />
             </div>
             <div>
               <p className="text-[12px] font-semibold text-[var(--fg)]">
@@ -1112,7 +1086,7 @@ export default async function DashboardPage() {
 
           <Link
             href="/dashboard/integrations"
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3.5 py-2 text-[11px] font-semibold text-[var(--fg)] transition-all hover:border-[var(--brand-primary-border)] hover:bg-[var(--hover)]"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] px-3.5 py-2 text-[11px] font-semibold text-[var(--fg)] transition-all hover:border-[var(--stroke-strong)] hover:bg-[var(--hover)]"
           >
             Connect Channel
             <ArrowRight className="h-3 w-3" />
@@ -1124,7 +1098,7 @@ export default async function DashboardPage() {
       {/* QUICK ACTIONS                                                      */}
       {/* ================================================================== */}
 
-      <section className="mb-5 rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
+      <section className="mb-5 rounded-2xl border border-black/80 dark:border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
         <SectionHeader
           title="Quick actions"
           subtitle="Jump straight into the tools you use most"
@@ -1133,19 +1107,10 @@ export default async function DashboardPage() {
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           <Link
             href="/dashboard/create"
-            className="group flex items-center gap-3 rounded-xl border border-transparent p-3.5 transition-all hover:-translate-y-0.5"
-            style={{
-              background:
-                "var(--brand-primary-soft)",
-              borderColor:
-                "var(--brand-primary-border)",
-            }}
+            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3.5 transition-all hover:-translate-y-0.5 hover:border-[var(--stroke-strong)]"
           >
             <div
-              className="flex h-9 w-9 items-center justify-center rounded-lg"
-              style={{
-                background: brandPrimary,
-              }}
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
             >
               <PenLine className="h-4 w-4 text-white" />
             </div>
@@ -1160,26 +1125,17 @@ export default async function DashboardPage() {
               </p>
             </div>
 
-            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--brand-primary)]" />
+            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)] group-hover:text-[var(--fg)]" />
           </Link>
 
           <Link
             href="/dashboard/trends"
-            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] p-3.5 transition-all hover:bg-[var(--hover)]"
+            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3.5 transition-all hover:-translate-y-0.5 hover:border-[var(--stroke-strong)] hover:bg-[var(--hover)]"
           >
             <div
-              className="flex h-9 w-9 items-center justify-center rounded-lg"
-              style={{
-                background:
-                  "rgba(34,230,138,.10)",
-              }}
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
             >
-              <Lightbulb
-                className="h-4 w-4"
-                style={{
-                  color: "#0E9F63",
-                }}
-              />
+              <Lightbulb className="h-4 w-4 text-white" />
             </div>
 
             <div>
@@ -1192,25 +1148,17 @@ export default async function DashboardPage() {
               </p>
             </div>
 
-            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)]" />
+            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)] group-hover:text-[var(--fg)]" />
           </Link>
 
           <Link
             href="/dashboard/repurpose"
-            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] p-3.5 transition-all hover:bg-[var(--hover)]"
+            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3.5 transition-all hover:-translate-y-0.5 hover:border-[var(--stroke-strong)] hover:bg-[var(--hover)]"
           >
             <div
-              className="flex h-9 w-9 items-center justify-center rounded-lg"
-              style={{
-                background: brandSoft,
-              }}
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
             >
-              <RefreshCw
-                className="h-4 w-4"
-                style={{
-                  color: brandPrimary,
-                }}
-              />
+              <RefreshCw className="h-4 w-4 text-white" />
             </div>
 
             <div>
@@ -1223,26 +1171,17 @@ export default async function DashboardPage() {
               </p>
             </div>
 
-            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)]" />
+            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)] group-hover:text-[var(--fg)]" />
           </Link>
 
           <Link
             href="/dashboard/calendar"
-            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] p-3.5 transition-all hover:bg-[var(--hover)]"
+            className="group flex items-center gap-3 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3.5 transition-all hover:-translate-y-0.5 hover:border-[var(--stroke-strong)] hover:bg-[var(--hover)]"
           >
             <div
-              className="flex h-9 w-9 items-center justify-center rounded-lg"
-              style={{
-                background:
-                  "rgba(34,230,138,.10)",
-              }}
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
             >
-              <CalendarClock
-                className="h-4 w-4"
-                style={{
-                  color: "#0E9F63",
-                }}
-              />
+              <CalendarClock className="h-4 w-4 text-white" />
             </div>
 
             <div>
@@ -1255,7 +1194,7 @@ export default async function DashboardPage() {
               </p>
             </div>
 
-            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)]" />
+            <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-[var(--fg-4)] group-hover:text-[var(--fg)]" />
           </Link>
         </div>
       </section>
@@ -1265,7 +1204,7 @@ export default async function DashboardPage() {
       {/* ================================================================== */}
 
       <section className="mb-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(290px,0.42fr)]">
-        <article className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5 sm:p-6">
+        <article className="rounded-2xl border border-black/80 dark:border-[var(--stroke)] bg-[var(--panel-fill)] p-5 sm:p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-[15px] font-semibold text-[var(--fg)]">
@@ -1315,10 +1254,7 @@ export default async function DashboardPage() {
               </p>
 
               <p
-                className="mt-1 text-[13px] font-semibold"
-                style={{
-                  color: KORA_GREEN,
-                }}
+                className="mt-1 text-[13px] font-semibold text-emerald-500"
               >
                 +{fmtNum(totalFollowers)}
               </p>
@@ -1339,65 +1275,51 @@ export default async function DashboardPage() {
         {/* AI INSIGHT */}
 
         <article
-          className="rounded-2xl border p-5"
-          style={{
-            borderColor: brandBorder,
-            background:
-              "var(--panel-fill)",
-          }}
+          className="rounded-2xl border border-black/80 dark:border-[var(--stroke)] bg-[var(--panel-fill)] p-5 flex flex-col justify-between"
         >
-          <div className="flex items-center gap-2.5">
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg"
-              style={{
-                background: brandSoft,
-              }}
-            >
-              <Sparkles
-                className="h-4 w-4"
-                style={{
-                  color: brandPrimary,
-                }}
-              />
+          <div>
+            <div className="flex items-center gap-2.5">
+              <div
+                className="flex h-8 w-8 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
+              >
+                <Sparkles className="h-4 w-4 text-white" />
+              </div>
+
+              <div>
+                <p className="text-[12px] font-semibold text-[var(--fg)]">
+                  Kora AI
+                </p>
+
+                <p className="text-[9px] text-[var(--fg-4)]">
+                  Your next move
+                </p>
+              </div>
             </div>
 
-            <div>
-              <p className="text-[12px] font-semibold text-[var(--fg)]">
-                Kora AI
+            <div className="mt-6">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--fg-4)]">
+                Recommendation
               </p>
 
-              <p className="text-[9px] text-[var(--fg-4)]">
-                Your next move
+              <p className="mt-2 text-[13px] font-medium leading-6 text-[var(--fg)]">
+                {topAccount
+                  ? `${platformLabel(
+                      topAccount.platform
+                    )} is currently your strongest channel.`
+                  : "Connect your social accounts to unlock personalized recommendations."}
+              </p>
+
+              <p className="mt-2 text-[11px] leading-5 text-[var(--fg-3)]">
+                {topAccount
+                  ? "Your recent performance suggests that doubling down on your strongest format could increase reach."
+                  : "KoraSpace will analyze your content, audience and platform performance once accounts are connected."}
               </p>
             </div>
-          </div>
-
-          <div className="mt-6">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--fg-4)]">
-              Recommendation
-            </p>
-
-            <p className="mt-2 text-[13px] font-medium leading-6 text-[var(--fg)]">
-              {topAccount
-                ? `${platformLabel(
-                    topAccount.platform
-                  )} is currently your strongest channel.`
-                : "Connect your social accounts to unlock personalized recommendations."}
-            </p>
-
-            <p className="mt-2 text-[11px] leading-5 text-[var(--fg-3)]">
-              {topAccount
-                ? "Your recent performance suggests that doubling down on your strongest format could increase reach."
-                : "KoraSpace will analyze your content, audience and platform performance once accounts are connected."}
-            </p>
           </div>
 
           <Link
             href="/dashboard/analytics"
-            className="mt-6 inline-flex items-center gap-1.5 text-[10.5px] font-semibold"
-            style={{
-              color: brandPrimary,
-            }}
+            className="mt-6 inline-flex items-center gap-1.5 text-[10.5px] font-semibold text-[var(--fg)] hover:opacity-75 transition-opacity"
           >
             View insight
             <ArrowRight className="h-3 w-3" />
@@ -1410,7 +1332,7 @@ export default async function DashboardPage() {
       {/* ================================================================== */}
 
       <section className="mb-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(280px,0.42fr)]">
-        <article className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
+        <article className="rounded-2xl border border-black/80 dark:border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
           <SectionHeader
             title="Upcoming content"
             subtitle="Your publishing queue"
@@ -1433,10 +1355,7 @@ export default async function DashboardPage() {
 
               <Link
                 href="/dashboard/create"
-                className="mt-4 rounded-lg px-3.5 py-2 text-[10.5px] font-semibold text-white"
-                style={{
-                  background: brandPrimary,
-                }}
+                className="mt-4 rounded-xl bg-black text-white hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200 px-3.5 py-2 text-[10.5px] font-semibold shadow-sm transition-all"
               >
                 Create a post
               </Link>
@@ -1516,7 +1435,7 @@ export default async function DashboardPage() {
           )}
         </article>
 
-        <article className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
+        <article className="rounded-2xl border border-black/80 dark:border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
           <SectionHeader
             title="Needs attention"
             subtitle="Things worth acting on"
@@ -1528,17 +1447,9 @@ export default async function DashboardPage() {
               className="flex items-center gap-3 py-3 first:pt-0 group"
             >
               <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                style={{
-                  background: brandSoft,
-                }}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
               >
-                <MessageCircle
-                  className="h-3.5 w-3.5"
-                  style={{
-                    color: brandPrimary,
-                  }}
-                />
+                <MessageCircle className="h-3.5 w-3.5 text-white" />
               </div>
 
               <div className="min-w-0 flex-1">
@@ -1555,18 +1466,9 @@ export default async function DashboardPage() {
               className="flex items-center gap-3 py-3 group"
             >
               <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                style={{
-                  background:
-                    "rgba(34,230,138,.10)",
-                }}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
               >
-                <Heart
-                  className="h-3.5 w-3.5"
-                  style={{
-                    color: "#0E9F63",
-                  }}
-                />
+                <Heart className="h-3.5 w-3.5 text-white" />
               </div>
 
               <div className="min-w-0 flex-1">
@@ -1575,7 +1477,7 @@ export default async function DashboardPage() {
                 </p>
               </div>
 
-              <ArrowRight className="h-3 w-3 text-[var(--fg-4)]" />
+              <ArrowRight className="h-3 w-3 text-[var(--fg-4)] transition-transform group-hover:translate-x-0.5" />
             </Link>
 
             <Link
@@ -1583,18 +1485,9 @@ export default async function DashboardPage() {
               className="flex items-center gap-3 py-3 last:pb-0 group"
             >
               <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                style={{
-                  background:
-                    "rgba(245,158,11,.10)",
-                }}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
               >
-                <CircleAlert
-                  className="h-3.5 w-3.5"
-                  style={{
-                    color: "#D18A00",
-                  }}
-                />
+                <CircleAlert className="h-3.5 w-3.5 text-white" />
               </div>
 
               <div className="min-w-0 flex-1">
@@ -1603,7 +1496,7 @@ export default async function DashboardPage() {
                 </p>
               </div>
 
-              <ArrowRight className="h-3 w-3 text-[var(--fg-4)]" />
+              <ArrowRight className="h-3 w-3 text-[var(--fg-4)] transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
         </article>
@@ -1613,7 +1506,7 @@ export default async function DashboardPage() {
       {/* TRENDING                                                           */}
       {/* ================================================================== */}
 
-      <section className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
+      <section className="rounded-2xl border border-black/80 dark:border-[var(--stroke)] bg-[var(--panel-fill)] p-5">
         <SectionHeader
           title="Trending now"
           subtitle="Discover opportunities for your next content"
@@ -1624,21 +1517,13 @@ export default async function DashboardPage() {
         <div className="grid gap-2.5 md:grid-cols-3">
           <Link
             href="/dashboard/trends"
-            className="group rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 transition-all hover:-translate-y-0.5 hover:border-[var(--brand-primary-border)]"
+            className="group rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 transition-all hover:-translate-y-0.5 hover:border-[var(--stroke-strong)]"
           >
             <div className="flex items-center gap-2">
               <span
-                className="flex h-7 w-7 items-center justify-center rounded-lg"
-                style={{
-                  background: brandSoft,
-                }}
+                className="flex h-7 w-7 items-center justify-center rounded-lg bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
               >
-                <Flame
-                  className="h-3.5 w-3.5"
-                  style={{
-                    color: brandPrimary,
-                  }}
-                />
+                <Flame className="h-3.5 w-3.5 text-white" />
               </span>
 
               <span className="text-[10px] font-semibold text-[var(--fg)]">
@@ -1651,9 +1536,9 @@ export default async function DashboardPage() {
             </p>
 
             <div className="mt-3 flex items-center justify-between">
-              <StatusPill tone="brand" brandColor={brandPrimary}>
+              <span className="inline-flex items-center rounded-full border border-black/40 dark:border-white/10 bg-black/5 dark:bg-white/5 px-2.5 py-1 text-[9.5px] font-semibold text-[var(--fg)]">
                 Rising
-              </StatusPill>
+              </span>
 
               <ArrowUpRight className="h-3.5 w-3.5 text-[var(--fg-4)] transition-transform group-hover:translate-x-0.5" />
             </div>
@@ -1661,22 +1546,13 @@ export default async function DashboardPage() {
 
           <Link
             href="/dashboard/trends"
-            className="group rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 transition-all hover:-translate-y-0.5 hover:border-[var(--brand-primary-border)]"
+            className="group rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 transition-all hover:-translate-y-0.5 hover:border-[var(--stroke-strong)]"
           >
             <div className="flex items-center gap-2">
               <span
-                className="flex h-7 w-7 items-center justify-center rounded-lg"
-                style={{
-                  background:
-                    "rgba(34,230,138,.10)",
-                }}
+                className="flex h-7 w-7 items-center justify-center rounded-lg bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
               >
-                <Video
-                  className="h-3.5 w-3.5"
-                  style={{
-                    color: "#0E9F63",
-                  }}
-                />
+                <Video className="h-3.5 w-3.5 text-white" />
               </span>
 
               <span className="text-[10px] font-semibold text-[var(--fg)]">
@@ -1689,9 +1565,9 @@ export default async function DashboardPage() {
             </p>
 
             <div className="mt-3 flex items-center justify-between">
-              <StatusPill tone="green">
+              <span className="inline-flex items-center rounded-full border border-black/40 dark:border-white/10 bg-black/5 dark:bg-white/5 px-2.5 py-1 text-[9.5px] font-semibold text-[var(--fg)]">
                 High opportunity
-              </StatusPill>
+              </span>
 
               <ArrowUpRight className="h-3.5 w-3.5 text-[var(--fg-4)] transition-transform group-hover:translate-x-0.5" />
             </div>
@@ -1699,21 +1575,13 @@ export default async function DashboardPage() {
 
           <Link
             href="/dashboard/trends"
-            className="group rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 transition-all hover:-translate-y-0.5 hover:border-[var(--brand-primary-border)]"
+            className="group rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 transition-all hover:-translate-y-0.5 hover:border-[var(--stroke-strong)]"
           >
             <div className="flex items-center gap-2">
               <span
-                className="flex h-7 w-7 items-center justify-center rounded-lg"
-                style={{
-                  background: brandSoft,
-                }}
+                className="flex h-7 w-7 items-center justify-center rounded-lg bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
               >
-                <Bot
-                  className="h-3.5 w-3.5"
-                  style={{
-                    color: brandPrimary,
-                  }}
-                />
+                <Bot className="h-3.5 w-3.5 text-white" />
               </span>
 
               <span className="text-[10px] font-semibold text-[var(--fg)]">
@@ -1726,9 +1594,9 @@ export default async function DashboardPage() {
             </p>
 
             <div className="mt-3 flex items-center justify-between">
-              <StatusPill tone="brand" brandColor={brandPrimary}>
+              <span className="inline-flex items-center rounded-full border border-black/40 dark:border-white/10 bg-black/5 dark:bg-white/5 px-2.5 py-1 text-[9.5px] font-semibold text-[var(--fg)]">
                 Opportunity
-              </StatusPill>
+              </span>
 
               <ArrowUpRight className="h-3.5 w-3.5 text-[var(--fg-4)] transition-transform group-hover:translate-x-0.5" />
             </div>

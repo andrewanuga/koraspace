@@ -237,7 +237,6 @@ function InboxStatCard({
   label,
   value,
   icon: Icon,
-  tone = "primary",
   highlight,
 }: {
   label: string;
@@ -246,57 +245,15 @@ function InboxStatCard({
   tone?: "primary" | "pink" | "blue" | "green" | "purple" | "indigo";
   highlight?: boolean;
 }) {
-  const toneMap: Record<string, { bg: string; color: string; border: string }> = {
-    primary: {
-      bg: "var(--brand-primary-soft)",
-      color: "var(--brand-primary)",
-      border: "var(--brand-primary-border)",
-    },
-    pink: {
-      bg: "var(--brand-primary-soft)",
-      color: "var(--brand-primary)",
-      border: "var(--brand-primary-border)",
-    },
-    blue: {
-      bg: "var(--kora-blue-soft)",
-      color: "var(--kora-blue)",
-      border: "rgba(59, 130, 246, 0.2)",
-    },
-    green: {
-      bg: "var(--success-soft)",
-      color: "var(--success)",
-      border: "rgba(34, 197, 94, 0.2)",
-    },
-    purple: {
-      bg: "rgba(168, 85, 247, 0.12)",
-      color: "#c084fc",
-      border: "rgba(168, 85, 247, 0.2)",
-    },
-    indigo: {
-      bg: "var(--kora-blue-soft)",
-      color: "var(--kora-blue)",
-      border: "rgba(59, 130, 246, 0.2)",
-    },
-  };
-
-  const currentTone = toneMap[tone] || toneMap.primary;
-
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--stroke-strong)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)]">
+    <div className="group relative overflow-hidden rounded-xl border border-black/80 bg-[var(--panel-fill)] p-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)] dark:border-[var(--stroke)]">
       <div className="flex items-center justify-between gap-3">
-        <div
-          className="flex h-8 w-8 items-center justify-center rounded-lg"
-          style={{
-            backgroundColor: currentTone.bg,
-            color: currentTone.color,
-            border: `1px solid ${currentTone.border}`,
-          }}
-        >
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-black bg-black text-white dark:border-white/10 dark:bg-white/[0.06] dark:text-white">
           <Icon className="h-4 w-4" />
         </div>
 
         {highlight && (
-          <span className="flex h-2 w-2 rounded-full bg-[var(--brand-primary)]" />
+          <span className="flex h-2 w-2 rounded-full bg-black dark:bg-white" />
         )}
       </div>
 
@@ -620,7 +577,7 @@ export function InboxClient({
 
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-2.5 py-1 text-[10px] font-semibold text-[var(--brand-primary)]">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-black/20 bg-black/5 px-2.5 py-1 text-[10px] font-semibold text-black dark:border-white/10 dark:bg-white/[0.06] dark:text-white">
             <MessageSquare className="h-3 w-3" />
             <span>Community & Engagement</span>
           </div>
@@ -631,7 +588,7 @@ export function InboxClient({
             </h1>
 
             {unreadCount > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--brand-primary)] px-2 text-[9px] font-bold text-white shadow-[var(--brand-primary-shadow)]">
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-black px-2 text-[9px] font-bold text-white shadow-sm dark:bg-white dark:text-black">
                 {unreadCount} new
               </span>
             )}
@@ -649,13 +606,13 @@ export function InboxClient({
             disabled={unreadCount === 0}
             className="inline-flex h-9 items-center gap-2 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)] px-3.5 text-[11px] font-medium text-[var(--fg-2)] transition hover:border-[var(--stroke-strong)] hover:bg-[var(--panel-fill-2)] hover:text-[var(--fg)] disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <CheckCheck className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
+            <CheckCheck className="h-3.5 w-3.5 text-black dark:text-white" />
             Mark all as read
           </button>
 
           <Link
             href="/dashboard/integrations"
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[var(--brand-primary)] px-3.5 text-[11px] font-semibold text-white shadow-[var(--brand-primary-shadow)] transition-opacity hover:opacity-90"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-black px-3.5 text-[11px] font-semibold text-white shadow-sm transition-opacity hover:opacity-90 dark:bg-white dark:text-black"
           >
             <Plus className="h-3.5 w-3.5" />
             Connect Channel
@@ -674,7 +631,7 @@ export function InboxClient({
           </span>
           <Link
             href="/dashboard/integrations"
-            className="text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
+            className="text-[9px] font-semibold text-[var(--fg)] hover:underline"
           >
             + Connect
           </Link>
@@ -686,7 +643,7 @@ export function InboxClient({
             onClick={() => setSelectedAccount("all")}
             className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-medium transition ${
               selectedAccount === "all"
-                ? "border-[var(--brand-primary)] bg-[var(--brand-primary-soft)] font-semibold text-[var(--brand-primary)]"
+                ? "border-black bg-black font-semibold text-white dark:border-white/10 dark:bg-white/[0.08] dark:text-white"
                 : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:text-[var(--fg)]"
             }`}
           >
@@ -696,7 +653,7 @@ export function InboxClient({
           {accounts.length === 0 ? (
             <Link
               href="/dashboard/integrations"
-              className="flex shrink-0 items-center gap-1.5 rounded-full border border-dashed border-[var(--stroke)] px-3 py-1 text-[10px] font-medium text-[var(--fg-4)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]"
+              className="flex shrink-0 items-center gap-1.5 rounded-full border border-dashed border-[var(--stroke)] px-3 py-1 text-[10px] font-medium text-[var(--fg-4)] hover:border-[var(--stroke-strong)] hover:text-[var(--fg)]"
             >
               <span>+ Connect your first channel</span>
             </Link>
@@ -713,7 +670,7 @@ export function InboxClient({
                   }
                   className={`flex shrink-0 items-center gap-2 rounded-full border px-2.5 py-1 text-[10px] font-medium transition ${
                     active
-                      ? "border-[var(--brand-primary)] bg-[var(--brand-primary-soft)] font-semibold text-[var(--brand-primary)]"
+                      ? "border-black bg-black font-semibold text-white dark:border-white/10 dark:bg-white/[0.08] dark:text-white"
                       : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:text-[var(--fg)]"
                   }`}
                 >
@@ -740,14 +697,12 @@ export function InboxClient({
           label="Total Messages"
           value={fmtNum(counts.all)}
           icon={MessageSquare}
-          tone="primary"
         />
 
         <InboxStatCard
           label="Unread"
           value={fmtNum(unreadCount)}
           icon={Bell}
-          tone="pink"
           highlight={unreadCount > 0}
         />
 
@@ -755,7 +710,6 @@ export function InboxClient({
           label="Needs Reply"
           value={fmtNum(needsReplyCount)}
           icon={MessageCircle}
-          tone="purple"
           highlight={needsReplyCount > 0}
         />
 
@@ -763,14 +717,12 @@ export function InboxClient({
           label="Mentions"
           value={fmtNum(counts.mentions)}
           icon={AtSign}
-          tone="blue"
         />
 
         <InboxStatCard
           label="Channels"
           value={fmtNum(accounts.length)}
           icon={Users}
-          tone="green"
         />
       </div>
 
@@ -794,7 +746,7 @@ export function InboxClient({
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[10px] font-semibold transition ${
                 active
-                  ? "border-[var(--brand-primary)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]"
+                  ? "border-black bg-black text-white dark:border-white/10 dark:bg-white/[0.08] dark:text-white"
                   : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:text-[var(--fg)]"
               }`}
             >
@@ -803,7 +755,7 @@ export function InboxClient({
                 <span
                   className={`rounded px-1 text-[9px] font-bold ${
                     active
-                      ? "bg-[var(--brand-primary)] text-white"
+                      ? "bg-white/20 text-white"
                       : "bg-[var(--panel-fill-2)] text-[var(--fg-4)]"
                   }`}
                 >
@@ -873,7 +825,7 @@ export function InboxClient({
                     onClick={() => setActiveTab(item.id as typeof activeTab)}
                     className={`group flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-left transition ${
                       active
-                        ? "border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)] font-semibold"
+                        ? "border border-black bg-black text-white font-semibold dark:border-white/10 dark:bg-white/[0.08] dark:text-white"
                         : "text-[var(--fg-2)] hover:bg-[var(--panel-fill-2)] hover:text-[var(--fg)]"
                     }`}
                   >
@@ -881,7 +833,7 @@ export function InboxClient({
                       <Icon
                         className={`h-3.5 w-3.5 ${
                           active
-                            ? "text-[var(--brand-primary)]"
+                            ? "text-white dark:text-white"
                             : "text-[var(--fg-4)]"
                         }`}
                       />
@@ -895,7 +847,7 @@ export function InboxClient({
                       <span
                         className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold ${
                           active
-                            ? "bg-[var(--brand-primary)] text-white"
+                            ? "bg-white/20 text-white"
                             : "bg-[var(--panel-fill-2)] text-[var(--fg-4)]"
                         }`}
                       >
@@ -917,7 +869,7 @@ export function InboxClient({
               </span>
               <Link
                 href="/dashboard/integrations"
-                className="text-[9px] font-medium text-[var(--brand-primary)] transition hover:underline"
+                className="text-[9px] font-medium text-[var(--fg)] transition hover:underline"
               >
                 + Connect
               </Link>
@@ -931,7 +883,7 @@ export function InboxClient({
                   </p>
                   <Link
                     href="/dashboard/integrations"
-                    className="mt-1.5 inline-flex items-center gap-1 text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
+                    className="mt-1.5 inline-flex items-center gap-1 text-[9px] font-semibold text-[var(--fg)] hover:underline"
                   >
                     Connect channel
                     <ArrowUpRight className="h-2.5 w-2.5" />
@@ -950,7 +902,7 @@ export function InboxClient({
                       }
                       className={`flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition ${
                         active
-                          ? "border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)] font-semibold"
+                          ? "border border-black bg-black text-white font-semibold dark:border-white/10 dark:bg-white/[0.08] dark:text-white"
                           : "text-[var(--fg-3)] hover:bg-[var(--panel-fill-2)] hover:text-[var(--fg)]"
                       }`}
                     >
@@ -982,7 +934,7 @@ export function InboxClient({
           {/* SEARCH */}
 
           <div className="border-b border-[var(--stroke)] p-3.5">
-            <div className="flex h-9 items-center gap-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 transition focus-within:border-[var(--brand-primary-border)]">
+            <div className="flex h-9 items-center gap-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-3 transition focus-within:border-[var(--stroke-strong)]">
               <Search className="h-3.5 w-3.5 shrink-0 text-[var(--fg-4)]" />
 
               <input
@@ -1023,7 +975,7 @@ export function InboxClient({
                       }
                       className={`rounded-md whitespace-nowrap px-2.5 py-1 text-[9px] font-semibold transition ${
                         active
-                          ? "bg-[var(--brand-primary)] text-white shadow-sm"
+                          ? "bg-black text-white shadow-sm dark:bg-white dark:text-black"
                           : "text-[var(--fg-4)] hover:text-[var(--fg)]"
                       }`}
                     >
@@ -1061,8 +1013,8 @@ export function InboxClient({
           <div className="min-h-0 flex-1 overflow-y-auto divide-y divide-[var(--stroke)]">
             {filteredMessages.length === 0 ? (
               <div className="flex h-full min-h-[360px] flex-col items-center justify-center px-6 text-center">
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
-                  <MessageCircle className="h-5 w-5" />
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-black bg-black text-white dark:border-white/10 dark:bg-white/[0.06] dark:text-white">
+                  <MessageCircle className="h-5 w-5 text-white" />
                 </div>
 
                 <p className="font-display text-sm font-bold text-[var(--fg)]">
@@ -1080,7 +1032,7 @@ export function InboxClient({
                 {messagesList.length === 0 && accounts.length === 0 && (
                   <Link
                     href="/dashboard/integrations"
-                    className="mt-3.5 inline-flex items-center gap-1.5 rounded-xl bg-[var(--brand-primary)] px-3.5 py-1.5 text-[10px] font-semibold text-white shadow-[var(--brand-primary-shadow)] transition hover:opacity-90"
+                    className="mt-3.5 inline-flex items-center gap-1.5 rounded-xl bg-black px-3.5 py-1.5 text-[10px] font-semibold text-white shadow-sm transition hover:opacity-90 dark:bg-white dark:text-black"
                   >
                     Connect Channels
                     <ArrowUpRight className="h-3 w-3" />
@@ -1100,13 +1052,13 @@ export function InboxClient({
                     onClick={() => selectConversation(message.id)}
                     className={`relative flex w-full gap-3 p-3.5 text-left transition ${
                       active
-                        ? "bg-[var(--brand-primary-soft)]"
+                        ? "bg-black/[0.04] dark:bg-white/[0.06]"
                         : "hover:bg-[var(--panel-fill-2)]"
                     }`}
                   >
                     {/* ACTIVE ACCENT BAR */}
                     {active && (
-                      <span className="absolute inset-y-0 left-0 w-1 bg-[var(--brand-primary)]" />
+                      <span className="absolute inset-y-0 left-0 w-1 bg-black dark:bg-white" />
                     )}
 
                     {/* AVATAR */}
@@ -1164,7 +1116,7 @@ export function InboxClient({
                         )}
 
                         {unread && (
-                          <span className="h-2 w-2 rounded-full bg-[var(--brand-primary)]" />
+                          <span className="h-2 w-2 rounded-full bg-black dark:bg-white" />
                         )}
                       </div>
                     </div>
@@ -1226,7 +1178,7 @@ export function InboxClient({
                       </h2>
 
                       {!selectedMessage.is_read && (
-                        <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--brand-primary)]" />
+                        <span className="h-2 w-2 shrink-0 rounded-full bg-black dark:bg-white" />
                       )}
                     </div>
 
@@ -1286,7 +1238,7 @@ export function InboxClient({
 
                       <button
                         type="button"
-                        className="inline-flex items-center gap-1 text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
+                        className="inline-flex items-center gap-1 text-[9px] font-semibold text-[var(--fg)] hover:underline"
                       >
                         View post
                         <ArrowUpRight className="h-2.5 w-2.5" />
@@ -1361,7 +1313,7 @@ export function InboxClient({
                         localReplies[selectedMessage.id]) && (
                         <div className="flex justify-end">
                           <div className="max-w-[78%]">
-                            <div className="rounded-2xl rounded-tr-sm bg-[var(--brand-primary)] px-4 py-3 text-white shadow-[var(--brand-primary-shadow)]">
+                            <div className="rounded-2xl rounded-tr-sm bg-black px-4 py-3 text-white shadow-sm dark:bg-white/[0.08] dark:text-white dark:border dark:border-white/10">
                               <p className="text-[11px] leading-[1.65]">
                                 {selectedMessage.reply_body ||
                                   localReplies[selectedMessage.id]}
@@ -1370,7 +1322,7 @@ export function InboxClient({
 
                             <div className="mt-1.5 flex items-center justify-end gap-1.5 px-1 text-[9px] text-[var(--fg-4)]">
                               <span>Delivered</span>
-                              <CheckCheck className="h-3 w-3 text-[var(--brand-primary)]" />
+                              <CheckCheck className="h-3 w-3 text-black dark:text-white" />
                             </div>
                           </div>
                         </div>
@@ -1379,14 +1331,14 @@ export function InboxClient({
                     {/* AI SUGGESTION */}
 
                     {selectedMessage.category === "lead" && (
-                      <div className="ml-11 rounded-xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] p-4">
+                      <div className="ml-11 rounded-xl border border-black/20 bg-black/[0.02] p-4 dark:border-white/10 dark:bg-white/[0.04]">
                         <div className="mb-2 flex items-center gap-2">
-                          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-[var(--brand-primary)] text-white">
+                          <div className="flex h-6 w-6 items-center justify-center rounded-lg border border-black bg-black text-white dark:border-white/10 dark:bg-white/[0.06] dark:text-white">
                             <Bot className="h-3.5 w-3.5" />
                           </div>
 
                           <div>
-                            <p className="font-display text-[10px] font-bold text-[var(--brand-primary)]">
+                            <p className="font-display text-[10px] font-bold text-[var(--fg)]">
                               Kora AI · Suggested reply
                             </p>
 
@@ -1416,7 +1368,7 @@ export function InboxClient({
                                 }! Thanks so much for reaching out. I would be happy to share more details and help you get started with our services.`
                               )
                             }
-                            className="rounded-lg border border-[var(--brand-primary-border)] bg-[var(--panel-fill)] px-3 py-1.5 text-[9px] font-semibold text-[var(--brand-primary)] transition hover:bg-[var(--panel-fill-2)]"
+                            className="rounded-lg border border-black/30 bg-[var(--panel-fill)] px-3 py-1.5 text-[9px] font-semibold text-[var(--fg)] transition hover:bg-[var(--panel-fill-2)] dark:border-white/20"
                           >
                             Use reply
                           </button>
@@ -1461,7 +1413,7 @@ export function InboxClient({
 
                       <Link
                         href="/dashboard/automations"
-                        className="text-[9px] font-semibold text-[var(--brand-primary)] hover:underline"
+                        className="text-[9px] font-semibold text-[var(--fg)] hover:underline"
                       >
                         Manage automation →
                       </Link>
@@ -1469,7 +1421,7 @@ export function InboxClient({
 
                     {/* INPUT CONTAINER */}
 
-                    <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 transition focus-within:border-[var(--brand-primary-border)]">
+                    <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 transition focus-within:border-[var(--stroke-strong)]">
                       <textarea
                         value={reply}
                         onChange={(event) => setReply(event.target.value)}
@@ -1505,7 +1457,7 @@ export function InboxClient({
                                   }! Thanks for reaching out 🙌`
                               )
                             }
-                            className="ml-1 inline-flex h-7 items-center gap-1.5 rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] px-2.5 text-[9px] font-semibold text-[var(--brand-primary)] transition hover:opacity-80"
+                            className="ml-1 inline-flex h-7 items-center gap-1.5 rounded-lg border border-black/20 bg-black/5 px-2.5 text-[9px] font-semibold text-black transition hover:bg-black/10 dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:hover:bg-white/10"
                           >
                             <Sparkles className="h-3 w-3" />
                             AI Assist
@@ -1516,7 +1468,7 @@ export function InboxClient({
                           type="button"
                           onClick={() => sendReply(selectedMessage)}
                           disabled={!reply.trim()}
-                          className="inline-flex h-8 items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-4 text-[10px] font-bold text-white shadow-[var(--brand-primary-shadow)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                          className="inline-flex h-8 items-center gap-2 rounded-xl bg-black px-4 text-[10px] font-bold text-white shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-black"
                         >
                           Send
                           <Send className="h-3 w-3" />
@@ -1543,8 +1495,8 @@ export function InboxClient({
             /* -------------------------------------------------------------- */
 
             <div className="flex flex-1 flex-col items-center justify-center p-10 text-center">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
-                <MessageCircle className="h-6 w-6" />
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-black bg-black text-white dark:border-white/10 dark:bg-white/[0.06] dark:text-white">
+                <MessageCircle className="h-6 w-6 text-white" />
               </div>
 
               <h3 className="font-display text-base font-bold text-[var(--fg)]">
@@ -1562,7 +1514,7 @@ export function InboxClient({
                     filteredMessages[0] &&
                     selectConversation(filteredMessages[0].id)
                   }
-                  className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-semibold text-[var(--brand-primary)] transition hover:underline"
+                  className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-semibold text-[var(--fg)] transition hover:underline"
                 >
                   Open first conversation
                   <ChevronRight className="h-3 w-3" />

@@ -189,66 +189,21 @@ function AnalyticsStatCard({
   icon: React.ElementType;
   tone?: "primary" | "pink" | "blue" | "green" | "purple" | "indigo" | "amber";
 }) {
-  const toneMap: Record<string, { bg: string; color: string; border: string }> = {
-    primary: {
-      bg: "var(--brand-primary-soft)",
-      color: "var(--brand-primary)",
-      border: "var(--brand-primary-border)",
-    },
-    pink: {
-      bg: "var(--brand-primary-soft)",
-      color: "var(--brand-primary)",
-      border: "var(--brand-primary-border)",
-    },
-    blue: {
-      bg: "var(--kora-blue-soft)",
-      color: "var(--kora-blue)",
-      border: "rgba(59, 130, 246, 0.2)",
-    },
-    green: {
-      bg: "var(--success-soft)",
-      color: "var(--success)",
-      border: "rgba(34, 197, 94, 0.2)",
-    },
-    indigo: {
-      bg: "var(--kora-blue-soft)",
-      color: "var(--kora-blue)",
-      border: "rgba(59, 130, 246, 0.2)",
-    },
-    purple: {
-      bg: "rgba(168, 85, 247, 0.12)",
-      color: "#c084fc",
-      border: "rgba(168, 85, 247, 0.2)",
-    },
-    amber: {
-      bg: "rgba(245, 158, 11, 0.12)",
-      color: "#f59e0b",
-      border: "rgba(245, 158, 11, 0.25)",
-    },
-  };
-
-  const currentTone = toneMap[tone] || toneMap.primary;
-
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-4 sm:p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--stroke-strong)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
+    <div className="group relative overflow-hidden rounded-2xl border border-black/80 dark:border-[var(--stroke)] bg-[var(--panel-fill)] p-4 sm:p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)]">
       <div className="flex items-start justify-between gap-3">
         <div
-          className="flex h-10 w-10 items-center justify-center rounded-xl"
-          style={{
-            backgroundColor: currentTone.bg,
-            color: currentTone.color,
-            border: `1px solid ${currentTone.border}`,
-          }}
+          className="flex h-10 w-10 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white transition-colors"
         >
-          <Icon className="h-5 w-5" />
+          <Icon className="h-5 w-5 text-white" />
         </div>
 
         {growth && (
           <div
             className={`flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
               growthPositive
-                ? "bg-[var(--success-soft)] text-[var(--success)]"
-                : "bg-red-500/10 text-red-400"
+                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                : "bg-red-500/10 text-red-500 dark:text-red-400"
             }`}
           >
             {growthPositive ? (
@@ -430,8 +385,8 @@ function BestTimeToPostCard({ stats }: { stats: BestTimeStatsType }) {
       {/* Top Best Window Highlight based on Audience Online Activity */}
       <div className="flex items-center justify-between rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]">
-            <Clock className="h-4 w-4" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white">
+            <Clock className="h-4 w-4 text-white" />
           </div>
           <div>
             <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--fg-4)]">
@@ -446,7 +401,7 @@ function BestTimeToPostCard({ stats }: { stats: BestTimeStatsType }) {
           </div>
         </div>
 
-        <span className="shrink-0 rounded-full bg-[var(--brand-primary-soft)] border border-[var(--brand-primary-border)] px-2 py-0.5 text-[9px] font-bold text-[var(--brand-primary)] dark:text-white">
+        <span className="shrink-0 rounded-full bg-black text-white dark:bg-white/[0.06] border border-black dark:border-white/10 px-2.5 py-0.5 text-[9px] font-bold dark:text-white">
           {stats.engagementLift}
         </span>
       </div>
@@ -458,7 +413,7 @@ function BestTimeToPostCard({ stats }: { stats: BestTimeStatsType }) {
             Audience Active Days
           </span>
           <span className="text-[9px] text-[var(--fg-4)]">
-            Peak: <strong className="text-[var(--brand-primary)]">{stats.bestDayName}s</strong>
+            Peak: <strong className="text-[var(--fg)]">{stats.bestDayName}s</strong>
           </span>
         </div>
         <div className="flex items-end justify-between gap-1.5 pt-1 pb-1">
@@ -470,7 +425,7 @@ function BestTimeToPostCard({ stats }: { stats: BestTimeStatsType }) {
                   <div
                     className={`w-full rounded-xs transition-all duration-300 ${
                       isPeak
-                        ? "bg-[var(--brand-primary)] shadow-xs"
+                        ? "bg-black dark:bg-white shadow-xs"
                         : "bg-[var(--fg-4)] opacity-25 hover:opacity-40"
                     }`}
                     style={{ height: `${Math.max(day.pct, 14)}%` }}
@@ -479,7 +434,7 @@ function BestTimeToPostCard({ stats }: { stats: BestTimeStatsType }) {
                 <span
                   className={`text-[9px] font-medium ${
                     isPeak
-                      ? "font-bold text-[var(--brand-primary)]"
+                      ? "font-bold text-[var(--fg)]"
                       : "text-[var(--fg-4)]"
                   }`}
                 >
@@ -505,21 +460,21 @@ function BestTimeToPostCard({ stats }: { stats: BestTimeStatsType }) {
                 key={slot.id}
                 className={`rounded-lg border p-2 text-left transition ${
                   isTop
-                    ? "border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)]"
+                    ? "border-black/80 dark:border-white/20 bg-black/5 dark:bg-white/5"
                     : "border-[var(--stroke)] bg-[var(--panel-fill-2)]"
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span
                     className={`text-[10px] font-semibold ${
-                      isTop ? "text-[var(--brand-primary)] dark:text-white" : "text-[var(--fg)]"
+                      isTop ? "text-[var(--fg)] font-bold" : "text-[var(--fg)]"
                     }`}
                   >
                     {slot.label}
                   </span>
                   <span
                     className={`font-display text-[10px] font-bold ${
-                      isTop ? "text-[var(--brand-primary)] dark:text-white" : "text-[var(--fg-3)]"
+                      isTop ? "text-[var(--fg)]" : "text-[var(--fg-3)]"
                     }`}
                   >
                     {slot.percentage}% active
@@ -527,7 +482,7 @@ function BestTimeToPostCard({ stats }: { stats: BestTimeStatsType }) {
                 </div>
                 <div className="mt-0.5 flex items-center justify-between text-[9px] text-[var(--fg-4)]">
                   <span>{slot.time}</span>
-                  <span className={`font-semibold ${isTop ? "text-[var(--brand-primary)] dark:text-white" : ""}`}>
+                  <span className={`font-semibold ${isTop ? "text-[var(--fg)]" : ""}`}>
                     {slot.activityLevel}
                   </span>
                 </div>
@@ -1665,7 +1620,7 @@ export function AnalyticsClient({
 
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--brand-primary)] bg-[var(--brand-primary)] px-2.5 py-1 text-[10px] font-semibold text-white shadow-xs">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white px-2.5 py-1 text-[10px] font-semibold shadow-xs">
             <Activity className="h-3 w-3 text-white" />
             <span className="text-white font-medium">
               {persona === "creator"
@@ -1688,7 +1643,7 @@ export function AnalyticsClient({
             type="button"
             className="inline-flex h-9 items-center gap-2 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill)] px-3 text-[11px] font-medium text-[var(--fg-2)] transition hover:border-[var(--stroke-strong)] hover:bg-[var(--panel-fill-2)]"
           >
-            <CalendarDays className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
+            <CalendarDays className="h-3.5 w-3.5 text-[var(--fg)]" />
             <span>
               {selectedDays === 365 ? "All Time" : `Last ${selectedDays} days`}
             </span>
@@ -1696,10 +1651,10 @@ export function AnalyticsClient({
 
           <Link
             href="/dashboard/integrations"
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--brand-primary)] bg-[var(--brand-primary)] px-3 text-[11px] font-semibold text-white shadow-xs transition hover:opacity-90"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-black text-white hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200 border border-black dark:border-transparent px-3 text-[11px] font-semibold shadow-xs transition"
           >
-            <Plug className="h-3.5 w-3.5 text-white" />
-            <span className="text-white">Channels ({connectedCount})</span>
+            <Plug className="h-3.5 w-3.5" />
+            <span>Channels ({connectedCount})</span>
           </Link>
         </div>
       </div>
@@ -1708,7 +1663,7 @@ export function AnalyticsClient({
       {/* SOCIALS & DATE RANGE FILTER BAR (BELOW DESCRIPTION)                */}
       {/* ------------------------------------------------------------------ */}
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3 lg:flex-row lg:items-center lg:justify-between shadow-xs">
+      <div className="flex flex-col gap-3 rounded-2xl border border-black/80 dark:border-[var(--stroke)] bg-[var(--panel-fill)] p-3 lg:flex-row lg:items-center lg:justify-between shadow-xs">
         {/* SOCIAL PLATFORMS FILTER */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar lg:pb-0">
           {/* TOTAL / ALL FILTER BUTTON */}
@@ -1717,26 +1672,26 @@ export function AnalyticsClient({
             onClick={() => setSelectedPlatform("all")}
             className={`flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
               activeSelectedPlatform === "all"
-                ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white shadow-sm"
+                ? "border-black bg-black text-white dark:border-white dark:bg-white dark:text-black shadow-sm"
                 : "border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-3)] hover:text-[var(--fg)] hover:border-[var(--stroke-strong)]"
             }`}
           >
             <span
               className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold shadow-xs ${
                 activeSelectedPlatform === "all"
-                  ? "bg-white/20 text-white"
-                  : "bg-[var(--brand-primary)] text-white"
+                  ? "bg-white/20 dark:bg-black/20 text-white dark:text-black"
+                  : "bg-black text-white dark:bg-white/[0.06] dark:text-white"
               }`}
             >
               ∑
             </span>
-            <span className={activeSelectedPlatform === "all" ? "text-white font-semibold" : ""}>
+            <span className={activeSelectedPlatform === "all" ? "font-semibold" : ""}>
               Total
             </span>
             <span
               className={`rounded-full px-1.5 py-0.2 text-[9px] font-bold ${
                 activeSelectedPlatform === "all"
-                  ? "bg-white/20 text-white"
+                  ? "bg-white/20 dark:bg-black/20 text-white dark:text-black"
                   : "bg-[var(--panel-fill)] text-[var(--fg-4)]"
               }`}
             >
@@ -1755,7 +1710,7 @@ export function AnalyticsClient({
                 onClick={() => setSelectedPlatform(active ? "all" : p.id)}
                 className={`flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                   active
-                    ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] font-semibold text-white shadow-sm"
+                    ? "border-black bg-black text-white dark:border-white dark:bg-white dark:text-black font-semibold shadow-sm"
                     : "border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-3)] hover:text-[var(--fg)] hover:border-[var(--stroke-strong)]"
                 }`}
               >
@@ -1763,12 +1718,12 @@ export function AnalyticsClient({
                   platform={p.id}
                   className="h-5 w-5 rounded-full ring-1 ring-[var(--stroke)]"
                 />
-                <span className={active ? "text-white font-semibold" : ""}>{p.label}</span>
+                <span className={active ? "font-semibold" : ""}>{p.label}</span>
                 {p.postCount > 0 && (
                   <span
                     className={`rounded-full px-1.5 py-0.2 text-[9px] font-bold ${
                       active
-                        ? "bg-white/20 text-white"
+                        ? "bg-white/20 dark:bg-black/20 text-white dark:text-black"
                         : "bg-[var(--panel-fill)] text-[var(--fg-4)]"
                     }`}
                   >
@@ -1783,10 +1738,10 @@ export function AnalyticsClient({
           {connectedPlatforms.length === 0 && (
             <Link
               href="/dashboard/integrations"
-              className="flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--brand-primary)] bg-[var(--brand-primary)] px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:opacity-90"
+              className="flex shrink-0 items-center gap-1.5 rounded-full bg-black text-white hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200 border border-black dark:border-transparent px-3 py-1.5 text-xs font-semibold shadow-xs transition"
             >
-              <Plug className="h-3.5 w-3.5 text-white" />
-              <span className="text-white">+ Connect Account</span>
+              <Plug className="h-3.5 w-3.5" />
+              <span>+ Connect Account</span>
             </Link>
           )}
         </div>
@@ -1809,7 +1764,7 @@ export function AnalyticsClient({
                 onClick={() => setDateRange(r.id as any)}
                 className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
                   active
-                    ? "bg-[var(--brand-primary)] text-white shadow-sm"
+                    ? "bg-black text-white dark:bg-white dark:text-black shadow-sm"
                     : "text-[var(--fg-4)] hover:text-[var(--fg)]"
                 }`}
               >
@@ -1930,7 +1885,7 @@ export function AnalyticsClient({
                   onClick={() => setChartMetric(m.id as any)}
                   className={`rounded-md px-2 py-1 text-[10px] font-semibold transition ${
                     chartMetric === m.id
-                      ? "bg-[var(--brand-primary)] text-white shadow-xs"
+                      ? "bg-black text-white dark:bg-white dark:text-black shadow-xs"
                       : "text-[var(--fg-4)] hover:text-[var(--fg)]"
                   }`}
                 >
@@ -1950,7 +1905,7 @@ export function AnalyticsClient({
         </GlassCard>
 
         {/* TOP CONTENT */}
-        <GlassCard className="rounded-2xl p-5 flex flex-col justify-between">
+        <GlassCard className="rounded-2xl border-black/80 dark:border-[var(--stroke)] p-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
               <div>
@@ -1964,7 +1919,7 @@ export function AnalyticsClient({
 
               <Link
                 href="/dashboard/library"
-                className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--brand-primary)] transition hover:opacity-80"
+                className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--fg)] hover:opacity-75 transition"
               >
                 View all
                 <ArrowUpRight className="h-3 w-3" />
@@ -2000,7 +1955,7 @@ export function AnalyticsClient({
                             {fmtNum(postReach(post))}
                           </span>{" "}
                           reach · {fmtNum(postEngagement(post))} eng ·{" "}
-                          <span className="font-semibold text-[var(--brand-primary)]">
+                          <span className="font-semibold text-[var(--fg)]">
                             {postEngRate(post)}%
                           </span>{" "}
                           rate
@@ -2022,8 +1977,8 @@ export function AnalyticsClient({
                 })
               ) : (
                 <div className="flex min-h-[220px] flex-col items-center justify-center text-center p-6">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--panel-fill-2)] text-[var(--fg-4)]">
-                    <Sparkles className="h-5 w-5" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white">
+                    <Sparkles className="h-5 w-5 text-white" />
                   </div>
                   <p className="mt-2 text-xs font-semibold text-[var(--fg-2)]">
                     No posts for this period
@@ -2055,7 +2010,7 @@ export function AnalyticsClient({
 
       <div className="grid gap-4 xl:grid-cols-3">
         {/* AUDIENCE DEMOGRAPHICS */}
-        <GlassCard className="rounded-2xl p-5">
+        <GlassCard className="rounded-2xl border-black/80 dark:border-[var(--stroke)] p-5">
           <div className="flex items-start justify-between gap-2">
             <div>
               <h2 className="font-display text-sm font-bold text-[var(--fg)]">
@@ -2077,7 +2032,7 @@ export function AnalyticsClient({
               onClick={() => setActiveAudienceTab("gender")}
               className={`flex-1 rounded-md py-1.5 text-[10px] font-semibold transition ${
                 activeAudienceTab === "gender"
-                  ? "bg-[var(--panel-fill)] text-[var(--fg)] shadow-sm"
+                  ? "bg-black text-white dark:bg-white dark:text-black shadow-sm"
                   : "text-[var(--fg-4)] hover:text-[var(--fg-2)]"
               }`}
             >
@@ -2089,7 +2044,7 @@ export function AnalyticsClient({
               onClick={() => setActiveAudienceTab("age")}
               className={`flex-1 rounded-md py-1.5 text-[10px] font-semibold transition ${
                 activeAudienceTab === "age"
-                  ? "bg-[var(--panel-fill)] text-[var(--fg)] shadow-sm"
+                  ? "bg-black text-white dark:bg-white dark:text-black shadow-sm"
                   : "text-[var(--fg-4)] hover:text-[var(--fg-2)]"
               }`}
             >
@@ -2101,7 +2056,7 @@ export function AnalyticsClient({
               onClick={() => setActiveAudienceTab("location")}
               className={`flex-1 rounded-md py-1.5 text-[10px] font-semibold transition ${
                 activeAudienceTab === "location"
-                  ? "bg-[var(--panel-fill)] text-[var(--fg)] shadow-sm"
+                  ? "bg-black text-white dark:bg-white dark:text-black shadow-sm"
                   : "text-[var(--fg-4)] hover:text-[var(--fg-2)]"
               }`}
             >
@@ -2112,8 +2067,8 @@ export function AnalyticsClient({
           <div className="mt-5">
             {!audienceDemographics.hasData ? (
               <div className="flex min-h-[160px] flex-col items-center justify-center text-center p-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--panel-fill-2)] text-[var(--fg-4)]">
-                  <Users className="h-4 w-4" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white">
+                  <Users className="h-4 w-4 text-white" />
                 </div>
                 <p className="mt-2 text-xs font-semibold text-[var(--fg-2)]">
                   No demographic data
@@ -2148,7 +2103,7 @@ export function AnalyticsClient({
                         </div>
                         <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--panel-fill-2)]">
                           <div
-                            className="h-full rounded-full bg-gradient-to-r from-[var(--brand-primary)] to-[var(--kora-blue)] transition-all duration-500"
+                            className="h-full rounded-full bg-black dark:bg-white transition-all duration-500"
                             style={{ width: `${Math.max(item.pct, 4)}%` }}
                           />
                         </div>
@@ -2166,7 +2121,7 @@ export function AnalyticsClient({
                       >
                         <div className="flex items-center justify-between text-[11px]">
                           <div className="flex items-center gap-2">
-                            <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[var(--panel-fill)] text-[9px] font-bold text-[var(--brand-primary)]">
+                            <span className="flex h-5 w-5 items-center justify-center rounded-md bg-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white text-[9px] font-bold">
                               {item.code}
                             </span>
                             <span className="font-medium text-[var(--fg-2)]">{item.country}</span>
@@ -2181,7 +2136,7 @@ export function AnalyticsClient({
 
                         <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[var(--panel-fill)]">
                           <div
-                            className="h-full rounded-full bg-[var(--brand-primary)] transition-all duration-500"
+                            className="h-full rounded-full bg-black dark:bg-white transition-all duration-500"
                             style={{ width: `${Math.max(item.pct, 6)}%` }}
                           />
                         </div>
@@ -2195,7 +2150,7 @@ export function AnalyticsClient({
         </GlassCard>
 
         {/* BEST TIME TO POST (AUDIENCE ACTIVITY) */}
-        <GlassCard className="rounded-2xl p-5">
+        <GlassCard className="rounded-2xl border-black/80 dark:border-[var(--stroke)] p-5">
           <div className="flex items-start justify-between gap-2">
             <div>
               <h2 className="font-display text-sm font-bold text-[var(--fg)]">
@@ -2215,7 +2170,7 @@ export function AnalyticsClient({
         </GlassCard>
 
         {/* PLATFORM DISTRIBUTION */}
-        <GlassCard className="rounded-2xl p-5">
+        <GlassCard className="rounded-2xl border-black/80 dark:border-[var(--stroke)] p-5">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="font-display text-sm font-bold text-[var(--fg)]">
@@ -2250,7 +2205,7 @@ export function AnalyticsClient({
                         />
 
                         <div>
-                          <span className="text-[11px] font-semibold text-[var(--fg)] group-hover:text-[var(--brand-primary)] transition">
+                          <span className="text-[11px] font-semibold text-[var(--fg)] group-hover:text-[var(--fg)] transition">
                             {platform.label}
                           </span>
                           <p className="text-[9px] text-[var(--fg-4)]">
@@ -2279,8 +2234,8 @@ export function AnalyticsClient({
             </div>
           ) : (
             <div className="flex min-h-[180px] flex-col items-center justify-center p-6 text-center">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--panel-fill-2)] text-[var(--fg-4)]">
-                <Layers className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white">
+                <Layers className="h-5 w-5 text-white" />
               </div>
               <p className="mt-2 text-xs font-semibold text-[var(--fg-2)]">
                 No channel distribution
@@ -2299,11 +2254,11 @@ export function AnalyticsClient({
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(330px,0.8fr)]">
         {/* AI CONTENT INSIGHTS */}
-        <GlassCard className="rounded-2xl p-5">
+        <GlassCard className="rounded-2xl border-black/80 dark:border-[var(--stroke)] p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--kora-blue-soft)] bg-[var(--kora-blue-soft)] text-[var(--kora-blue)]">
-                <Sparkles className="h-4 w-4" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white">
+                <Sparkles className="h-4 w-4 text-white" />
               </div>
 
               <div>
@@ -2317,7 +2272,7 @@ export function AnalyticsClient({
               </div>
             </div>
 
-            <span className="rounded-full bg-[var(--brand-primary-soft)] px-2.5 py-0.5 text-[9px] font-bold text-[var(--brand-primary)] dark:text-white border border-[var(--brand-primary-border)]">
+            <span className="rounded-full bg-black text-white dark:bg-white/[0.06] border border-black dark:border-white/10 px-2.5 py-0.5 text-[9px] font-bold dark:text-white">
               Live Analysis
             </span>
           </div>
@@ -2325,16 +2280,6 @@ export function AnalyticsClient({
           <div className="mt-4 divide-y divide-[var(--stroke)]">
             {aiContentInsights.map((insight, idx) => {
               const Icon = insight.icon;
-              const toneClasses =
-                {
-                  primary:
-                    "border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]",
-                  purple: "border-purple-500/20 bg-purple-500/10 text-purple-400",
-                  blue: "border-[var(--kora-blue-soft)] bg-[var(--kora-blue-soft)] text-[var(--kora-blue)]",
-                  green: "border-[var(--success-soft)] bg-[var(--success-soft)] text-[var(--success)]",
-                  amber: "border-amber-500/20 bg-amber-500/10 text-amber-400",
-                }[insight.tone] ||
-                "border-[var(--brand-primary-border)] bg-[var(--brand-primary-soft)] text-[var(--brand-primary)]";
 
               return (
                 <div
@@ -2344,9 +2289,9 @@ export function AnalyticsClient({
                   } ${idx === aiContentInsights.length - 1 ? "pb-0" : ""}`}
                 >
                   <div
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${toneClasses}`}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-4 w-4 text-white" />
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -2410,8 +2355,8 @@ export function AnalyticsClient({
             </div>
           ) : (
             <div className="flex min-h-[180px] flex-col items-center justify-center p-6 text-center">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--panel-fill-2)] text-[var(--fg-4)]">
-                <Hash className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white">
+                <Hash className="h-5 w-5 text-white" />
               </div>
               <p className="mt-2 text-xs font-semibold text-[var(--fg-2)]">
                 No topic trends yet
@@ -2431,7 +2376,7 @@ export function AnalyticsClient({
       {campaigns.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <Megaphone className="h-4 w-4 text-amber-400" />
+            <Megaphone className="h-4 w-4 text-[var(--fg)]" />
             <h2 className="font-display text-base font-bold text-[var(--fg)]">
               Campaign Performance
             </h2>
@@ -2439,11 +2384,11 @@ export function AnalyticsClient({
 
           <div className="grid gap-4 xl:grid-cols-2">
             {campaigns.slice(0, 4).map((campaign) => (
-              <GlassCard key={campaign.id} className="rounded-2xl p-5">
+              <GlassCard key={campaign.id} className="rounded-2xl border-black/80 dark:border-[var(--stroke)] p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-400">
-                      <Megaphone className="h-4 w-4" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white">
+                      <Megaphone className="h-4 w-4 text-white" />
                     </div>
 
                     <div>
@@ -2464,7 +2409,7 @@ export function AnalyticsClient({
 
                 <div className="mt-5 grid grid-cols-4 gap-2">
                   <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-center">
-                    <DollarSign className="mx-auto h-4 w-4 text-amber-400" />
+                    <DollarSign className="mx-auto h-4 w-4 text-[var(--fg)]" />
                     <p className="mt-1.5 font-display text-xs font-bold text-[var(--fg)]">
                       {fmtNaira(safeNumber(campaign.spend))}
                     </p>
@@ -2472,7 +2417,7 @@ export function AnalyticsClient({
                   </div>
 
                   <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-center">
-                    <TrendingUp className="mx-auto h-4 w-4 text-[var(--brand-primary)]" />
+                    <TrendingUp className="mx-auto h-4 w-4 text-[var(--fg)]" />
                     <p className="mt-1.5 font-display text-xs font-bold text-[var(--fg)]">
                       {safeNumber(campaign.ctr).toFixed(1)}%
                     </p>
@@ -2480,7 +2425,7 @@ export function AnalyticsClient({
                   </div>
 
                   <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-center">
-                    <Trophy className="mx-auto h-4 w-4 text-purple-400" />
+                    <Trophy className="mx-auto h-4 w-4 text-[var(--fg)]" />
                     <p className="mt-1.5 font-display text-xs font-bold text-[var(--fg)]">
                       {fmtNum(safeNumber(campaign.conversions))}
                     </p>
@@ -2488,7 +2433,7 @@ export function AnalyticsClient({
                   </div>
 
                   <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3 text-center">
-                    <TrendingUp className="mx-auto h-4 w-4 text-[var(--success)]" />
+                    <TrendingUp className="mx-auto h-4 w-4 text-emerald-500" />
                     <p className="mt-1.5 font-display text-xs font-bold text-[var(--fg)]">
                       {safeNumber(campaign.roas).toFixed(1)}×
                     </p>
