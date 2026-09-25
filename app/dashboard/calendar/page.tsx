@@ -34,6 +34,8 @@ import {
   Globe,
   Radio,
   Tv,
+  Smartphone,
+  Monitor,
 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
@@ -328,6 +330,7 @@ export default function CalendarPage() {
 
   // Navigation & Views
   const [view, setView] = useState<"calendar" | "grid">("calendar");
+  const [previewDevice, setPreviewDevice] = useState<"phone" | "desktop">("phone");
   const [currentMonth, setCurrentMonth] = useState(now.getMonth());
   const [currentYear, setCurrentYear] = useState(now.getFullYear());
   const [platformFilter, setPlatformFilter] = useState("All");
@@ -1235,17 +1238,53 @@ export default function CalendarPage() {
           /* ============================================================ */
           /* VISUAL GRID PREVIEW                                          */
           /* ============================================================ */
-          <div className="flex-1 overflow-auto bg-[var(--app-bg)] flex items-center justify-center p-8 gap-12">
-            <div className="max-w-[320px] space-y-4">
+          <div className="flex-1 overflow-auto bg-[var(--app-bg)] flex flex-col lg:flex-row items-center justify-center p-6 sm:p-8 gap-8 lg:gap-12">
+            <div className="max-w-[320px] w-full space-y-4 shrink-0">
               <div className="w-12 h-12 rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white flex items-center justify-center">
                 <LayoutGrid className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-[var(--fg)]">
-                Feed Grid Preview
-              </h3>
-              <p className="text-sm text-[var(--fg-4)] leading-relaxed">
-                Preview how your scheduled media and captions will look on your feed before publishing.
-              </p>
+              <div>
+                <h3 className="text-xl font-semibold text-[var(--fg)]">
+                  Feed Grid Preview
+                </h3>
+                <p className="text-sm text-[var(--fg-4)] leading-relaxed mt-1">
+                  Preview how your scheduled media and captions will look on your feed before publishing.
+                </p>
+              </div>
+
+              {/* DEVICE SCREEN SWITCHER */}
+              <div className="space-y-1.5 pt-1">
+                <label className="text-[10px] font-semibold uppercase tracking-wider text-[var(--fg-4)] block">
+                  Device Screen View
+                </label>
+                <div className="flex items-center gap-1 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-1">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDevice("phone")}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      previewDevice === "phone"
+                        ? "bg-black text-white shadow-xs dark:bg-white dark:text-black"
+                        : "text-[var(--fg-4)] hover:text-[var(--fg)]"
+                    }`}
+                  >
+                    <Smartphone className="w-3.5 h-3.5" />
+                    <span>Phone</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDevice("desktop")}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      previewDevice === "desktop"
+                        ? "bg-black text-white shadow-xs dark:bg-white dark:text-black"
+                        : "text-[var(--fg-4)] hover:text-[var(--fg)]"
+                    }`}
+                  >
+                    <Monitor className="w-3.5 h-3.5" />
+                    <span>Desktop</span>
+                  </button>
+                </div>
+              </div>
+
               <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3.5">
                 <div className="flex items-center gap-2 mb-1 text-xs font-semibold text-[var(--fg)]">
                   <Sparkles className="w-3.5 h-3.5 text-black dark:text-white" />
@@ -1257,61 +1296,152 @@ export default function CalendarPage() {
               </div>
             </div>
 
-            {/* PHONE FRAME */}
-            <div className="w-full max-w-[340px] h-[640px] rounded-[36px] overflow-hidden border border-[var(--stroke-strong)] bg-[var(--panel-fill-2)] shadow-2xl flex flex-col">
-              <div className="h-11 border-b border-[var(--stroke)] flex items-center justify-between px-5">
-                <span className="text-xs font-bold text-[var(--fg)]">
-                  @{accounts[0]?.handle || accounts[0]?.display_name || "koraspace"}
-                </span>
-                <Layout className="w-3.5 h-3.5 text-[var(--fg-4)]" />
-              </div>
-
-              <div className="p-4 border-b border-[var(--stroke)] flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-black text-white dark:bg-white/10 flex items-center justify-center font-bold shadow-md">
-                  <Sparkles className="w-5 h-5 text-white" />
+            {/* PREVIEW FRAME */}
+            {previewDevice === "phone" ? (
+              /* PHONE FRAME */
+              <div className="w-full max-w-[340px] h-[640px] rounded-[36px] overflow-hidden border border-[var(--stroke-strong)] bg-[var(--panel-fill-2)] shadow-2xl flex flex-col transition-all">
+                <div className="h-11 border-b border-[var(--stroke)] flex items-center justify-between px-5 bg-[var(--panel-fill)]">
+                  <span className="text-xs font-bold text-[var(--fg)]">
+                    @{accounts[0]?.handle || accounts[0]?.display_name || "koraspace"}
+                  </span>
+                  <Layout className="w-3.5 h-3.5 text-[var(--fg-4)]" />
                 </div>
-                <div className="flex gap-4 text-center">
-                  <div>
-                    <p className="text-xs font-bold text-[var(--fg)]">{scheduledEvents.length + 24}</p>
-                    <p className="text-[9px] text-[var(--fg-4)]">Posts</p>
+
+                <div className="p-4 border-b border-[var(--stroke)] flex items-center gap-3 bg-[var(--panel-fill)]">
+                  <div className="w-12 h-12 rounded-full bg-black text-white dark:bg-white/10 flex items-center justify-center font-bold shadow-md shrink-0">
+                    <Sparkles className="w-5 h-5 text-white" />
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-[var(--fg)]">14.8K</p>
-                    <p className="text-[9px] text-[var(--fg-4)]">Audience</p>
+                  <div className="flex gap-4 text-center flex-1 justify-around">
+                    <div>
+                      <p className="text-xs font-bold text-[var(--fg)]">{scheduledEvents.length + 24}</p>
+                      <p className="text-[9px] text-[var(--fg-4)]">Posts</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-[var(--fg)]">14.8K</p>
+                      <p className="text-[9px] text-[var(--fg-4)]">Audience</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-[var(--fg)]">340</p>
+                      <p className="text-[9px] text-[var(--fg-4)]">Following</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-[var(--fg)]">340</p>
-                    <p className="text-[9px] text-[var(--fg-4)]">Following</p>
+                </div>
+
+                <div className="flex-1 bg-[var(--app-bg)] overflow-y-auto p-1.5">
+                  <div className="grid grid-cols-3 gap-1">
+                    {Array.from({ length: 15 }).map((_, index) => {
+                      const post = scheduledEvents[index];
+                      return (
+                        <div
+                          key={index}
+                          className={`aspect-square relative rounded-lg overflow-hidden border flex items-center justify-center p-1 text-center ${
+                            post
+                              ? "border-[var(--stroke-strong)] bg-[var(--panel-fill-2)]"
+                              : "border-[var(--stroke)] bg-[var(--panel-fill)]/40"
+                          }`}
+                        >
+                          {post ? (
+                            <div className="text-[8.5px] font-medium text-[var(--fg-3)] p-1 line-clamp-3">
+                              {post.title}
+                            </div>
+                          ) : (
+                            <div className="w-2 h-2 rounded-full bg-[var(--stroke)]" />
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
+            ) : (
+              /* DESKTOP SCREEN FRAME */
+              <div className="w-full max-w-[660px] h-[640px] rounded-2xl overflow-hidden border border-[var(--stroke-strong)] bg-[var(--panel-fill-2)] shadow-2xl flex flex-col transition-all">
+                {/* Browser Bar */}
+                <div className="h-10 border-b border-[var(--stroke)] flex items-center justify-between px-4 bg-[var(--panel-fill)] shrink-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
+                  </div>
+                  <div className="flex items-center gap-1 px-3 py-1 rounded-md bg-[var(--panel-fill-2)] border border-[var(--stroke)] text-[10px] text-[var(--fg-4)] font-mono max-w-[280px] w-full justify-center">
+                    <span className="truncate">koraspace.com/@{accounts[0]?.handle || accounts[0]?.display_name || "koraspace"}</span>
+                  </div>
+                  <div className="w-8 flex justify-end">
+                    <Layout className="w-3.5 h-3.5 text-[var(--fg-4)]" />
+                  </div>
+                </div>
 
-              <div className="flex-1 bg-[var(--app-bg)] overflow-y-auto p-1">
-                <div className="grid grid-cols-3 gap-1">
-                  {Array.from({ length: 15 }).map((_, index) => {
-                    const post = scheduledEvents[index];
-                    return (
-                      <div
-                        key={index}
-                        className={`aspect-square relative rounded-lg overflow-hidden border flex items-center justify-center p-1 text-center ${
-                          post
-                            ? "border-[var(--stroke-strong)] bg-[var(--panel-fill-2)]"
-                            : "border-[var(--stroke)] bg-[var(--panel-fill)]/40"
-                        }`}
-                      >
-                        {post ? (
-                          <div className="text-[8.5px] font-medium text-[var(--fg-3)] p-1 line-clamp-3">
-                            {post.title}
-                          </div>
-                        ) : (
-                          <div className="w-2 h-2 rounded-full bg-[var(--stroke)]" />
-                        )}
+                {/* Desktop Header */}
+                <div className="p-5 border-b border-[var(--stroke)] bg-[var(--panel-fill)] shrink-0">
+                  <div className="flex items-center gap-5">
+                    <div className="w-16 h-16 rounded-full bg-black text-white dark:bg-white/10 flex items-center justify-center font-bold shadow-lg shrink-0">
+                      <Sparkles className="w-7 h-7 text-white" />
+                    </div>
+                    <div className="space-y-1 flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="text-sm font-bold text-[var(--fg)] truncate">
+                            {accounts[0]?.display_name || "Koraspace Creator"}
+                          </h4>
+                          <p className="text-[11px] text-[var(--fg-4)]">
+                            @{accounts[0]?.handle || accounts[0]?.display_name || "koraspace"}
+                          </p>
+                        </div>
+                        <span className="text-[9.5px] px-2.5 py-0.5 rounded-md border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-3)] font-semibold">
+                          Desktop View
+                        </span>
                       </div>
-                    );
-                  })}
+                      <div className="flex gap-6 text-left pt-1">
+                        <div>
+                          <span className="text-xs font-bold text-[var(--fg)] mr-1">{scheduledEvents.length + 24}</span>
+                          <span className="text-[10px] text-[var(--fg-4)]">posts</span>
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold text-[var(--fg)] mr-1">14.8K</span>
+                          <span className="text-[10px] text-[var(--fg-4)]">followers</span>
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold text-[var(--fg)] mr-1">340</span>
+                          <span className="text-[10px] text-[var(--fg-4)]">following</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Desktop Grid Content */}
+                <div className="flex-1 bg-[var(--app-bg)] overflow-y-auto p-4">
+                  <div className="grid grid-cols-3 gap-3">
+                    {Array.from({ length: 12 }).map((_, index) => {
+                      const post = scheduledEvents[index];
+                      return (
+                        <div
+                          key={index}
+                          className={`aspect-square relative rounded-xl overflow-hidden border flex items-center justify-center p-3 text-center transition-all hover:border-[var(--stroke-strong)] ${
+                            post
+                              ? "border-[var(--stroke)] bg-[var(--panel-fill-2)] shadow-xs"
+                              : "border-[var(--stroke)] bg-[var(--panel-fill)]/40"
+                          }`}
+                        >
+                          {post ? (
+                            <div className="space-y-1 p-1">
+                              <div className="text-[10px] font-semibold text-[var(--fg)] line-clamp-3">
+                                {post.title}
+                              </div>
+                              <span className="inline-block text-[8px] px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 text-[var(--fg-3)] font-mono">
+                                {formatEventTime(post.trigger_at)}
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="w-2.5 h-2.5 rounded-full bg-[var(--stroke)]" />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </GlassCard>
