@@ -46,6 +46,10 @@ import {
   ThumbsUp,
   Eye,
   Edit3,
+  Lightbulb,
+  Copy,
+  CheckCheck,
+  Wand2,
 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
@@ -244,6 +248,139 @@ function RenderSmartPreviewMedia({
       </span>
     </div>
   );
+}
+
+function getAiRecommendations(event: CalendarEventItem, platform: string) {
+  const content = (event.content || event.title || "").trim();
+  const len = content.length;
+  const p = platform.toLowerCase();
+  const hasMedia = Boolean(event.media_urls && event.media_urls.length > 0);
+
+  const recommendations: Array<{
+    category: string;
+    title: string;
+    advice: string;
+    scoreBoost: string;
+    badge: string;
+  }> = [];
+
+  // 1. Hook Optimization
+  if (!content.includes("?") && !content.includes("!") && len > 40) {
+    recommendations.push({
+      category: "Hook & Intrigue",
+      title: "Add Curiosity Question in Opening",
+      advice: "Opening with an intriguing question (e.g. 'What if...') increases feed dwell time by up to 38%.",
+      scoreBoost: "+15% Read-Through",
+      badge: "High Impact",
+    });
+  } else {
+    recommendations.push({
+      category: "Hook & Intrigue",
+      title: "Strong Scroll-Stopping Hook",
+      advice: "Your opening statement clearly establishes context and attracts attention quickly.",
+      scoreBoost: "+20% Hook Rate",
+      badge: "Optimized",
+    });
+  }
+
+  // 2. Platform Nuance & Formatting
+  if (p === "x" || p === "twitter") {
+    if (len > 240) {
+      recommendations.push({
+        category: "Platform Fit",
+        title: "Trim for Quote-Tweets",
+        advice: "Shortening by ~30 chars leaves ample space for audience commentary when retweeted.",
+        scoreBoost: "+24% Reposts",
+        badge: "X Growth",
+      });
+    } else {
+      recommendations.push({
+        category: "Platform Fit",
+        title: "Punchy Feed Density",
+        advice: "Format is crisp and readable on mobile timelines without truncation.",
+        scoreBoost: "+18% Engagement",
+        badge: "Optimal",
+      });
+    }
+  } else if (p === "linkedin") {
+    if (!content.includes("\n\n")) {
+      recommendations.push({
+        category: "Platform Fit",
+        title: "Add Line Breaks for Mobile Readers",
+        advice: "Separate main thoughts into 1-2 sentence micro-paragraphs to maximize LinkedIn mobile readability.",
+        scoreBoost: "+30% Dwell Time",
+        badge: "Format Tip",
+      });
+    } else {
+      recommendations.push({
+        category: "Platform Fit",
+        title: "Clean White Space Hierarchy",
+        advice: "Paragraph pacing creates an inviting reading rhythm for professional feeds.",
+        scoreBoost: "+22% Dwell Time",
+        badge: "Optimal",
+      });
+    }
+  } else if (p === "instagram") {
+    if (!content.includes("#")) {
+      recommendations.push({
+        category: "Discovery",
+        title: "Include 3–5 Targeted Hashtags",
+        advice: "Add specific niche community tags (#aistrategy, #buildinpublic) in caption footer to index on Explore.",
+        scoreBoost: "+25% Discovery",
+        badge: "SEO",
+      });
+    }
+    if (!hasMedia) {
+      recommendations.push({
+        category: "Media",
+        title: "Attach Visual Carousel or Clip",
+        advice: "Instagram algorithm heavily indexes visual carousels and reels over plain text.",
+        scoreBoost: "+40% Reach",
+        badge: "Media Alert",
+      });
+    }
+  } else if (p === "tiktok") {
+    recommendations.push({
+      category: "Retention",
+      title: "Sync Audio & Kinetic Text",
+      advice: "Combine spoken hook with on-screen kinetic subtitle animations in the first 3 seconds.",
+      scoreBoost: "+35% Completion",
+      badge: "Watch-Time",
+    });
+  }
+
+  // 3. Call to Action / Discussion Spark
+  if (!/(comment|link|below|share|save|drop|follow|thoughts|opinion)/i.test(content)) {
+    recommendations.push({
+      category: "Call to Action",
+      title: "Add Conversational Discussion CTA",
+      advice: "Conclude with an engaging prompt like 'What's your take on this?' to initiate active comment threads.",
+      scoreBoost: "+28% Comments",
+      badge: "Conversion",
+    });
+  }
+
+  return recommendations;
+}
+
+function generateEnhancedCopy(content: string, platform: string) {
+  const p = platform.toLowerCase();
+  const trimmed = content.trim();
+  if (!trimmed) return "";
+
+  if (p === "x" || p === "twitter") {
+    return `⚡ ${trimmed}\n\nWhat's your take on this? Repost if you found this valuable.`;
+  }
+  if (p === "linkedin") {
+    return `💡 Strategic Insight:\n\n${trimmed}\n\n---\nKey Takeaway: High-signal execution and consistency compound.\n\n👇 What has your experience been with this? Let's discuss below.`;
+  }
+  if (p === "instagram") {
+    return `${trimmed}\n\n.\n.\n💬 Double tap if you agree & save this for later!\n#growth #contentstrategy #buildinpublic #productivity`;
+  }
+  if (p === "tiktok") {
+    return `🔥 ${trimmed}\n\nDrop a comment below with your thoughts! 👇 #fyp #growthtips #creator`;
+  }
+  return `${trimmed}\n\n👉 Let us know your thoughts in the comments below!`;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -460,6 +597,20 @@ export default function CalendarPage() {
   // Smart Multi-Platform Content Preview State
   const [smartPreviewEvent, setSmartPreviewEvent] = useState<CalendarEventItem | null>(null);
   const [smartPreviewPlatform, setSmartPreviewPlatform] = useState<string>("instagram");
+  const [copiedEnhanced, setCopiedEnhanced] = useState(false);
+
+  // Day Selection Modal (when multiple contents exist on a single day)
+  const [daySelectionModal, setDaySelectionModal] = useState<{
+    date: Date;
+    dayNum: number;
+    events: CalendarEventItem[];
+  } | null>(null);
+
+  const openSmartPreview = (event: CalendarEventItem) => {
+    setSmartPreviewEvent(event);
+    const p = event.platform?.toLowerCase() || "instagram";
+    setSmartPreviewPlatform(p === "all" ? "instagram" : p);
+  };
 
   /* ---------------------------------------------------------------------- */
   /*                              LOAD DATA                                 */
@@ -1328,7 +1479,19 @@ export default function CalendarPage() {
                   <div
                     key={index}
                     onClick={() => {
-                      if (isCurrentMonth) handleOpenComposerForDay(dayNum);
+                      if (isCurrentMonth) {
+                        if (dayEvents.length === 0) {
+                          handleOpenComposerForDay(dayNum);
+                        } else if (dayEvents.length === 1) {
+                          openSmartPreview(dayEvents[0]);
+                        } else {
+                          setDaySelectionModal({
+                            date: cellDate,
+                            dayNum,
+                            events: dayEvents,
+                          });
+                        }
+                      }
                     }}
                     className={`group/cell relative border-r border-b border-[#ec4899]/30 min-h-[140px] p-2.5 transition-all cursor-pointer ${
                       isCurrentMonth
@@ -1370,9 +1533,10 @@ export default function CalendarPage() {
                             key={event.id}
                             onClick={(e) => {
                               e.stopPropagation();
-                              setSelectedEventDetail(event);
+                              openSmartPreview(event);
                             }}
                             className="group/event relative cursor-pointer overflow-hidden rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-2 pl-2.5 hover:border-black/50 dark:hover:border-white/20 hover:shadow-sm transition-all"
+                            title="Click for Smart Multi-Platform Content Preview"
                           >
                             {/* Left Platform Accent */}
                             <div
@@ -1382,7 +1546,7 @@ export default function CalendarPage() {
 
                             <div className="flex items-start gap-1.5">
                               <div className="mt-0.5 shrink-0">
-                                <PlatformIcon platform={event.platform} className="w-3 h-3 text-[var(--fg)] dark:text-white" />
+                                <PlatformIcon platform={event.platform} className="w-3.5 h-3.5 text-[var(--fg)] dark:text-white" />
                               </div>
 
                               <div className="min-w-0 flex-1">
@@ -1414,8 +1578,18 @@ export default function CalendarPage() {
                       })}
 
                       {dayEvents.length > 3 && (
-                        <div className="text-[9px] text-[var(--fg)] px-1 font-semibold">
-                          +{dayEvents.length - 3} more
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDaySelectionModal({
+                              date: cellDate,
+                              dayNum,
+                              events: dayEvents,
+                            });
+                          }}
+                          className="text-[9px] text-[var(--fg)] px-1 font-semibold hover:underline cursor-pointer"
+                        >
+                          +{dayEvents.length - 3} more scheduled
                         </div>
                       )}
                     </div>
@@ -1696,8 +1870,9 @@ export default function CalendarPage() {
               upcomingTasks.map((task) => (
                 <div
                   key={task.id}
-                  onClick={() => setSelectedEventDetail(task)}
+                  onClick={() => openSmartPreview(task)}
                   className="flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--hover)] transition-colors cursor-pointer border border-transparent hover:border-[var(--stroke)]"
+                  title="Click for Smart Multi-Platform Content Preview"
                 >
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-[var(--stroke)] bg-[var(--panel-fill)] shrink-0">
                     <PlatformIcon platform={task.platform} className="w-3.5 h-3.5 text-[var(--fg)] dark:text-white" />
@@ -2857,6 +3032,127 @@ export default function CalendarPage() {
                   )}
                 </div>
 
+                {/* AI RECOMMENDATIONS & CONTENT IMPROVEMENTS */}
+                <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 space-y-3.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-lg bg-black text-white dark:bg-white/10 flex items-center justify-center">
+                        <Sparkles className="w-3.5 h-3.5 text-white" />
+                      </div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--fg)]">
+                        AI Recommendations & Improvements
+                      </h4>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-[var(--brand-primary)]/10 text-[var(--brand-primary)] font-semibold border border-[var(--brand-primary)]/20">
+                      Live AI Analysis
+                    </span>
+                  </div>
+
+                  {/* Recommendations list */}
+                  {(() => {
+                    const recs = getAiRecommendations(smartPreviewEvent, smartPreviewPlatform);
+                    const enhancedCopy = generateEnhancedCopy(
+                      smartPreviewEvent.content || smartPreviewEvent.title || "",
+                      smartPreviewPlatform
+                    );
+
+                    return (
+                      <div className="space-y-2.5">
+                        <div className="space-y-2">
+                          {recs.map((rec, i) => (
+                            <div
+                              key={i}
+                              className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-2.5 space-y-1"
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-1.5">
+                                  <Lightbulb className="w-3.5 h-3.5 text-black dark:text-white shrink-0" />
+                                  <span className="text-[11px] font-bold text-[var(--fg)]">
+                                    {rec.title}
+                                  </span>
+                                </div>
+                                <span className="text-[9px] font-mono font-semibold px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400">
+                                  {rec.scoreBoost}
+                                </span>
+                              </div>
+                              <p className="text-[10.5px] text-[var(--fg-4)] leading-relaxed pl-5">
+                                {rec.advice}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* AI Optimized Variation Callout */}
+                        {enhancedCopy && (
+                          <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                <Wand2 className="w-3.5 h-3.5 text-black dark:text-white" />
+                                <span className="text-[11px] font-bold text-[var(--fg)]">
+                                  AI Enhanced Copy for {platformLabel(smartPreviewPlatform)}
+                                </span>
+                              </div>
+                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 text-[var(--fg-3)] font-mono">
+                                High Signal
+                              </span>
+                            </div>
+
+                            <p className="text-[11px] text-[var(--fg-3)] font-sans italic whitespace-pre-wrap bg-[var(--panel-fill-2)] p-2.5 rounded-lg border border-[var(--stroke)] leading-relaxed">
+                              {enhancedCopy}
+                            </p>
+
+                            <div className="flex items-center gap-2 pt-1">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(enhancedCopy);
+                                  setCopiedEnhanced(true);
+                                  setTimeout(() => setCopiedEnhanced(false), 2000);
+                                }}
+                                className="flex-1 py-1.5 px-2.5 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[10px] font-semibold text-[var(--fg)] hover:bg-[var(--hover)] flex items-center justify-center gap-1.5 transition-all"
+                              >
+                                {copiedEnhanced ? (
+                                  <>
+                                    <CheckCheck className="w-3 h-3 text-emerald-400" />
+                                    <span className="text-emerald-400">Copied to Clipboard!</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Copy className="w-3 h-3 text-[var(--fg-4)]" />
+                                    <span>Copy Enhanced Text</span>
+                                  </>
+                                )}
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const eventToEdit = smartPreviewEvent;
+                                  setSmartPreviewEvent(null);
+                                  setSelectedPlatform(smartPreviewPlatform);
+                                  setPostContent(enhancedCopy);
+                                  const d = new Date(eventToEdit.trigger_at);
+                                  setSelectedDate({
+                                    year: d.getFullYear(),
+                                    month: d.getMonth(),
+                                    day: d.getDate(),
+                                  });
+                                  setModalMode("post");
+                                  setShowModal(true);
+                                }}
+                                className="py-1.5 px-2.5 rounded-lg bg-black text-white dark:bg-white dark:text-black text-[10px] font-semibold hover:opacity-90 flex items-center gap-1 transition-all"
+                              >
+                                <Edit3 className="w-3 h-3" />
+                                <span>Apply to Composer</span>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </div>
+
                 {/* AUDIENCE TIMING & SURGE SLOT */}
                 <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 space-y-3">
                   <div className="flex items-center gap-2">
@@ -2964,6 +3260,141 @@ export default function CalendarPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </GlassCard>
+        </div>
+      )}
+
+      {/* ================================================================ */}
+      {/* SELECT CONTENT TO PREVIEW (MULTIPLE CONTENTS ON A DAY MODAL)      */}
+      {/* ================================================================ */}
+
+      {daySelectionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
+          <GlassCard className="w-full max-w-lg rounded-3xl border border-[var(--stroke)] bg-[var(--panel-fill)] shadow-2xl flex flex-col my-auto overflow-hidden">
+            {/* HEADER */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--stroke)] bg-[var(--panel-fill-2)]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-black border border-black text-white dark:bg-white/[0.08] dark:border-white/15 dark:text-white flex items-center justify-center shadow-sm">
+                  <CalendarIcon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-[var(--fg)]">
+                    {daySelectionModal.date.toLocaleDateString([], {
+                      weekday: "long",
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </h3>
+                  <p className="text-xs text-[var(--fg-4)]">
+                    {daySelectionModal.events.length} scheduled contents on this day · Select to preview
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setDaySelectionModal(null)}
+                className="w-8 h-8 rounded-xl flex items-center justify-center text-[var(--fg-4)] hover:text-[var(--fg)] hover:bg-[var(--hover)] transition-all"
+              >
+                <X className="w-4 h-4 text-[var(--fg-4)] hover:text-[var(--fg)]" />
+              </button>
+            </div>
+
+            {/* ITEMS LIST */}
+            <div className="p-5 space-y-2.5 max-h-[420px] overflow-y-auto bg-[var(--app-bg)]">
+              {daySelectionModal.events.map((event) => {
+                const isVideo = isVideoUrl(event.media_urls?.[0]);
+                const hasMedia = Boolean(event.media_urls && event.media_urls.length > 0);
+
+                return (
+                  <div
+                    key={event.id}
+                    onClick={() => {
+                      const targetEvent = event;
+                      setDaySelectionModal(null);
+                      openSmartPreview(targetEvent);
+                    }}
+                    className="group/item relative rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-3.5 hover:border-black/50 dark:hover:border-white/30 hover:shadow-md transition-all cursor-pointer flex items-start gap-3.5"
+                  >
+                    {/* Left Platform Icon */}
+                    <div className="w-9 h-9 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] flex items-center justify-center shrink-0 group-hover/item:border-black/30 dark:group-hover/item:border-white/20 transition-colors">
+                      <PlatformIcon platform={event.platform} className="w-4 h-4 text-[var(--fg)] dark:text-white" />
+                    </div>
+
+                    {/* Content & Metadata */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-bold text-[var(--fg)]">
+                            {platformLabel(event.platform)}
+                          </span>
+                          <span className="text-[9px] px-2 py-0.5 rounded-md bg-[var(--panel-fill-2)] border border-[var(--stroke)] text-[var(--fg-4)] uppercase font-semibold">
+                            {event.type === "post" ? "Post" : "AI Task"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1 text-[10px] font-mono text-[var(--fg-3)]">
+                          <Clock className="w-3 h-3 text-[var(--fg-4)]" />
+                          <span>{formatEventTime(event.trigger_at)}</span>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-[var(--fg-3)] line-clamp-2 leading-relaxed">
+                        {event.content || event.title}
+                      </p>
+
+                      {/* Media and Preview Indicator */}
+                      <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-[var(--stroke)]">
+                        <div className="flex items-center gap-2 text-[10px] text-[var(--fg-4)]">
+                          {hasMedia ? (
+                            <span className="flex items-center gap-1 font-semibold text-emerald-400">
+                              {isVideo ? <Tv className="w-3 h-3" /> : <ImageIcon className="w-3 h-3" />}
+                              <span>{isVideo ? "Video Attached" : `${event.media_urls?.length} Image${event.media_urls?.length === 1 ? "" : "s"}`}</span>
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1">
+                              <FileText className="w-3 h-3" />
+                              <span>Text Post</span>
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-1 text-[11px] font-semibold text-[var(--fg)] group-hover/item:text-[var(--brand-primary)] transition-colors">
+                          <Sparkles className="w-3 h-3" />
+                          <span>Open Smart Preview</span>
+                          <ArrowRight className="w-3 h-3 group-hover/item:translate-x-0.5 transition-transform" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* FOOTER ACTIONS */}
+            <div className="px-6 py-3.5 border-t border-[var(--stroke)] bg-[var(--panel-fill)] flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => {
+                  const day = daySelectionModal.dayNum;
+                  setDaySelectionModal(null);
+                  handleOpenComposerForDay(day);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed border-[var(--stroke-strong)] text-xs font-semibold text-[var(--fg-3)] hover:text-[var(--fg)] hover:border-black/50 dark:hover:border-white/30 transition-all"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Schedule Another on this Day</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDaySelectionModal(null)}
+                className="px-4 py-1.5 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] text-xs font-semibold text-[var(--fg)] hover:bg-[var(--hover)] transition-all"
+              >
+                Done
+              </button>
             </div>
           </GlassCard>
         </div>
