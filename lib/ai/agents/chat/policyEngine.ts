@@ -101,14 +101,14 @@ export function decideInvocation(ctx: InvocationContext): PolicyDecision {
     }
   }
 
-  // Must be declared in plan
-  if (!plan.requiredTools.includes(toolInvocation.toolName)) {
+  // Must be declared in plan if plan is present
+  if (plan && plan.requiredTools && !plan.requiredTools.includes(toolInvocation.toolName)) {
     reasonCodes.push('PLAN_DEVIATION');
     reasons.push(`Tool "${toolInvocation.toolName}" not declared in plan.`);
   }
 
   // Approval fingerprint validation if present
-  if (plan.approval) {
+  if (plan?.approval) {
     const expected = plan.approval.planFingerprint;
     const { computePlanFingerprint } = require('./types');
     const actual = computePlanFingerprint({ ...plan, approval: undefined });

@@ -103,7 +103,13 @@ export async function callAI(
   }
 
   const agentConfig = AGENT_DEFAULTS[options.agent];
-  const model = options.model || agentConfig?.defaultModel || getDefaultModel();
+  let model = options.model || agentConfig?.defaultModel || getDefaultModel();
+
+  // Normalize model ID for OpenRouter if provider prefix is missing or legacy
+  if (process.env.OPENROUTER_API_KEY && (!model.includes("/") || model.startsWith("gemini-"))) {
+    model = getDefaultModel();
+  }
+
   const temperature = options.temperature ?? agentConfig?.temperature;
   const maxTokens = options.maxTokens ?? agentConfig?.maxTokens;
 

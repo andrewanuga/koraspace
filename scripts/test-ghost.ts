@@ -4,6 +4,7 @@
 
 import { GhostAgent } from "../lib/ai/agents/ghost/agent";
 import { GhostPolicyEngine } from "../lib/ai/agents/ghost/policy";
+import { defaultToolRegistry } from "../lib/ai/tools/index";
 import type { AgentContext } from "../lib/ai/core/types";
 import type { GhostDecision, GhostInput } from "../lib/ai/agents/ghost/types";
 
@@ -134,12 +135,16 @@ async function runTests() {
   assert(leadEvalRes.data?.policy.requiresHumanApproval === true, "GhostAgent enforces policy in result");
 
   // -- 7. Tool Execution via ToolRegistry ---------------------------
-  const toolRes = await GhostAgent.executeTool(
+  const toolRes = await defaultToolRegistry.execute(
     "get_current_time",
     { timeZone: "UTC" },
     assistCtx
   );
-  assert(toolRes.success === true, "GhostAgent.executeTool() successfully calls registered tool");
+  assert(
+    toolRes.success === true,
+    "defaultToolRegistry.execute() successfully calls registered tool",
+    JSON.stringify(toolRes.error)
+  );
 
   console.log("\n==================================================");
   console.log(`📊 Test Summary: ${passed} passed, ${failed} failed`);

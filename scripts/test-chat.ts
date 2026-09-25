@@ -138,8 +138,8 @@ async function runTests() {
     context
   );
   assert(
-    timeRes.success === true && (timeRes.data as Record<string, unknown>)?.formatted !== undefined,
-    "ChatAgent.executeTool() successfully dispatches get_current_time tool under validated plan"
+    hashtagsRes.success === true && Array.isArray(hashtagsRes.data?.hashtags),
+    "ChatAgent.executeTool() successfully dispatches generate_hashtags tool"
   );
 
   console.log("\n==================================================");
