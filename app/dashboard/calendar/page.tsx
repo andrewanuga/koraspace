@@ -963,29 +963,21 @@ export default function CalendarPage() {
           label="Scheduled Posts"
           value={String(scheduledEvents.filter((e) => e.type === "post").length)}
           icon={CalendarIcon}
-          tone="violet"
-          iconClassName="text-[var(--brand-primary)] dark:text-white"
         />
         <StatTile
           label="AI Automations"
           value={String(scheduledEvents.filter((e) => e.type === "ai_task").length)}
           icon={Bot}
-          tone="violet"
-          iconClassName="text-[var(--brand-primary)] dark:text-white"
         />
         <StatTile
           label="This Week Queue"
           value={String(upcomingTasks.length)}
           icon={Clock}
-          tone="violet"
-          iconClassName="text-[var(--brand-primary)] dark:text-white"
         />
         <StatTile
           label="Connected Channels"
           value={String(accounts.length)}
           icon={CheckCircle2}
-          tone="violet"
-          iconClassName="text-[var(--brand-primary)] dark:text-white"
         />
       </div>
 
@@ -1151,9 +1143,9 @@ export default function CalendarPage() {
                       {isCurrentMonth && optimalSlot && (
                         <div
                           title={`Peak audience activity slot: ${optimalSlot.formatted} (${optimalSlot.surgeWindow})`}
-                          className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[8.5px] font-medium text-[var(--brand-primary)] bg-[var(--brand-primary-soft)] border border-[var(--brand-primary-border)]"
+                          className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[8.5px] font-medium bg-black text-white border border-black dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
                         >
-                          <Zap className="w-2.5 h-2.5 text-[var(--brand-primary)] dark:text-white" />
+                          <Zap className="w-2.5 h-2.5 text-white" />
                           <span>{optimalSlot.formatted}</span>
                         </div>
                       )}
@@ -1172,7 +1164,7 @@ export default function CalendarPage() {
                               e.stopPropagation();
                               setSelectedEventDetail(event);
                             }}
-                            className="group/event relative cursor-pointer overflow-hidden rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-2 pl-2.5 hover:border-[var(--brand-primary-border)] hover:shadow-sm transition-all"
+                            className="group/event relative cursor-pointer overflow-hidden rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-2 pl-2.5 hover:border-black/50 dark:hover:border-white/20 hover:shadow-sm transition-all"
                           >
                             {/* Left Platform Accent */}
                             <div
@@ -1214,7 +1206,7 @@ export default function CalendarPage() {
                       })}
 
                       {dayEvents.length > 3 && (
-                        <div className="text-[9px] text-[var(--brand-primary)] px-1 font-semibold">
+                        <div className="text-[9px] text-[var(--fg)] px-1 font-semibold">
                           +{dayEvents.length - 3} more
                         </div>
                       )}
@@ -1228,7 +1220,7 @@ export default function CalendarPage() {
                           e.stopPropagation();
                           handleOpenComposerForDay(dayNum);
                         }}
-                        className="absolute bottom-1.5 right-1.5 opacity-0 group-hover/cell:opacity-100 flex h-6 w-6 items-center justify-center rounded-lg bg-[var(--panel-fill)] border border-[var(--stroke)] text-[var(--fg-3)] hover:text-[var(--brand-primary)] hover:border-[var(--brand-primary-border)] transition-all shadow-sm"
+                        className="absolute bottom-1.5 right-1.5 opacity-0 group-hover/cell:opacity-100 flex h-6 w-6 items-center justify-center rounded-lg bg-[var(--panel-fill)] border border-[var(--stroke)] text-[var(--fg-3)] hover:text-[var(--fg)] hover:border-black/40 dark:hover:border-white/20 transition-all shadow-sm"
                         title="Schedule post on this day"
                       >
                         <Plus className="w-3.5 h-3.5 text-[var(--fg)] dark:text-white" />
@@ -1245,8 +1237,8 @@ export default function CalendarPage() {
           /* ============================================================ */
           <div className="flex-1 overflow-auto bg-[var(--app-bg)] flex items-center justify-center p-8 gap-12">
             <div className="max-w-[320px] space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[var(--brand-primary-soft)] border border-[var(--brand-primary-border)] flex items-center justify-center text-[var(--brand-primary)] dark:text-white">
-                <LayoutGrid className="w-6 h-6 text-[var(--brand-primary)] dark:text-white" />
+              <div className="w-12 h-12 rounded-xl bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white flex items-center justify-center">
+                <LayoutGrid className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-[var(--fg)]">
                 Feed Grid Preview
@@ -1254,9 +1246,9 @@ export default function CalendarPage() {
               <p className="text-sm text-[var(--fg-4)] leading-relaxed">
                 Preview how your scheduled media and captions will look on your feed before publishing.
               </p>
-              <div className="rounded-xl border border-[var(--brand-primary-border)]/20 bg-[var(--brand-primary-soft)] p-3.5">
-                <div className="flex items-center gap-2 mb-1 text-xs font-semibold text-[var(--brand-primary)]">
-                  <Sparkles className="w-3.5 h-3.5 text-[var(--brand-primary)] dark:text-white" />
+              <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-3.5">
+                <div className="flex items-center gap-2 mb-1 text-xs font-semibold text-[var(--fg)]">
+                  <Sparkles className="w-3.5 h-3.5 text-black dark:text-white" />
                   <span>Visual Consistency</span>
                 </div>
                 <p className="text-xs text-[var(--fg-4)]">
@@ -1275,7 +1267,7 @@ export default function CalendarPage() {
               </div>
 
               <div className="p-4 border-b border-[var(--stroke)] flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-[var(--brand-primary)] flex items-center justify-center text-white font-bold shadow-md">
+                <div className="w-12 h-12 rounded-full bg-black text-white dark:bg-white/10 flex items-center justify-center font-bold shadow-md">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex gap-4 text-center">
@@ -1303,7 +1295,7 @@ export default function CalendarPage() {
                         key={index}
                         className={`aspect-square relative rounded-lg overflow-hidden border flex items-center justify-center p-1 text-center ${
                           post
-                            ? "border-[var(--brand-primary-border)] bg-[var(--panel-fill-2)]"
+                            ? "border-[var(--stroke-strong)] bg-[var(--panel-fill-2)]"
                             : "border-[var(--stroke)] bg-[var(--panel-fill)]/40"
                         }`}
                       >
@@ -1409,7 +1401,7 @@ export default function CalendarPage() {
                   className="flex items-center justify-between p-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)]"
                 >
                   <div className="flex items-center gap-2.5">
-                    <Icon className="w-3.5 h-3.5 text-[var(--brand-primary)] dark:text-white" />
+                    <Icon className="w-3.5 h-3.5 text-black dark:text-white" />
                     <span className="text-xs text-[var(--fg-3)]">{item.label}</span>
                   </div>
                   <span className="text-xs font-semibold text-[var(--fg)]">{item.count}</span>
@@ -1420,11 +1412,11 @@ export default function CalendarPage() {
         </div>
 
         {/* AI AUTO STRATEGY CARD */}
-        <div className="relative overflow-hidden rounded-2xl border border-[var(--brand-primary-border)] bg-[var(--panel-fill)] p-4 shadow-md flex flex-col justify-between">
+        <div className="relative overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-4 shadow-md flex flex-col justify-between">
           <div className="relative z-10">
             <div className="flex items-center gap-2.5 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-[var(--brand-primary-soft)] border border-[var(--brand-primary-border)] flex items-center justify-center text-[var(--brand-primary)] dark:text-white">
-                <Sparkles className="w-4 h-4 text-[var(--brand-primary)] dark:text-white" />
+              <div className="w-8 h-8 rounded-lg bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-white" />
               </div>
               <h3 className="text-sm font-semibold text-[var(--fg)]">AI Batch Strategy</h3>
             </div>
@@ -1439,9 +1431,9 @@ export default function CalendarPage() {
               setModalMode("ai_batch");
               setShowModal(true);
             }}
-            className="mt-4 w-full h-9 rounded-xl bg-[var(--brand-primary)] text-xs font-semibold text-white shadow-md hover:brightness-110 transition-all flex items-center justify-center gap-1.5"
+            className="mt-4 w-full h-9 rounded-xl bg-black text-white dark:bg-white dark:text-black text-xs font-semibold shadow-md hover:opacity-90 transition-all flex items-center justify-center gap-1.5"
           >
-            <Sparkles className="w-3.5 h-3.5 text-white" />
+            <Sparkles className="w-3.5 h-3.5" />
             <span>Generate Strategy</span>
           </button>
         </div>
@@ -1457,13 +1449,13 @@ export default function CalendarPage() {
             {/* MODAL HEADER */}
             <div className="flex items-center justify-between p-4 border-b border-[var(--stroke)]">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[var(--brand-primary-soft)] border border-[var(--brand-primary-border)] text-[var(--brand-primary)] dark:text-white">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white">
                   {modalMode === "post" ? (
-                    <CalendarIcon className="w-4 h-4 text-[var(--brand-primary)] dark:text-white" />
+                    <CalendarIcon className="w-4 h-4 text-white" />
                   ) : modalMode === "ai_task" ? (
-                    <Bot className="w-4 h-4 text-[var(--brand-primary)] dark:text-white" />
+                    <Bot className="w-4 h-4 text-white" />
                   ) : (
-                    <Sparkles className="w-4 h-4 text-[var(--brand-primary)] dark:text-white" />
+                    <Sparkles className="w-4 h-4 text-white" />
                   )}
                 </div>
                 <div>

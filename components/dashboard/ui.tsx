@@ -408,7 +408,7 @@ export function StatTile({
   value,
   delta,
   icon: Icon,
-  tone = "primary",
+  tone = "neutral",
   iconColor,
   iconBg,
   iconBorder,
@@ -416,12 +416,12 @@ export function StatTile({
   footer,
   className,
 }: StatTileProps) {
-  const theme = TONE_MAP[tone] || TONE_MAP.primary;
+  const theme = TONE_MAP[tone] || TONE_MAP.neutral;
 
   return (
     <GlassCard
       className={cn(
-        "group min-h-[132px] p-5",
+        "group min-h-[132px] p-5 border-black/80 dark:border-[var(--stroke)]",
         className
       )}
       hover
@@ -448,26 +448,22 @@ export function StatTile({
 
         {Icon && (
           <div
-            className="
-              flex h-9 w-9
-              items-center justify-center
-              rounded-xl
-              border
-            "
-            style={{
-              background: iconBg || theme.bg,
-              borderColor: iconBorder || theme.border,
-            }}
+            className={cn(
+              "flex h-9 w-9 items-center justify-center rounded-xl border transition-colors",
+              "bg-black border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
+            )}
+            style={
+              (iconBg || iconBorder)
+                ? {
+                    background: iconBg,
+                    borderColor: iconBorder,
+                  }
+                : undefined
+            }
           >
             <Icon
               className={cn("h-[17px] w-[17px]", iconClassName)}
-              style={
-                iconColor
-                  ? { color: iconColor }
-                  : !iconClassName
-                  ? { color: theme.color }
-                  : undefined
-              }
+              style={iconColor ? { color: iconColor } : undefined}
             />
           </div>
         )}
