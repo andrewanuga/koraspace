@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { onboardingSchema } from "@/lib/security/schemas";
 
+import { sendOnboardingWelcomeEmail } from "@/lib/mailer";
+
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
@@ -19,7 +21,6 @@ export async function POST(req: NextRequest) {
     // Rate limit: 5 onboarding submissions/min per user.
     const guard = await checkRequest(req, requestKey(req, user.id), 5);
     if (guard) return guard;
-
 
     const body = await req.json();
 
@@ -90,10 +91,12 @@ export async function POST(req: NextRequest) {
     };
 
     // Attempt update with all personalization columns
+    let updatedProfile = null;
     try {
-      await prisma.profile.update({
+      updatedProfile = await prisma.profile.update({
         where: { id: user.id },
-        data: fullPayload
+        data: fullPayload,
+        select: { id: true, email: true, full_name: true }
       });
     } catch (upsertError: any) {
       console.warn("Full onboarding update failed, attempting safe core fallback:", upsertError.message);
@@ -111,9 +114,10 @@ export async function POST(req: NextRequest) {
       };
 
       try {
-        await prisma.profile.update({
+        updatedProfile = await prisma.profile.update({
           where: { id: user.id },
-          data: corePayload
+          data: corePayload,
+          select: { id: true, email: true, full_name: true }
         });
       } catch (fallbackError: any) {
         console.error("Onboarding core fallback error:", fallbackError);
@@ -122,6 +126,24 @@ export async function POST(req: NextRequest) {
           { status: 500 }
         );
       }
+    }
+
+    // Send the customized, high-converting onboarding welcome email from hello@koraspace.site
+    const targetEmail = updatedProfile?.email || user.email;
+    const targetName = updatedProfile?.full_name || user.name || cleanUsername || "Creator";
+
+    if (targetEmail) {
+      sendOnboardingWelcomeEmail({
+        email: targetEmail,
+        name: targetName,
+        username: cleanUsername,
+        persona: fullPayload.persona,
+        platforms: fullPayload.social_platforms,
+        goals: fullPayload.onboarding_goals,
+        niche: fullPayload.niche || undefined,
+      }).catch((err) => {
+        console.warn("[Onboarding] Failed to send welcome email from hello@koraspace.site:", err);
+      });
     }
 
     return NextResponse.json({
@@ -137,4 +159,5 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 
