@@ -465,6 +465,34 @@ export default function CalendarPage() {
   /*                         DYNAMIC PLATFORM FILTERS                       */
   /* ---------------------------------------------------------------------- */
 
+  const ALL_PLATFORMS = useMemo(
+    () => [
+      { id: "All", label: "All Platforms" },
+      { id: "x", label: "X (Twitter)" },
+      { id: "instagram", label: "Instagram" },
+      { id: "linkedin", label: "LinkedIn" },
+      { id: "tiktok", label: "TikTok" },
+      { id: "youtube", label: "YouTube" },
+      { id: "threads", label: "Threads" },
+      { id: "facebook", label: "Facebook" },
+    ],
+    []
+  );
+
+  const platformFilterOptions = useMemo(() => {
+    const list = [...ALL_PLATFORMS];
+    accounts.forEach((acc) => {
+      if (acc.platform) {
+        const pLower = acc.platform.toLowerCase();
+        const exists = list.some((item) => item.id.toLowerCase() === pLower);
+        if (!exists) {
+          list.push({ id: pLower, label: platformLabel(acc.platform) });
+        }
+      }
+    });
+    return list;
+  }, [accounts, ALL_PLATFORMS]);
+
   const dynamicPlatformFilters = useMemo(() => {
     const set = new Set<string>(["All"]);
     accounts.forEach((acc) => {
@@ -472,6 +500,15 @@ export default function CalendarPage() {
     });
     return Array.from(set);
   }, [accounts]);
+
+  const getPlatformCount = (platformId: string) => {
+    if (platformId === "All") return scheduledEvents.length;
+    return scheduledEvents.filter((e) => {
+      const p = (e.platform || "").toLowerCase();
+      const target = platformId.toLowerCase();
+      return p === target || platformLabel(e.platform).toLowerCase() === target;
+    }).length;
+  };
 
   /* ---------------------------------------------------------------------- */
   /*                         BEST TIME COMPUTATION                          */
@@ -958,10 +995,58 @@ export default function CalendarPage() {
       />
 
       {/* ================================================================ */}
+      {/* PLATFORMS FILTER BAR                                             */}
+      {/* ================================================================ */}
+      <div className="mt-4 mb-1 flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none">
+        {platformFilterOptions.map((opt) => {
+          const isActive =
+            platformFilter.toLowerCase() === opt.id.toLowerCase() ||
+            (opt.id === "All" && platformFilter === "All") ||
+            opt.label.toLowerCase() === platformFilter.toLowerCase();
+          const count = getPlatformCount(opt.id);
+
+          return (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => setPlatformFilter(opt.id)}
+              className={`shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
+                isActive
+                  ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-xs"
+                  : "border-[var(--stroke)] bg-[var(--panel-fill)] text-[var(--fg-3)] hover:text-[var(--fg)] hover:bg-[var(--panel-fill-2)] hover:border-[var(--stroke-strong)]"
+              }`}
+            >
+              {opt.id === "All" ? (
+                <LayoutGrid
+                  className={`w-3.5 h-3.5 ${
+                    isActive ? "text-white dark:text-black" : "text-[var(--fg)] dark:text-white"
+                  }`}
+                />
+              ) : (
+                <PlatformIcon platform={opt.id} className="w-3.5 h-3.5" />
+              )}
+              <span>{opt.label}</span>
+              {count > 0 && (
+                <span
+                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none ${
+                    isActive
+                      ? "bg-white/20 text-white dark:bg-black/15 dark:text-black"
+                      : "bg-[var(--panel-fill-2)] text-[var(--fg-4)] border border-[var(--stroke)]"
+                  }`}
+                >
+                  {count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ================================================================ */}
       {/* METRICS & QUICK SUMMARY                                          */}
       {/* ================================================================ */}
 
-      <div className="mt-4 mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-3 mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatTile
           label="Scheduled Posts"
           value={String(scheduledEvents.filter((e) => e.type === "post").length)}
@@ -1113,6 +1198,7 @@ export default function CalendarPage() {
 
                       const isSamePlatform =
                         platformFilter === "All" ||
+                        event.platform.toLowerCase() === platformFilter.toLowerCase() ||
                         platformLabel(event.platform).toLowerCase() === platformFilter.toLowerCase();
 
                       return isSameDay && isSamePlatform;
