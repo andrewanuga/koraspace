@@ -121,6 +121,23 @@ export const emailOnlySchema = z.object({
     }),
 });
 
+export const otpVerificationSchema = z.object({
+  email: z
+    .string({ required_error: "Email address is required." })
+    .transform(sanitizeEmail)
+    .refine((val) => EMAIL_REGEX.test(val), {
+      message: "Please enter a valid email address.",
+    }),
+  otp: z
+    .string({ required_error: "Verification code is required." })
+    .transform((val) => (typeof val === "string" ? val.replace(/\D/g, "").trim() : ""))
+    .refine((val) => val.length === 6, {
+      message: "Please enter a valid 6-digit code.",
+    }),
+});
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type EmailOnlyInput = z.infer<typeof emailOnlySchema>;
+export type OtpVerificationInput = z.infer<typeof otpVerificationSchema>;
+

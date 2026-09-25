@@ -7,6 +7,7 @@ import { sendVerificationEmail } from "@/lib/mailer";
 import {
   signupSchema,
   emailOnlySchema,
+  otpVerificationSchema,
   sanitizeEmail,
   sanitizeText,
 } from "@/lib/validations/auth";
@@ -46,9 +47,9 @@ export async function registerUser(email: string, password: string, name: string
       },
     });
 
-    // 4. Generate secure verification token
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours expiry
+    // 4. Generate 6-digit numeric OTP code
+    const otpCode = crypto.randomInt(100000, 999999).toString();
+    const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiry
 
     // Delete any stale tokens for this identifier
     await prisma.verificationToken.deleteMany({
@@ -58,17 +59,17 @@ export async function registerUser(email: string, password: string, name: string
     await prisma.verificationToken.create({
       data: {
         identifier: cleanEmail,
-        token: verificationToken,
+        token: `${cleanEmail}:${otpCode}`,
         expires,
       },
     });
 
-    // 5. Build verification URL
+    // 5. Build 1-click verification URL
     const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://koraspace.site").replace(/\/$/, "");
-    const verifyUrl = `${appUrl}/verify-email?token=${verificationToken}&email=${encodeURIComponent(cleanEmail)}`;
+    const verifyUrl = `${appUrl}/verify-email?email=${encodeURIComponent(cleanEmail)}&otp=${otpCode}`;
 
-    // 6. Send verification email
-    sendVerificationEmail(cleanEmail, cleanName, verifyUrl).catch((err) => {
+    // 6. Send verification email with 6-digit PIN
+    sendVerificationEmail(cleanEmail, cleanName, otpCode, verifyUrl).catch((err) => {
       console.warn("[Signup] Non-blocking verification email error:", err);
     });
 
@@ -109,9 +110,9 @@ export async function resendVerificationEmail(email: string) {
       };
     }
 
-    // Generate new token
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    // Generate fresh 6-digit numeric OTP code
+    const otpCode = crypto.randomInt(100000, 999999).toString();
+    const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
     await prisma.verificationToken.deleteMany({
       where: { identifier: cleanEmail },
@@ -120,20 +121,75 @@ export async function resendVerificationEmail(email: string) {
     await prisma.verificationToken.create({
       data: {
         identifier: cleanEmail,
-        token: verificationToken,
+        token: `${cleanEmail}:${otpCode}`,
         expires,
       },
     });
 
     const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://koraspace.site").replace(/\/$/, "");
-    const verifyUrl = `${appUrl}/verify-email?token=${verificationToken}&email=${encodeURIComponent(cleanEmail)}`;
+    const verifyUrl = `${appUrl}/verify-email?email=${encodeURIComponent(cleanEmail)}&otp=${otpCode}`;
 
-    await sendVerificationEmail(cleanEmail, user.full_name || "Creator", verifyUrl);
+    await sendVerificationEmail(cleanEmail, user.full_name || "Creator", otpCode, verifyUrl);
 
-    return { success: true, message: "A fresh verification link has been sent to your inbox." };
+    return { success: true, message: "A new 6-digit verification code was sent to your inbox." };
   } catch (error: any) {
     console.error("Resend verification error:", error);
     return { error: "Failed to resend verification email. Please try again." };
+  }
+}
+
+export async function verifyEmailOtp(email: string, otp: string) {
+  try {
+    const validation = otpVerificationSchema.safeParse({ email, otp });
+    if (!validation.success) {
+      return { error: validation.error.errors[0]?.message || "Invalid verification code." };
+    }
+
+    const { email: cleanEmail, otp: cleanOtp } = validation.data;
+
+    // Look for matching token
+    const tokenRecord = await prisma.verificationToken.findFirst({
+      where: {
+        identifier: cleanEmail,
+        token: {
+          in: [`${cleanEmail}:${cleanOtp}`, cleanOtp],
+        },
+      },
+    });
+
+    if (!tokenRecord) {
+      return {
+        error: "Invalid verification code. Please check the code in your email and try again.",
+      };
+    }
+
+    if (new Date() > tokenRecord.expires) {
+      await prisma.verificationToken.deleteMany({
+        where: { identifier: cleanEmail },
+      }).catch(() => {});
+      return {
+        error: "This verification code has expired. Please request a new code.",
+        expired: true,
+      };
+    }
+
+    // Mark email as verified
+    await prisma.profile.update({
+      where: { email: cleanEmail },
+      data: {
+        emailVerified: new Date(),
+      },
+    });
+
+    // Purge verification tokens
+    await prisma.verificationToken.deleteMany({
+      where: { identifier: cleanEmail },
+    });
+
+    return { success: true, email: cleanEmail };
+  } catch (error: any) {
+    console.error("Verify OTP error:", error);
+    return { error: "An error occurred while verifying the code. Please try again." };
   }
 }
 
@@ -145,21 +201,25 @@ export async function verifyEmailToken(token: string) {
 
     const cleanToken = token.trim();
 
-    const tokenRecord = await prisma.verificationToken.findUnique({
-      where: { token: cleanToken },
+    const tokenRecord = await prisma.verificationToken.findFirst({
+      where: {
+        OR: [
+          { token: cleanToken },
+          { token: { endsWith: `:${cleanToken}` } }
+        ]
+      },
     });
 
     if (!tokenRecord) {
       return {
         error:
-          "This verification link is invalid or has already been used. Please request a new verification email.",
+          "This verification link is invalid or has already been used. Please request a new verification code.",
       };
     }
 
     if (new Date() > tokenRecord.expires) {
-      // Clean up expired token
-      await prisma.verificationToken.delete({
-        where: { token: cleanToken },
+      await prisma.verificationToken.deleteMany({
+        where: { identifier: tokenRecord.identifier },
       }).catch(() => {});
       return {
         error:

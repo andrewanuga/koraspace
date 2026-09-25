@@ -127,14 +127,19 @@ export async function sendPasswordResetEmail(email: string, resetUrl: string) {
   }
 }
 
-export async function sendVerificationEmail(email: string, name: string, verifyUrl: string) {
+export async function sendVerificationEmail(
+  email: string,
+  name: string,
+  otpCode: string,
+  verifyUrl: string
+) {
   const transporter = getTransporter();
   if (!transporter) return;
 
   const firstName = name ? name.split(" ")[0] : "there";
-  const subject = "Verify your email address for Koraspace";
+  const subject = `${otpCode} is your Koraspace verification code`;
   
-  const text = `Hi ${firstName},\n\nWelcome to Koraspace! Please verify your email address to activate your account and start managing your social channels with AI.\n\nClick here to verify:\n${verifyUrl}\n\nThis verification link will expire in 24 hours. If you did not create a Koraspace account, you can safely ignore this message.\n\nNeed assistance? Reach out to support@koraspace.site`;
+  const text = `Hi ${firstName},\n\nYour Koraspace email verification code is: ${otpCode}\n\nEnter this 6-digit code on the verification screen to activate your account. This code will expire in 15 minutes.\n\nAlternatively, you can verify your account directly by clicking this link:\n${verifyUrl}\n\nIf you did not request this verification, you can safely ignore this email.\n\nNeed assistance? Reach out to support@koraspace.site`;
 
   const html = `
     <!DOCTYPE html>
@@ -150,6 +155,11 @@ export async function sendVerificationEmail(email: string, name: string, verifyU
           <td align="center">
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #111827; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; overflow: hidden;">
               
+              <!-- Top Gradient Brand Accent -->
+              <tr>
+                <td height="4" style="background: linear-gradient(90deg, #ff0a8a 0%, #3b82f6 50%, #ff0a8a 100%); line-height: 4px; font-size: 4px;">&nbsp;</td>
+              </tr>
+
               <!-- Header -->
               <tr>
                 <td style="padding: 32px 32px 20px 32px; text-align: center;">
@@ -164,28 +174,34 @@ export async function sendVerificationEmail(email: string, name: string, verifyU
               <tr>
                 <td style="padding: 0 32px 24px 32px;">
                   <div style="background-color: #1f2937; border-radius: 14px; padding: 28px 24px; border: 1px solid rgba(255, 255, 255, 0.06);">
-                    <h2 style="color: #ffffff; font-size: 19px; font-weight: 700; margin: 0 0 12px 0;">Verify your email address</h2>
+                    <h2 style="color: #ffffff; font-size: 19px; font-weight: 700; margin: 0 0 10px 0;">Verify your email address</h2>
                     <p style="color: #d1d5db; line-height: 1.6; font-size: 14px; margin: 0 0 20px 0;">
-                      Hi ${firstName}, welcome to Koraspace! Please verify your email address to activate your account and start managing your social channels with AI.
+                      Hi ${firstName}, welcome to Koraspace! Enter this 6-digit verification code to activate your workspace:
                     </p>
-                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                      <tr>
-                        <td align="center" style="padding: 10px 0 20px 0;">
-                          <a href="${verifyUrl}" style="background-color: #ff0a8a; color: #ffffff; padding: 14px 32px; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 10px; display: inline-block; box-shadow: 0 8px 25px rgba(255, 10, 138, 0.25);">
-                            Verify Email Address →
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
-                    <p style="color: #9ca3af; font-size: 12px; margin: 10px 0 0 0; line-height: 1.5;">
-                      This verification link will expire in 24 hours. If you did not create a Koraspace account, you can safely ignore this message.
-                    </p>
-                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
-                      <p style="color: #6b7280; font-size: 11px; word-break: break-all; margin: 0;">
-                        Button not working? Copy and paste this URL into your browser:<br/>
-                        <a href="${verifyUrl}" style="color: #ff7fba; text-decoration: underline;">${verifyUrl}</a>
-                      </p>
+                    
+                    <!-- OTP Code Card -->
+                    <div style="background-color: #111827; border: 1px solid rgba(255, 10, 138, 0.35); border-radius: 12px; padding: 20px 16px; text-align: center; margin: 0 0 24px 0;">
+                      <div style="color: #9ca3af; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; font-weight: 600;">
+                        Verification PIN
+                      </div>
+                      <div style="color: #ff4da6; font-size: 38px; font-weight: 800; letter-spacing: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; line-height: 1;">
+                        ${otpCode}
+                      </div>
+                      <div style="color: #6b7280; font-size: 11px; margin-top: 10px;">
+                        Expires in 15 minutes · Do not share this code
+                      </div>
                     </div>
+
+                    <div style="text-align: center; margin-bottom: 20px;">
+                      <p style="color: #9ca3af; font-size: 12px; margin: 0 0 12px 0;">Or verify automatically with 1-click:</p>
+                      <a href="${verifyUrl}" style="background-color: #ff0a8a; color: #ffffff; padding: 12px 28px; font-size: 13px; font-weight: 600; text-decoration: none; border-radius: 10px; display: inline-block; box-shadow: 0 8px 25px rgba(255, 10, 138, 0.25);">
+                        Verify Email Address →
+                      </a>
+                    </div>
+
+                    <p style="color: #9ca3af; font-size: 12px; margin: 16px 0 0 0; line-height: 1.5; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 14px;">
+                      If you did not create a Koraspace account, you can safely ignore this message.
+                    </p>
                   </div>
                 </td>
               </tr>
