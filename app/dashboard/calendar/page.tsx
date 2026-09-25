@@ -168,6 +168,84 @@ function formatEventDate(dateStr: string) {
   }
 }
 
+function isVideoUrl(url?: string) {
+  if (!url) return false;
+  return /\.(mp4|mov|webm|ogg|m4v)(\?.*)?$/i.test(url) || url.includes("video");
+}
+
+function RenderSmartPreviewMedia({
+  mediaUrls,
+  content,
+  aspectRatio = "aspect-square",
+  className = "",
+}: {
+  mediaUrls?: string[];
+  content?: string;
+  aspectRatio?: string;
+  className?: string;
+}) {
+  if (mediaUrls && mediaUrls.length > 0) {
+    const isVideo = isVideoUrl(mediaUrls[0]);
+    return (
+      <div className={`relative w-full ${aspectRatio} overflow-hidden bg-black/90 flex items-center justify-center ${className}`}>
+        {isVideo ? (
+          <video
+            src={mediaUrls[0]}
+            controls
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <img
+            src={mediaUrls[0]}
+            alt="Media Attachment"
+            className="w-full h-full object-cover"
+          />
+        )}
+
+        {/* Media Type / Count Badge */}
+        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 z-10 pointer-events-none">
+          {isVideo ? (
+            <span className="px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md text-white text-[9px] font-semibold flex items-center gap-1 shadow-sm">
+              <Tv className="w-2.5 h-2.5 text-white" />
+              Video
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md text-white text-[9px] font-semibold flex items-center gap-1 shadow-sm">
+              <ImageIcon className="w-2.5 h-2.5 text-white" />
+              Image
+            </span>
+          )}
+        </div>
+
+        {mediaUrls.length > 1 && (
+          <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-md text-white text-[9px] font-semibold font-mono shadow-sm z-10 pointer-events-none">
+            1 / {mediaUrls.length}
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  // Fallback visual canvas when no media uploaded
+  return (
+    <div className={`w-full ${aspectRatio} p-6 sm:p-8 flex flex-col items-center justify-center text-center bg-gradient-to-br from-[var(--panel-fill-2)] via-[var(--panel-fill)] to-[var(--panel-fill-2)] relative overflow-hidden ${className}`}>
+      <div className="w-11 h-11 rounded-2xl bg-black text-white dark:bg-white dark:text-black flex items-center justify-center mb-2.5 shadow-md">
+        <Sparkles className="w-5 h-5" />
+      </div>
+      <p className="text-xs sm:text-sm font-semibold text-[var(--fg)] max-w-[280px] line-clamp-4 leading-relaxed">
+        {content || "Visual Post Content"}
+      </p>
+      <span className="text-[9.5px] text-[var(--fg-4)] font-mono mt-2.5 uppercase tracking-wider">
+        Visual Feed Asset
+      </span>
+    </div>
+  );
+}
+
 /* -------------------------------------------------------------------------- */
 /*                              PLATFORM ICON                                 */
 /* -------------------------------------------------------------------------- */
@@ -2328,23 +2406,12 @@ export default function CalendarPage() {
                       </div>
 
                       {/* IG Media Area */}
-                      <div className="aspect-square w-full bg-[var(--panel-fill-2)] relative flex items-center justify-center overflow-hidden border-b border-[var(--stroke)]">
-                        {smartPreviewEvent.media_urls?.[0] ? (
-                          <img src={smartPreviewEvent.media_urls[0]} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full p-8 flex flex-col items-center justify-center text-center bg-gradient-to-br from-[var(--panel-fill-2)] via-[var(--panel-fill)] to-[var(--panel-fill-2)]">
-                            <div className="w-12 h-12 rounded-2xl bg-black text-white dark:bg-white dark:text-black flex items-center justify-center mb-3 shadow-md">
-                              <Sparkles className="w-6 h-6" />
-                            </div>
-                            <p className="text-sm font-semibold text-[var(--fg)] max-w-[280px] line-clamp-4 leading-relaxed">
-                              {smartPreviewEvent.content || smartPreviewEvent.title}
-                            </p>
-                            <span className="text-[10px] text-[var(--fg-4)] font-mono mt-3 uppercase tracking-wider">
-                              Visual Feed Post
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                      <RenderSmartPreviewMedia
+                        mediaUrls={smartPreviewEvent.media_urls}
+                        content={smartPreviewEvent.content || smartPreviewEvent.title}
+                        aspectRatio="aspect-square"
+                        className="border-b border-[var(--stroke)]"
+                      />
 
                       {/* IG Actions */}
                       <div className="p-3.5 space-y-2">
@@ -2419,9 +2486,13 @@ export default function CalendarPage() {
                       </div>
 
                       {/* Tweet Media */}
-                      {smartPreviewEvent.media_urls?.[0] && (
-                        <div className="rounded-2xl overflow-hidden border border-[var(--stroke)] max-h-[220px]">
-                          <img src={smartPreviewEvent.media_urls[0]} alt="" className="w-full h-full object-cover" />
+                      {smartPreviewEvent.media_urls && smartPreviewEvent.media_urls.length > 0 && (
+                        <div className="rounded-2xl overflow-hidden border border-[var(--stroke)]">
+                          <RenderSmartPreviewMedia
+                            mediaUrls={smartPreviewEvent.media_urls}
+                            content={smartPreviewEvent.content || smartPreviewEvent.title}
+                            aspectRatio="aspect-[16/9]"
+                          />
                         </div>
                       )}
 
@@ -2489,9 +2560,13 @@ export default function CalendarPage() {
                       </div>
 
                       {/* LinkedIn Media */}
-                      {smartPreviewEvent.media_urls?.[0] && (
-                        <div className="rounded-2xl overflow-hidden border border-[var(--stroke)] max-h-[220px]">
-                          <img src={smartPreviewEvent.media_urls[0]} alt="" className="w-full h-full object-cover" />
+                      {smartPreviewEvent.media_urls && smartPreviewEvent.media_urls.length > 0 && (
+                        <div className="rounded-2xl overflow-hidden border border-[var(--stroke)]">
+                          <RenderSmartPreviewMedia
+                            mediaUrls={smartPreviewEvent.media_urls}
+                            content={smartPreviewEvent.content || smartPreviewEvent.title}
+                            aspectRatio="aspect-[1.91/1]"
+                          />
                         </div>
                       )}
 
@@ -2529,6 +2604,26 @@ export default function CalendarPage() {
                   {/* TIKTOK / SHORTS MOCKUP */}
                   {smartPreviewPlatform === "tiktok" && (
                     <div className="rounded-[32px] overflow-hidden border border-[var(--stroke-strong)] bg-neutral-950 text-white p-4 shadow-2xl transition-all h-[520px] flex flex-col justify-between relative">
+                      {/* Media Background Canvas */}
+                      <div className="absolute inset-0 z-0">
+                        {smartPreviewEvent.media_urls && smartPreviewEvent.media_urls.length > 0 ? (
+                          <RenderSmartPreviewMedia
+                            mediaUrls={smartPreviewEvent.media_urls}
+                            content={smartPreviewEvent.content || smartPreviewEvent.title}
+                            aspectRatio="h-full w-full"
+                            className="h-full w-full"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-b from-neutral-900 via-neutral-950 to-black flex flex-col items-center justify-center p-8 text-center opacity-80">
+                            <Music2 className="w-12 h-12 text-pink-500 mb-3 animate-pulse" />
+                            <p className="text-xs font-semibold text-white/80 line-clamp-3">
+                              {smartPreviewEvent.content || smartPreviewEvent.title}
+                            </p>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/80 pointer-events-none" />
+                      </div>
+
                       {/* Top Header */}
                       <div className="flex items-center justify-between text-xs text-white/80 z-10">
                         <span className="font-bold tracking-wider">TikTok Feed View</span>
@@ -2594,6 +2689,15 @@ export default function CalendarPage() {
                           <p className="text-xs text-[var(--fg)] leading-relaxed whitespace-pre-wrap">
                             {smartPreviewEvent.content || smartPreviewEvent.title}
                           </p>
+                          {smartPreviewEvent.media_urls && smartPreviewEvent.media_urls.length > 0 && (
+                            <div className="rounded-2xl overflow-hidden border border-[var(--stroke)] mt-2">
+                              <RenderSmartPreviewMedia
+                                mediaUrls={smartPreviewEvent.media_urls}
+                                content={smartPreviewEvent.content || smartPreviewEvent.title}
+                                aspectRatio="aspect-video"
+                              />
+                            </div>
+                          )}
                           <div className="flex items-center gap-4 text-[var(--fg-4)] pt-2">
                             <Heart className="w-4 h-4 hover:text-red-500 cursor-pointer" />
                             <MessageCircle className="w-4 h-4 hover:text-[var(--fg)] cursor-pointer" />
@@ -2629,6 +2733,16 @@ export default function CalendarPage() {
                       <div className="text-xs text-[var(--fg)] leading-relaxed whitespace-pre-wrap">
                         {smartPreviewEvent.content || smartPreviewEvent.title}
                       </div>
+
+                      {smartPreviewEvent.media_urls && smartPreviewEvent.media_urls.length > 0 && (
+                        <div className="rounded-2xl overflow-hidden border border-[var(--stroke)]">
+                          <RenderSmartPreviewMedia
+                            mediaUrls={smartPreviewEvent.media_urls}
+                            content={smartPreviewEvent.content || smartPreviewEvent.title}
+                            aspectRatio="aspect-video"
+                          />
+                        </div>
+                      )}
 
                       <div className="flex items-center justify-between pt-2 border-t border-[var(--stroke)] text-[10px] text-[var(--fg-4)]">
                         <span>👍 82 Reactions</span>
@@ -2691,6 +2805,56 @@ export default function CalendarPage() {
                       <p className="text-sm font-bold text-emerald-400 mt-0.5">Optimal</p>
                     </div>
                   </div>
+                </div>
+
+                {/* MEDIA SPECS & FORMATTING HEALTH */}
+                <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-lg bg-black text-white dark:bg-white/10 flex items-center justify-center">
+                        <ImageIcon className="w-3.5 h-3.5 text-white" />
+                      </div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--fg)]">
+                        Media & Layout Specs
+                      </h4>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-[var(--panel-fill)] border border-[var(--stroke)] text-[var(--fg-3)] font-mono">
+                      {smartPreviewEvent.media_urls && smartPreviewEvent.media_urls.length > 0
+                        ? `${smartPreviewEvent.media_urls.length} Attached`
+                        : "Text Post"}
+                    </span>
+                  </div>
+
+                  {smartPreviewEvent.media_urls && smartPreviewEvent.media_urls.length > 0 ? (
+                    <div className="space-y-2 text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[var(--fg-4)]">Format Detected:</span>
+                        <span className="font-semibold text-[var(--fg)] font-mono">
+                          {isVideoUrl(smartPreviewEvent.media_urls[0]) ? "MP4/WebM Video (Playable)" : "High-Res Image (JPG/PNG)"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[var(--fg-4)]">Target Aspect Ratio:</span>
+                        <span className="font-bold text-[var(--fg)]">
+                          {smartPreviewPlatform === "instagram"
+                            ? "1:1 Square / 4:5 Portrait"
+                            : smartPreviewPlatform === "tiktok"
+                            ? "9:16 Full Vertical (1080x1920)"
+                            : "16:9 Landscape (1200x675)"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[var(--fg-4)]">Encoding & Fit:</span>
+                        <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                          <span>✓</span> Platform Optimized
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-[11px] text-[var(--fg-4)] leading-relaxed">
+                      No media attached. Post will render with dynamic typography styling and brand palette on {platformLabel(smartPreviewPlatform)}.
+                    </p>
+                  )}
                 </div>
 
                 {/* AUDIENCE TIMING & SURGE SLOT */}
