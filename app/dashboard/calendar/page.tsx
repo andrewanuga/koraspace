@@ -985,7 +985,7 @@ export default function CalendarPage() {
       {/* MAIN CALENDAR CARD                                               */}
       {/* ================================================================ */}
 
-      <GlassCard className="flex-1 flex flex-col overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] shadow-lg">
+      <GlassCard className="flex-1 flex flex-col overflow-hidden rounded-3xl border border-[#ec4899]/30 bg-[var(--panel-fill)] shadow-lg">
         {/* TOOLBAR */}
         <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 px-5 py-4 border-b border-[var(--stroke)] bg-[var(--panel-fill)]">
           {/* LEFT: MONTH NAVIGATOR */}
@@ -1128,7 +1128,7 @@ export default function CalendarPage() {
                         : "bg-[var(--app-bg)] opacity-30 cursor-default"
                     }`}
                   >
-                    {/* CELL HEADER: DATE + OPTIMAL SURGE BADGE */}
+                    {/* CELL HEADER: DATE + OPTIMAL SURGE TIME */}
                     <div className="flex items-center justify-between mb-1.5">
                       <span
                         className={`w-6 h-6 flex items-center justify-center rounded-full text-[11px] font-semibold ${
@@ -1143,9 +1143,9 @@ export default function CalendarPage() {
                       {isCurrentMonth && optimalSlot && (
                         <div
                           title={`Peak audience activity slot: ${optimalSlot.formatted} (${optimalSlot.surgeWindow})`}
-                          className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[8.5px] font-medium bg-black text-white border border-black dark:bg-white/[0.06] dark:border-white/10 dark:text-white"
+                          className="flex items-center gap-1 text-[9px] font-semibold text-black dark:text-white"
                         >
-                          <Zap className="w-2.5 h-2.5 text-white" />
+                          <Zap className="w-2.5 h-2.5 text-black dark:text-white" />
                           <span>{optimalSlot.formatted}</span>
                         </div>
                       )}
@@ -1182,10 +1182,10 @@ export default function CalendarPage() {
                                   {event.title}
                                 </p>
 
-                                <div className="flex items-center gap-1 mt-0.5 text-[8.5px] text-[var(--fg-4)]">
-                                  <Clock className="w-2.5 h-2.5 text-[var(--fg-4)] dark:text-white" />
-                                  <span>{formatEventTime(event.trigger_at)}</span>
-                                  <span className="capitalize text-[8px] opacity-75">
+                                <div className="flex items-center gap-1 mt-0.5 text-[8.5px] text-black dark:text-white/80">
+                                  <Clock className="w-2.5 h-2.5 text-black dark:text-white" />
+                                  <span className="font-medium text-black dark:text-white">{formatEventTime(event.trigger_at)}</span>
+                                  <span className="capitalize text-[8px] opacity-75 text-[var(--fg-4)]">
                                     • {event.type === "post" ? "Post" : "AI Task"}
                                   </span>
                                 </div>
@@ -1322,7 +1322,7 @@ export default function CalendarPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
         {/* UPCOMING POSTS */}
-        <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 shadow-sm">
+        <div className="rounded-2xl border border-[#ec4899]/30 bg-[var(--panel-fill-2)] p-4 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="text-sm font-semibold text-[var(--fg)]">Upcoming Posts</h3>
@@ -1344,7 +1344,7 @@ export default function CalendarPage() {
 
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-medium text-[var(--fg)] truncate">{task.title}</p>
-                    <p className="text-[9.5px] text-[var(--fg-4)] mt-0.5">
+                    <p className="text-[9.5px] text-black dark:text-white/80 mt-0.5 font-medium">
                       {formatEventDate(task.trigger_at)} · {formatEventTime(task.trigger_at)}
                     </p>
                   </div>
@@ -1412,7 +1412,7 @@ export default function CalendarPage() {
         </div>
 
         {/* AI AUTO STRATEGY CARD */}
-        <div className="relative overflow-hidden rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-4 shadow-md flex flex-col justify-between">
+        <div className="relative overflow-hidden rounded-2xl border border-[#ec4899]/30 bg-[var(--panel-fill)] p-4 shadow-md flex flex-col justify-between">
           <div className="relative z-10">
             <div className="flex items-center gap-2.5 mb-2">
               <div className="w-8 h-8 rounded-lg bg-black border border-black text-white dark:bg-white/[0.06] dark:border-white/10 dark:text-white flex items-center justify-center">
@@ -1431,9 +1431,9 @@ export default function CalendarPage() {
               setModalMode("ai_batch");
               setShowModal(true);
             }}
-            className="mt-4 w-full h-9 rounded-xl bg-black text-white dark:bg-white dark:text-black text-xs font-semibold shadow-md hover:opacity-90 transition-all flex items-center justify-center gap-1.5"
+            className="mt-4 w-full h-9 rounded-xl bg-[#ec4899] hover:bg-[#db2777] text-white text-xs font-semibold shadow-md hover:opacity-95 transition-all flex items-center justify-center gap-1.5"
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-3.5 h-3.5 text-white" />
             <span>Generate Strategy</span>
           </button>
         </div>
