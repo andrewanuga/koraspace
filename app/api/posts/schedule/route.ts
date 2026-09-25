@@ -116,3 +116,78 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return new Response("Unauthorized", { status: 401 });
+    const workspaceId = user.id;
+
+    const body = await req.json();
+    const { id, scheduled_at, content, platform, status } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
+    }
+
+    const updateData: Record<string, unknown> = {};
+    if (scheduled_at) updateData.scheduled_at = new Date(scheduled_at);
+    if (content !== undefined) updateData.content = content;
+    if (platform !== undefined) updateData.platform = platform;
+    if (status !== undefined) updateData.status = status;
+
+    const updated = await prisma.scheduledPost.updateMany({
+      where: {
+        id,
+        user_id: workspaceId,
+      },
+      data: updateData,
+    });
+
+    if (updated.count === 0) {
+      return NextResponse.json({ error: "Post not found or unauthorized" }, { status: 404 });
+    }
+
+    const post = await prisma.scheduledPost.findFirst({
+      where: { id, user_id: workspaceId },
+    });
+
+    return NextResponse.json({ success: true, post });
+  } catch (err: any) {
+    console.error("[/api/posts/schedule PATCH]", err);
+    return NextResponse.json({ error: err?.message || "Failed to update scheduled post" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return new Response("Unauthorized", { status: 401 });
+    const workspaceId = user.id;
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
+    }
+
+    const deleted = await prisma.scheduledPost.deleteMany({
+      where: {
+        id,
+        user_id: workspaceId,
+      },
+    });
+
+    if (deleted.count === 0) {
+      return NextResponse.json({ error: "Post not found or unauthorized" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, message: "Scheduled post deleted" });
+  } catch (err: any) {
+    console.error("[/api/posts/schedule DELETE]", err);
+    return NextResponse.json({ error: err?.message || "Failed to delete scheduled post" }, { status: 500 });
+  }
+}

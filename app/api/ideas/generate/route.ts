@@ -10,9 +10,10 @@ import { scanForPromptInjection } from "@/lib/security/enforcement";
 
 export async function POST(req: NextRequest) {
   try {
-    const workspace = await getActiveWorkspace(supabase);
-    if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const workspaceId = workspace.workspaceId;
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return new Response("Unauthorized", { status: 401 });
+    const workspaceId = user.id;
 
     // Rate limit: 30 requests/min per user
     const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
@@ -35,15 +36,18 @@ export async function POST(req: NextRequest) {
     }
 
     // Fetch user profile preferences, Brand Brain context, and active trends
-    const [{ data: profile }, brandContext, { data: trends }] = await Promise.all([
-      supabase.from("profiles").select("ai_model").eq("id", workspaceId).single(),
+    const [profile, brandContext, trends] = await Promise.all([
+      prisma.profile.findUnique({
+        where: { id: workspaceId },
+        select: { ai_model: true }
+      }),
       buildBrandContext(workspaceId).catch(() => null),
-      supabase
-        .from("social_trends")
-        .select("topic, summary")
-        .eq("user_id", workspaceId)
-        .order("score", { ascending: false })
-        .limit(4),
+      prisma.socialTrend.findMany({
+        where: { user_id: workspaceId },
+        select: { topic: true, summary: true },
+        orderBy: { score: "desc" },
+        take: 4,
+      }).catch(() => []),
     ]);
 
     // Dev mock fallback if no API key
