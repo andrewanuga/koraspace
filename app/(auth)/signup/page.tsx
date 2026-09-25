@@ -18,13 +18,21 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
 import { registerUser, resendVerificationEmail } from "./actions";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
+import {
+  signupSchema,
+  EMAIL_REGEX,
+  PASSWORD_NUMBER_REGEX,
+  PASSWORD_SPECIAL_CHAR_REGEX,
+  sanitizeEmail,
+  sanitizeText,
+} from "@/lib/validations/auth";
 
 const PASSWORD_REQUIREMENTS = [
   { label: "At least 8 characters", test: (p: string) => p.length >= 8 },
-  { label: "Contains a number", test: (p: string) => /\d/.test(p) },
+  { label: "Contains a number", test: (p: string) => PASSWORD_NUMBER_REGEX.test(p) },
   {
     label: "Contains a special character (!@#$%^&*)",
-    test: (p: string) => /[!@#$%^&*]/.test(p),
+    test: (p: string) => PASSWORD_SPECIAL_CHAR_REGEX.test(p),
   },
 ];
 
@@ -46,14 +54,11 @@ export default function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const isPasswordValid = PASSWORD_REQUIREMENTS.every((req) =>
-      req.test(password)
-    );
-    if (!isPasswordValid) {
-      toastError(
-        "Weak password",
-        "Please meet all password requirements before continuing."
-      );
+    // Client-side Zod and Regex input validation & sanitization
+    const validation = signupSchema.safeParse({ name, email, password });
+    if (!validation.success) {
+      const firstError = validation.error.errors[0]?.message || "Please check your input.";
+      toastError("Validation Error", firstError);
       return;
     }
 
@@ -61,7 +66,7 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const res = await registerUser(email, password, name);
+      const res = await registerUser(validation.data.email, validation.data.password, validation.data.name);
 
       if (res.error) {
         toastError("Couldn't create account", res.error);

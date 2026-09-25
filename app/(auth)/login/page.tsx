@@ -21,6 +21,7 @@ import { useToast } from "@/components/ui/toast";
 import { signIn } from "next-auth/react";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { checkUserVerificationStatus, resendVerificationEmail } from "@/app/(auth)/signup/actions";
+import { loginSchema } from "@/lib/validations/auth";
 
 const inputCls =
   "h-12 w-full rounded-xl border border-white/[0.10] bg-white/[0.035] px-4 text-sm text-white outline-none transition-all placeholder:text-white/25 focus:border-[#ff0a8a]/60 focus:bg-white/[0.055] focus:ring-4 focus:ring-[#ff0a8a]/10";
@@ -87,17 +88,25 @@ function LoginForm() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Client-side Zod and Regex input validation & sanitization
+    const validation = loginSchema.safeParse({ email, password });
+    if (!validation.success) {
+      const firstError = validation.error.errors[0]?.message || "Invalid credentials.";
+      toastError("Validation Error", firstError);
+      return;
+    }
+
     if (loading) return;
     setLoading(true);
     setUnverifiedEmail(null);
 
-    const cleanEmail = email.trim();
+    const { email: cleanEmail, password: cleanPassword } = validation.data;
 
     try {
       const result = await signIn("credentials", {
         redirect: false,
         email: cleanEmail,
-        password,
+        password: cleanPassword,
       });
 
       if (result?.error) {

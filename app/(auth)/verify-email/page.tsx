@@ -16,6 +16,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
 import { verifyEmailToken, resendVerificationEmail } from "@/app/(auth)/signup/actions";
+import { emailOnlySchema } from "@/lib/validations/auth";
 
 const inputCls =
   "h-12 w-full rounded-xl border border-white/[0.10] bg-white/[0.035] px-4 text-sm text-white outline-none transition-all placeholder:text-white/25 focus:border-[#ff0a8a]/60 focus:bg-white/[0.055] focus:ring-4 focus:ring-[#ff0a8a]/10";
@@ -76,9 +77,9 @@ function VerifyEmailContent() {
 
   const handleResend = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    const cleanEmail = emailInput.trim();
-    if (!cleanEmail) {
-      toastError("Missing email", "Please enter your registered email address.");
+    const validation = emailOnlySchema.safeParse({ email: emailInput });
+    if (!validation.success) {
+      toastError("Invalid email", validation.error.errors[0]?.message || "Please enter a valid email address.");
       return;
     }
 
@@ -87,7 +88,7 @@ function VerifyEmailContent() {
     setResendSuccessMsg("");
 
     try {
-      const res = await resendVerificationEmail(cleanEmail);
+      const res = await resendVerificationEmail(validation.data.email);
       if (res.error) {
         toastError("Couldn't send link", res.error);
       } else {

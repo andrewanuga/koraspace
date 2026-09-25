@@ -4,6 +4,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/db"
 import bcrypt from "bcryptjs"
 
+import { loginSchema } from "@/lib/validations/auth"
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -17,26 +19,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null
+        const parsed = loginSchema.safeParse(credentials);
+        if (!parsed.success) {
+          return null;
         }
-        
-        const cleanEmail = (credentials.email as string).toLowerCase().trim();
+
+        const { email: cleanEmail, password: cleanPassword } = parsed.data;
+
         const user = await prisma.profile.findUnique({
           where: { email: cleanEmail }
-        })
+        });
 
         if (!user || !user.password_hash) {
-          return null
+          return null;
         }
 
         const isValid = await bcrypt.compare(
-          credentials.password as string,
+          cleanPassword,
           user.password_hash
-        )
+        );
 
         if (!isValid) {
-          return null
+          return null;
         }
 
         if (!user.emailVerified) {

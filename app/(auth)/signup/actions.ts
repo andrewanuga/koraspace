@@ -4,24 +4,25 @@ import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { sendVerificationEmail } from "@/lib/mailer";
+import {
+  signupSchema,
+  emailOnlySchema,
+  sanitizeEmail,
+  sanitizeText,
+} from "@/lib/validations/auth";
 
 export async function registerUser(email: string, password: string, name: string) {
   try {
-    const cleanEmail = email.toLowerCase().trim();
-    const cleanName = name.trim();
-
-    // 1. Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!cleanEmail || !emailRegex.test(cleanEmail)) {
-      return { error: "Please enter a valid email address." };
+    // 1. Validate & sanitize using Zod Schema & Regular Expressions
+    const validationResult = signupSchema.safeParse({ name, email, password });
+    if (!validationResult.success) {
+      const firstError = validationResult.error.errors[0]?.message || "Invalid registration input.";
+      return { error: firstError };
     }
 
-    // 2. Password validation
-    if (!password || password.length < 8) {
-      return { error: "Password must be at least 8 characters long." };
-    }
+    const { name: cleanName, email: cleanEmail, password: cleanPassword } = validationResult.data;
 
-    // 3. Check for existing registered email in DB
+    // 2. Check for pre-existing registered email in DB
     const existingUser = await prisma.profile.findUnique({
       where: { email: cleanEmail },
     });
@@ -33,9 +34,9 @@ export async function registerUser(email: string, password: string, name: string
       };
     }
 
-    const password_hash = await bcrypt.hash(password, 12);
+    const password_hash = await bcrypt.hash(cleanPassword, 12);
 
-    // 4. Create new user profile with emailVerified initially null
+    // 3. Create new user profile with emailVerified initially null
     await prisma.profile.create({
       data: {
         email: cleanEmail,
@@ -45,7 +46,7 @@ export async function registerUser(email: string, password: string, name: string
       },
     });
 
-    // 5. Generate secure verification token
+    // 4. Generate secure verification token
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours expiry
 
@@ -62,11 +63,11 @@ export async function registerUser(email: string, password: string, name: string
       },
     });
 
-    // 6. Build verification URL
+    // 5. Build verification URL
     const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://koraspace.site").replace(/\/$/, "");
     const verifyUrl = `${appUrl}/verify-email?token=${verificationToken}&email=${encodeURIComponent(cleanEmail)}`;
 
-    // 7. Send verification email
+    // 6. Send verification email
     sendVerificationEmail(cleanEmail, cleanName, verifyUrl).catch((err) => {
       console.warn("[Signup] Non-blocking verification email error:", err);
     });
@@ -86,11 +87,12 @@ export async function registerUser(email: string, password: string, name: string
 
 export async function resendVerificationEmail(email: string) {
   try {
-    const cleanEmail = email.toLowerCase().trim();
-
-    if (!cleanEmail) {
-      return { error: "Please provide your email address." };
+    const validationResult = emailOnlySchema.safeParse({ email });
+    if (!validationResult.success) {
+      return { error: validationResult.error.errors[0]?.message || "Please enter a valid email address." };
     }
+
+    const cleanEmail = validationResult.data.email;
 
     const user = await prisma.profile.findUnique({
       where: { email: cleanEmail },
@@ -141,8 +143,10 @@ export async function verifyEmailToken(token: string) {
       return { error: "Invalid or missing verification token." };
     }
 
+    const cleanToken = token.trim();
+
     const tokenRecord = await prisma.verificationToken.findUnique({
-      where: { token },
+      where: { token: cleanToken },
     });
 
     if (!tokenRecord) {
@@ -155,7 +159,7 @@ export async function verifyEmailToken(token: string) {
     if (new Date() > tokenRecord.expires) {
       // Clean up expired token
       await prisma.verificationToken.delete({
-        where: { token },
+        where: { token: cleanToken },
       }).catch(() => {});
       return {
         error:
@@ -165,7 +169,7 @@ export async function verifyEmailToken(token: string) {
       };
     }
 
-    const cleanEmail = tokenRecord.identifier.toLowerCase().trim();
+    const cleanEmail = sanitizeEmail(tokenRecord.identifier);
 
     // Mark email verified
     await prisma.profile.update({
@@ -189,7 +193,7 @@ export async function verifyEmailToken(token: string) {
 
 export async function checkUserVerificationStatus(email: string) {
   try {
-    const cleanEmail = email.toLowerCase().trim();
+    const cleanEmail = sanitizeEmail(email);
     if (!cleanEmail) return { exists: false, verified: false };
     const user = await prisma.profile.findUnique({
       where: { email: cleanEmail },
@@ -201,4 +205,3 @@ export async function checkUserVerificationStatus(email: string) {
     return { exists: false, verified: false };
   }
 }
-
