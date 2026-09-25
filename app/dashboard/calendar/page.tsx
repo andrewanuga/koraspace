@@ -37,6 +37,15 @@ import {
   Tv,
   Smartphone,
   Monitor,
+  Heart,
+  MessageCircle,
+  Repeat2,
+  Bookmark,
+  Share2,
+  MoreHorizontal,
+  ThumbsUp,
+  Eye,
+  Edit3,
 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
@@ -369,6 +378,10 @@ export default function CalendarPage() {
   // Event Detail / Reschedule Popover
   const [selectedEventDetail, setSelectedEventDetail] = useState<CalendarEventItem | null>(null);
   const [isRescheduling, setIsRescheduling] = useState(false);
+
+  // Smart Multi-Platform Content Preview State
+  const [smartPreviewEvent, setSmartPreviewEvent] = useState<CalendarEventItem | null>(null);
+  const [smartPreviewPlatform, setSmartPreviewPlatform] = useState<string>("instagram");
 
   /* ---------------------------------------------------------------------- */
   /*                              LOAD DATA                                 */
@@ -1448,15 +1461,28 @@ export default function CalendarPage() {
                       return (
                         <div
                           key={index}
-                          className={`aspect-square relative rounded-lg overflow-hidden border flex items-center justify-center p-1 text-center ${
+                          onClick={() => {
+                            if (post) {
+                              setSmartPreviewEvent(post);
+                              setSmartPreviewPlatform(post.platform?.toLowerCase() || "instagram");
+                            }
+                          }}
+                          className={`aspect-square relative rounded-lg overflow-hidden border flex items-center justify-center p-1 text-center transition-all ${
                             post
-                              ? "border-[var(--stroke-strong)] bg-[var(--panel-fill-2)]"
+                              ? "border-[var(--stroke-strong)] bg-[var(--panel-fill-2)] cursor-pointer hover:border-black/60 dark:hover:border-white/40 hover:scale-[1.02] shadow-xs group/post"
                               : "border-[var(--stroke)] bg-[var(--panel-fill)]/40"
                           }`}
+                          title={post ? "Click for Smart Multi-Platform Content Preview" : undefined}
                         >
                           {post ? (
-                            <div className="text-[8.5px] font-medium text-[var(--fg-3)] p-1 line-clamp-3">
-                              {post.title}
+                            <div className="relative w-full h-full flex flex-col justify-between p-1">
+                              <div className="text-[8.5px] font-medium text-[var(--fg-3)] line-clamp-3 text-left">
+                                {post.title}
+                              </div>
+                              <div className="flex items-center justify-between text-[7px] text-[var(--fg-4)] font-mono pt-1">
+                                <PlatformIcon platform={post.platform} className="w-2.5 h-2.5" />
+                                <span>{formatEventTime(post.trigger_at)}</span>
+                              </div>
                             </div>
                           ) : (
                             <div className="w-2 h-2 rounded-full bg-[var(--stroke)]" />
@@ -1531,20 +1557,33 @@ export default function CalendarPage() {
                       return (
                         <div
                           key={index}
+                          onClick={() => {
+                            if (post) {
+                              setSmartPreviewEvent(post);
+                              setSmartPreviewPlatform(post.platform?.toLowerCase() || "instagram");
+                            }
+                          }}
                           className={`aspect-square relative rounded-xl overflow-hidden border flex items-center justify-center p-3 text-center transition-all hover:border-[var(--stroke-strong)] ${
                             post
-                              ? "border-[var(--stroke)] bg-[var(--panel-fill-2)] shadow-xs"
+                              ? "border-[var(--stroke)] bg-[var(--panel-fill-2)] shadow-xs cursor-pointer hover:border-black/60 dark:hover:border-white/40 hover:scale-[1.02] group/dpost"
                               : "border-[var(--stroke)] bg-[var(--panel-fill)]/40"
                           }`}
+                          title={post ? "Click for Smart Multi-Platform Content Preview" : undefined}
                         >
                           {post ? (
-                            <div className="space-y-1 p-1">
-                              <div className="text-[10px] font-semibold text-[var(--fg)] line-clamp-3">
+                            <div className="space-y-1.5 p-1 w-full h-full flex flex-col justify-between">
+                              <div className="text-[10px] font-semibold text-[var(--fg)] line-clamp-3 text-left">
                                 {post.title}
                               </div>
-                              <span className="inline-block text-[8px] px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 text-[var(--fg-3)] font-mono">
-                                {formatEventTime(post.trigger_at)}
-                              </span>
+                              <div className="flex items-center justify-between pt-1 border-t border-[var(--stroke)]">
+                                <div className="flex items-center gap-1 text-[8.5px] text-[var(--fg-3)]">
+                                  <PlatformIcon platform={post.platform} className="w-3 h-3" />
+                                  <span className="capitalize">{platformLabel(post.platform)}</span>
+                                </div>
+                                <span className="inline-block text-[8px] px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 text-[var(--fg-3)] font-mono">
+                                  {formatEventTime(post.trigger_at)}
+                                </span>
+                              </div>
                             </div>
                           ) : (
                             <div className="w-2.5 h-2.5 rounded-full bg-[var(--stroke)]" />
@@ -2171,6 +2210,596 @@ export default function CalendarPage() {
               >
                 Close
               </button>
+            </div>
+          </GlassCard>
+        </div>
+      )}
+
+      {/* ================================================================ */}
+      {/* SMART MULTI-PLATFORM CONTENT PREVIEW MODAL                       */}
+      {/* ================================================================ */}
+
+      {smartPreviewEvent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
+          <GlassCard className="w-full max-w-4xl max-h-[92vh] overflow-hidden rounded-3xl border border-[var(--stroke)] bg-[var(--panel-fill)] shadow-2xl flex flex-col my-auto">
+            {/* TOP HEADER */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--stroke)] bg-[var(--panel-fill-2)]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-black border border-black text-white dark:bg-white/[0.08] dark:border-white/15 dark:text-white flex items-center justify-center shadow-sm">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold text-[var(--fg)]">
+                      Smart Content Multi-Platform Preview
+                    </h3>
+                    <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-black/10 dark:bg-white/10 text-[var(--fg)] border border-[var(--stroke)]">
+                      Target: {platformLabel(smartPreviewEvent.platform)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--fg-4)]">
+                    Simulate how this scheduled content formats and appears across each social network
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSmartPreviewEvent(null)}
+                className="w-8 h-8 rounded-xl flex items-center justify-center text-[var(--fg-4)] hover:text-[var(--fg)] hover:bg-[var(--hover)] transition-all"
+              >
+                <X className="w-5 h-5 text-[var(--fg-4)] hover:text-[var(--fg)]" />
+              </button>
+            </div>
+
+            {/* PLATFORM SWITCHER BAR */}
+            <div className="px-6 py-3 border-b border-[var(--stroke)] bg-[var(--panel-fill)] flex items-center gap-2 overflow-x-auto scrollbar-none">
+              {[
+                { id: "instagram", label: "Instagram" },
+                { id: "x", label: "X (Twitter)" },
+                { id: "linkedin", label: "LinkedIn" },
+                { id: "tiktok", label: "TikTok" },
+                { id: "threads", label: "Threads" },
+                { id: "facebook", label: "Facebook" },
+                { id: "youtube", label: "YouTube" },
+              ].map((p) => {
+                const isSelected = smartPreviewPlatform.toLowerCase() === p.id.toLowerCase();
+                const isTarget = smartPreviewEvent.platform?.toLowerCase() === p.id.toLowerCase();
+
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setSmartPreviewPlatform(p.id)}
+                    className={`shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
+                      isSelected
+                        ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-xs"
+                        : "border-[var(--stroke)] bg-[var(--panel-fill-2)] text-[var(--fg-3)] hover:text-[var(--fg)] hover:bg-[var(--hover)]"
+                    }`}
+                  >
+                    <PlatformIcon platform={p.id} className="w-3.5 h-3.5" />
+                    <span>{p.label}</span>
+                    {isTarget && (
+                      <span
+                        className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold ${
+                          isSelected
+                            ? "bg-white/20 text-white dark:bg-black/15 dark:text-black"
+                            : "bg-black/10 text-black dark:bg-white/10 dark:text-white"
+                        }`}
+                      >
+                        Target
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* MODAL BODY (TWO COLUMNS) */}
+            <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 bg-[var(--app-bg)]">
+              {/* LEFT COLUMN: VISUAL SIMULATOR CANVAS (7 COLS) */}
+              <div className="lg:col-span-7 flex flex-col items-center justify-center">
+                <div className="w-full max-w-[420px]">
+                  {/* INSTAGRAM MOCKUP */}
+                  {smartPreviewPlatform === "instagram" && (
+                    <div className="rounded-3xl overflow-hidden border border-[var(--stroke)] bg-[var(--panel-fill)] shadow-xl transition-all">
+                      {/* IG Post Header */}
+                      <div className="flex items-center justify-between p-3.5 border-b border-[var(--stroke)]">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-full p-[1.5px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600">
+                            <div className="w-full h-full rounded-full bg-[var(--panel-fill)] p-[1px]">
+                              {accounts[0]?.avatar_url ? (
+                                <img src={accounts[0].avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full rounded-full bg-black text-white dark:bg-white dark:text-black flex items-center justify-center text-[10px] font-bold">
+                                  {(accounts[0]?.handle || "K").charAt(0).toUpperCase()}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-[var(--fg)]">
+                              {accounts[0]?.handle?.replace(/^@/, "") || "koraspace_creator"}
+                            </p>
+                            <p className="text-[9.5px] text-[var(--fg-4)]">Peak Audience Window</p>
+                          </div>
+                        </div>
+                        <MoreHorizontal className="w-4 h-4 text-[var(--fg-4)]" />
+                      </div>
+
+                      {/* IG Media Area */}
+                      <div className="aspect-square w-full bg-[var(--panel-fill-2)] relative flex items-center justify-center overflow-hidden border-b border-[var(--stroke)]">
+                        {smartPreviewEvent.media_urls?.[0] ? (
+                          <img src={smartPreviewEvent.media_urls[0]} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full p-8 flex flex-col items-center justify-center text-center bg-gradient-to-br from-[var(--panel-fill-2)] via-[var(--panel-fill)] to-[var(--panel-fill-2)]">
+                            <div className="w-12 h-12 rounded-2xl bg-black text-white dark:bg-white dark:text-black flex items-center justify-center mb-3 shadow-md">
+                              <Sparkles className="w-6 h-6" />
+                            </div>
+                            <p className="text-sm font-semibold text-[var(--fg)] max-w-[280px] line-clamp-4 leading-relaxed">
+                              {smartPreviewEvent.content || smartPreviewEvent.title}
+                            </p>
+                            <span className="text-[10px] text-[var(--fg-4)] font-mono mt-3 uppercase tracking-wider">
+                              Visual Feed Post
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* IG Actions */}
+                      <div className="p-3.5 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3.5">
+                            <Heart className="w-5 h-5 text-[var(--fg)] hover:text-red-500 transition-colors cursor-pointer" />
+                            <MessageCircle className="w-5 h-5 text-[var(--fg)] hover:opacity-75 transition-opacity cursor-pointer" />
+                            <Send className="w-5 h-5 text-[var(--fg)] hover:opacity-75 transition-opacity cursor-pointer" />
+                          </div>
+                          <Bookmark className="w-5 h-5 text-[var(--fg)] cursor-pointer" />
+                        </div>
+
+                        <p className="text-[11px] font-bold text-[var(--fg)]">
+                          1,482 likes
+                        </p>
+
+                        {/* IG Caption */}
+                        <div className="text-xs text-[var(--fg)] leading-relaxed space-y-1">
+                          <p>
+                            <span className="font-bold mr-1.5">
+                              {accounts[0]?.handle?.replace(/^@/, "") || "koraspace_creator"}
+                            </span>
+                            <span className="whitespace-pre-wrap">
+                              {smartPreviewEvent.content || smartPreviewEvent.title}
+                            </span>
+                          </p>
+                        </div>
+
+                        <p className="text-[10px] text-[var(--fg-4)] cursor-pointer hover:underline pt-0.5">
+                          View all 34 comments
+                        </p>
+                        <p className="text-[9px] text-[var(--fg-4)] uppercase tracking-wider">
+                          Scheduled: {formatEventDate(smartPreviewEvent.trigger_at)} at {formatEventTime(smartPreviewEvent.trigger_at)}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* X (TWITTER) MOCKUP */}
+                  {(smartPreviewPlatform === "x" || smartPreviewPlatform === "twitter") && (
+                    <div className="rounded-3xl overflow-hidden border border-[var(--stroke)] bg-[var(--panel-fill)] p-4 shadow-xl transition-all space-y-3">
+                      {/* Tweet Author Header */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-2.5">
+                          {accounts[0]?.avatar_url ? (
+                            <img src={accounts[0].avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-black text-white dark:bg-white dark:text-black flex items-center justify-center font-bold text-xs">
+                              {(accounts[0]?.display_name || "K").charAt(0)}
+                            </div>
+                          )}
+                          <div>
+                            <div className="flex items-center gap-1">
+                              <span className="text-xs font-bold text-[var(--fg)]">
+                                {accounts[0]?.display_name || "Koraspace Creator"}
+                              </span>
+                              <span className="w-3.5 h-3.5 rounded-full bg-sky-500 text-white flex items-center justify-center text-[8px] font-bold">
+                                ✓
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-[var(--fg-4)]">
+                              @{accounts[0]?.handle?.replace(/^@/, "") || "koraspace"}
+                            </p>
+                          </div>
+                        </div>
+                        <AtSign className="w-4 h-4 text-[var(--fg-4)]" />
+                      </div>
+
+                      {/* Tweet Content */}
+                      <div className="text-xs text-[var(--fg)] leading-relaxed whitespace-pre-wrap pt-1 font-sans">
+                        {smartPreviewEvent.content || smartPreviewEvent.title}
+                      </div>
+
+                      {/* Tweet Media */}
+                      {smartPreviewEvent.media_urls?.[0] && (
+                        <div className="rounded-2xl overflow-hidden border border-[var(--stroke)] max-h-[220px]">
+                          <img src={smartPreviewEvent.media_urls[0]} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+
+                      {/* Tweet Timestamp & Analytics */}
+                      <div className="py-2 border-y border-[var(--stroke)] flex items-center justify-between text-[10px] text-[var(--fg-4)]">
+                        <span>{formatEventTime(smartPreviewEvent.trigger_at)} · {formatEventDate(smartPreviewEvent.trigger_at)}</span>
+                        <span className="font-semibold text-[var(--fg)]">18.4K Views</span>
+                      </div>
+
+                      {/* Tweet Actions */}
+                      <div className="flex items-center justify-between text-[var(--fg-4)] px-2 pt-1 text-xs">
+                        <div className="flex items-center gap-1.5 hover:text-sky-400 cursor-pointer">
+                          <MessageCircle className="w-4 h-4" />
+                          <span className="text-[10px]">28</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 hover:text-emerald-400 cursor-pointer">
+                          <Repeat2 className="w-4 h-4" />
+                          <span className="text-[10px]">94</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 hover:text-pink-500 cursor-pointer">
+                          <Heart className="w-4 h-4" />
+                          <span className="text-[10px]">482</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 hover:text-sky-400 cursor-pointer">
+                          <Bookmark className="w-4 h-4" />
+                          <span className="text-[10px]">63</span>
+                        </div>
+                        <Share2 className="w-4 h-4 hover:text-[var(--fg)] cursor-pointer" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* LINKEDIN MOCKUP */}
+                  {smartPreviewPlatform === "linkedin" && (
+                    <div className="rounded-3xl overflow-hidden border border-[var(--stroke)] bg-[var(--panel-fill)] p-4 shadow-xl transition-all space-y-3">
+                      {/* LinkedIn Author Header */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-2.5">
+                          {accounts[0]?.avatar_url ? (
+                            <img src={accounts[0].avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-black text-white dark:bg-white dark:text-black flex items-center justify-center font-bold text-xs">
+                              {(accounts[0]?.display_name || "K").charAt(0)}
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-xs font-bold text-[var(--fg)]">
+                              {accounts[0]?.display_name || "Koraspace Creator"}
+                            </p>
+                            <p className="text-[10px] text-[var(--fg-4)] truncate max-w-[220px]">
+                              Content Strategist & AI Architecture
+                            </p>
+                            <p className="text-[9px] text-[var(--fg-4)] flex items-center gap-1 mt-0.5">
+                              <span>Scheduled for {formatEventDate(smartPreviewEvent.trigger_at)}</span>
+                              <span>• 🌐</span>
+                            </p>
+                          </div>
+                        </div>
+                        <Briefcase className="w-4 h-4 text-[var(--fg-4)]" />
+                      </div>
+
+                      {/* LinkedIn Content */}
+                      <div className="text-xs text-[var(--fg)] leading-relaxed whitespace-pre-wrap pt-1 font-sans">
+                        {smartPreviewEvent.content || smartPreviewEvent.title}
+                      </div>
+
+                      {/* LinkedIn Media */}
+                      {smartPreviewEvent.media_urls?.[0] && (
+                        <div className="rounded-2xl overflow-hidden border border-[var(--stroke)] max-h-[220px]">
+                          <img src={smartPreviewEvent.media_urls[0]} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+
+                      {/* LinkedIn Reaction Stats */}
+                      <div className="pt-2 border-t border-[var(--stroke)] flex items-center justify-between text-[10px] text-[var(--fg-4)]">
+                        <span className="flex items-center gap-1 font-medium text-[var(--fg)]">
+                          <span>👍 💡 ❤️</span>
+                          <span>164 reactions</span>
+                        </span>
+                        <span>24 comments · 9 reposts</span>
+                      </div>
+
+                      {/* LinkedIn Actions */}
+                      <div className="grid grid-cols-4 gap-1 pt-1 border-t border-[var(--stroke)] text-[var(--fg-4)]">
+                        <button type="button" className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-[var(--hover)] hover:text-[var(--fg)] text-[10px] font-semibold transition-all">
+                          <ThumbsUp className="w-3.5 h-3.5" />
+                          <span>Like</span>
+                        </button>
+                        <button type="button" className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-[var(--hover)] hover:text-[var(--fg)] text-[10px] font-semibold transition-all">
+                          <MessageCircle className="w-3.5 h-3.5" />
+                          <span>Comment</span>
+                        </button>
+                        <button type="button" className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-[var(--hover)] hover:text-[var(--fg)] text-[10px] font-semibold transition-all">
+                          <Repeat2 className="w-3.5 h-3.5" />
+                          <span>Repost</span>
+                        </button>
+                        <button type="button" className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-[var(--hover)] hover:text-[var(--fg)] text-[10px] font-semibold transition-all">
+                          <Send className="w-3.5 h-3.5" />
+                          <span>Send</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TIKTOK / SHORTS MOCKUP */}
+                  {smartPreviewPlatform === "tiktok" && (
+                    <div className="rounded-[32px] overflow-hidden border border-[var(--stroke-strong)] bg-neutral-950 text-white p-4 shadow-2xl transition-all h-[520px] flex flex-col justify-between relative">
+                      {/* Top Header */}
+                      <div className="flex items-center justify-between text-xs text-white/80 z-10">
+                        <span className="font-bold tracking-wider">TikTok Feed View</span>
+                        <Music2 className="w-4 h-4 animate-spin text-white/60" />
+                      </div>
+
+                      {/* Floating Right Actions */}
+                      <div className="absolute right-3.5 bottom-16 flex flex-col items-center gap-3.5 z-10">
+                        <div className="w-9 h-9 rounded-full bg-white text-black font-bold flex items-center justify-center text-xs shadow-md">
+                          {(accounts[0]?.handle || "K").charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <Heart className="w-6 h-6 text-white" />
+                          <span className="text-[9px] font-bold">24.1K</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <MessageCircle className="w-6 h-6 text-white" />
+                          <span className="text-[9px] font-bold">842</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <Bookmark className="w-6 h-6 text-white" />
+                          <span className="text-[9px] font-bold">3.2K</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <Share2 className="w-6 h-6 text-white" />
+                          <span className="text-[9px] font-bold">940</span>
+                        </div>
+                      </div>
+
+                      {/* Bottom Caption Overlay */}
+                      <div className="z-10 space-y-2 pr-14">
+                        <p className="text-xs font-bold">
+                          @{accounts[0]?.handle?.replace(/^@/, "") || "koraspace_official"}
+                        </p>
+                        <p className="text-[11px] text-white/90 leading-snug line-clamp-3">
+                          {smartPreviewEvent.content || smartPreviewEvent.title}
+                        </p>
+                        <div className="flex items-center gap-2 text-[10px] text-white/75">
+                          <Music2 className="w-3 h-3" />
+                          <span className="truncate">Original Sound • Audience Surge Audio</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* THREADS MOCKUP */}
+                  {smartPreviewPlatform === "threads" && (
+                    <div className="rounded-3xl overflow-hidden border border-[var(--stroke)] bg-[var(--panel-fill)] p-5 shadow-xl transition-all space-y-3">
+                      <div className="flex items-start gap-3">
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-9 h-9 rounded-full bg-black text-white dark:bg-white dark:text-black flex items-center justify-center font-bold text-xs">
+                            {(accounts[0]?.handle || "T").charAt(0).toUpperCase()}
+                          </div>
+                          <div className="w-[1.5px] h-16 bg-[var(--stroke-strong)]" />
+                        </div>
+                        <div className="flex-1 min-w-0 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-[var(--fg)]">
+                              {accounts[0]?.handle?.replace(/^@/, "") || "koraspace"}
+                            </span>
+                            <span className="text-[10px] text-[var(--fg-4)]">1m</span>
+                          </div>
+                          <p className="text-xs text-[var(--fg)] leading-relaxed whitespace-pre-wrap">
+                            {smartPreviewEvent.content || smartPreviewEvent.title}
+                          </p>
+                          <div className="flex items-center gap-4 text-[var(--fg-4)] pt-2">
+                            <Heart className="w-4 h-4 hover:text-red-500 cursor-pointer" />
+                            <MessageCircle className="w-4 h-4 hover:text-[var(--fg)] cursor-pointer" />
+                            <Repeat2 className="w-4 h-4 hover:text-emerald-400 cursor-pointer" />
+                            <Send className="w-4 h-4 hover:text-[var(--fg)] cursor-pointer" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* FACEBOOK & OTHER FALLBACK MOCKUP */}
+                  {(smartPreviewPlatform === "facebook" || smartPreviewPlatform === "youtube") && (
+                    <div className="rounded-3xl overflow-hidden border border-[var(--stroke)] bg-[var(--panel-fill)] p-4 shadow-xl transition-all space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-9 h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs">
+                            {(accounts[0]?.display_name || "F").charAt(0)}
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-[var(--fg)]">
+                              {accounts[0]?.display_name || "Koraspace Publishing"}
+                            </p>
+                            <p className="text-[9.5px] text-[var(--fg-4)] flex items-center gap-1">
+                              <span>Scheduled for {formatEventDate(smartPreviewEvent.trigger_at)}</span>
+                              <span>• 🌍</span>
+                            </p>
+                          </div>
+                        </div>
+                        <PlatformIcon platform={smartPreviewPlatform} className="w-4 h-4" />
+                      </div>
+
+                      <div className="text-xs text-[var(--fg)] leading-relaxed whitespace-pre-wrap">
+                        {smartPreviewEvent.content || smartPreviewEvent.title}
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-[var(--stroke)] text-[10px] text-[var(--fg-4)]">
+                        <span>👍 82 Reactions</span>
+                        <span>12 Comments · 4 Shares</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* RIGHT COLUMN: SMART INTELLIGENCE & ACTION METRICS (5 COLS) */}
+              <div className="lg:col-span-5 space-y-4">
+                {/* CHARACTER & FORMATTING HEALTH */}
+                <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--fg)]">
+                      Platform Formatting Health
+                    </h4>
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-semibold">
+                      Live Assessment
+                    </span>
+                  </div>
+
+                  {/* Character limit gauge */}
+                  <div>
+                    {(() => {
+                      const maxChar = PLATFORM_CONFIGS[smartPreviewPlatform]?.maxChars || 2200;
+                      const currentLen = (smartPreviewEvent.content || smartPreviewEvent.title || "").length;
+                      const pct = Math.min(100, Math.round((currentLen / maxChar) * 100));
+                      const isOver = currentLen > maxChar;
+
+                      return (
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-[var(--fg-4)]">Character Usage:</span>
+                            <span className={`font-mono font-bold ${isOver ? "text-red-400" : "text-[var(--fg)]"}`}>
+                              {currentLen} / {maxChar} ({pct}%)
+                            </span>
+                          </div>
+                          <div className="w-full h-1.5 rounded-full bg-[var(--stroke)] overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all ${
+                                isOver ? "bg-red-500" : pct > 85 ? "bg-amber-400" : "bg-emerald-400"
+                              }`}
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[var(--stroke)]">
+                    <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-2.5">
+                      <p className="text-[9.5px] text-[var(--fg-4)] uppercase font-semibold">Hook Strength</p>
+                      <p className="text-sm font-bold text-[var(--fg)] mt-0.5">94 / 100</p>
+                    </div>
+                    <div className="rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] p-2.5">
+                      <p className="text-[9.5px] text-[var(--fg-4)] uppercase font-semibold">Readability</p>
+                      <p className="text-sm font-bold text-emerald-400 mt-0.5">Optimal</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* AUDIENCE TIMING & SURGE SLOT */}
+                <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-black text-white dark:bg-white/10 flex items-center justify-center">
+                      <Zap className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--fg)]">
+                      Audience Surge Window
+                    </h4>
+                  </div>
+
+                  {(() => {
+                    const eventDate = new Date(smartPreviewEvent.trigger_at);
+                    const optimalSlot = getOptimalPostTimeForDay(eventDate, smartPreviewPlatform);
+
+                    return (
+                      <div className="space-y-2 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[var(--fg-4)]">Scheduled Time:</span>
+                          <span className="font-semibold text-[var(--fg)]">
+                            {formatEventDate(smartPreviewEvent.trigger_at)} at {formatEventTime(smartPreviewEvent.trigger_at)}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[var(--fg-4)]">Peak Slot for {platformLabel(smartPreviewPlatform)}:</span>
+                          <span className="font-bold text-[var(--fg)]">
+                            {optimalSlot.formatted}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-[var(--fg-4)] pt-1 border-t border-[var(--stroke)]">
+                          {optimalSlot.label} · {optimalSlot.surgeWindow}
+                        </p>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* QUICK EVENT ACTIONS */}
+                <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--panel-fill-2)] p-4 space-y-3">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--fg)]">
+                    Quick Actions
+                  </h4>
+
+                  <div className="grid grid-cols-3 gap-1.5">
+                    <button
+                      type="button"
+                      disabled={isRescheduling}
+                      onClick={() => handleShiftDay(smartPreviewEvent, -1)}
+                      className="py-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] text-[10px] font-semibold text-[var(--fg-3)] hover:text-[var(--fg)] hover:bg-[var(--hover)] transition-all"
+                    >
+                      -1 Day
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isRescheduling}
+                      onClick={() => handleShiftDay(smartPreviewEvent, 1)}
+                      className="py-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] text-[10px] font-semibold text-[var(--fg-3)] hover:text-[var(--fg)] hover:bg-[var(--hover)] transition-all"
+                    >
+                      +1 Day
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isRescheduling}
+                      onClick={() => handleShiftDay(smartPreviewEvent, 7)}
+                      className="py-2 rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] text-[10px] font-semibold text-[var(--fg-3)] hover:text-[var(--fg)] hover:bg-[var(--hover)] transition-all"
+                    >
+                      +1 Week
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-2 border-t border-[var(--stroke)]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const eventToEdit = smartPreviewEvent;
+                        setSmartPreviewEvent(null);
+                        setSelectedPlatform(eventToEdit.platform);
+                        setPostContent(eventToEdit.content || eventToEdit.title);
+                        const d = new Date(eventToEdit.trigger_at);
+                        setSelectedDate({
+                          year: d.getFullYear(),
+                          month: d.getMonth(),
+                          day: d.getDate(),
+                        });
+                        setModalMode(eventToEdit.type === "ai_task" ? "ai_task" : "post");
+                        setShowModal(true);
+                      }}
+                      className="flex-1 py-2 px-3 rounded-xl bg-black text-white dark:bg-white dark:text-black text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 hover:opacity-90 transition-all"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>Edit in Composer</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleDeleteEvent(smartPreviewEvent);
+                        setSmartPreviewEvent(null);
+                      }}
+                      className="p-2 rounded-xl border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all"
+                      title="Remove post"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </GlassCard>
         </div>
