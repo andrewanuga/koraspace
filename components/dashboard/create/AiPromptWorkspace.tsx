@@ -59,10 +59,12 @@ interface AiPromptWorkspaceProps {
 }
 
 function modelDisplayName(id: string, models: ModelOption[]) {
-  const found = models.find((m) => m.id === id);
+  if (!id) return "Default Model";
+  const found = models?.find((m) => m.id === id);
   if (found) return found.name;
   const parts = id.split("/");
-  return parts[parts.length - 1]
+  const last = parts[parts.length - 1] || id;
+  return last
     .replace(/-/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
@@ -165,7 +167,7 @@ export function AiPromptWorkspace({
         )}
 
         {/* Footer bar */}
-        <div className="mt-4 flex items-center gap-3">
+        <div className="mt-4 flex flex-wrap items-center gap-3">
           {/* File attach */}
           <input
             ref={fileRef}
@@ -182,6 +184,55 @@ export function AiPromptWorkspace({
           >
             <Paperclip className="h-4 w-4" />
           </button>
+
+          {/* Model picker */}
+          {models.length > 0 && (
+            <div className="relative" ref={modelPickerRef}>
+              <button
+                type="button"
+                onClick={onToggleModelPicker}
+                className="flex h-9 items-center gap-1.5 rounded-lg border border-[var(--stroke)] bg-[var(--panel-fill-2)] px-2.5 text-[11px] text-[var(--fg-3)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--fg)]"
+              >
+                <Bot className="h-3.5 w-3.5 text-[var(--brand-primary)]" />
+                <span className="max-w-[110px] truncate sm:max-w-[150px]">
+                  {modelDisplayName(selectedModel, models)}
+                </span>
+                <ChevronDown className="h-3 w-3 text-[var(--fg-4)]" />
+              </button>
+
+              {showModelPicker && (
+                <div
+                  className="absolute bottom-full left-0 z-50 mb-2 w-[240px] overflow-hidden rounded-xl border border-[var(--stroke)] bg-[var(--panel-fill)] shadow-2xl"
+                  style={{ backdropFilter: "blur(20px)" }}
+                >
+                  <div className="border-b border-[var(--stroke)] p-3">
+                    <p className="text-[12px] font-semibold text-[var(--fg)]">Select Model</p>
+                    <p className="mt-0.5 text-[10px] text-[var(--fg-4)]">Choose intelligence engine</p>
+                  </div>
+                  <div className="max-h-[260px] overflow-y-auto p-1.5">
+                    {models.map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => onModelChange(m.id)}
+                        className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-[11.5px] transition-colors ${
+                          selectedModel === m.id
+                            ? "bg-[var(--brand-primary-soft)] text-[var(--brand-primary)] font-medium"
+                            : "text-[var(--fg-2)] hover:bg-[var(--hover)]"
+                        }`}
+                      >
+                        <div className="truncate">
+                          <p className="truncate font-medium">{m.name}</p>
+                          <p className="text-[9.5px] text-[var(--fg-4)] capitalize">{m.provider}</p>
+                        </div>
+                        {selectedModel === m.id && <Check className="h-3.5 w-3.5 shrink-0" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Tools */}
           <div className="relative" ref={toolPickerRef}>

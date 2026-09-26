@@ -27,9 +27,10 @@ export interface ScoreResponse {
 
 export async function POST(req: NextRequest) {
   try {
-    const workspace = await getActiveWorkspace(supabase);
-    if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const workspaceId = workspace.workspaceId;
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return new Response("Unauthorized", { status: 401 });
+    const workspaceId = user.id;
 
     // Rate limit: 30 requests/min per user.
     const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
@@ -41,12 +42,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Get user's model preference and Brand Context
-    const [{ data: profile }, brandContext] = await Promise.all([
-      supabase
-        .from("profiles")
-        .select("ai_model")
-        .eq("id", workspaceId)
-        .single(),
+    const [profile, brandContext] = await Promise.all([
+      prisma.profile.findUnique({
+        where: { id: workspaceId },
+        select: { ai_model: true },
+      }).catch(() => null),
       buildBrandContext(workspaceId).catch(() => null),
     ]);
 

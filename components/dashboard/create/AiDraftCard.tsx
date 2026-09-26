@@ -64,9 +64,22 @@ export function AiDraftCard({
     const text = hashtags.length
       ? `${content}\n\n${hashtags.map((t) => `#${t.replace("#", "")}`).join(" ")}`
       : content;
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* clipboard fallback */
+    }
   };
 
   const handleScheduleSubmit = async (instant: boolean = false) => {

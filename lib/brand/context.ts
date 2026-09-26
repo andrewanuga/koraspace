@@ -1,10 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/db";
 import type {
   BrandProfile,
-  BrandContentPreference,
-  BrandWritingStyle,
-  BrandMemory,
-  BrandKnowledgeItem,
   BrandContext,
 } from "./types";
 
@@ -13,54 +9,32 @@ import type {
  * (Create, Ideas, Repurpose, Ghost, Chat).
  */
 export async function buildBrandContext(userId: string): Promise<BrandContext> {
-  const supabase = await createClient();
+  try {
+    const [profile, memories] = await Promise.all([
+      prisma.brandProfile.findUnique({
+        where: { user_id: userId },
+      }).catch(() => null),
+      prisma.brandMemory.findMany({
+        where: { user_id: userId, enabled: true },
+        orderBy: { importance: "desc" },
+        take: 15,
+      }).catch(() => []),
+    ]);
 
-  const [
-    { data: profile },
-    { data: preferences },
-    { data: styles },
-    { data: memories },
-    { data: knowledge },
-  ] = await Promise.all([
-    supabase
-      .from("brand_profiles")
-      .select("*")
-      .eq("user_id", userId)
-      .maybeSingle(),
-
-    supabase
-      .from("brand_content_preferences")
-      .select("label")
-      .eq("user_id", userId),
-
-    supabase
-      .from("brand_writing_styles")
-      .select("label")
-      .eq("user_id", userId),
-
-    supabase
-      .from("brand_memories")
-      .select("title, content")
-      .eq("user_id", userId)
-      .eq("enabled", true)
-      .order("importance", { ascending: false }),
-
-    supabase
-      .from("brand_knowledge_items")
-      .select("title, content, type")
-      .eq("user_id", userId)
-      .limit(30),
-  ]);
-
-  return {
-    profile: (profile as BrandProfile | null) ?? null,
-    preferences: (preferences?.map((p: any) => p.label) ?? []) as string[],
-    styles: (styles?.map((s: any) => s.label) ?? []) as string[],
-    memories: (memories ?? []) as Array<{ title: string; content: string | null }>,
-    knowledge: (knowledge ?? []) as Array<{
-      title: string;
-      content: string | null;
-      type: string;
-    }>,
-  };
+    return {
+      profile: (profile as unknown as BrandProfile) ?? null,
+      preferences: [],
+      styles: [],
+      memories: (memories ?? []).map((m) => ({ title: m.title, content: m.content })),
+      knowledge: [],
+    };
+  } catch {
+    return {
+      profile: null,
+      preferences: [],
+      styles: [],
+      memories: [],
+      knowledge: [],
+    };
+  }
 }

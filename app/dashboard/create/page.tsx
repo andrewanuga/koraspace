@@ -7,7 +7,6 @@ import { AiPromptWorkspace } from "@/components/dashboard/create/AiPromptWorkspa
 import { QuickPrompts }      from "@/components/dashboard/create/QuickPrompts";
 import { AiDraftCard }       from "@/components/dashboard/create/AiDraftCard";
 import { BrandIntelligence } from "@/components/dashboard/create/BrandIntelligence";
-import { ContentFormats }    from "@/components/dashboard/create/ContentFormats";
 
 import type { CreateMode, Attachment, ModelOption } from "@/components/dashboard/create/types";
 import type { ScoreResponse } from "@/app/api/ai/score/route";
@@ -236,11 +235,6 @@ export default function CreatePage() {
     setPrompt(`Improve this content and make it more engaging with higher hook retention:\n\n${draft}`);
   };
 
-  /* ── Format select ── */
-  const handleFormatSelect = (format: string) => {
-    setPrompt(`Create a high-converting ${format} tailored to my brand voice.`);
-  };
-
   /* ── Tool select ── */
   const handleToolSelect = (toolPrompt: string, needsInput: boolean) => {
     if (needsInput) {
@@ -328,9 +322,6 @@ export default function CreatePage() {
           />
         </aside>
       </div>
-
-      {/* ── More formats ── */}
-      <ContentFormats onSelect={handleFormatSelect} />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { prisma } from "@/lib/db";
 import {
   verifyExecutionGate,
   sanitizeRetrievedContext,
@@ -359,7 +360,7 @@ Suggestion: Tweak claim to specify "For B2B enterprises...".`;
 
     // ── Database & Action Tools ──
     case "schedule_post":
-      if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
+      if (!ctx.workspaceId) return "Database not available.";
       try {
         verifyExecutionGate({
           workspaceId: ctx.workspaceId,
@@ -368,26 +369,27 @@ Suggestion: Tweak claim to specify "For B2B enterprises...".`;
           untrustedInput: args.content,
         });
 
-        const { error } = await ctx.supabase.from("scheduled_posts").insert({
-          user_id: ctx.workspaceId,
-          platform: args.platform,
-          content: args.content,
-          scheduled_at: args.publish_at,
-          status: "scheduled"
+        await prisma.scheduledPost.create({
+          data: {
+            user_id: ctx.workspaceId,
+            platform: args.platform,
+            content: args.content,
+            scheduled_at: new Date(args.publish_at),
+            status: "scheduled",
+          },
         });
-        
-        if (!error) {
-          await ctx.supabase.from("tasks").insert({
+
+        await prisma.task.create({
+          data: {
             user_id: ctx.workspaceId,
             title: `Post scheduled for ${args.platform}`,
             notes: `To be published at ${args.publish_at}. Content: "${args.content.substring(0, 60)}..."`,
             priority: "normal",
             status: "pending",
-            bot_id: "ai-scheduler"
-          });
-        }
+            bot_id: "ai-scheduler",
+          },
+        }).catch(() => null);
 
-        if (error) return `Error scheduling post: ${error.message}`;
         return `Successfully scheduled post for ${args.platform} at ${args.publish_at}.`;
       } catch (e: any) {
         return `Failed to schedule: ${e.message}`;
@@ -399,33 +401,28 @@ Suggestion: Tweak claim to specify "For B2B enterprises...".`;
       return `[AUTHORIZATION ERROR]: Direct messaging and private inbox operations are strictly blacklisted under Koraspace Zero-Trust Least-Privilege policy.`;
 
     case "fetch_post_analytics":
-      if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
+      if (!ctx.workspaceId) return "Database not available.";
       try {
         verifyExecutionGate({ workspaceId: ctx.workspaceId, action: "read", targetScope: "analytics" });
-        const { data, error } = await ctx.supabase
-          .from("post_history")
-          .select("platform, content, metrics, posted_at")
-          .eq("user_id", ctx.workspaceId)
-          .order("posted_at", { ascending: false })
-          .limit(5);
-        if (error) return `Error fetching analytics: ${error.message}`;
+        const data = await prisma.postHistory.findMany({
+          where: { user_id: ctx.workspaceId },
+          orderBy: { posted_at: "desc" },
+          take: 5,
+        });
         return JSON.stringify(data);
       } catch (e: any) {
         return `Failed to fetch analytics: ${e.message}`;
       }
 
     case "get_connected_accounts": {
-      if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
+      if (!ctx.workspaceId) return "Database not available.";
       try {
         verifyExecutionGate({ workspaceId: ctx.workspaceId, action: "read", targetScope: "analytics" });
-        const { data, error } = await ctx.supabase
-          .from("social_accounts")
-          .select("platform, handle, display_name, followers, status, last_synced_at")
-          .eq("user_id", ctx.workspaceId)
-          .eq("status", "connected");
-        if (error) return `Error fetching accounts: ${error.message}`;
+        const data = await prisma.connectedAccount.findMany({
+          where: { user_id: ctx.workspaceId, status: "connected" },
+        });
         if (!data?.length) return "No connected accounts found. Please go to Integrations to connect your social accounts.";
-        return JSON.stringify(data.map((a: any) => ({
+        return JSON.stringify(data.map((a) => ({
           platform: a.platform,
           handle: a.handle || a.display_name,
           followers: a.followers || 0,
@@ -437,19 +434,18 @@ Suggestion: Tweak claim to specify "For B2B enterprises...".`;
     }
 
     case "get_social_analytics": {
-      if (!ctx.supabase || !ctx.workspaceId) return "Database not available.";
+      if (!ctx.workspaceId) return "Database not available.";
       try {
         verifyExecutionGate({ workspaceId: ctx.workspaceId, action: "read", targetScope: "analytics" });
         const days = args.days || 30;
-        const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
-        let query = ctx.supabase
-          .from("social_posts")
-          .select("platform, impressions, likes, comments, shares, video_views, posted_at")
-          .eq("user_id", ctx.workspaceId)
-          .gte("posted_at", since);
-        if (args.platform) query = query.eq("platform", args.platform);
-        const { data, error } = await query;
-        if (error) return `Error fetching analytics: ${error.message}`;
+        const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+        const data = await prisma.postHistory.findMany({
+          where: {
+            user_id: ctx.workspaceId,
+            ...(args.platform ? { platform: args.platform } : {}),
+            posted_at: { gte: since },
+          },
+        });
         if (!data?.length) return `No posts found in the last ${days} days${args.platform ? ` for ${args.platform}` : ""}.`;
         const byPlatform: Record<string, { posts: number; impressions: number; engagements: number }> = {};
         for (const p of data) {

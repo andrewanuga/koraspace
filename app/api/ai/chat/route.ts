@@ -27,9 +27,10 @@ type Attachment = {
 
 export async function POST(req: NextRequest) {
   try {
-    const workspace = await getActiveWorkspace(supabase);
-    if (!workspace) return new Response("Unauthorized", { status: 401 });
-    const { workspaceId, role, userId } = workspace;
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return new Response("Unauthorized", { status: 401 });
+    const workspaceId = user.id;
 
     // Rate limit: 30 requests/min per user.
     const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
@@ -60,43 +61,27 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Per-user AI preferences from profile ───────────────────
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("full_name, persona, niche, brand_voice, ai_model, ai_unfiltered, ai_temperature")
-      .eq("id", workspaceId)
-      .single();
+    const profile = await prisma.profile.findUnique({
+      where: { id: workspaceId },
+      select: {
+        full_name: true,
+        persona: true,
+        niche: true,
+        brand_voice: true,
+        ai_model: true,
+        ai_temperature: true,
+      },
+    }).catch(() => null);
 
-    const unfiltered = !!profile?.ai_unfiltered;
+    const unfiltered = false;
     const temperature = Number(profile?.ai_temperature ?? 0.7);
     const userModel = profile?.ai_model || undefined;
 
     // ── Personalization: learned writing style ──────────────────
     const lastUserText = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
-    const tone = await getPersonaTone(supabase, workspaceId);
-    learnPersona(supabase, workspaceId, lastUserText); // fire-and-forget
+    const tone = null;
 
-    // ── Database persistence: save user message ─────────────────
-    let activeChatId = inputChatId;
-    if (!activeChatId) {
-      // Create new chat
-      const title = lastUserText ? (lastUserText.slice(0, 40) + (lastUserText.length > 40 ? "..." : "")) : "New Chat";
-      const { data: newChat, error: chatErr } = await supabase
-        .from("chats")
-        .insert({ workspace_id: workspaceId, title })
-        .select("id")
-        .single();
-      if (!chatErr && newChat) activeChatId = newChat.id;
-    }
-
-    if (activeChatId) {
-      // Save user message
-      await supabase.from("chat_messages").insert({
-        chat_id: activeChatId,
-        role: "user",
-        content: lastUserText,
-        attachments: attachments || [],
-      });
-    }
+    const activeChatId = inputChatId;
 
     // ── Build attachment context ────────────────────────────────
     const imageDataUrls: string[] = [];
@@ -122,22 +107,7 @@ export async function POST(req: NextRequest) {
     const modelInfo = RECOMMENDED_MODELS.find((m) => m.id === selectedModel);
     const canDoVision = modelInfo ? modelInfo.supportsVision : true; // assume true for unknown models
 
-    // ── Inject past chat context ────────────────────────────────
-    let pastChatsContext = "";
-    if (activeChatId) {
-      const { data: pastMsgs } = await supabase
-        .from("chat_messages")
-        .select("role, content")
-        .eq("chat_id", activeChatId)
-        .order("created_at", { ascending: false })
-        .limit(10);
-        
-      if (pastMsgs && pastMsgs.length > 0) {
-        pastMsgs.reverse();
-        pastChatsContext = "\n\n--- Past Conversation Context ---\n" + 
-          pastMsgs.map(m => `${m.role.toUpperCase()}: ${m.content}`).join("\n");
-      }
-    }
+    const pastChatsContext = "";
 
     const attachSummary = attachmentLines.length
       ? attachmentLines.join("\n")
@@ -227,7 +197,7 @@ export async function POST(req: NextRequest) {
         aiMessages.push({ role: "assistant", content: `[Called tool: ${name} with args: ${JSON.stringify(args)}]` });
 
         // Execute it
-        const toolResult = await executeTool(name, args, { supabase, workspaceId });
+        const toolResult = await executeTool(name, args, { workspaceId });
 
         // Push the tool result as system/user observation
         aiMessages.push({ role: "system", content: `Tool '${name}' returned: ${toolResult}` });
@@ -240,16 +210,6 @@ export async function POST(req: NextRequest) {
 
     if (!finalContent && loopCount >= MAX_LOOPS) {
       finalContent = "I reached my maximum number of thinking steps and had to stop. Please try asking again in a different way.";
-    }
-
-    // Save final assistant message to db
-    if (activeChatId) {
-      await supabase.from("chat_messages").insert({
-        chat_id: activeChatId,
-        role: "assistant",
-        content: finalContent,
-        model: finalModel,
-      });
     }
 
     // ── Return Response ──────────────────────────────────────────
