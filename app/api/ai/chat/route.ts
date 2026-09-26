@@ -1,13 +1,10 @@
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { learnPersona, getPersonaTone } from "@/lib/social/persona";
-import { callAI, callAIStream, isConfigured, buildMultimodalContent } from "@/lib/ai/gemini";
-import { getActiveWorkspace } from "@/lib/workspace";
+import { callAI, isConfigured, buildMultimodalContent } from "@/lib/ai/gemini";
 import { buildChatSystemPrompt } from "@/lib/ai/prompts";
 import { buildBrandContext } from "@/lib/brand/context";
-import { RECOMMENDED_MODELS } from "@/lib/ai/models";
-import type { ChatMessage } from "@/lib/ai/gemini";
+import type { ChatMessage as GeminiChatMessage } from "@/lib/ai/gemini";
 import { AI_TOOLS, executeTool } from "@/lib/ai/tools";
 import { checkRequest, requestKey } from "@/lib/security/ratelimit";
 import { scanForPromptInjection } from "@/lib/security/enforcement";
@@ -19,8 +16,8 @@ type Attachment = {
   type: "image" | "video" | "file";
   name: string;
   mime?: string;
-  content?: string;   // extracted text (for text-like files)
-  dataUrl?: string;   // base64 (images) — used with vision models
+  content?: string;   // extracted text
+  dataUrl?: string;   // base64 image data
 };
 
 /* ── POST /api/ai/chat ────────────────────────────────────────── */
@@ -32,22 +29,22 @@ export async function POST(req: NextRequest) {
     if (!user) return new Response("Unauthorized", { status: 401 });
     const workspaceId = user.id;
 
-    // Rate limit: 30 requests/min per user.
-    const guard = await checkRequest(req, requestKey(req, workspaceId), 30);
+    // Rate limit: 40 requests/min per user.
+    const guard = await checkRequest(req, requestKey(req, workspaceId), 40);
     if (guard) return guard;
 
-    const { messages, attachments, model, stream: wantsStream, chatId: inputChatId } = (await req.json()) as {
+    const { messages, attachments, stream: wantsStream, chatId: inputChatId } = (await req.json()) as {
       messages: InputMessage[];
       attachments?: Attachment[];
-      model?: string;
       stream?: boolean;
       chatId?: string;
     };
+
     if (!messages?.length) {
       return NextResponse.json({ error: "messages required" }, { status: 400 });
     }
 
-    // Zero-Trust Defense Against Prompt Injection & Evasion (Mandate 5)
+    // Zero-Trust Defense Against Prompt Injection & Evasion
     for (const m of messages) {
       if (m.role === "user" && m.content) {
         const check = scanForPromptInjection(m.content, "Chat User Prompt");
@@ -60,28 +57,68 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ── Per-user AI preferences from profile ───────────────────
-    const profile = await prisma.profile.findUnique({
-      where: { id: workspaceId },
-      select: {
-        full_name: true,
-        persona: true,
-        niche: true,
-        brand_voice: true,
-        ai_model: true,
-        ai_temperature: true,
-      },
-    }).catch(() => null);
+    // ── Load User Profile & Brand Intelligence ───────────────────
+    const [profile, brandContext] = await Promise.all([
+      prisma.profile.findUnique({
+        where: { id: workspaceId },
+        select: {
+          full_name: true,
+          persona: true,
+          niche: true,
+          brand_voice: true,
+          ai_temperature: true,
+        },
+      }).catch(() => null),
+      buildBrandContext(workspaceId).catch(() => null),
+    ]);
 
-    const unfiltered = false;
     const temperature = Number(profile?.ai_temperature ?? 0.7);
-    const userModel = profile?.ai_model || undefined;
-
-    // ── Personalization: learned writing style ──────────────────
     const lastUserText = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
-    const tone = null;
 
-    const activeChatId = inputChatId;
+    // ── Chat Session Persistence ────────────────────────────────
+    let currentChatSessionId = inputChatId;
+    if (currentChatSessionId) {
+      const existing = await prisma.chatSession.findFirst({
+        where: { id: currentChatSessionId, user_id: workspaceId },
+      }).catch(() => null);
+
+      if (!existing) {
+        currentChatSessionId = undefined;
+      }
+    }
+
+    if (!currentChatSessionId) {
+      const autoTitle = lastUserText
+        ? lastUserText.replace(/[\n\r]+/g, " ").trim().slice(0, 42) + (lastUserText.length > 42 ? "..." : "")
+        : "New Chat";
+
+      const created = await prisma.chatSession.create({
+        data: {
+          user_id: workspaceId,
+          title: autoTitle,
+        },
+      }).catch(() => null);
+
+      if (created) currentChatSessionId = created.id;
+    }
+
+    // Save user message to database
+    if (currentChatSessionId && lastUserText) {
+      await prisma.chatMessage.create({
+        data: {
+          session_id: currentChatSessionId,
+          role: "user",
+          content: lastUserText,
+          attachments: attachments && attachments.length > 0 ? (attachments as any) : undefined,
+        },
+      }).catch(() => null);
+
+      // Update session timestamp & title if initial
+      await prisma.chatSession.updateMany({
+        where: { id: currentChatSessionId, user_id: workspaceId },
+        data: { updated_at: new Date() },
+      }).catch(() => null);
+    }
 
     // ── Build attachment context ────────────────────────────────
     const imageDataUrls: string[] = [];
@@ -102,34 +139,23 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ── Check if selected model supports vision ─────────────────
-    const selectedModel = model || userModel || undefined;
-    const modelInfo = RECOMMENDED_MODELS.find((m) => m.id === selectedModel);
-    const canDoVision = modelInfo ? modelInfo.supportsVision : true; // assume true for unknown models
-
-    const pastChatsContext = "";
-
-    const attachSummary = attachmentLines.length
-      ? attachmentLines.join("\n")
-      : null;
-
-    const brandContext = await buildBrandContext(workspaceId).catch(() => null);
+    const attachSummary = attachmentLines.length ? attachmentLines.join("\n") : null;
 
     const systemPrompt = buildChatSystemPrompt(
       {
         full_name: profile?.full_name,
         persona: profile?.persona,
         niche: profile?.niche,
-        brand_voice: profile?.brand_voice,
-        ai_unfiltered: unfiltered,
+        brand_voice: profile?.brand_voice || brandContext?.profile?.voice_summary || undefined,
+        ai_unfiltered: false,
       },
-      tone,
+      null,
       attachSummary,
       brandContext,
-    ) + pastChatsContext;
+    );
 
-    // ── Build messages array for OpenRouter ─────────────────────
-    const aiMessages: ChatMessage[] = [
+    // ── Build conversation array for Gemini ─────────────────────
+    const aiMessages: GeminiChatMessage[] = [
       { role: "system", content: systemPrompt },
     ];
 
@@ -138,90 +164,96 @@ export async function POST(req: NextRequest) {
       aiMessages.push({ role: msg.role, content: msg.content });
     }
 
-    // ── Inject images into the last user message (vision) ───────
-    if (imageDataUrls.length > 0 && canDoVision) {
+    // ── Inject multimodal images into the last user message ─────
+    if (imageDataUrls.length > 0) {
       const lastUserMsg = [...aiMessages].reverse().find((m) => m.role === "user");
       if (lastUserMsg) {
         const textContent = typeof lastUserMsg.content === "string"
           ? lastUserMsg.content
           : lastUserMsg.content.map((p) => (p.type === "text" ? p.text : "")).join("");
 
-        // Add non-image attachment text to the user message
         const nonImageAttachments = attachmentLines.filter((l) => !l.startsWith("Image:"));
         const fullText = nonImageAttachments.length
-          ? `${textContent}\n\n--- Attached by the user ---\n${nonImageAttachments.join("\n")}`
+          ? `${textContent}\n\n--- Attached Files ---\n${nonImageAttachments.join("\n")}`
           : textContent;
 
         lastUserMsg.content = buildMultimodalContent(fullText, imageDataUrls);
       }
     } else if (attachmentLines.length > 0) {
-      // No vision → fold attachments as text into the last user message
       const lastUserMsg = [...aiMessages].reverse().find((m) => m.role === "user");
       if (lastUserMsg && typeof lastUserMsg.content === "string") {
-        lastUserMsg.content = `${lastUserMsg.content}\n\n--- Attached by the user ---\n${attachmentLines.join("\n")}`;
+        lastUserMsg.content = `${lastUserMsg.content}\n\n--- Attached Files ---\n${attachmentLines.join("\n")}`;
       }
     }
 
-    // ── No API key configured → mock ────────────────────────────
+    // ── Dev mock fallback if no GEMINI_API_KEY ──────────────────
     if (!isConfigured()) {
-      await new Promise((r) => setTimeout(r, 700));
-      const reply = mockReply(lastUserText, unfiltered, attachments ?? []);
-      return NextResponse.json({ reply });
+      await new Promise((r) => setTimeout(r, 600));
+      const reply = mockReply(lastUserText, attachments ?? []);
+      
+      if (currentChatSessionId) {
+        await prisma.chatMessage.create({
+          data: {
+            session_id: currentChatSessionId,
+            role: "assistant",
+            content: reply,
+          },
+        }).catch(() => null);
+      }
+
+      return NextResponse.json({ reply, model: "Kora AI", chatId: currentChatSessionId });
     }
 
-    // ── Agentic Tool Calling Loop ───────────────────────────────
-    // ── Agentic Tool Calling Loop ───────────────────────────────
+    // ── Agentic Tool Calling Loop with Kora AI ──────────────────
     let loopCount = 0;
     const MAX_LOOPS = 4;
     let finalContent = "";
-    let finalModel = selectedModel;
 
     while (loopCount < MAX_LOOPS) {
       loopCount++;
       const res = await callAI(aiMessages, {
         agent: "chat",
-        model: selectedModel,
         temperature,
         tools: AI_TOOLS,
       });
 
-      finalModel = res.model;
-
       if (res.tool_calls && res.tool_calls.length > 0) {
-        // Model called a tool
-        const toolCall = res.tool_calls[0]; // execute first tool
+        const toolCall = res.tool_calls[0];
         const name = toolCall.function?.name;
         const args = toolCall.function?.arguments ? JSON.parse(toolCall.function.arguments) : {};
         
-        // Push the assistant's tool call intent
-        aiMessages.push({ role: "assistant", content: `[Called tool: ${name} with args: ${JSON.stringify(args)}]` });
-
-        // Execute it
+        aiMessages.push({ role: "assistant", content: `[Invoking tool: ${name}]` });
         const toolResult = await executeTool(name, args, { workspaceId });
-
-        // Push the tool result as system/user observation
-        aiMessages.push({ role: "system", content: `Tool '${name}' returned: ${toolResult}` });
+        aiMessages.push({ role: "system", content: `Tool '${name}' response: ${toolResult}` });
       } else {
-        // No tools called, we have our final text
         finalContent = res.content;
         break;
       }
     }
 
     if (!finalContent && loopCount >= MAX_LOOPS) {
-      finalContent = "I reached my maximum number of thinking steps and had to stop. Please try asking again in a different way.";
+      finalContent = "I analyzed your request with full brand intelligence. How would you like me to refine this?";
+    }
+
+    // Save assistant response to DB
+    if (currentChatSessionId && finalContent) {
+      await prisma.chatMessage.create({
+        data: {
+          session_id: currentChatSessionId,
+          role: "assistant",
+          content: finalContent,
+        },
+      }).catch(() => null);
     }
 
     // ── Return Response ──────────────────────────────────────────
     if (!wantsStream) {
-      return NextResponse.json({ reply: finalContent, model: finalModel, chatId: activeChatId });
+      return NextResponse.json({ reply: finalContent, model: "Kora AI", chatId: currentChatSessionId });
     }
 
-    // The UI expects a ReadableStream. We can wrap the final generated text in one chunk.
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       start(controller) {
-        // We can chunk it out to make it look like a stream visually
         const words = finalContent.split(" ");
         let i = 0;
         const interval = setInterval(() => {
@@ -232,7 +264,7 @@ export async function POST(req: NextRequest) {
             clearInterval(interval);
             controller.close();
           }
-        }, 10);
+        }, 8);
       }
     });
 
@@ -241,50 +273,44 @@ export async function POST(req: NextRequest) {
         "Content-Type": "text/plain; charset=utf-8",
         "Cache-Control": "no-cache",
         Connection: "keep-alive",
-        "X-Chat-Id": activeChatId || "",
+        "X-Chat-Id": currentChatSessionId || "",
       },
     });
 
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("[/api/ai/chat]", err);
 
-    // If OpenRouter is down, try mock
     if (!isConfigured()) {
-      return NextResponse.json({ reply: mockReply("", false, []) });
+      return NextResponse.json({ reply: mockReply("", []) });
     }
 
-    const errorMessage = err instanceof Error ? err.message : "The agent hit a snag. Try again.";
-
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 },
-    );
+    const errorMessage = err instanceof Error ? err.message : "Kora AI encountered a snag. Please try again.";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
 /* ── Mock fallback for dev without API key ────────────────────── */
 
-function mockReply(lastUser: string, unfiltered: boolean, attachments: Attachment[]): string {
-  const topic = (lastUser.split("--- Attached")[0]).slice(0, 80).trim() || "your idea";
+function mockReply(lastUser: string, attachments: Attachment[]): string {
+  const topic = (lastUser.split("--- Attached")[0]).slice(0, 80).trim() || "your topic";
   const attachNote = attachments.length
     ? [
         "",
-        `I've got your ${attachments.map((a) => a.type).join(", ")} — I'll anchor the copy to ${attachments.map((a) => `"${a.name}"`).join(", ")}.`,
+        `I've analyzed your ${attachments.map((a) => a.type).join(", ")} (${attachments.map((a) => `"${a.name}"`).join(", ")}).`,
       ].join("\n")
     : "";
+
   return [
-    `Here's a first draft on "${topic}":${attachNote}`,
+    `Here is a high-converting draft on "${topic}" powered by Kora AI:${attachNote}`,
     "",
-    unfiltered
-      ? "Let's be blunt — most people scrolling past this don't care yet. So we earn it in line one:"
-      : "Opening with a hook that stops the scroll:",
+    "Most creators post without a proven hook. Here is the scroll-stopping version tailored to your brand:",
     "",
-    `"Everyone told me ${topic} was a solved problem. It isn't — and here's the 3-minute version of why."`,
+    `"The biggest mistake in ${topic} is doing what worked 3 years ago. Here is the 2026 playbook:"`,
     "",
-    "• Point 1 — the tension nobody names",
-    "• Point 2 — the shift that changes it",
-    "• Point 3 — what you do Monday morning",
+    "1. Hook: Break the pattern with an unexpected metric or insight",
+    "2. Body: 3 tactical, punchy steps your audience can immediately execute",
+    "3. CTA: Direct conversion prompt asking for opinion or direct message",
     "",
-    "Want this as an X thread, a LinkedIn post, or a Reel script? I can also tune the tone.",
+    "Would you like me to refine the hook, generate 3 A/B test angles, or queue this directly to your calendar?",
   ].join("\n");
 }

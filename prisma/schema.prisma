@@ -535,3 +535,28 @@ model SiteEvent {
 
   @@map("site_events")
 }
+
+model ChatSession {
+  id         String        @id @default(uuid())
+  user_id    String
+  title      String        @default("New Chat")
+  created_at DateTime      @default(now())
+  updated_at DateTime      @updatedAt
+  messages   ChatMessage[]
+
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id          String      @id @default(uuid())
+  session_id  String
+  role        String      // user, assistant, system
+  content     String      @db.Text
+  attachments Json?
+  score_data  Json?
+  created_at  DateTime    @default(now())
+
+  session     ChatSession @relation(fields: [session_id], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
